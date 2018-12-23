@@ -1,3 +1,10 @@
+◆このリポジトリ
+Quoridorn Vue CLI 3 版
+
+◆元の資材
+Quoridorn Vue CLI 2 版
+https://github.com/HillTopTRPG/quoridorn
+
 # quoridorn-vue-cli-3
 
 ## Project setup
