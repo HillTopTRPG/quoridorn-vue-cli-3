@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import { Action } from "vuex-class";
-import { DiceBotLoader } from "bcdice-js"; // ES Modules
+// import { DiceBotLoader } from "bcdice-js"; // ES Modules
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
@@ -90,7 +90,10 @@ export default class CreateRoomWindow extends Vue {
       value: "DiceBot"
     });
     const _: any = this;
-    setTimeout((): void => {
+
+    /* bcdice-js を Dynamic import */
+    import(/* webpackChunkName: "bcdice-js" */ "bcdice-js").then(module => {
+      const DiceBotLoader = module.DiceBotLoader;
       DiceBotLoader["collectDiceBots"]().forEach(
         (diceBot: any): void => {
           // window.console.qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
@@ -100,7 +103,7 @@ export default class CreateRoomWindow extends Vue {
           });
         }
       );
-    }, 0);
+    });
   }
 
   @Watch("roomName")

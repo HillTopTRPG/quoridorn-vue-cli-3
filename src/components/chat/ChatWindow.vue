@@ -164,7 +164,6 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
-import BCDice, { DiceBotLoader } from "bcdice-js"; // ES Modules
 
 export default {
   name: "chat",
@@ -193,7 +192,7 @@ export default {
       /** 現在発言中のアクターのkey */
       currentActorKey: null,
       /** bc-dice本体 */
-      bcDice: new BCDice(),
+      bcDice: null,
       /** 秘匿チャットの相手 */
       secretTarget: "",
       /** 入力中のルームメンバーのpeerIdの配列 */
@@ -226,32 +225,28 @@ export default {
         `==【ダイスボット(指定なし)専用】====================\n` +
         "ゲーム固有の判定がある場合はこの場所に記載されます。"
     });
-    setTimeout(
-      function() {
-        // window.console.qLog(`bcdice-js ダイスボット一覧`)
-        DiceBotLoader.collectDiceBots().forEach(
-          function(diceBot) {
-            // window.console.qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
-            // window.console.qLog(`${diceBot.gameName()}, ${diceBot.gameType()}`)
-            this.diceBotSystems.push({
-              name: diceBot.gameName(),
-              value: diceBot.gameType(),
-              diceBot: diceBot,
-              helpMessage:
-                this.baseHelpMessage +
-                `==【${diceBot.gameName()}専用】====================\n` +
-                diceBot.getHelpMessage()
-            });
-          }.bind(this)
-        );
 
-        const elm = document.getElementById("chatLog");
-        if (elm) {
-          elm.scrollTop = elm.scrollHeight;
-        }
-      }.bind(this),
-      0
-    );
+    /* bcdice-js を Dynamic import */
+    import(/* webpackChunkName: "bcdice-js" */ "bcdice-js").then(module => {
+      this.bcDice = new module.BCDice();
+
+      module.DiceBotLoader["collectDiceBots"]().forEach(diceBot => {
+        this.diceBotSystems.push({
+          name: diceBot.gameName(),
+          value: diceBot.gameType(),
+          diceBot: diceBot,
+          helpMessage:
+            this.baseHelpMessage +
+            `==【${diceBot.gameName()}専用】====================\n` +
+            diceBot.getHelpMessage()
+        });
+      });
+
+      const elm = document.getElementById("chatLog");
+      if (elm) {
+        elm.scrollTop = elm.scrollHeight;
+      }
+    });
   },
   methods: {
     ...mapActions([
@@ -598,30 +593,37 @@ export default {
       // -------------------
       this.addChatLog(messageObj);
 
-      this.bcDice.setMessage(this.currentMessage);
-      const resultObj = this.bcDice.dice_command();
-      const diceResult = resultObj[0].replace(/(^: )/g, "").replace(/＞/g, "→");
-      const isSecret = resultObj[1];
-      if (diceResult !== "1") {
-        if (isSecret) {
-          this.addChatLog({
-            name: this.currentDiceBotSystem,
-            text: `シークレットダイス`,
-            color: "black",
-            tab: this.activeTab,
-            owner: "SYSTEM"
-          });
-        } else {
-          this.addChatLog({
-            name: this.currentDiceBotSystem,
-            text: diceResult,
-            color: "black",
-            tab: this.activeTab,
-            owner: "SYSTEM"
-          });
+      // -------------------
+      // ダイスBot処理
+      // -------------------
+      if (this.bcDice) {
+        this.bcDice.setMessage(this.currentMessage);
+        const resultObj = this.bcDice.dice_command();
+        const diceResult = resultObj[0]
+          .replace(/(^: )/g, "")
+          .replace(/＞/g, "→");
+        const isSecret = resultObj[1];
+        if (diceResult !== "1") {
+          if (isSecret) {
+            this.addChatLog({
+              name: this.currentDiceBotSystem,
+              text: `シークレットダイス`,
+              color: "black",
+              tab: this.activeTab,
+              owner: "SYSTEM"
+            });
+          } else {
+            this.addChatLog({
+              name: this.currentDiceBotSystem,
+              text: diceResult,
+              color: "black",
+              tab: this.activeTab,
+              owner: "SYSTEM"
+            });
+          }
         }
+        this.currentMessage = "";
       }
-      this.currentMessage = "";
 
       // setTimeout(function () {
       //   var elm = document.getElementById('chatLog')
