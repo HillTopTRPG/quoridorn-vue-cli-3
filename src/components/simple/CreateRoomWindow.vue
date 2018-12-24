@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="入室画面" display-property="private.display.createRoomWindow" align="center" fixSize="370, 286" @open="open">
+  <WindowFrame titleText="入室画面" display-property="private.display.createRoomWindow" align="center" fixSize="370, 286" @open="onOpen">
     <div class="contents">
       <fieldset class="roomInfo">
         <legend>部屋の情報</legend>
@@ -80,6 +80,7 @@ export default class CreateRoomWindow extends Vue {
     SubGM: "見た目が異なるだけで、ゲームマスターと同等の権限です。",
     見学: "部屋の設定、プレイヤーたちの設定は一切変更できません。"
   };
+
   /*
    * lifecycle hook
    */
@@ -107,7 +108,8 @@ export default class CreateRoomWindow extends Vue {
     this.existCheckMessage = "";
   }
 
-  open(): void {
+  // この画面を開いた時
+  onOpen(): void {
     this.roomName = "";
     this.password = "";
     this.playerName = "";
@@ -117,22 +119,26 @@ export default class CreateRoomWindow extends Vue {
     this.currentSystem = "DiceBot";
   }
 
+  /**
+   * 確定ボタン押下時
+   */
   commit(): void {
+    // 入力チェック
     const errorMsg = [];
-    if (this.roomName === "") {
-      errorMsg.push("・部屋名は必須項目です。");
-    }
-    if (this.playerName === "") {
-      errorMsg.push("・あなたの名前は必須項目です。");
-    }
+    if (this.roomName === "") errorMsg.push("・部屋名は必須項目です。");
+    if (this.playerName === "") errorMsg.push("・あなたの名前は必須項目です。");
     if (errorMsg.length > 0) {
       alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
       return;
     }
+
+    // 利用システムの設定
     this.setProperty({
       property: "public.room.system",
       value: this.currentSystem
     });
+
+    // 利用者情報の設定
     this.setProperty({
       property: "private.self",
       value: {
@@ -144,159 +150,45 @@ export default class CreateRoomWindow extends Vue {
       },
       logOff: true
     });
+
+    // メンバーのリセット
     this.emptyMember();
+
+    // 部屋に接続する
     this.createPeer({
       roomId: this.roomName
     });
+
+    // この画面を閉じる
     this.windowClose("private.display.createRoomWindow");
   }
 
+  /**
+   * キャンセルボタン押下時
+   */
   cancel(): void {
+    // この画面を閉じる
     this.windowClose("private.display.createRoomWindow");
   }
+
+  /**
+   * 部屋の存在チェック
+   */
   checkRoomExist(): void {
     if (this.roomName === "") {
       this.existCheckMessage = "部屋名を入力してください。";
       return;
     }
     this.existCheckMessage = "存在確認中です...";
-    const _ = this;
     this.checkRoomName({
       roomName: this.roomName,
-      roomFindFunc: (message: string) => (_.existCheckMessage = message),
-      roomNonFindFunc: () => (_.existCheckMessage = "この部屋は存在しません。")
+      roomFindFunc: (message: string) => (this.existCheckMessage = message),
+      roomNonFindFunc: () =>
+        (this.existCheckMessage = "この部屋は存在しません。")
     });
   }
 }
 </script>
-
-<!--
-<script>
-import { mapActions } from "vuex";
-import { DiceBotLoader } from "bcdice-js"; // ES Modules
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-
-export default {
-  name: "createRoomWindow",
-  mixins: [WindowMixin],
-  components: {
-    WindowFrame
-  },
-  data() {
-    return {
-      roomName: "",
-      playerName: "",
-      password: "",
-      playerPassword: "",
-      currentSystem: "DiceBot",
-      diceBotSystems: [],
-      existCheckMessage: "",
-      playerType: "PL",
-      roleText: {
-        "PL": "部屋の設定や他のプレイヤーの設定の一部が変更不可です。",
-        "GM": "すべての部屋設定とプレイヤーの設定を変更可能です。",
-        "SubGM": "見た目が異なるだけで、ゲームマスターと同等の権限です。",
-        "見学": "部屋の設定、プレイヤーたちの設定は一切変更できません。"
-      }
-    };
-  },
-  created() {
-    this.diceBotSystems.push({
-      name: "指定なし",
-      value: "DiceBot"
-    });
-    setTimeout(
-      function() {
-        DiceBotLoader["collectDiceBots"]().forEach(
-          function(diceBot) {
-            // window.console.qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
-            this.diceBotSystems.push({
-              name: diceBot["gameName"](),
-              value: diceBot.gameType()
-            });
-          }.bind(this)
-        );
-      }.bind(this),
-      0
-    );
-  },
-  watch: {
-    roomName() {
-      this.existCheckMessage = "";
-    }
-  },
-  methods: {
-    ...mapActions([
-      "windowClose",
-      "createPeer",
-      "setProperty",
-      "checkRoomName",
-      "emptyMember"
-    ]),
-    open() {
-      this.roomName = "";
-      this.password = "";
-      this.playerName = "";
-      this.playerType = "PL";
-      this.existCheckMessage = "";
-      this.playerPassword = "";
-      this.currentSystem = "DiceBot";
-    },
-    commit() {
-      const errorMsg = [];
-      if (this.roomName === "") {
-        errorMsg.push("・部屋名は必須項目です。");
-      }
-      if (this.playerName === "") {
-        errorMsg.push("・あなたの名前は必須項目です。");
-      }
-      if (errorMsg.length > 0) {
-        alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
-        return;
-      }
-      this.setProperty({
-        property: "public.room.system",
-        value: this.currentSystem
-      });
-      this.setProperty({
-        property: "private.self",
-        value: {
-          password: this.password,
-          playerPassword: this.playerPassword,
-          playerName: this.playerName,
-          playerType: this.playerType,
-          currentChatName: `${this.playerName}(${this.playerType})`
-        },
-        logOff: true
-      });
-      this.emptyMember();
-      this.createPeer({
-        roomId: this.roomName
-      });
-      this.windowClose("private.display.createRoomWindow");
-    },
-    cancel() {
-      this.windowClose("private.display.createRoomWindow");
-    },
-    checkRoomExist() {
-      if (this.roomName === "") {
-        this.existCheckMessage = "部屋名を入力してください。";
-        return;
-      }
-      this.existCheckMessage = "存在確認中です...";
-      const _ = this;
-      this.checkRoomName({
-        roomName: this.roomName,
-        roomFindFunc: message => (_.existCheckMessage = message),
-        roomNonFindFunc: () =>
-          (_.existCheckMessage = "この部屋は存在しません。")
-      });
-    }
-  }
-};
-</script>
--->
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

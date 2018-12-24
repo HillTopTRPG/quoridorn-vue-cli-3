@@ -1,52 +1,93 @@
 <template>
   <div class="volumeComponent">
-    <input class="volume" :class="{muted: mute, masterMute: masterMute, mutable: mutable}" type="range" min="0" max="1" step="0.01" v-model="volume">
-    <span class="icon mute" :class="{muted: mute, masterMute: masterMute}" @click="setMute()" v-show="mutable && !mute"><i class="icon-volume-high"></i></span>
-    <span class="icon mute" :class="{muted: mute, masterMute: masterMute}" @click="setMute()" v-show="mutable && mute"><i class="icon-volume-mute"></i></span>
-    <span class="volumeText" :class="{mutable: mutable}">{{Math.round(volume * 100)}}</span>
+    <label>
+      <input class="volume"
+             :class="{muted: mute, masterMute: masterMute, mutable: mutable}"
+             type="range"
+             min="0"
+             max="1"
+             step="0.01"
+             v-model="volume">
+    </label>
+    <span class="icon mute"
+          :class="{muted: mute, masterMute: masterMute}"
+          @click="setMute()"
+          v-show="mutable && !mute">
+      <i class="icon-volume-high"></i>
+    </span>
+    <span class="icon mute"
+          :class="{muted: mute, masterMute: masterMute}"
+          @click="setMute()"
+          v-show="mutable && mute">
+      <i class="icon-volume-mute"></i>
+    </span>
+    <span class="volumeText"
+          :class="{mutable: mutable}"
+    >{{Math.round(volume * 100)}}</span>
   </div>
 </template>
 
-<script>
-import { mapState, mapActions } from "vuex";
+<script lang="ts">
+import { Component, Emit, Vue, Watch } from "vue-property-decorator";
+import { Getter } from "vuex-class";
 
-export default {
+@Component<VolumeComponent>({
   name: "volumeComponent",
   props: {
     initVolume: { type: Number, required: true },
     mutable: { type: Boolean, default: true }
-  },
-  data() {
-    return {
-      volume: 0,
-      mute: false
-    };
-  },
-  mounted() {
+  }
+})
+export default class VolumeComponent extends Vue {
+  /** Vuexの getter への参照 */
+  @Getter("masterMute") masterMute: any;
+
+  /** 音量 */
+  private volume: number = 0;
+  /** ミュートかどうか */
+  private mute: boolean = false;
+
+  /**
+   * ライフサイクルメソッド
+   */
+  mounted(this: any): void {
     this.volume = this.initVolume;
-  },
-  methods: {
-    ...mapActions([]),
-    setMute(mute = !this.mute) {
-      this.mute = mute;
-    },
-    setVolume(volume) {
-      this.volume = volume;
-    }
-  },
-  watch: {
-    mute(mute) {
-      this.$emit("mute", mute);
-    },
-    volume(volume) {
-      this.mute = false;
-      this.$emit("volume", volume);
-    }
-  },
-  computed: mapState({
-    masterMute: state => state.private.display.jukeboxWindow.masterMute
-  })
-};
+  }
+
+  /**
+   * このコンポーネントにミュートを設定する
+   * @param mute: boolean
+   */
+  setMute(this: any, mute: boolean = !this.mute): void {
+    this.mute = mute;
+  }
+
+  /**
+   * このコンポーネントに音量を設定する
+   * @param volume: number
+   */
+  public setVolume(this: any, volume: number): void {
+    this.volume = volume;
+  }
+
+  /**
+   * フィールド変数 mute を監視し、その値で muteイベント を発火する
+   * @param mute
+   */
+  @Watch("mute")
+  @Emit("mute")
+  onChangeMute(mute: boolean): void {}
+
+  /**
+   * フィールド変数 volume を監視し、その値で volumeイベント を発火する
+   * @param volume
+   */
+  @Watch("volume")
+  @Emit("volume")
+  onChangeVolume(volume: number): void {
+    this.mute = false;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -58,6 +99,13 @@ export default {
   position: relative;
   height: 20px;
   margin: auto;
+}
+.volumeComponent > label {
+  display: flex;
+  flex: 1;
+}
+.volumeComponent > label > * {
+  flex: 1;
 }
 .icon {
   color: black;

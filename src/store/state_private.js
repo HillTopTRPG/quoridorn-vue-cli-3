@@ -353,6 +353,10 @@ const storeModulePrivate = {
     //   window.console.log('#=#=#=#=#', newArr.join(','))
     //   state.display.settingChatTargetTabWindow.widthList = newArr
     // }
+  },
+  getters: {
+    masterMute: state => state.display.jukeboxWindow.masterMute,
+    masterVolume: state => state.display.jukeboxWindow.masterVolume
   }
 };
 export default storeModulePrivate;

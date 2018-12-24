@@ -13,43 +13,58 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapActions } from "vuex";
-import VolumeComponent from "./VolumeComponent";
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+import VolumeComponent from "@/components/music/component/VolumeComponent.vue";
 
-export default {
+@Component<MasterVolumeComponent>({
   name: "masterVolumeComponent",
   components: {
-    VolumeComponent: VolumeComponent
-  },
-  mounted() {
+    VolumeComponent
+  }
+})
+export default class MasterVolumeComponent extends Vue {
+  /** Vuexの action への参照 */
+  @Action("setProperty") setProperty: any;
+  /** Vuexの getter への参照 */
+  @Getter("masterMute") masterMute: any;
+  @Getter("masterVolume") masterVolume: any;
+
+  /**
+   * ライフサイクルメソッド
+   */
+  mounted(this: any): void {
     this.$refs.volumeComponent.setMute(this.masterMute);
     this.$refs.volumeComponent.setVolume(this.masterVolume);
-  },
-  methods: {
-    ...mapActions(["setProperty"]),
-    mute(mute) {
-      this.$refs.volumeComponent.setMute(mute);
-      this.setProperty({
-        property: `private.display.jukeboxWindow.masterMute`,
-        value: mute,
-        logOff: true
-      });
-    },
-    volume(volume) {
-      this.$refs.volumeComponent.setVolume(volume);
-      this.setProperty({
-        property: `private.display.jukeboxWindow.masterVolume`,
-        value: volume,
-        logOff: true
-      });
-    }
-  },
-  computed: mapState({
-    masterMute: state => state.private.display.jukeboxWindow.masterMute,
-    masterVolume: state => state.private.display.jukeboxWindow.masterVolume
-  })
-};
+  }
+
+  /**
+   * マスターミュートを設定する
+   * @param mute
+   */
+  mute(this: any, mute: boolean): void {
+    this.$refs.volumeComponent.setMute(mute);
+    this.setProperty({
+      property: `private.display.jukeboxWindow.masterMute`,
+      value: mute,
+      logOff: true
+    });
+  }
+
+  /**
+   * マスターボリュームを設定する
+   * @param volume
+   */
+  volume(this: any, volume: number): void {
+    this.$refs.volumeComponent.setVolume(volume);
+    this.setProperty({
+      property: `private.display.jukeboxWindow.masterVolume`,
+      value: volume,
+      logOff: true
+    });
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

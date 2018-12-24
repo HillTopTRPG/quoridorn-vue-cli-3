@@ -36,10 +36,6 @@ export default {
   components: {
     BGMCoreComponent: BGMCoreComponent
   },
-  data() {
-    return {};
-  },
-  mounted() {},
   destroyed() {
     this.destroyed();
   },
