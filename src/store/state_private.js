@@ -15,6 +15,7 @@ const storeModulePrivate = {
     /** 接続情報 */
     self: {
       peerId: null,
+      playerKey: null,
       playerName: "",
       playerType: "",
       currentChatName: "",

@@ -280,7 +280,6 @@ export default {
           .filter(character => character.place === "field")
           .forEach(character => result.push(character));
       });
-      window.console.log(this.characterList);
       return result;
     }
   })

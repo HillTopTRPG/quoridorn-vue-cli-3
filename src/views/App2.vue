@@ -1,6 +1,13 @@
-<template>
+  <template>
   <div id="app2" @wheel.passive="onWheel" @contextmenu.prevent>
     <GameTable ref="gameTable"/>
+    <div id="YoutubePlayerContainer">
+      <div class="unUse"><div id="YoutubePlayer001"></div></div>
+      <div class="unUse"><div id="YoutubePlayer002"></div></div>
+      <div class="unUse"><div id="YoutubePlayer003"></div></div>
+      <div class="unUse"><div id="YoutubePlayer004"></div></div>
+      <div class="unUse"><div id="YoutubePlayer005"></div></div>
+    </div>
     <ChatWindow/>
     <Menu/>
     <AddMapMaskWindow/>
@@ -131,6 +138,7 @@ export default {
   mounted() {
     // this.onSettingMount();
     this.onMount();
+    window.youtube.init();
 
     let count = 0;
     document.onkeydown = event => {

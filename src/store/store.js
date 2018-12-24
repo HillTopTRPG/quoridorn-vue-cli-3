@@ -82,7 +82,57 @@ export default new Vuex.Store({
      * @param rootState
      */
     onMount({ dispatch, state, rootState }) {
-      // 特定の画面は最初に開く
+      /* ----------------------------------------------------------------------
+       * URLパラメータの処理
+       */
+      // const webif = getParam("webif")
+      const roomId = window["getUrlParam"]("roomId");
+      const peerId = window["getUrlParam"]("peerId");
+      const playerName = window["getUrlParam"]("playerName");
+      const playerType = window["getUrlParam"]("playerType");
+      const password = window["getUrlParam"]("password");
+
+      if (!roomId) {
+        let newUrl = location.href.replace(/\?.+$/, "");
+        newUrl += `?roomId=エントランス`;
+        if (peerId) newUrl += `&peerId=${peerId}`;
+        if (playerName) newUrl += `&playerName=${playerName}`;
+        if (playerType) newUrl += `&playerType=${playerType}`;
+        location.href = newUrl;
+      }
+
+      console.log(
+        `playerName: ${playerName}, playerType: ${playerType}, password: ${password}`
+      );
+
+      dispatch("addPlayer", {
+        name: rootState.private.self.playerName,
+        color: "#000000",
+        type: rootState.private.self.playerType
+      });
+
+      dispatch("setProperty", {
+        property: `private.self`,
+        value: {
+          password: password || "",
+          playerName: playerName || "名無し",
+          playerType: playerType || "PL",
+          currentChatName: `${playerName}(${playerType})`
+        },
+        logOff: false
+      });
+
+      // 部屋が指定されていたら接続しにいく
+      if (roomId) {
+        dispatch("createPeer", {
+          roomId: roomId,
+          peerId: peerId
+        });
+      }
+
+      /* ----------------------------------------------------------------------
+       * 初期表示画面の設定
+       */
       setTimeout(() => {
         dispatch("windowOpen", "private.display.chatWindow");
         dispatch("windowOpen", "private.display.welcomeWindow");
@@ -94,16 +144,17 @@ export default new Vuex.Store({
         // dispatch("windowOpen", "private.display.playerBoxWindow")
       }, 0);
 
+      /* ----------------------------------------------------------------------
+       * カード情報の設定
+       */
       const cardSetName = "花札";
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
-      window.console.log(rootState.setting.cardSet);
       const cardSet = rootState.setting.cardSet.filter(
         cs => cs.name === cardSetName
       )[0];
 
-      window.console.log(cardSet);
       const basePath = cardSet.basePath;
       rootState.public.deck.name = cardSet.name;
       rootState.public.deck.back = basePath + cardSet.back;
@@ -133,44 +184,11 @@ export default new Vuex.Store({
         });
         rootState.public.deck.cards.maxKey = i;
       });
-      // for (let i = 0; i < 80; i++) {
-      //   const num = i + 1
-      //   rootState.public.deck.cards.list.push(
-      //     {
-      //       key: `card-${i}`,
-      //       front: { text: `CARD_00${num}` },
-      //       back: { text: `～00${num}～\n裏面\n裏面` }
-      //     })
-      //   rootState.public.deck.cards.maxKey = i
-      // }
 
+      /* ----------------------------------------------------------------------
+       * チャットタブの設定
+       */
       dispatch("changeChatTab", "雑談");
-
-      // URLパラメータの処理
-      // const webif = getParam("webif")
-      const roomId = window["getUrlParam"]("roomId");
-      const peerId = window["getUrlParam"]("peerId");
-      const playerName = window["getUrlParam"]("playerName") || "名無し";
-      const playerType = window["getUrlParam"]("playerType") || "PL";
-      const password = window["getUrlParam"]("password") || "";
-      dispatch("setProperty", {
-        property: `private.self`,
-        value: {
-          password: password,
-          playerName: playerName,
-          playerType: playerType,
-          currentChatName: `${playerName}(${playerType})`
-        },
-        logOff: false
-      });
-
-      // 部屋が指定されていたら接続しにいく
-      if (roomId) {
-        dispatch("createPeer", {
-          roomId: roomId,
-          peerId: peerId
-        });
-      }
     },
 
     /**

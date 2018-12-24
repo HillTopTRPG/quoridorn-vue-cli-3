@@ -1,16 +1,16 @@
 <template>
   <WindowFrame :titleText="`プレイルーム${roomName === '' ? '' : `「${roomName}」`}情報表示`" display-property="private.display.roomInfoWindow" align="center" fixSize="400, 310">
     <div class="container">
-      <div v-if="memberList.length === 0">お部屋に接続していません。</div>
-      <div class="inviteUrlArea" v-if="memberList.length > 0">
+      <div v-if="playerList.length === 0">お部屋に接続していません。</div>
+      <div class="inviteUrlArea" v-if="playerList.length > 0">
         招待用URL：<input class="inviteUrl" type="text" readonly="readonly" :value="inviteUrl" />
       </div>
-      <ul v-if="memberList.length > 0">
-        <li v-for="(memberObj, index) in memberList" :key="memberObj.peerId">
+      <ul v-if="playerList.length > 0">
+        <li v-for="(player, index) in playerList" :key="player.key">
           <b v-if="index === 0">[親]</b>
-          <b v-if="memberObj.peerId === yourPeerId">[この画面]</b>
-          <span>{{memberObj.name}} (peerID：{{memberObj.peerId}})</span>
-          <div class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createURL(memberObj)"/></div>
+          <b v-if="player.key === selfPlayerKey">[あなた]</b>
+          <span>{{player.name}}</span>
+          <div class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createURL(player)"/></div>
         </li>
       </ul>
     </div>
@@ -29,8 +29,8 @@ export default {
     WindowFrame
   },
   methods: {
-    createURL(memberObj) {
-      return `${this.inviteUrl}&playerName=${memberObj.name}`;
+    createURL(player) {
+      return `${this.inviteUrl}&playerName=${player.name}`;
     }
     // open () {
     //   setTimeout(function () {
@@ -44,7 +44,7 @@ export default {
     // }
   },
   watch: {
-    // memberList () {
+    // playerList () {
     //   setTimeout(function () {
     //     const elms = document.querySelectorAll('.returnUrl')
     //     elms.forEach((elm) => {
@@ -58,9 +58,14 @@ export default {
   computed: mapState({
     roomName: state => state.public.room.id,
     password: state => state.public.room.password,
-    memberList: state =>
-      state.public.room.members.filter(memberObj => memberObj.isCame),
+    playerList: state => state.public.player.list,
     yourPeerId: state => state.private.self.peerId,
+    selfPlayerKey: state => {
+      const player = state.public.player.list.filter(
+        player => player.name === state.private.self.playerName
+      )[0];
+      return player ? player.key : null;
+    },
     inviteUrl(state) {
       const baseUrl = location.href.replace(/\?.+$/, "");
       const roomName = state.public.room.id;

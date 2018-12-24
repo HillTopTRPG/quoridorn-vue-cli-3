@@ -664,6 +664,7 @@ export default {
   background-position: 0 0;
   background-size: 100% 100%;
   cursor: crosshair;
+  z-index: -1;
   /*
   box-sizing: border-box;
   */

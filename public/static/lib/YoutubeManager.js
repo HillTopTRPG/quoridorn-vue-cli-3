@@ -331,5 +331,5 @@ const YoutubeControlManager = () => {
 };
 window.youtube = YoutubeControlManager();
 window.onYouTubeIframeAPIReady = () => {
-  window.youtube.init();
+  // window.youtube.init();
 };

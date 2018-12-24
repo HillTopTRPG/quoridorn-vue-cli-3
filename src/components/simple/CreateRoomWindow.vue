@@ -10,7 +10,7 @@
           <button class="roomNameCheckBtn" @click="checkRoomExist">部屋存在確認</button>
           <span class="existMsg" v-show="existCheckMessage !== ''"><b>{{existCheckMessage}}</b></span>
         </div>
-        <label class="passwordLabel">パスワード：<input class="passwordInput" type="password" v-model="password" /></label>
+        <label class="passwordLabel">パスワード：<input class="passwordInput" type="password" v-model="password" placeholder="推奨項目（荒らし防止のため）" /></label>
         <label class="systemLabel">システム：
           <select class="systemSelect" v-model="currentSystem">
             <option v-for="systemObj in diceBotSystems" :key="systemObj.value" :value="systemObj.value">{{systemObj.name}}</option>
@@ -20,14 +20,17 @@
       <fieldset>
         <legend>あなたの情報</legend>
         <div>
-          <select class="playerTypeSelect" v-model="playerType" :title="'権限：\nPL：通常\nGM：チャットログを'">
-            <option value="PL">プレイヤー</option>
-            <option value="GM">ゲームマスター</option>
-            <option value="SubGM">サブGM</option>
-          </select>
+          <label>
+            <select class="playerTypeSelect" v-model="playerType">
+              <option value="PL">プレイヤー</option>
+              <option value="GM">ゲームマスター</option>
+              <option value="SubGM">サブGM</option>
+              <option value="見学">見学者</option>
+            </select>
+          </label>
           <input class="playerNameInput" type="text" v-model="playerName" placeholder="名前（必須項目）" />
         </div>
-        <label class="passwordLabel">パスワード：<input class="passwordInput" type="password" v-model="playerPassword" /></label>
+        <label class="passwordLabel">パスワード：<input class="passwordInput" type="password" v-model="playerPassword" placeholder="推奨項目（成りすまし防止のため）"/></label>
         <div v-html="roleText[playerType].replace(/\n/g, '<br>')"></div>
       </fieldset>
       <div class="operateArea">
@@ -38,6 +41,136 @@
   </WindowFrame>
 </template>
 
+<script lang="ts">
+import { Action } from "vuex-class";
+import { DiceBotLoader } from "bcdice-js"; // ES Modules
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
+
+import { Component, Vue, Watch } from "vue-property-decorator";
+
+@Component<CreateRoomWindow>({
+  name: "createRoomWindow",
+  mixins: [WindowMixin],
+  components: {
+    WindowFrame
+  }
+})
+export default class CreateRoomWindow extends Vue {
+  @Action("setProperty") setProperty: any;
+  @Action("emptyMember") emptyMember: any;
+  @Action("createPeer") createPeer: any;
+  @Action("windowClose") windowClose: any;
+  @Action("checkRoomName") checkRoomName: any;
+
+  /*
+   * data
+   */
+  private roomName: string = "";
+  private playerName: string = "";
+  private password: string = "";
+  private playerPassword: string = "";
+  private currentSystem: string = "DiceBot";
+  private diceBotSystems: any[] = [];
+  private existCheckMessage: string = "";
+  private playerType: string = "PL";
+  private roleText: any = {
+    PL: "部屋の設定や他のプレイヤーの設定の一部が変更不可です。",
+    GM: "すべての部屋設定とプレイヤーの設定を変更可能です。",
+    SubGM: "見た目が異なるだけで、ゲームマスターと同等の権限です。",
+    見学: "部屋の設定、プレイヤーたちの設定は一切変更できません。"
+  };
+  /*
+   * lifecycle hook
+   */
+  created(): void {
+    this.diceBotSystems.push({
+      name: "指定なし",
+      value: "DiceBot"
+    });
+    const _: any = this;
+    setTimeout((): void => {
+      DiceBotLoader["collectDiceBots"]().forEach(
+        (diceBot: any): void => {
+          // window.console.qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
+          _.diceBotSystems.push({
+            name: diceBot["gameName"](),
+            value: diceBot.gameType()
+          });
+        }
+      );
+    }, 0);
+  }
+
+  @Watch("roomName")
+  onChangeRoomName() {
+    this.existCheckMessage = "";
+  }
+
+  open(): void {
+    this.roomName = "";
+    this.password = "";
+    this.playerName = "";
+    this.playerType = "PL";
+    this.existCheckMessage = "";
+    this.playerPassword = "";
+    this.currentSystem = "DiceBot";
+  }
+
+  commit(): void {
+    const errorMsg = [];
+    if (this.roomName === "") {
+      errorMsg.push("・部屋名は必須項目です。");
+    }
+    if (this.playerName === "") {
+      errorMsg.push("・あなたの名前は必須項目です。");
+    }
+    if (errorMsg.length > 0) {
+      alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
+      return;
+    }
+    this.setProperty({
+      property: "public.room.system",
+      value: this.currentSystem
+    });
+    this.setProperty({
+      property: "private.self",
+      value: {
+        password: this.password,
+        playerPassword: this.playerPassword,
+        playerName: this.playerName,
+        playerType: this.playerType,
+        currentChatName: `${this.playerName}(${this.playerType})`
+      },
+      logOff: true
+    });
+    this.emptyMember();
+    this.createPeer({
+      roomId: this.roomName
+    });
+    this.windowClose("private.display.createRoomWindow");
+  }
+
+  cancel(): void {
+    this.windowClose("private.display.createRoomWindow");
+  }
+  checkRoomExist(): void {
+    if (this.roomName === "") {
+      this.existCheckMessage = "部屋名を入力してください。";
+      return;
+    }
+    this.existCheckMessage = "存在確認中です...";
+    const _ = this;
+    this.checkRoomName({
+      roomName: this.roomName,
+      roomFindFunc: (message: string) => (_.existCheckMessage = message),
+      roomNonFindFunc: () => (_.existCheckMessage = "この部屋は存在しません。")
+    });
+  }
+}
+</script>
+
+<!--
 <script>
 import { mapActions } from "vuex";
 import { DiceBotLoader } from "bcdice-js"; // ES Modules
@@ -61,9 +194,10 @@ export default {
       existCheckMessage: "",
       playerType: "PL",
       roleText: {
-        PL: "部屋の設定や他のプレイヤーの設定の一部が変更不可です。",
-        GM: "すべての部屋設定とプレイヤーの設定を変更可能です。",
-        SubGM: "見た目が異なるだけで、ゲームマスターと同等の権限です。"
+        "PL": "部屋の設定や他のプレイヤーの設定の一部が変更不可です。",
+        "GM": "すべての部屋設定とプレイヤーの設定を変更可能です。",
+        "SubGM": "見た目が異なるだけで、ゲームマスターと同等の権限です。",
+        "見学": "部屋の設定、プレイヤーたちの設定は一切変更できません。"
       }
     };
   },
@@ -103,6 +237,9 @@ export default {
     open() {
       this.roomName = "";
       this.password = "";
+      this.playerName = "";
+      this.playerType = "PL";
+      this.existCheckMessage = "";
       this.playerPassword = "";
       this.currentSystem = "DiceBot";
     },
@@ -159,6 +296,7 @@ export default {
   }
 };
 </script>
+-->
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

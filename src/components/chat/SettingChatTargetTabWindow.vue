@@ -1,4 +1,4 @@
-<template>
+  <template>
   <WindowFrame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`" @open="initWindow" @reset="initWindow">
     <div class="contents">
       <div>
@@ -205,12 +205,9 @@ export default {
   computed: mapState({
     ...mapGetters(["getPeerActors", "getViewName", "getObj"]),
     groupTargetTabList(state) {
-      window.console.log("$$$$$$$", state.public.chat.groupTargetTab.list);
       return state.public.chat.groupTargetTab.list.filter(tab => {
         if (tab.isAll) return true;
-        window.console.log("!!!!", tab.group);
         const targetList = tab.group.map(g => this.getObj(g)).filter(obj => {
-          window.console.log("---", obj);
           const kind = obj.key.split("-")[0];
           if (kind === "player") {
             if (obj.key === this.selfPlayerKey) return true;

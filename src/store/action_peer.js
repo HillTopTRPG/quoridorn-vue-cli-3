@@ -16,6 +16,11 @@ const actionPeer = {
      * WebRTCでPeer接続し、Roomにも接続する
      */
     createPeer({ rootState, dispatch }, { peerId, roomId }) {
+      if (!roomId) {
+        window.console.error(`RoomIdは必須項目です。`);
+        alert(`RoomIdは必須項目です。`);
+        return;
+      }
       const options = {
         key: window.__SKYWAY_KEY__,
         debug: 1
@@ -30,7 +35,7 @@ const actionPeer = {
        */
       peer.on("open", id => {
         window.console.qLog(`Peer接続成功 => PeerId: ${id}`);
-        // セーブデータからの復元の場合は既にpeerIdが格納されており、接続
+        // セーブデータからの復元の場合は既にpeerIdが格納されている
         if (rootState.private.self.peerId !== id) {
           rootState.private.self.peerId = id;
           rootState.public.room.password = rootState.private.self.password;
@@ -45,18 +50,17 @@ const actionPeer = {
             type: rootState.private.self.playerType
           });
         }
-        if (roomId) {
-          window.console.qLog(`Room接続開始 => Room: ${roomId}`);
-          const room = rootState.self.webRtcPeer.joinRoom(roomId);
-          room.on("open", () => {
-            window.console.qLog(`Room接続成功 => Room: ${roomId}`);
-            rootState.room.webRtcRoom = room;
-            dispatch("connectFunc", { room: room });
-          });
-        } else {
-          window.console.error(`RoomIdは必須項目です。`);
-          alert(`RoomIdは必須項目です。`);
-        }
+        window.console.qLog(`Room接続開始 => Room: ${roomId}`);
+        const room = rootState.self.webRtcPeer.joinRoom(roomId);
+
+        /* ------------------------------
+         * Room接続成功時
+         */
+        room.on("open", () => {
+          window.console.qLog(`Room接続成功 => Room: ${roomId}`);
+          rootState.room.webRtcRoom = room;
+          dispatch("connectFunc", { room: room });
+        });
       });
 
       // Peer接続に関するエラーはこちらにてハンドリング
@@ -64,10 +68,14 @@ const actionPeer = {
         window.console.error(err);
         if (err.message.indexOf("is already in use") > 0) {
           alert(
-            `接続に失敗しました。\npeerId:${peerId}は既に使われています。\n異なるpeerIdを指定してください。`
+            `接続に失敗しました。¥npeerId:${peerId}は既に使われています。¥n異なるpeerIdを指定してください。`
           );
         } else {
-          // alert(`接続に失敗しました。\n原因は不明です。\nF12を押して、表示されるコンソールに書かれている赤い文字をコピーして、開発者にご展開ください。`)
+          alert(
+            `接続に失敗しました。¥n原因は以下のメッセージを参考にしてください。¥n${
+              err.message
+            }`
+          );
         }
       });
 

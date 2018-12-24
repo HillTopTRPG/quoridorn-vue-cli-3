@@ -202,8 +202,8 @@ const storeModulePublic = {
           key: "bgm-0",
           chatLinkage: 0,
           chatLinkageSearch: "",
-          tag: "Free",
-          title: "Free停止",
+          tag: "BGM",
+          title: "BGM停止",
           url: "",
           playLength: 0,
           volume: 0.5,
@@ -215,8 +215,8 @@ const storeModulePublic = {
           key: "bgm-1",
           chatLinkage: 0,
           chatLinkageSearch: "",
-          tag: "Vocaloid",
-          title: "Vocaloid停止",
+          tag: "SE",
+          title: "SE停止",
           url: "",
           playLength: 0,
           volume: 0.5,
@@ -228,20 +228,7 @@ const storeModulePublic = {
           key: "bgm-2",
           chatLinkage: 0,
           chatLinkageSearch: "",
-          tag: "Other",
-          title: "Other停止",
-          url: "",
-          playLength: 0,
-          volume: 0.5,
-          isLoop: false,
-          fadeIn: 1,
-          fadeOut: 1
-        },
-        {
-          key: "bgm-3",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "Free",
+          tag: "BGM",
           title: "馬車道",
           url: require("../assets/BGM/o12.mp3"),
           playLength: 0,
@@ -251,10 +238,10 @@ const storeModulePublic = {
           fadeOut: 0
         },
         {
-          key: "bgm-4",
+          key: "bgm-3",
           chatLinkage: 0,
           chatLinkageSearch: "",
-          tag: "Free",
+          tag: "BGM",
           title: "羊飼いの夕餉",
           url: require("../assets/BGM/n122.mp3"),
           playLength: 0,
@@ -264,12 +251,25 @@ const storeModulePublic = {
           fadeOut: 1
         },
         {
+          key: "bgm-4",
+          chatLinkage: 0,
+          chatLinkageSearch: "",
+          tag: "BGM",
+          title: "小さな行進曲",
+          url: require("../assets/BGM/n26.mp3"),
+          playLength: 0,
+          volume: 0.8,
+          isLoop: true,
+          fadeIn: 0,
+          fadeOut: 0
+        },
+        {
           key: "bgm-5",
           chatLinkage: 0,
           chatLinkageSearch: "",
-          tag: "Free",
-          title: "小さな行進曲",
-          url: require("../assets/BGM/n26.mp3"),
+          tag: "BGM",
+          title: "華志の舞 (Kashi no Mai)",
+          url: "https://www.youtube.com/watch?v=nq3YnT0km2o&t=15s",
           playLength: 0,
           volume: 0.8,
           isLoop: true,
@@ -280,9 +280,9 @@ const storeModulePublic = {
           key: "bgm-6",
           chatLinkage: 0,
           chatLinkageSearch: "",
-          tag: "Free",
-          title: "華志の舞 (Kashi no Mai)",
-          url: "https://www.youtube.com/watch?v=nq3YnT0km2o&t=15s",
+          tag: "BGM",
+          title: "ECHO【Gumi English】",
+          url: "https://www.youtube.com/watch?v=cQKGUgOfD8U",
           playLength: 0,
           volume: 0.8,
           isLoop: true,
@@ -293,20 +293,7 @@ const storeModulePublic = {
           key: "bgm-7",
           chatLinkage: 0,
           chatLinkageSearch: "",
-          tag: "Vocaloid",
-          title: "ECHO【Gumi English】",
-          url: "https://www.youtube.com/watch?v=cQKGUgOfD8U",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-8",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "Other",
+          tag: "BGM",
           title: "DJ Sona's Ultimate Skin Music: Kinetic",
           url: "https://www.youtube.com/watch?v=uHJyAZtRrOY",
           playLength: 0,
@@ -316,10 +303,10 @@ const storeModulePublic = {
           fadeOut: 0
         },
         {
-          key: "bgm-9",
+          key: "bgm-8",
           chatLinkage: 0,
           chatLinkageSearch: "",
-          tag: "Other",
+          tag: "BGM",
           title: "Tobu - Higher",
           url: "https://www.youtube.com/watch?v=blA7epJJaR4",
           playLength: 0,
@@ -329,7 +316,7 @@ const storeModulePublic = {
           fadeOut: 0
         },
         {
-          key: "bgm-10",
+          key: "bgm-9",
           chatLinkage: 0,
           chatLinkageSearch: "チーン1",
           tag: "SE",
@@ -342,7 +329,7 @@ const storeModulePublic = {
           fadeOut: 0
         },
         {
-          key: "bgm-11",
+          key: "bgm-10",
           chatLinkage: 1,
           chatLinkageSearch: "出題1",
           tag: "SE",
@@ -355,7 +342,7 @@ const storeModulePublic = {
           fadeOut: 0
         },
         {
-          key: "bgm-12",
+          key: "bgm-11",
           chatLinkage: 1,
           chatLinkageSearch: "正解1",
           tag: "SE",
@@ -368,7 +355,7 @@ const storeModulePublic = {
           fadeOut: 0
         },
         {
-          key: "bgm-13",
+          key: "bgm-12",
           chatLinkage: 1,
           chatLinkageSearch: "不正解1",
           tag: "SE",
@@ -377,6 +364,71 @@ const storeModulePublic = {
           playLength: 0,
           volume: 0.8,
           isLoop: false,
+          fadeIn: 0,
+          fadeOut: 0
+        },
+        {
+          key: "bgm-13",
+          chatLinkage: 0,
+          chatLinkageSearch: "",
+          tag: "BGM",
+          title: "おばけのウケねらい",
+          url: "https://www.youtube.com/watch?v=M92c6pl10u0",
+          playLength: 0,
+          volume: 0.8,
+          isLoop: true,
+          fadeIn: 0,
+          fadeOut: 0
+        },
+        {
+          key: "bgm-14",
+          chatLinkage: 0,
+          chatLinkageSearch: "",
+          tag: "BGM",
+          title: "気まぐれメルシィ feat. 初音ミク",
+          url: "https://www.youtube.com/watch?v=o1iz4L-5zkQ",
+          playLength: 0,
+          volume: 0.8,
+          isLoop: true,
+          fadeIn: 0,
+          fadeOut: 0
+        },
+        {
+          key: "bgm-15",
+          chatLinkage: 0,
+          chatLinkageSearch: "",
+          tag: "BGM",
+          title: "Bad Apple!!",
+          url: "https://www.youtube.com/watch?v=9lNZ_Rnr7Jc",
+          playLength: 0,
+          volume: 0.8,
+          isLoop: true,
+          fadeIn: 0,
+          fadeOut: 0
+        },
+        {
+          key: "bgm-16",
+          chatLinkage: 0,
+          chatLinkageSearch: "",
+          tag: "BGM",
+          title: "Again",
+          url: "https://www.youtube.com/watch?v=jdQWia3fwMU",
+          playLength: 0,
+          volume: 0.8,
+          isLoop: true,
+          fadeIn: 0,
+          fadeOut: 0
+        },
+        {
+          key: "bgm-17",
+          chatLinkage: 0,
+          chatLinkageSearch: "",
+          tag: "BGM",
+          title: "LUVORATORRRRRY! ver れをる feat.nqrse",
+          url: "https://www.youtube.com/watch?v=p-o_bMkzOW0",
+          playLength: 0,
+          volume: 0.8,
+          isLoop: true,
           fadeIn: 0,
           fadeOut: 0
         }
@@ -513,7 +565,7 @@ const storeModulePublic = {
      * @returns {*}
      */
     addPlayer: ({ commit }, { name, color, type }) => {
-      commit("addPlayer", { name, color, type });
+      return commit("addPlayer", { name, color, type });
       // commit('addPlayerWidth')
     },
 
@@ -598,12 +650,14 @@ const storeModulePublic = {
      * @returns {*[]}
      */
     addPlayer: (state, { name, color, type }) => {
+      const key = `player-${name}`;
       state.player.list.push({
-        key: `player-${name}`,
+        key: key,
         name: name,
         fontColor: color,
         type: type
       });
+      return key;
     },
 
     /**

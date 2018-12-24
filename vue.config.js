@@ -4,7 +4,8 @@ module.exports = {
   devServer: {
     watchOptions: {
       poll: true
-    }
+    },
+    disableHostCheck: true
   },
   // yamlローダーの追加
   chainWebpack: config => {
