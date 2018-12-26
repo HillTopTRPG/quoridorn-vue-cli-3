@@ -1,0 +1,23 @@
+fieldset.root {
+    border: none;
+    padding: 0.5em;
+    text-align: center;
+}
+fieldset.root > legend {
+    padding: 0.5em 1em 0;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+fieldset.root > legend,
+fieldset.root fieldset {
+    text-align: left;
+}
+fieldset.root > button {
+    margin-top: 0.5em;
+}
+.description {
+    font-size: 10px;
+    color: #444;
+}

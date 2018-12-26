@@ -7,11 +7,11 @@
       <div class="attrArea">
         <span class="tag" :title="'【タグ】\n' + tag">{{tag}}</span><!--
      --><span class="title" :title="'【タイトル】\n' + title">{{title}}</span><!--
-     --><span class="icon loop" disabled v-if="isLoop"><i class="icon-infinite" title="ループ再生します"></i></span>
+     --><span class="icon loop" disabled v-if="isLoop"><i class="icon-loop" title="ループ再生します"></i></span>
       </div>
       <div class="controlArea">
-        <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="isPlay"><i class="icon-play"></i></span>
-        <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="!isPlay"><i class="icon-pause"></i></span>
+        <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="isPlay"><i class="icon-play3"></i></span>
+        <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="!isPlay"><i class="icon-pause2"></i></span>
         <VolumeComponent
           :initVolume="initVolume"
           @mute="setMute"

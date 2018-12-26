@@ -93,12 +93,12 @@ export default new Vuex.Store({
       const password = window["getUrlParam"]("password");
 
       if (!roomId) {
-        let newUrl = location.href.replace(/\?.+$/, "");
-        newUrl += `?roomId=エントランス`;
-        if (peerId) newUrl += `&peerId=${peerId}`;
-        if (playerName) newUrl += `&playerName=${playerName}`;
-        if (playerType) newUrl += `&playerType=${playerType}`;
-        location.href = newUrl;
+        // let newUrl = location.href.replace(/\?.+$/, "");
+        // newUrl += `?roomId=エントランス`;
+        // if (peerId) newUrl += `&peerId=${peerId}`;
+        // if (playerName) newUrl += `&playerName=${playerName}`;
+        // if (playerType) newUrl += `&playerType=${playerType}`;
+        // location.href = newUrl;
       }
 
       console.log(

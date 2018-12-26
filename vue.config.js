@@ -1,6 +1,9 @@
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
+
 module.exports = {
   /* パターン３ */
-  baseUrl: "http://localhost:8080/",
+  baseUrl: "quoridorn/dev2",
   devServer: {
     watchOptions: {
       poll: true
@@ -15,6 +18,9 @@ module.exports = {
       "Access-Control-Allow-Headers":
         "X-Requested-With, content-type, Authorization"
     }
+  },
+  configureWebpack: {
+    plugins: [new BundleAnalyzerPlugin()]
   },
   // yamlローダーの追加
   chainWebpack: config => {

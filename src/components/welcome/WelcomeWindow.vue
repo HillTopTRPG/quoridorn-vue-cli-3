@@ -15,18 +15,25 @@
         <input id="welcomeWindow-tab1" type="radio" name="tab_btn" checked>
         <input id="welcomeWindow-tab2" type="radio" name="tab_btn">
         <input id="welcomeWindow-tab3" type="radio" name="tab_btn">
+        <input id="welcomeWindow-tab4" type="radio" name="tab_btn">
 
         <div class="tab_area">
-          <label class="tab1_label" for="welcomeWindow-tab1">仕様一覧</label>
-          <label class="tab2_label" for="welcomeWindow-tab2">出典元情報</label>
-          <label class="tab3_label" for="welcomeWindow-tab3">開発支援</label>
-          <!--<label class="tab4_label" for="welcomeWindow-tab4">????</label>-->
+          <label class="tab1_label" for="welcomeWindow-tab1">ログイン</label>
+          <label class="tab2_label" for="welcomeWindow-tab2">仕様一覧</label>
+          <label class="tab3_label" for="welcomeWindow-tab3">出典元情報</label>
+          <label class="tab4_label" for="welcomeWindow-tab4">開発支援</label>
         </div>
         <div class="panel_area">
           <!--------------------------------
-           ! タブ１ - 仕様一覧
+           ! タブ１ - ログイン
            !------------------------------->
           <div id="panel1" class="tab_panel">
+            <Login/>
+          </div>
+          <!--------------------------------
+           ! タブ２ - 仕様一覧
+           !------------------------------->
+          <div id="panel2" class="tab_panel">
             <div class="spec-header">
               <button class="open" @click="specAll(true)">全て開く</button>
               <button class="close" @click="specAll(false)">全て閉じる</button>
@@ -66,13 +73,13 @@
             <a class="toTop" href="#logo-container"><div class="rotate90">＜</div><div>TOP</div></a>
           </div>
           <!--------------------------------
-           ! タブ２ - 出典元情報
+           ! タブ３ - 出典元情報
            !------------------------------->
-          <div id="panel2" class="tab_panel"><Source/></div>
+          <div id="panel3" class="tab_panel"><Source/></div>
           <!--------------------------------
-           ! タブ３ - 開発支援
+           ! タブ４ - 開発支援
            !------------------------------->
-          <div id="panel3" class="tab_panel"><DevSupport/></div>
+          <div id="panel4" class="tab_panel"><DevSupport/></div>
         </div>
       </div>
       <!-- tab_wrap -->
@@ -81,10 +88,10 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 
+import Login from "./login/Login.vue";
 import Environment from "./spec/Environment";
 import MenuBar from "./spec/MenuBar";
 import Save from "./spec/Save";
@@ -126,6 +133,7 @@ export default {
   components: {
     WindowFrame,
     Logo,
+    Login,
     Environment,
     MenuBar,
     Save,
@@ -160,7 +168,6 @@ export default {
     DevSupport
   },
   methods: {
-    ...mapActions([]),
     specAll(openFlg) {
       const elms = document
         .getElementById("welcomeWindowContents")
@@ -252,14 +259,16 @@ input[type="radio"] {
 
 #welcomeWindow-tab1:checked ~ .tab_area .tab1_label,
 #welcomeWindow-tab2:checked ~ .tab_area .tab2_label,
-#welcomeWindow-tab3:checked ~ .tab_area .tab3_label {
+#welcomeWindow-tab3:checked ~ .tab_area .tab3_label,
+#welcomeWindow-tab4:checked ~ .tab_area .tab4_label {
   background: #fff;
   color: #000;
   border-bottom-color: transparent;
 }
 #welcomeWindow-tab1:checked ~ .panel_area #panel1,
 #welcomeWindow-tab2:checked ~ .panel_area #panel2,
-#welcomeWindow-tab3:checked ~ .panel_area #panel3 {
+#welcomeWindow-tab3:checked ~ .panel_area #panel3,
+#welcomeWindow-tab4:checked ~ .panel_area #panel4 {
   display: block;
 }
 

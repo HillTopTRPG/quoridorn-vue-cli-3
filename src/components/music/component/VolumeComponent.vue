@@ -19,7 +19,7 @@
           :class="{muted: mute, masterMute: masterMute}"
           @click="setMute()"
           v-show="mutable && mute">
-      <i class="icon-volume-mute"></i>
+      <i class="icon-volume-mute2"></i>
     </span>
     <span class="volumeText"
           :class="{mutable: mutable}"
