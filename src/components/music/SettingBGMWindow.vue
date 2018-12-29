@@ -38,7 +38,7 @@
               </td><Divider :index="2" prop="settingBGMWindow"/>
               <td :style="colStyle(3)">{{bgmObj.title}}</td><Divider :index="3" prop="settingBGMWindow"/>
               <td :style="colStyle(4)">{{bgmObj.url ? convertSecond(bgmObj.playLength) : '-'}}</td><Divider :index="4" prop="settingBGMWindow"/>
-              <td :style="colStyle(5)"><i class="icon-infinite" v-if="bgmObj.url && bgmObj.isLoop"></i>{{bgmObj.url && bgmObj.isLoop ? '' : '-'}}</td><Divider :index="5" prop="settingBGMWindow"/>
+              <td :style="colStyle(5)"><i class="icon-loop" v-if="bgmObj.url && bgmObj.isLoop"></i>{{bgmObj.url && bgmObj.isLoop ? '' : '-'}}</td><Divider :index="5" prop="settingBGMWindow"/>
               <td :style="colStyle(6)">{{bgmObj.url ? bgmObj.volume * 100 : '-'}}</td><Divider :index="6" prop="settingBGMWindow"/>
               <td :style="colStyle(7)" :title="fadeTitle(bgmObj)">{{bgmObj.url ? fadeStr(bgmObj) : '-'}}</td>
             </tr>
@@ -115,12 +115,12 @@ export default {
       this.windowOpen("private.display.editBGMWindow");
     },
     doDelete() {
-      window.console.qLog(`doDelete: ${this.selectLineKey}`);
+      quoridornLog(`doDelete: ${this.selectLineKey}`);
       alert("未実装の機能です。");
     },
     changeSortMode(event) {
       const val = event.target.checked;
-      window.console.qLog(`changeSortMode: ${val}`);
+      quoridornLog(`changeSortMode: ${val}`);
       if (val) {
         setTimeout(() => {
           alert("未実装の機能です。");
@@ -181,7 +181,7 @@ export default {
       }
       return "All";
     },
-    bgmList: state => state.public.bgm.list,
+    bgmList: state => state.setting.bgm.list,
     /* Start 列幅可変テーブルのプロパティ */
     selectLineKey: state =>
       state.private.display.settingBGMWindow.selectLineKey,

@@ -90,11 +90,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        window.console.qLog(`key:"${key}" is not find.`);
+        quoridornLog(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        window.console.qLog(`key:"(${key})" is duplicate.`);
+        quoridornLog(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];
@@ -123,7 +123,7 @@ export default {
         obj.width = this.rect.width + plus * 2 + "px";
         obj.height = this.rect.height + plus * 2 + "px";
       }
-      // window.console.qLog(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+      // quoridornLog(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
       return obj;
     },
     name() {
@@ -141,7 +141,7 @@ export default {
         return "";
       }
       const imageStr = this.useImageList.split("|")[this.useImageIndex];
-      // window.console.qLog(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
+      // quoridornLog(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
       const isReverse = imageStr.indexOf(":R") >= 0;
       const imageKey = imageStr.replace(":R", "");
       return {

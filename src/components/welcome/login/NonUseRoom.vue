@@ -5,7 +5,7 @@
       卓でつかうデータの作成・保存ができます。<br>
       通信する機能、ルームメンバーが必要な機能は利用できません。
     </div>
-    <button type="button" @click="commit"><i class="icon-home3"></i> 作成</button>
+    <button type="button" @click="commit"><i class="icon-home3"></i> つかう</button>
   </fieldset>
 </template>
 

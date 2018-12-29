@@ -88,7 +88,7 @@ export default {
         this.switchImageList,
         this.switchCurrentKey
       );
-      window.console.qLog(
+      quoridornLog(
         `image(${this.switchCurrentKey}) isReverse: ${
           switchImageObj.isReverse
         } -> ${!switchImageObj.isReverse}`
@@ -103,11 +103,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        window.console.qLog(`key:"${key}" is not find.`);
+        quoridornLog(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        window.console.qLog(`key:"(${key})" is duplicate.`);
+        quoridornLog(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];

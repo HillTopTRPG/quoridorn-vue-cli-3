@@ -57,7 +57,7 @@ export default {
       "importStart"
     ]),
     dragging() {
-      window.console.qLog(`★★★★ dragging ★★★★`);
+      quoridornLog(`★★★★ dragging ★★★★`);
     },
     onWheel(delta) {
       const changeValue = 100;
@@ -92,7 +92,7 @@ export default {
       return (Math.atan2(loc.y, loc.x) * 180) / Math.PI;
     },
     leftDown() {
-      // window.console.qLog(`  [methods] mousedown left on GameTable`)
+      // quoridornLog(`  [methods] mousedown left on GameTable`)
       const obj = {
         move: {
           from: {
@@ -105,7 +105,7 @@ export default {
       this.setProperty({ property: "map", value: obj, logOff: true });
     },
     leftUp() {
-      // window.console.qLog(`  [methods] mouseup left on GameTable`)
+      // quoridornLog(`  [methods] mouseup left on GameTable`)
       if (this.rollObj.isRolling) {
         // マップ上のオブジェクトを回転中の場合
         const pieceObj = this.$store.state.public[
@@ -123,7 +123,7 @@ export default {
           pieceObj.angle.dragging + pieceObj.angle.total
         );
         const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30);
-        // window.console.qLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
+        // quoridornLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
         const obj = {
           total: total,
           dragging: 0
@@ -153,7 +153,7 @@ export default {
       }
     },
     rightDown() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] GameTableイベント => event: mousedown, mouse: right`
       );
       const obj = {
@@ -169,7 +169,7 @@ export default {
       this.setProperty({ property: "map", value: obj, logOff: true });
     },
     rightUp(event) {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] GameTableイベント => event: mouseup, mouse: right`
       );
       const isDraggingRight = this.isDraggingRight;
@@ -216,7 +216,7 @@ export default {
             logOff: true
           });
           this.windowOpen(`private.display.gameTableContext`);
-          window.console.qLog(`  [methods] open context => gameTableContext`);
+          quoridornLog(`  [methods] open context => gameTableContext`);
         }
       } else {
         this.setProperty({
@@ -294,7 +294,7 @@ export default {
           (Math.ceil(locateOnTable.y / this.gridSize) - 1) * this.gridSize;
       }
 
-      window.console.qLog(
+      quoridornLog(
         `  [methods] drop on GameTable => type: ${kind}, address: (${
           canvasAddress.grid.column
         },${canvasAddress.grid.row})`

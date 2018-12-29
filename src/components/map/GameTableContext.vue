@@ -18,6 +18,7 @@
 import { mapActions } from "vuex";
 import ContextFrame from "../ContextFrame";
 import WindowMixin from "../WindowMixin";
+import { quoridornLog } from "../common/Utility";
 
 export default {
   mixins: [WindowMixin],
@@ -32,21 +33,19 @@ export default {
       "doResetWindowLocate"
     ]),
     addCharacter() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: GameTable.addCharacter`
       );
       this.windowOpen("private.display.addCharacterSettingWindow");
       this.windowClose("private.display.gameTableContext");
     },
     addMapMask() {
-      window.console.qLog(
-        `  [methods] select context => item: GameTable.addMapMask`
-      );
+      quoridornLog(`  [methods] select context => item: GameTable.addMapMask`);
       this.windowOpen("private.display.addMapMaskWindow");
       this.windowClose("private.display.gameTableContext");
     },
     addMapMarker() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: GameTable.addMapMarker`
       );
       this.setProperty({
@@ -58,7 +57,7 @@ export default {
       this.windowClose("private.display.gameTableContext");
     },
     addDiceSymbol() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: GameTable.addDiceSymbol`
       );
       this.setProperty({
@@ -70,14 +69,14 @@ export default {
       this.windowClose("private.display.gameTableContext");
     },
     createHandCardArea() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: GameTable.createHandCardArea`
       );
       alert("未実装の機能です。");
       this.windowClose("private.display.gameTableContext");
     },
     createMessageCard() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: GameTable.createMessageCard`
       );
       this.setProperty({
@@ -89,7 +88,7 @@ export default {
       this.windowClose("private.display.gameTableContext");
     },
     resetWindowLocate() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: GameTable.resetWindowLocate`
       );
       this.doResetWindowLocate();

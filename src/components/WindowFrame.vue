@@ -41,6 +41,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { quoridornLog } from "./common/Utility";
 
 @Component<WindowFrame>({
   name: "windowFrame",
@@ -94,7 +95,7 @@ export default class WindowFrame extends Vue {
     this.addEventForIFrame();
   }
   closeWindow(this: any): void {
-    // window.console.qLog(`  [methods] closeWindow(click [x]button)`)
+    // quoridornLog(`  [methods] closeWindow(click [x]button)`)
     this.windowClose(this.displayProperty);
     this.$emit("cancel");
   }
@@ -132,7 +133,7 @@ export default class WindowFrame extends Vue {
     } else {
       const moveMode = this.moveMode;
       const winFac = this.windowFactor;
-      // window.console.qLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
+      // quoridornLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
       if (moveMode.indexOf("right") >= 0) {
         winFac.r -= winFac.draggingX;
         winFac.w += winFac.draggingX;
@@ -153,7 +154,7 @@ export default class WindowFrame extends Vue {
       winFac.draggingY = 0;
       this.mouseUp(event);
     }
-    // window.console.qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+    // quoridornLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     this.moveMode = flg ? direct : "";
   }
   reflesh(this: any): void {
@@ -181,7 +182,7 @@ export default class WindowFrame extends Vue {
       case "move":
         this.windowFactor.draggingX = moveX;
     }
-    // window.console.qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+    // quoridornLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
   }
   move(this: any, event: any, flg: boolean, isTouch: boolean): void {
     if (flg) {
@@ -518,7 +519,7 @@ export default {
   methods: {
     ...mapActions(["windowClose", "setProperty", "windowActive"]),
     closeWindow() {
-      // window.console.qLog(`  [methods] closeWindow(click [x]button)`)
+      // quoridornLog(`  [methods] closeWindow(click [x]button)`)
       this.windowClose(this.displayProperty);
       this.$emit("cancel");
     },
@@ -550,7 +551,7 @@ export default {
       } else {
         const moveMode = this.moveMode;
         const winFac = this.windowFactor;
-        // window.console.qLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
+        // quoridornLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
         if (moveMode.indexOf("right") >= 0) {
           winFac.r -= winFac.draggingX;
           winFac.w += winFac.draggingX;
@@ -571,7 +572,7 @@ export default {
         winFac.draggingY = 0;
         this.mouseUp(event);
       }
-      // window.console.qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+      // quoridornLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
       this.moveMode = flg ? direct : "";
     },
     reflesh() {
@@ -599,7 +600,7 @@ export default {
         case "move":
           this.windowFactor.draggingX = moveX;
       }
-      // window.console.qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+      // quoridornLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     },
     move(event, flg, isTouch) {
       if (flg) {

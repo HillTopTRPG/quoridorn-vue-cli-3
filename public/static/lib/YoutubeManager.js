@@ -70,7 +70,7 @@ const YoutubeControlManager = () => {
   const doPlayerMethod = (methodName, ...args) => {
     const yPlayer = playerMapping[args.shift()];
     if (!yPlayer) return;
-    // window.console.qLog('doPlayerMethod', methodName, ...args)
+    // quoridornLog('doPlayerMethod', methodName, ...args)
     let result = null;
     try {
       result = yPlayer.player[methodName](...args);
@@ -169,7 +169,7 @@ const YoutubeControlManager = () => {
   };
   const callEventHandler = (index, eventName, ...args) => {
     if (eventName !== "timeUpdate") {
-      // window.console.qLog(`--- ${eventName} => ${index}`, ...args)
+      // quoridornLog(`--- ${eventName} => ${index}`, ...args)
     }
     let playerObj = getPlayerObj(index);
     if (!playerObj) {
@@ -181,7 +181,7 @@ const YoutubeControlManager = () => {
   };
   const callEventHandlerTag = (tag, eventName, ...args) => {
     if (eventName !== "timeUpdate") {
-      // window.console.qLog(`--- ${eventName} => ${index}`, ...args)
+      // quoridornLog(`--- ${eventName} => ${index}`, ...args)
     }
     let playerObj = playerMapping[tag];
     if (!playerObj) {

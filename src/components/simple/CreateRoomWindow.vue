@@ -96,9 +96,9 @@ export default class CreateRoomWindow extends Vue {
       const DiceBotLoader = module.DiceBotLoader;
       DiceBotLoader["collectDiceBots"]().forEach(
         (diceBot: any): void => {
-          // window.console.qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
+          // quoridornLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
           _.diceBotSystems.push({
-            name: diceBot["gameName"](),
+            name: diceBot.gameName(),
             value: diceBot.gameType()
           });
         }
@@ -159,7 +159,7 @@ export default class CreateRoomWindow extends Vue {
 
     // 部屋に接続する
     this.createPeer({
-      roomId: this.roomName
+      roomName: this.roomName
     });
 
     // この画面を閉じる

@@ -3,6 +3,9 @@ fieldset.root {
     padding: 0.5em;
     text-align: center;
 }
+fieldset.root > * {
+    text-align: left;
+}
 fieldset.root > legend {
     padding: 0.5em 1em 0;
     user-select: none;
@@ -20,4 +23,11 @@ fieldset.root > button {
 .description {
     font-size: 10px;
     color: #444;
+}
+label,
+legend{
+    font-weight: bold;
+}
+label * {
+    font-weight: normal;
 }

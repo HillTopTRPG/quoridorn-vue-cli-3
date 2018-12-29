@@ -28,13 +28,13 @@ export default {
   mounted() {
     const cardElm = this.$refs.card;
     const transitionEnd = () => {
-      // window.console.qLog('transitionEnd')
+      // quoridornLog('transitionEnd')
     };
     const animationEnd = event => {
       const animationName = event.animationName;
-      // window.console.qLog(animationName)
+      // quoridornLog(animationName)
       const className = animationName.replace(/^(.+animation).+$/, "$1");
-      // window.console.qLog(className)
+      // quoridornLog(className)
       if (
         animationName.startsWith("shuffle-animation-even") ||
         animationName.startsWith("shuffle-animation-odd")
@@ -179,12 +179,12 @@ export default {
       if (this.viewMode === "choice" && !this.isViewer) {
         if (this.hoverIndex === this.index) {
           let flg = false;
-          // window.console.qLog(this.$refs.card.classList)
+          // quoridornLog(this.$refs.card.classList)
           if (this.$refs.card) {
             Array.prototype.slice
               .call(this.$refs.card.classList)
               .forEach(cls => {
-                // window.console.qLog(cls)
+                // quoridornLog(cls)
                 if (flg) return;
                 flg = cls.startsWith("shuffle-animation");
               });

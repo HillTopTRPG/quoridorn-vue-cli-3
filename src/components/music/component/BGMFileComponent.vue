@@ -54,7 +54,13 @@ export default {
         if (!this.jukeboxAudio) return;
         this.$refs.core.setDuration(this.jukeboxAudio.duration);
       });
-      this.jukeboxAudio.src = this.url;
+      if (this.url.startsWith("..")) {
+        import(this.url).then(module => {
+          this.jukeboxAudio.src = module;
+        });
+      } else {
+        this.jukeboxAudio.src = this.url;
+      }
     },
     destroyed() {
       this.jukeboxAudio = null;

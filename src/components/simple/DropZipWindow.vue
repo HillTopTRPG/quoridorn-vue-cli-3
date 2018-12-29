@@ -55,7 +55,7 @@ export default {
               if (!target[prop]) {
                 target[prop] = {};
               }
-              // window.console.qLog(target[prop], val)
+              // quoridornLog(target[prop], val)
               propProc(target[prop], val);
             }
           }
@@ -82,7 +82,7 @@ export default {
             toObj = toObj[prop];
             fromObj = fromObj[prop];
           });
-          // window.console.qLog('$$ ', toObj, fromObj, importData)
+          // quoridornLog('$$ ', toObj, fromObj, importData)
           if (toObj) {
             propProc(toObj, fromObj);
           }

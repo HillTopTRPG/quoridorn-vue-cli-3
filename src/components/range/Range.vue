@@ -47,7 +47,7 @@ export default {
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2
       };
-      // window.console.qLog(`center:(${center.x}, ${center.y})`)
+      // quoridornLog(`center:(${center.x}, ${center.y})`)
 
       const obstacleList = this.getAllObstacle;
 
@@ -125,7 +125,7 @@ export default {
         const right = obstacle.left + width;
         const top = obstacle.top;
         const bottom = obstacle.top + height;
-        // window.console.qLog(`rect:${left},${right},${top},${bottom}`)
+        // quoridornLog(`rect:${left},${right},${top},${bottom}`)
 
         const obsCenter = createCornerFunc(left + width / 2, top + height / 2);
         const centerAngle = this.calcAngle(obsCenter);
@@ -202,7 +202,7 @@ export default {
         const sinMax = Math.sin(maxPI);
         /* ========== */
 
-        // window.console.qLog(`range:(${info.angle.min.index})${info.angle.min.angle}~(${info.angle.max.index})${info.angle.max.angle}`)
+        // quoridornLog(`range:(${info.angle.min.index})${info.angle.min.angle}~(${info.angle.max.index})${info.angle.max.angle}`)
         info.angle.min.arc.x = this.centerX + arcDistance * cosMin;
         info.angle.min.arc.y = this.centerY + arcDistance * sinMin;
         info.angle.max.arc.x = this.centerX + arcDistance * cosMax;
@@ -218,16 +218,16 @@ export default {
         const RB = { x: this.width, y: this.height };
         const LB = { x: 0, y: this.height };
 
-        // window.console.qLog('LT:', LT.x, LT.y)
-        // window.console.qLog('RT:', RT.x, RT.y)
-        // window.console.qLog('RB:', RB.x, RB.y)
-        // window.console.qLog('LB:', LB.x, LB.y)
+        // quoridornLog('LT:', LT.x, LT.y)
+        // quoridornLog('RT:', RT.x, RT.y)
+        // quoridornLog('RB:', RB.x, RB.y)
+        // quoridornLog('LB:', LB.x, LB.y)
 
         /* ==========
          * ブロックの算出
          */
         aList.forEach((a, i) => {
-          // window.console.qLog('a:', a)
+          // quoridornLog('a:', a)
           const c = (8 - i) * 2;
           if (info.angle.min.angle === a) {
             info.angle.min.block = c;

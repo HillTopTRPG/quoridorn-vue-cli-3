@@ -37,13 +37,13 @@ export default {
       "updateCame"
     ]),
     commit() {
-      window.console.qLog(this.currentPeerId);
+      quoridornLog(this.currentPeerId);
       const currentMemberObj = this.currentMemberObj;
       if (!currentMemberObj) {
         alert("ルームメンバーからあなたを選んでください。");
         return;
       }
-      window.console.qLog(currentMemberObj);
+      quoridornLog(currentMemberObj);
       const privateData = currentMemberObj.private;
       if (!privateData) {
         this.windowClose("private.display.selectPeerWindow");
@@ -55,7 +55,7 @@ export default {
       this.updateCame(peerId);
       this.createPeer({
         peerId: peerId,
-        roomId: this.roomId
+        roomName: this.roomName
       });
       this.windowOpen("private.display.inviteLinkWindow");
       this.windowClose("private.display.selectPeerWindow");
@@ -83,7 +83,7 @@ export default {
       return null;
     },
     members: state => state.public.room.members,
-    roomId: state => state.public.room.id,
+    roomName: state => state.public.room.id,
     currentMemberObj() {
       return this.members.filter(
         memberObj => memberObj.peerId === this.currentPeerId

@@ -1,6 +1,7 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import AddressCalcMixin from "./AddressCalcMixin";
+import { quoridornLog } from "../components/common/Utility";
 
 export default {
   mixins: [AddressCalcMixin],
@@ -21,7 +22,7 @@ export default {
         this.$emit("leftDown");
         return;
       }
-      // window.console.qLog(`  [methods] mousedown left on ${this.type}`)
+      // quoridornLog(`  [methods] mousedown left on ${this.type}`)
       const offset = {
         w: this.mouseOnTable.x - this.rect.left,
         h: this.mouseOnTable.y - this.rect.top
@@ -50,7 +51,7 @@ export default {
         this.$emit("leftUp");
         return;
       }
-      // window.console.qLog(`  [methods] mouseup left on ${this.type}`)
+      // quoridornLog(`  [methods] mouseup left on ${this.type}`)
       const locate = {
         x:
           this.mouseOnTable.x - this.storeObj.move.gridOffset.x * this.gridSize,
@@ -102,7 +103,7 @@ export default {
       };
       this.setProperty({ property: contextProperty, value: obj, logOff: true });
       this.windowOpen(contextProperty);
-      window.console.qLog(
+      quoridornLog(
         `  [methods] open context => ${contextProperty}(${this.objKey})`
       );
     },
@@ -142,12 +143,10 @@ export default {
         value: true,
         logOff: true
       });
-      window.console.qLog(
-        `  [methods] rolling start on ${this.type}(${this.objKey})`
-      );
+      quoridornLog(`  [methods] rolling start on ${this.type}(${this.objKey})`);
       const angle = this.getAngle(this.mouseOnTable);
       const planeAngle = this.arrangeAngle(angle - this.angle.total);
-      // window.console.qLog(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
+      // quoridornLog(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
       this.setProperty({
         property: `public.${this.type}.list.${this.storeIndex}.angle.dragStart`,
         value: planeAngle,
@@ -160,7 +159,7 @@ export default {
       this.setProperty({ property: `map.rollObj`, value: obj, logOff: true });
     },
     rollEnd(event) {
-      // window.console.qLog(`rollEnd`, event.pageX, event.pageY)
+      // quoridornLog(`rollEnd`, event.pageX, event.pageY)
       const mapObj = {
         rollObj: {
           isRolling: false
@@ -174,7 +173,7 @@ export default {
         this.angle.dragging + this.angle.total
       );
       const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30);
-      // window.console.qLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
+      // quoridornLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
       const obj = {
         total: total,
         dragging: 0
@@ -190,7 +189,7 @@ export default {
   watch: {
     mouseOnTable: {
       handler(mouseOnTable) {
-        // window.console.qLog(`piece:${this.storeObj.name}, isDraggingLeft:${this.storeObj.isDraggingLeft}, isRolling:${this.isRolling}`)
+        // quoridornLog(`piece:${this.storeObj.name}, isDraggingLeft:${this.storeObj.isDraggingLeft}, isRolling:${this.isRolling}`)
         if (this.isRolling) {
           if (!this.isThisRolling) {
             return;

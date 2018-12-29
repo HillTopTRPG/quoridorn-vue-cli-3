@@ -38,7 +38,7 @@ export default {
     //     elms.forEach((elm) => {
     //       elm.focus()
     //       elm.value += ''
-    //       window.console.qLog(elm.value)
+    //       quoridornLog(elm.value)
     //     })
     //   }, 100)
     // }
@@ -50,7 +50,7 @@ export default {
     //     elms.forEach((elm) => {
     //       elm.focus()
     //       elm.value += ''
-    //       window.console.qLog(elm.value)
+    //       quoridornLog(elm.value)
     //     })
     //   }, 0)
     // }
@@ -71,7 +71,7 @@ export default {
       const roomName = state.public.room.id;
       const password = state.public.room.password;
       const passwordParam = password ? `&password=${password}` : "";
-      return `${baseUrl}?roomId=${roomName}${passwordParam}`;
+      return `${baseUrl}?roomName=${roomName}${passwordParam}`;
     },
     text() {
       return location.pathname;

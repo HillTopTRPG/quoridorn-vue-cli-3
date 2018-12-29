@@ -26,7 +26,7 @@ export default {
   methods: {
     createURL(peerId) {
       const baseUrl = location.href.replace(/\?.+$/, "");
-      const url = `${baseUrl}?roomId=${this.roomId}&password=${
+      const url = `${baseUrl}?roomName=${this.roomName}&password=${
         this.password
       }&peerId=${peerId}`;
       return url;
@@ -38,7 +38,7 @@ export default {
         memberObj => memberObj.peerId !== this.$store.state.private.self.peerId
       );
     },
-    roomId: state => state.public.room.id,
+    roomName: state => state.public.room.id,
     password: state => state.public.room.password
   })
 };

@@ -1,0 +1,1 @@
+declare function quoridornLog(...args: any[]): any;

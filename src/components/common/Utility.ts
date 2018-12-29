@@ -1,16 +1,19 @@
 // URLパラメータ取得処理
-window.getUrlParam = function(name, url = window.location.href) {
+export function getUrlParam(
+  name: string,
+  url: string = window.location.href
+): string {
   name = name.replace(/[[\]]/g, "\\$&");
   const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
   let results = regex.exec(url);
-  if (!results) return null;
+  if (!results) return "";
   if (!results[2]) return "";
   return decodeURIComponent(results[2].replace(/\+/g, " "));
-};
+}
 
-// window.console.qLog = window.console.log.bind(console, '%c[System] %c%s', 'color:blue;font-weight:bold', '')
+// quoridornLog = window.console.log.bind(console, '%c[System] %c%s', 'color:blue;font-weight:bold', '')
 
-window.console.qLog = function() {
+export function quoridornLog(...a: any): void {
   // window.console.log(...arguments)
 
   let format = "";
@@ -20,7 +23,7 @@ window.console.qLog = function() {
   logs.push("color:blue; font-weight: bold;");
   logs.push("[System]");
 
-  const args = [];
+  const args: any[] = [];
   let str = "";
   Array.prototype.slice.call(arguments).forEach(arg => {
     if (toString.call(arg) === "[object String]") {
@@ -35,7 +38,7 @@ window.console.qLog = function() {
     args.push(str.trim());
   }
 
-  args.forEach(arg => {
+  args.forEach((arg: any) => {
     const indent = "        ";
     const toString = Object.prototype.toString;
     if (toString.call(arg) === "[object String]") {
@@ -108,7 +111,7 @@ window.console.qLog = function() {
   // const backupPrepare = Error.prepareStackTrace
   //
   // // 第2引数に渡した関数はスタックトレースから除外される
-  // Error.captureStackTrace(this, window.console.qLog)
+  // Error.captureStackTrace(this, quoridornLog)
   //
   // Error.prepareStackTrace = function (_, stack) {
   //   // window.console.log('---------------------', stack)
@@ -137,6 +140,6 @@ window.console.qLog = function() {
   // setTimeout(() => {
   //   Error.prepareStackTrace = backupPrepare
   // })
-};
+}
 
-// window.console.qLog('aaaa -> bbb: val1', {rrr: 123, qqq: 432}, 'bbb ccc: val2 ddd', {ppp: 222, fff: 4444})
+// quoridornLog('aaaa -> bbb: val1', {rrr: 123, qqq: 432}, 'bbb ccc: val2 ddd', {ppp: 222, fff: 4444})

@@ -177,7 +177,7 @@ export default {
     }
   },
   computed: mapState({
-    bgmList: state => state.public.bgm.list
+    bgmList: state => state.setting.bgm.list
   })
 };
 </script>

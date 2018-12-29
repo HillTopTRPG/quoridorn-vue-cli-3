@@ -27,7 +27,7 @@ export default {
       "windowClose"
     ]),
     viewEditMapMask() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: MapMask(${
           this.objKey
         }).viewEditMapMask`
@@ -41,7 +41,7 @@ export default {
       this.windowClose("private.display.mapMaskContext");
     },
     changeMapMaskLock() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: MapMask(${
           this.objKey
         }).changeMapMaskLock`
@@ -55,7 +55,7 @@ export default {
       this.windowClose("private.display.mapMaskContext");
     },
     deleteMapMask() {
-      window.console.qLog(
+      quoridornLog(
         `  [methods] select context => item: MapMask(${
           this.objKey
         }).deleteMapMask`
@@ -74,7 +74,7 @@ export default {
     storeObj() {
       const type = "mapMask";
       const key = this.objKey;
-      // window.console.qLog(`key:${key}`)
+      // quoridornLog(`key:${key}`)
       return this.getPieceObj(type, key);
     },
     isLock() {
@@ -85,7 +85,7 @@ export default {
         return false;
       }
       const isLock = this.storeObj.isLock;
-      window.console.qLog(` [computed] isLock => ${isLock}`);
+      quoridornLog(` [computed] isLock => ${isLock}`);
       return isLock;
     }
   })

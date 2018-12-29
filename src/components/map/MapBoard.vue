@@ -22,7 +22,7 @@ export default {
   methods: {
     paint() {
       const ctx = document.getElementById("map-canvas").getContext("2d");
-      // window.console.qLog('paint')
+      // quoridornLog('paint')
 
       const img = new Image();
       img.src = this.getBackgroundImage;
@@ -90,7 +90,7 @@ export default {
         }
         this.drawLine(ctx, mouseMark.x, mouseMark.y, 20, 20)
         this.drawLine(ctx, mouseMark.x + 20, mouseMark.y, -20, 20)
-        // window.console.qLog(this.mouseOnCanvas)
+        // quoridornLog(this.mouseOnCanvas)
         */
 
         // マス座標の描画
@@ -105,7 +105,7 @@ export default {
               const x = c * this.gridSize + (this.gridSize - 1) / 2;
               const y = r * this.gridSize + (this.gridSize - 1) / 2;
               ctx.fillText(text, x, y);
-              // window.console.qLog(`text:${text} (${x}, ${y})`)
+              // quoridornLog(`text:${text} (${x}, ${y})`)
             }
           }
         }

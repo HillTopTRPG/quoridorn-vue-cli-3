@@ -1,7 +1,7 @@
 <template>
   <WindowFrame titleText="部屋接続確認画面" display-property="private.display.confirmLoadRoomWindow" align="center" fixSize="385, 300" :isBanClose="true">
     <div class="contents">
-      <div>部屋「{{roomId}}」は既に存在します。<br>どうしますか？</div>
+      <div>部屋「{{roomName}}」は既に存在します。<br>どうしますか？</div>
       <div class="operateArea">
         <button @click="clickJoinRoom">この部屋に入室する</button>
         <button @click="clickExitRoomAndLoad">退室してセーブデータを展開する</button>
@@ -44,10 +44,10 @@ export default {
         return;
       }
       this.logout();
-      const roomId = this.importData.public.room.id;
+      const roomName = this.importData.public.room.id;
       const peerId = this.importData.private.self.peerId;
       this.createPeer({
-        roomId: roomId,
+        roomName: roomName,
         peerId: peerId
       });
       this.windowClose("private.display.confirmLoadRoomWindow");
@@ -62,7 +62,7 @@ export default {
   },
   computed: mapState({
     importData: state => state.private.display.confirmLoadRoomWindow.importData,
-    roomId() {
+    roomName() {
       return !this.importData ? "" : this.importData.public.room.id;
     }
   })

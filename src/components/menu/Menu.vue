@@ -22,7 +22,7 @@
     </div>
     <!-- 部屋情報 -->
     <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isConnected}">
-      ルームID.<span :class="{isDisconnect : !isConnected}">{{ roomId }}</span>
+      ルームID.<span :class="{isDisconnect : !isConnected}">{{ roomName }}</span>
       :
       <span>{{ memberNum }}</span>名
     </div>
@@ -429,7 +429,7 @@ export default {
       if (filtered.length === 0) return false;
       return filtered[0].isCame;
     },
-    roomId: state =>
+    roomName: state =>
       state.public.room.id !== "" ? state.public.room.id : "未接続",
     memberNum: state =>
       state.public.room.members.filter(memberObj => memberObj.isCame).length,
