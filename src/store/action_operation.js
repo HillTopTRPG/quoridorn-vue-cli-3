@@ -3,6 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
+import {quoridornLog} from "../components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -10,7 +11,7 @@ Vue.use(Vuex);
  * Store
  * @type {Vuex}
  */
-const actionOperation = {
+export default {
   actions: {
     /** ========================================================================
      * チャットログを追加する
@@ -121,7 +122,7 @@ const actionOperation = {
      * チャット文字連携処理
      */
     chatLinkage: ({ dispatch, rootState, rootGetters }, text) => {
-      rootState.public.bgm.list
+      rootState.setting.bgm.list
         .filter(bgmObj => {
           if (
             bgmObj.chatLinkage === 1 &&
@@ -199,11 +200,11 @@ const actionOperation = {
     },
     doAddBGM: ({ rootState }, payload) => {
       // 欠番を埋める方式は不採用
-      let maxKey = rootState.public.bgm.maxKey;
+      let maxKey = rootState.setting.bgm.maxKey;
       const key = `bgm-${++maxKey}`;
-      rootState.public.bgm.maxKey = maxKey;
+      rootState.setting.bgm.maxKey = maxKey;
       payload.key = key;
-      rootState.public.bgm.list.push(payload);
+      rootState.setting.bgm.list.push(payload);
     },
     /** ========================================================================
      * マップオブジェクトを追加する
@@ -240,7 +241,7 @@ const actionOperation = {
       obj.key = key;
       rootState.public[payload.propName].maxKey = maxKey;
 
-      window.console.qLog(
+      quoridornLog(
         `[mutations] doAddPieceInfo => {type: ${obj.type}, key:${
           obj.key
         }, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${
@@ -273,7 +274,7 @@ const actionOperation = {
           continue;
         }
         if (pieceObj[prop] !== payload[prop]) {
-          window.console.qLog(
+          quoridornLog(
             `[mutations] update ${propName}(${key}) => ${prop}: ${
               pieceObj[prop]
             } -> ${payload[prop]}`
@@ -294,7 +295,7 @@ const actionOperation = {
       });
     },
     doDeletePieceInfo: ({ rootState, rootGetters }, payload) => {
-      // window.console.qLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
+      // quoridornLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
       const obj = rootGetters.getPieceObj(payload.propName, payload.key);
       const index = rootState.public[payload.propName].list.indexOf(obj);
       rootState.public[payload.propName].list.splice(index, 1);
@@ -377,6 +378,178 @@ const actionOperation = {
       };
       rootState.public.chat.groupTargetTab.list.push(addObj);
     }
+  },
+  getters: {
+    chatLogList: (state, getters, rootState) => {
+      return rootState.public.chat.logs[rootState.chat.activeTab].filter(
+          log => {
+            if (log.from === getters.selfPlayerKey) return true;
+            if (!log.target) return true;
+            if (log.target === "groupTargetTab-0") return true;
+            const kind = log.target.split("-")[0];
+            if (kind === "groupTargetTab") {
+              const target = getters.getObj(log.target);
+              if (!target.isSecret) return true;
+              if (target.isAll) return true;
+              const findIndex = target.group.findIndex(g => {
+                const kind = g.split("-")[0];
+                if (kind === "player") {
+                  if (g === getters.selfPlayerKey) return true;
+                } else if (kind === "character") {
+                  if (getters.getObj(g).owner === getters.selfPlayerKey)
+                    return true;
+                }
+                return false;
+              });
+              return findIndex > -1;
+            } else if (kind === "player") {
+              window.console.log(
+                  "-----player",
+                  log.target,
+                  getters.selfPlayerKey,
+                  log.target === getters.selfPlayerKey
+              );
+              return log.target === getters.selfPlayerKey;
+            } else {
+              const target = getters.getObj(log.target);
+              return target.owner === getters.selfPlayerKey;
+            }
+          }
+      );
+    },
+    chatTabList: (state, getters, rootState) => rootState.public.chat.tabs,
+    playerList: (state, getters, rootState) => rootState.public.player.list,
+    characterList: (state, getters, rootState) =>
+        rootState.public.character.list,
+    groupTargetTabList: (state, getters, rootState) => {
+      return rootState.public.chat.groupTargetTab.list.filter(tab => {
+        if (tab.isAll) return true;
+        const filterObj = tab.group.filter(targetKey => {
+          if (targetKey === getters.currentActorKey) return true;
+          if (getters.currentActorKey.split("-")[0] === "player") {
+            const targetCharacter = getters.characterList
+                .filter(character => character.owner === getters.currentActorKey)
+                .filter(character => character.key === targetKey)[0];
+            if (targetCharacter) return true;
+          } else if (getters.currentActorKey.split("-")[0] === "character") {
+            const targetCharacter = getters.characterList.filter(
+                character => character.key === getters.currentActorKey
+            )[0];
+            if (targetCharacter) return true;
+          }
+          return false;
+        });
+        if (filterObj.length > 0) return true;
+      });
+    },
+    members: (state, getters, rootState) =>
+        rootState.public.room.members.filter(member => {
+          return member.peerId !== rootState.private.self.peerId;
+        }),
+    currentCount: (state, getters, rootState) => rootState.count,
+    currentChatName: (state, getters, rootState) =>
+        rootState.private.self.currentChatName,
+    inputting: (state, getters, rootState) => rootState.public.chat.inputting,
+    createInputtingMsg: (state, getters, rootState) => {
+      return function (name) {
+        return `${name}が入力中...`;
+      };
+    },
+    fontColor: (state, getters, rootState) => rootState.private.self.color,
+    chatTargetList: (state, getters, rootState) => {
+      const list = [
+        ...getters.groupTargetTabList,
+        ...getters.playerList,
+        ...getters.characterList.filter(
+            character => character.place === "field"
+        )
+      ];
+      return list;
+    },
+    activeTab: (state, getters, rootState) => rootState.chat.activeTab,
+    hoverTab: (state, getters, rootState) => rootState.chat.hoverTab,
+    selfPlayerKey: (state, getters, rootState) => {
+      const player = rootState.public.player.list.filter(
+          player => player.name === rootState.private.self.playerName
+      )[0];
+      return player ? player.key : null;
+    },
+    chatOptionPageNum: (state, getters, rootState) => {
+      if (getters.chatOptionSelectMode === "from") {
+        const index = getters.getPeerActors.findIndex(
+            target => target.key === getters.chatTarget
+        );
+        if (index === -1) return -1;
+        return Math.floor(index / getters.chatOptionPagingSize) + 1;
+      }
+      if (getters.chatOptionSelectMode === "target") {
+        const index = getters.chatTargetList.findIndex(
+            target => target.key === getters.chatTarget
+        );
+        if (index === -1) return -1;
+        return Math.floor(index / getters.chatOptionPagingSize) + 1;
+      }
+      if (getters.chatOptionSelectMode === "tab") {
+        const index = getters.chatTabList.findIndex(
+            target => target.name === getters.activeTab
+        );
+        if (index === -1) return -1;
+        return Math.floor(index / getters.chatOptionPagingSize) + 1;
+      }
+      return -1;
+    },
+    chatOptionPageMaxNum: (state, getters, rootState) => {
+      if (getters.chatOptionSelectMode === "from") {
+        return (
+            Math.floor(
+                getters.getPeerActors.length / getters.chatOptionPagingSize
+            ) + 1
+        );
+      }
+      if (getters.chatOptionSelectMode === "target") {
+        return (
+            Math.floor(
+                getters.chatTargetList.length / getters.chatOptionPagingSize
+            ) + 1
+        );
+      }
+      if (getters.chatOptionSelectMode === "tab") {
+        return (
+            Math.floor(
+                getters.chatTabList.length / getters.chatOptionPagingSize
+            ) + 1
+        );
+      }
+      return 0;
+    },
+    chatOptionPagingList: (state, getters, rootState) => {
+      const pageNum = getters.chatOptionPageNum;
+      const startIndex = (pageNum - 1) * getters.chatOptionPagingSize;
+      if (getters.chatOptionSelectMode === "from") {
+        const endIndex = Math.min(
+            pageNum * getters.chatOptionPagingSize,
+            getters.getPeerActors.length
+        );
+        const result = getters.getPeerActors.concat();
+        return result.splice(startIndex, endIndex - startIndex);
+      }
+      if (getters.chatOptionSelectMode === "target") {
+        const endIndex = Math.min(
+            pageNum * getters.chatOptionPagingSize,
+            getters.chatTargetList.length
+        );
+        const result = getters.chatTargetList.concat();
+        return result.splice(startIndex, endIndex - startIndex);
+      }
+      if (getters.chatOptionSelectMode === "tab") {
+        const endIndex = Math.min(
+            pageNum * getters.chatOptionPagingSize,
+            getters.chatTabList.length
+        );
+        const result = getters.chatTabList.concat();
+        return result.splice(startIndex, endIndex - startIndex);
+      }
+      return 0;
+    }
   }
 };
-export default actionOperation;

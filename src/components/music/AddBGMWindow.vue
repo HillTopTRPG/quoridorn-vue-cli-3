@@ -40,7 +40,6 @@
           <button class="preview" @click="preview">プレビュー</button>
         </div>
         <div>
-          <!-- </label> -->
           <!-- 再生時間 -->
           <label class="playLength"><span title="0で全て再生">時間</span><input type="number" min="0" step="0.1" max="10000" v-model="playLength"></label>
           <!-- フェードイン -->
@@ -76,12 +75,12 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-import VolumeComponent from "./component/VolumeComponent";
+  import {mapActions, mapState} from "vuex";
+  import WindowFrame from "../WindowFrame";
+  import WindowMixin from "../WindowMixin";
+  import VolumeComponent from "./component/VolumeComponent";
 
-export default {
+  export default {
   name: "addBGMWindow",
   mixins: [WindowMixin],
   components: {

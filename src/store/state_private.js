@@ -9,7 +9,7 @@ Vue.use(Vuex);
 /**
  * Store
  */
-const storeModulePrivate = {
+export default {
   // privateデータは、データ保存時に public.room.members に含める
   state: {
     /** 接続情報 */
@@ -204,7 +204,7 @@ const storeModulePrivate = {
      * @param property
      */
     windowOpen({ state, getters }, property) {
-      // window.console.qLog(`window open => ${property}`)
+        // quoridornLog(`window open => ${property}`)
       const windowObj = getters.getStateValue(property);
       if (!windowObj.isDisplay) {
         // まだ表示していないウィンドウを開いた場合
@@ -289,7 +289,7 @@ const storeModulePrivate = {
       let maxIndex = 0;
       const splits = property.split(".");
       const dispName = splits[splits.length - 1];
-      // window.console.qLog(`windowActive => ${dispName}`)
+        // quoridornLog(`windowActive => ${dispName}`)
       for (const key in state.display) {
         if (!state.display.hasOwnProperty(key)) continue;
         const value = state.display[key];
@@ -359,4 +359,3 @@ const storeModulePrivate = {
     masterVolume: state => state.display.jukeboxWindow.masterVolume
   }
 };
-export default storeModulePrivate;

@@ -9,6 +9,7 @@ import stateSetting from "./state_setting";
 import actionFile from "./action_file";
 import actionPeer from "./action_peer";
 import actionOperation from "./action_operation";
+import {getUrlParam} from "../components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -29,8 +30,15 @@ export default new Vuex.Store({
     // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）
     mouse: { x: 0, y: 0, drag: { from: { x: 0, y: 0 }, move: { x: 0, y: 0 } } },
     self: { webRtcPeer: null },
+    param: {
+      roomName: "",
+      roomPassword: "",
+      playerName: "",
+      playerPassword: ""
+    },
     room: {
-      webRtcRoom: null
+      webRtcRoom: null,
+      isExist: false
     },
     chat: {
       activeTab: "メイン"
@@ -85,50 +93,68 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
-      // const webif = getParam("webif")
-      const roomId = window["getUrlParam"]("roomId");
-      const peerId = window["getUrlParam"]("peerId");
-      const playerName = window["getUrlParam"]("playerName");
-      const playerType = window["getUrlParam"]("playerType");
-      const password = window["getUrlParam"]("password");
+      const roomName = getUrlParam("roomName");
+      const roomPassword = getUrlParam("roomPassword");
+      const peerId = getUrlParam("peerId");
+      const playerName = getUrlParam("playerName");
+      const playerPassword = getUrlParam("playerPassword");
+      const playerType = getUrlParam("playerType");
 
-      if (!roomId) {
+      state.param.roomName = roomName;
+      state.param.roomPassword = roomPassword;
+      state.param.playerName = playerName;
+      state.param.playerPassword = playerPassword;
+      state.param.playerType = playerType;
+
+      if (roomName) {
+        dispatch("checkRoomName", {
+          roomName: roomName,
+          roomFindFunc: message => {
+            state.room.isExist = true;
+          },
+          roomNonFindFunc: () => {
+            state.room.isExist = false;
+          }
+        });
+      }
+
+      if (!roomName) {
         // let newUrl = location.href.replace(/\?.+$/, "");
-        // newUrl += `?roomId=エントランス`;
+        // newUrl += `?roomName=エントランス`;
         // if (peerId) newUrl += `&peerId=${peerId}`;
         // if (playerName) newUrl += `&playerName=${playerName}`;
         // if (playerType) newUrl += `&playerType=${playerType}`;
         // location.href = newUrl;
       }
 
-      console.log(
-        `playerName: ${playerName}, playerType: ${playerType}, password: ${password}`
+      window.console.log(
+          `playerName: ${playerName}, playerPassword: ${playerPassword}`
       );
 
-      dispatch("addPlayer", {
-        name: rootState.private.self.playerName,
-        color: "#000000",
-        type: rootState.private.self.playerType
-      });
-
-      dispatch("setProperty", {
-        property: `private.self`,
-        value: {
-          password: password || "",
-          playerName: playerName || "名無し",
-          playerType: playerType || "PL",
-          currentChatName: `${playerName}(${playerType})`
-        },
-        logOff: false
-      });
-
-      // 部屋が指定されていたら接続しにいく
-      if (roomId) {
-        dispatch("createPeer", {
-          roomId: roomId,
-          peerId: peerId
-        });
-      }
+      // dispatch("addPlayer", {
+      //   name: rootState.private.self.playerName,
+      //   color: "#000000",
+      //   type: rootState.private.self.playerType
+      // });
+      //
+      // dispatch("setProperty", {
+      //   property: `private.self`,
+      //   value: {
+      //     password: playerPassword || "",
+      //     playerName: playerName || "名無し",
+      //     playerType: "PL",
+      //     currentChatName: `${playerName}(${"PL"})`
+      //   },
+      //   logOff: false
+      // });
+      //
+      // // 部屋が指定されていたら接続しにいく
+      // if (roomName) {
+      //   dispatch("createPeer", {
+      //     roomName: roomName,
+      //     peerId: peerId
+      //   });
+      // }
 
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定
@@ -461,6 +487,13 @@ export default new Vuex.Store({
         text = text.substr(0, text.length - 2);
         text += " }";
         return text;
-      }
+      },
+
+    paramRoomName: state => state.param.roomName,
+    paramRoomPassword: state => state.param.roomPassword,
+    paramPlayerName: state => state.param.playerName,
+    paramPlayerPassword: state => state.param.playerPassword,
+    paramPlayerType: state => state.param.playerType,
+    isRoomExist: state => state.room.isExist
   }
 });

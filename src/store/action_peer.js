@@ -4,19 +4,20 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Peer from "skyway-js";
+import {quoridornLog} from "../components/common/Utility";
 
 Vue.use(Vuex);
 
 /**
  * Store
  */
-const actionPeer = {
+export default {
   actions: {
     /** ========================================================================
      * WebRTCでPeer接続し、Roomにも接続する
      */
-    createPeer({ rootState, dispatch }, { peerId, roomId }) {
-      if (!roomId) {
+    createPeer({rootState, dispatch}, {peerId, roomName}) {
+        if (!roomName) {
         window.console.error(`RoomIdは必須項目です。`);
         alert(`RoomIdは必須項目です。`);
         return;
@@ -25,7 +26,7 @@ const actionPeer = {
         key: window.__SKYWAY_KEY__,
         debug: 1
       };
-      window.console.qLog(`Peer接続開始 => PeerId: ${peerId}`);
+        quoridornLog(`Peer接続開始 => PeerId: ${peerId}`);
       const peer = new Peer(peerId, options);
       // Await connections from others
       peer.on("connection", () => dispatch("connectFunc"));
@@ -34,7 +35,7 @@ const actionPeer = {
        * Peer接続成功時
        */
       peer.on("open", id => {
-        window.console.qLog(`Peer接続成功 => PeerId: ${id}`);
+          quoridornLog(`Peer接続成功 => PeerId: ${id}`);
         // セーブデータからの復元の場合は既にpeerIdが格納されている
         if (rootState.private.self.peerId !== id) {
           rootState.private.self.peerId = id;
@@ -50,14 +51,14 @@ const actionPeer = {
             type: rootState.private.self.playerType
           });
         }
-        window.console.qLog(`Room接続開始 => Room: ${roomId}`);
-        const room = rootState.self.webRtcPeer.joinRoom(roomId);
+          quoridornLog(`Room接続開始 => Room: ${roomName}`);
+          const room = rootState.self.webRtcPeer.joinRoom(roomName);
 
         /* ------------------------------
          * Room接続成功時
          */
         room.on("open", () => {
-          window.console.qLog(`Room接続成功 => Room: ${roomId}`);
+            quoridornLog(`Room接続成功 => Room: ${roomName}`);
           rootState.room.webRtcRoom = room;
           dispatch("connectFunc", { room: room });
         });
@@ -117,7 +118,7 @@ const actionPeer = {
 
       // 誰かが入室してきた場合
       room.on("peerJoin", peerId => {
-        window.console.qLog(`入室を感知 => peerId: ${peerId}`);
+          quoridornLog(`入室を感知 => peerId: ${peerId}`);
         // const filtered = rootState.public.room.members.filter(memberObj => memberObj.peerId === peerId)
         // if (filtered.length > 0) {
         // } else {
@@ -138,8 +139,8 @@ const actionPeer = {
 
       // 誰かが退室した場合
       room.on("peerLeave", peerId => {
-        window.console.qLog(`退室を感知 => peerId: ${peerId}`);
-        // window.console.qLog(peerId, rootState.public.room.members)
+          quoridornLog(`退室を感知 => peerId: ${peerId}`);
+          // quoridornLog(peerId, rootState.public.room.members)
         const memberObj = rootState.public.room.members.filter(
           member => member.peerId === peerId
         )[0];
@@ -183,14 +184,14 @@ const actionPeer = {
           const type = sendData.type;
           const value = sendData.value;
           if (type === "DO_METHOD") {
-            window.console.qLog(
+              quoridornLog(
               `RoomData受信 => TYPE: ${type}, METHOD: ${
                 sendData.method
               }, VALUE:`,
               value
             );
           } else {
-            window.console.qLog(`RoomData受信 => TYPE: ${type}, VALUE:`, value);
+              quoridornLog(`RoomData受信 => TYPE: ${type}, VALUE:`, value);
           }
           switch (type) {
             // ルームメンバーの情報を受け取ったとき
@@ -202,7 +203,7 @@ const actionPeer = {
                 break;
               }
 
-              window.console.qLog(
+                quoridornLog(
                 `Room: ${roomName} のルームメンバーとして認識されました。`
               );
               // チャット追加
@@ -403,7 +404,7 @@ const actionPeer = {
      * ログアウト処理（画面遷移なし）
      */
     logout({ rootState }) {
-      window.console.qLog("ログアウト");
+        quoridornLog("ログアウト");
       rootState.private.peerId = null;
       rootState.public.room.id = "";
       rootState.public.room.members.splice(
@@ -427,9 +428,8 @@ const actionPeer = {
           case "NOTICE_INPUT":
             return;
         }
-        window.console.qLog("RoomData送信 =>", payload);
+          quoridornLog("RoomData送信 =>", payload);
       }
     }
   }
 };
-export default actionPeer;

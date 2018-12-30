@@ -3,13 +3,14 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
+import {quoridornLog} from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
 /**
  * Store
  */
-const storeModulePublic = {
+export default {
   // publicデータは、ルーム参加者に展開したりデータ保存に利用するデータ
   state: {
     /** 設定(public) */
@@ -196,245 +197,6 @@ const storeModulePublic = {
 
     /** BGM */
     bgm: {
-      /** BGMのプリセット */
-      list: [
-        {
-          key: "bgm-0",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "BGM停止",
-          url: "",
-          playLength: 0,
-          volume: 0.5,
-          isLoop: false,
-          fadeIn: 1,
-          fadeOut: 1
-        },
-        {
-          key: "bgm-1",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "SE",
-          title: "SE停止",
-          url: "",
-          playLength: 0,
-          volume: 0.5,
-          isLoop: false,
-          fadeIn: 1,
-          fadeOut: 1
-        },
-        {
-          key: "bgm-2",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "馬車道",
-          url: require("../assets/BGM/o12.mp3"),
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 1,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-3",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "羊飼いの夕餉",
-          url: require("../assets/BGM/n122.mp3"),
-          playLength: 0,
-          volume: 1,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 1
-        },
-        {
-          key: "bgm-4",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "小さな行進曲",
-          url: require("../assets/BGM/n26.mp3"),
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-5",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "華志の舞 (Kashi no Mai)",
-          url: "https://www.youtube.com/watch?v=nq3YnT0km2o&t=15s",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-6",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "ECHO【Gumi English】",
-          url: "https://www.youtube.com/watch?v=cQKGUgOfD8U",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-7",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "DJ Sona's Ultimate Skin Music: Kinetic",
-          url: "https://www.youtube.com/watch?v=uHJyAZtRrOY",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: false,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-8",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "Tobu - Higher",
-          url: "https://www.youtube.com/watch?v=blA7epJJaR4",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-9",
-          chatLinkage: 0,
-          chatLinkageSearch: "チーン1",
-          tag: "SE",
-          title: "チーン1",
-          url: require("../assets/BGM/tin1.mp3"),
-          playLength: 0,
-          volume: 0.8,
-          isLoop: false,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-10",
-          chatLinkage: 1,
-          chatLinkageSearch: "出題1",
-          tag: "SE",
-          title: "出題1",
-          url: require("../assets/BGM/question1.mp3"),
-          playLength: 0,
-          volume: 0.8,
-          isLoop: false,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-11",
-          chatLinkage: 1,
-          chatLinkageSearch: "正解1",
-          tag: "SE",
-          title: "正解1",
-          url: require("../assets/BGM/correct1.mp3"),
-          playLength: 0,
-          volume: 0.8,
-          isLoop: false,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-12",
-          chatLinkage: 1,
-          chatLinkageSearch: "不正解1",
-          tag: "SE",
-          title: "不正解1",
-          url: require("../assets/BGM/incorrect1.mp3"),
-          playLength: 0,
-          volume: 0.8,
-          isLoop: false,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-13",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "おばけのウケねらい",
-          url: "https://www.youtube.com/watch?v=M92c6pl10u0",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-14",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "気まぐれメルシィ feat. 初音ミク",
-          url: "https://www.youtube.com/watch?v=o1iz4L-5zkQ",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-15",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "Bad Apple!!",
-          url: "https://www.youtube.com/watch?v=9lNZ_Rnr7Jc",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-16",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "Again",
-          url: "https://www.youtube.com/watch?v=jdQWia3fwMU",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        },
-        {
-          key: "bgm-17",
-          chatLinkage: 0,
-          chatLinkageSearch: "",
-          tag: "BGM",
-          title: "LUVORATORRRRRY! ver れをる feat.nqrse",
-          url: "https://www.youtube.com/watch?v=p-o_bMkzOW0",
-          playLength: 0,
-          volume: 0.8,
-          isLoop: true,
-          fadeIn: 0,
-          fadeOut: 0
-        }
-      ],
-      maxKey: 13,
-
       /** 再生リスト */
       playList: {
         list: [],
@@ -554,17 +316,32 @@ const storeModulePublic = {
     /**
      * ルームメンバを追加する
      * @param commit
+     * @param peerId
+     * @param name
+     * @param isCame
      * @returns {*}
      */
-    addMember: ({ commit }, { peerId, name, isCame }) =>
-      commit("addMember", { peerId, name, isCame }),
+    addMember: (
+        {commit}: { commit: Function },
+        {
+            peerId,
+            name,
+            isCame
+        }: { peerId: string; name: string; isCame: boolean }
+    ) => commit("addMember", {peerId, name, isCame}),
 
     /**
      * プレイヤーを追加する
      * @param commit
+     * @param name
+     * @param color
+     * @param type
      * @returns {*}
      */
-    addPlayer: ({ commit }, { name, color, type }) => {
+    addPlayer: (
+        {commit}: { commit: Function },
+        {name, color, type}: { name: string; color: string; type: string }
+    ) => {
       return commit("addPlayer", { name, color, type });
       // commit('addPlayerWidth')
     },
@@ -574,7 +351,7 @@ const storeModulePublic = {
      * @param commit
      * @returns {*}
      */
-    emptyMember: ({ commit }) => commit("emptyMember"),
+    emptyMember: ({commit}: { commit: Function }) => commit("emptyMember"),
 
     /**
      * チャットのタブを選択したことをデータに反映する
@@ -582,7 +359,8 @@ const storeModulePublic = {
      * @param tab
      * @returns {*}
      */
-    chatTabSelect: ({ commit }, tab) => commit("chatTabSelect", tab),
+    chatTabSelect: ({commit}: { commit: Function }, tab: string) =>
+        commit("chatTabSelect", tab),
 
     /**
      * チャット対象のタブを選択したことをデータに反映する
@@ -590,7 +368,7 @@ const storeModulePublic = {
      * @param tab
      * @returns {*}
      */
-    groupTargetTabSelect: ({ commit }, tab) =>
+    groupTargetTabSelect: ({commit}: { commit: Function }, tab: string) =>
       commit("groupTargetTabSelect", tab),
 
     /**
@@ -599,7 +377,8 @@ const storeModulePublic = {
      * @param payload
      * @returns {*}
      */
-    imageTagChange: ({ commit }, payload) => commit("imageTagChange", payload),
+    imageTagChange: ({commit}: { commit: Function }, payload: any) =>
+        commit("imageTagChange", payload),
 
     /**
      * チャットのタブの構成を変更する
@@ -608,7 +387,10 @@ const storeModulePublic = {
      * @param tabsText
      * @returns {*}
      */
-    changeChatTab: ({ getters, commit }, tabsText) =>
+    changeChatTab: (
+        {getters, commit}: { getters: any; commit: Function },
+        tabsText: string
+    ) =>
       commit("changeChatTab", {
         tabsText: tabsText,
         lastActiveTab: getters.activeChatTab
@@ -620,7 +402,10 @@ const storeModulePublic = {
      * @param state
      * @param name
      */
-    noticeInput: ({ commit, state }, { name, target }) => {
+    noticeInput: (
+        {commit, state}: { commit: Function; state: any },
+        {name, target}: { name: string; target: any }
+    ) => {
       // 即時入力カウントアップ
       commit("inputPeerId", { name: name, add: 1 });
       // 少し経ったらカウントダウン
@@ -634,9 +419,19 @@ const storeModulePublic = {
     /**
      * ルームメンバを追加する
      * @param state
+     * @param peerId
+     * @param name
+     * @param isCame
      * @returns {*[]}
      */
-    addMember: (state, { peerId, name, isCame }) => {
+    addMember: (
+        state: any,
+        {
+            peerId,
+            name,
+            isCame
+        }: { peerId: string; name: string; isCame: boolean }
+    ) => {
       state.room.members.push({
         peerId: peerId,
         name: name,
@@ -647,9 +442,15 @@ const storeModulePublic = {
     /**
      * プレイヤーを追加する
      * @param state
+     * @param name
+     * @param color
+     * @param type
      * @returns {*[]}
      */
-    addPlayer: (state, { name, color, type }) => {
+    addPlayer: (
+        state: any,
+        {name, color, type}: { name: string; color: string; type: string }
+    ) => {
       const key = `player-${name}`;
       state.player.list.push({
         key: key,
@@ -665,7 +466,7 @@ const storeModulePublic = {
      * @param state
      * @returns {*[]}
      */
-    emptyMember: state =>
+    emptyMember: (state: any) =>
       state.room.members.splice(0, state.room.members.length),
 
     /**
@@ -673,7 +474,7 @@ const storeModulePublic = {
      * @param state
      * @param tab
      */
-    chatTabSelect(state, tab) {
+    chatTabSelect(state: any, tab: string) {
       for (let tabObj of state.chat.tabs) {
         tabObj.isActive = tab === tabObj.name;
         // 未読数をリセット
@@ -686,7 +487,7 @@ const storeModulePublic = {
      * @param state
      * @param tab
      */
-    groupTargetTabSelect(state, tab) {
+    groupTargetTabSelect(state: any, tab: string) {
       for (let tabObj of state.chat.tabs) {
         tabObj.isActive = tab === tabObj.name;
         // 未読数をリセット
@@ -699,7 +500,7 @@ const storeModulePublic = {
      * @param state
      * @param payload
      */
-    inputPeerId(state, { name, add }) {
+    inputPeerId(state: any, {name, add}: { name: string; add: number }) {
       // プロパティが無ければ、リアクティブになる形式で登録をする
       if (!state.chat.inputting[name]) {
         this._vm.$set(state.chat.inputting, name, 0);
@@ -714,12 +515,15 @@ const storeModulePublic = {
      * @param key
      * @param imageList
      */
-    imageTagChange(state, { key, imageList }) {
-      const useTexts = [];
+    imageTagChange(
+        state: any,
+        {key, imageList}: { key: string; imageList: any[] }
+    ) {
+        const useTexts: any[] = [];
       /* eslint no-control-regex: 0 */
       const regExp = new RegExp("[　\t \r\n,]+", "g");
-      // window.console.qLog(imageList)
-      imageList.forEach(imageObj => {
+        // quoridornLog(imageList)
+        imageList.forEach((imageObj: any) => {
         Array.prototype.push.apply(
           useTexts,
           imageObj.currentTag.replace(regExp, ",").split(",")
@@ -727,7 +531,7 @@ const storeModulePublic = {
       });
 
       let addList = useTexts.concat(); // 配列をシャロ―コピー
-      const deleteList = state.image.tags.list.filter(tag => {
+        const deleteList = state.image.tags.list.filter((tag: any) => {
         // 「(全て)」は消させない
         if (tag.key === "imgTag-0") {
           return;
@@ -740,11 +544,11 @@ const storeModulePublic = {
           addList = addList.filter(item => item !== filteredList[0]);
         }
         if (!findFlg) {
-          state.image.list.forEach(imageObj => {
+            state.image.list.forEach((imageObj: any) => {
             if (findFlg) return;
             const filteredList = imageObj.tag
               .split(",")
-              .filter(imgTag => imgTag === tag.name);
+                .filter((imgTag: any) => imgTag === tag.name);
             if (filteredList.length > 0) {
               findFlg = true;
             }
@@ -753,7 +557,7 @@ const storeModulePublic = {
         return !findFlg;
       });
       // 削除リストに基づいてタグを消していく
-      deleteList.forEach(delTagObj =>
+        deleteList.forEach((delTagObj: any) =>
         state.image.tags.list.splice(
           state.image.tags.list.indexOf(delTagObj),
           1
@@ -783,15 +587,18 @@ const storeModulePublic = {
      * @param tabsText
      * @param lastActiveTab
      */
-    changeChatTab(state, { tabsText, lastActiveTab }) {
+    changeChatTab(
+        state: any,
+        {tabsText, lastActiveTab}: { tabsText: string; lastActiveTab: any }
+    ) {
       // 秘匿チャット以外を削除
       state.chat.tabs
-        .map((tab, index) => {
+          .map((tab: any, index: number) => {
           if (!tab.secretInfo) return;
           return index;
         })
         .reverse()
-        .forEach(index => state.chat.tabs.splice(index, 1));
+          .forEach((index: number) => state.chat.tabs.splice(index, 1));
 
       tabsText = "メイン " + tabsText;
       const regExp = new RegExp("[ 　]+", "g");
@@ -834,7 +641,7 @@ const storeModulePublic = {
       );
 
       // 追加されたタブの検知
-      state.chat.tabs.forEach(tabsTab => {
+        state.chat.tabs.forEach((tabsTab: any) => {
         if (!state.chat.logs[tabsTab.name]) {
           // this.$set(state.chat.logs, tabsTab.name, [])
           const newLogs = { ...state.chat.logs };
@@ -850,22 +657,21 @@ const storeModulePublic = {
     /**
      * 選択済みのチャットのタブのオブジェクト
      * @param state
-     * @returns {T}
+     * @returns any
      */
-    activeChatTab: state =>
-      state.chat.tabs.filter(tabObj => tabObj.isActive)[0],
+    activeChatTab: (state: any) =>
+        state.chat.tabs.filter((tabObj: any) => tabObj.isActive)[0],
 
     /**
      * すべての障害物を取得
      * @param state
      */
-    getAllObstacle: state => {
-      const allPieceList = state.character.list
-        .filter(o => o.place === "field")
-        .concat(state.chit.list.filter(o => o.place === "field"))
-        .concat(state.mapMask.list.filter(o => o.place === "field"));
+    getAllObstacle: (state: any) => {
       // TODO obstacle属性の作成
-      return allPieceList;
+        return state.character.list
+            .filter((o: any) => o.place === "field")
+            .concat(state.chit.list.filter((o: any) => o.place === "field"))
+            .concat(state.mapMask.list.filter((o: any) => o.place === "field"));
     },
 
     /**
@@ -873,9 +679,9 @@ const storeModulePublic = {
      * @param state
      * @returns {boolean}
      */
-    isFitGrid: state => state.setting.isFitGrid,
+    isFitGrid: (state: any) => state.setting.isFitGrid,
 
-    getPieceObj: (state, getters) =>
+      getPieceObj: (state: any, getters: any) =>
       /**
        * 指定されたタイプのオブジェクトの中から、指定されたキーのオブジェクトを絞り込んで取得する
        * @param type
@@ -883,10 +689,10 @@ const storeModulePublic = {
        * @param logOff
        * @returns {*}
        */
-      (type, key, logOff = true) => {
+      (type: any, key: any, logOff: boolean = true) => {
         const result = getters.getKeyObj(state[type].list, key);
         if (!logOff) {
-          window.console.qLog(
+            quoridornLog(
             `  [getters] pieceObj[${type}]#${key} => ${getters.objToString(
               result
             )}`
@@ -895,33 +701,35 @@ const storeModulePublic = {
         return result;
       },
 
-    pieceKeyList: state =>
+      pieceKeyList: (state: any) =>
       /**
        * 指定されたタイプのオブジェクトの、キーの一覧を取得する
        * @param type
        * @returns {*}
        */
-      type =>
+      (type: any) =>
         state[type].list
-          .filter(pieceObj => pieceObj.place === "field")
-          .map(pieceObj => pieceObj.key),
+            .filter((pieceObj: any) => pieceObj.place === "field")
+            .map((pieceObj: any) => pieceObj.key),
 
     /**
      * 現在の背景画像
      * @param state
      * @returns {*}
      */
-    getBackgroundImage: state =>
-      state.image.list.filter(d => d.key === state.map.imageKey)[0].data,
+    getBackgroundImage: (state: any) =>
+        state.image.list.filter((d: any) => d.key === state.map.imageKey)[0].data,
 
-    getPeerActors: (state, getters, rootState) => {
+      getPeerActors: (state: any, getters: any, rootState: any) => {
       const playerName = rootState.private.self.playerName;
-      const player = state.player.list.filter(p => p.name === playerName)[0];
+          const player = state.player.list.filter(
+              (p: any) => p.name === playerName
+          )[0];
       if (player) {
         return [
           player,
           ...state.character.list.filter(
-            character => character.owner === player.key
+              (character: any) => character.owner === player.key
           )
         ];
       } else {
@@ -929,24 +737,26 @@ const storeModulePublic = {
       }
     },
 
-    getObj: state => key => {
+      getObj: (state: any) => (key: string) => {
       if (!key) return;
       const kind = key.split("-")[0];
       if (kind === "player") {
         // プレイヤー
-        return state.player.list.filter(player => player.key === key)[0];
+          return state.player.list.filter((player: any) => player.key === key)[0];
       } else if (kind === "character") {
         // キャラクター
         return state.character.list.filter(
-          character => character.key === key
+            (character: any) => character.key === key
         )[0];
       } else if (kind === "groupTargetTab") {
         // グループチャットタブ
-        return state.chat.groupTargetTab.list.filter(tab => tab.key === key)[0];
+          return state.chat.groupTargetTab.list.filter(
+              (tab: any) => tab.key === key
+          )[0];
       }
     },
 
-    getViewName: (state, getters) => key => {
+      getViewName: (state: any, getters: any) => (key: string) => {
       const obj = getters.getObj(key);
       if (!obj) return "名無し(PL)";
       const kind = obj.key.split("-")[0];
@@ -960,4 +770,3 @@ const storeModulePublic = {
     }
   } /* end of getters */
 };
-export default storeModulePublic;

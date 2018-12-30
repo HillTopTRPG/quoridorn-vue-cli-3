@@ -11,7 +11,7 @@ Vue.use(Vuex);
 /**
  * Store
  */
-const actionFile = {
+export default {
   actions: {
     exportStart({ dispatch, rootState }) {
       // 配列の中身を空にする
@@ -303,11 +303,11 @@ const actionFile = {
         }
       };
       if (publicData.room && publicData.room.id !== "") {
-        const roomId = publicData.room.id;
+        const roomName = publicData.room.id;
         const peerId = privateData.self.peerId;
         // 部屋の存在チェック
         dispatch("checkRoomName", {
-          roomName: roomId,
+          roomName: roomName,
           /** 部屋が見つかったときのコールバック */
           roomFindFunc: () => {
             // 部屋が見つかったら接続しにいく。他のセーブデータは使わない。
@@ -325,7 +325,7 @@ const actionFile = {
             // })
 
             if (peerId) {
-              dispatch("createPeer", { peerId: peerId, roomId: roomId });
+              dispatch("createPeer", {peerId: peerId, roomName: roomName});
             }
             importFunc();
           }
@@ -338,4 +338,3 @@ const actionFile = {
     }
   }
 };
-export default actionFile;
