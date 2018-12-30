@@ -3,13 +3,13 @@
 // import "bcdice-js/lib/preload-dicebots"
 import Vue from "vue";
 import Vuex from "vuex";
-import statePrivate from "./state_private";
-import statePublic from "./state_public";
+import statePrivate from "./state_private.ts";
+import statePublic from "./state_public.ts";
 import stateSetting from "./state_setting";
 import actionFile from "./action_file";
-import actionPeer from "./action_peer";
-import actionOperation from "./action_operation";
-import {getUrlParam} from "../components/common/Utility";
+import actionPeer from "./action_peer.ts";
+import actionOperation from "./action_operation.ts";
+import { getUrlParam } from "../components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -79,7 +79,8 @@ export default new Vuex.Store({
     operationQueue: [],
     volatileSaveData: {
       members: []
-    }
+    },
+    isMordal: true
   },
   actions: {
     /**
@@ -128,7 +129,7 @@ export default new Vuex.Store({
       }
 
       window.console.log(
-          `playerName: ${playerName}, playerPassword: ${playerPassword}`
+        `playerName: ${playerName}, playerPassword: ${playerPassword}`
       );
 
       // dispatch("addPlayer", {
@@ -494,6 +495,7 @@ export default new Vuex.Store({
     paramPlayerName: state => state.param.playerName,
     paramPlayerPassword: state => state.param.playerPassword,
     paramPlayerType: state => state.param.playerType,
-    isRoomExist: state => state.room.isExist
+    isRoomExist: state => state.room.isExist,
+    isMordal: state => state.isMordal
   }
 });

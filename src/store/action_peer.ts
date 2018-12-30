@@ -4,7 +4,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Peer from "skyway-js";
-import {quoridornLog} from "../components/common/Utility";
+import {quoridornLog} from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -16,14 +16,17 @@ export default {
     /** ========================================================================
      * WebRTCでPeer接続し、Roomにも接続する
      */
-    createPeer({rootState, dispatch}, {peerId, roomName}) {
+    createPeer(
+      {rootState, dispatch}: { rootState: any, dispatch: any },
+      {peerId, roomName}: { peerId: string, roomName: string }
+    ) {
         if (!roomName) {
         window.console.error(`RoomIdは必須項目です。`);
         alert(`RoomIdは必須項目です。`);
         return;
       }
       const options = {
-        key: window.__SKYWAY_KEY__,
+        key: __SKYWAY_KEY__,
         debug: 1
       };
         quoridornLog(`Peer接続開始 => PeerId: ${peerId}`);
@@ -34,7 +37,7 @@ export default {
       /* ------------------------------
        * Peer接続成功時
        */
-      peer.on("open", id => {
+      peer.on("open", (id: string) => {
           quoridornLog(`Peer接続成功 => PeerId: ${id}`);
         // セーブデータからの復元の場合は既にpeerIdが格納されている
         if (rootState.private.self.peerId !== id) {
@@ -65,7 +68,7 @@ export default {
       });
 
       // Peer接続に関するエラーはこちらにてハンドリング
-      peer.on("error", err => {
+      peer.on("error", (err: any) => {
         window.console.error(err);
         if (err.message.indexOf("is already in use") > 0) {
           alert(
@@ -104,7 +107,10 @@ export default {
     /** ========================================================================
      * 接続後の処理
      */
-    connectFunc: ({ rootState, dispatch, commit }, { room }) => {
+    connectFunc: (
+      {rootState, dispatch, commit}: { rootState: any; dispatch: Function; commit: Function },
+      {room}: { room: any }
+    ) => {
       // Handle a chat connection.
       const roomName = room.name.replace("sfu_text_", "");
 
@@ -117,7 +123,7 @@ export default {
       dispatch("windowOpen", "private.display.playerBoxWindow");
 
       // 誰かが入室してきた場合
-      room.on("peerJoin", peerId => {
+      room.on("peerJoin", (peerId: string) => {
           quoridornLog(`入室を感知 => peerId: ${peerId}`);
         // const filtered = rootState.public.room.members.filter(memberObj => memberObj.peerId === peerId)
         // if (filtered.length > 0) {
@@ -138,11 +144,11 @@ export default {
       });
 
       // 誰かが退室した場合
-      room.on("peerLeave", peerId => {
+      room.on("peerLeave", (peerId: string) => {
           quoridornLog(`退室を感知 => peerId: ${peerId}`);
           // quoridornLog(peerId, rootState.public.room.members)
         const memberObj = rootState.public.room.members.filter(
-          member => member.peerId === peerId
+          (member: any) => member.peerId === peerId
         )[0];
         if (!memberObj) {
           return;
@@ -161,11 +167,11 @@ export default {
       });
 
       // 誰かがデータを送信した場合
-      room.on("data", message => {
+      room.on("data", (message: any) => {
         const peerId = message.src;
         const sendData = message.data;
         const memberObj = rootState.public.room.members.filter(
-          member => member.peerId === peerId
+          (member: any) => member.peerId === peerId
         )[0]; // TODO filter
         window.console.log(
           "####",
@@ -178,7 +184,7 @@ export default {
           !targets ||
           targets.length === 0 ||
           targets.findIndex(
-            target => target === rootState.private.self.peerId
+            (target: string) => target === rootState.private.self.peerId
           ) > -1
         ) {
           const type = sendData.type;
@@ -218,13 +224,13 @@ export default {
               // 自分を一番後ろにする処理
               let memberMe = null;
               let playerMe = null;
-              value.room.members.forEach(memberObj => {
+              value.room.members.forEach((memberObj: any) => {
                 if (memberObj.name === rootState.private.self.playerName) {
                   memberObj.isCame = true;
                   memberMe = memberObj;
                 }
               });
-              value.player.list.forEach(playerObj => {
+              value.player.list.forEach((playerObj: any) => {
                 if (playerObj.name === rootState.private.self.playerName) {
                   playerMe = playerObj;
                 } else {
@@ -341,28 +347,28 @@ export default {
     /** ========================================================================
      * 部屋の存在確認チェック
      */
-    checkRoomName({ rootState }, payload) {
+    checkRoomName({rootState}: { rootState: any }, payload: any) {
       const roomName = payload.roomName;
       const roomFindFunc = payload.roomFindFunc;
       const roomNonFindFunc = payload.roomNonFindFunc;
 
       let peer = new Peer({
-        key: window.__SKYWAY_KEY__,
+        key: __SKYWAY_KEY__,
         debug: 1
       });
-      let peerId = null;
-      const connectFunc = room => {
-        room.on("data", message => {
+      let peerId: string = "";
+      const connectFunc = (room: any) => {
+        room.on("data", (message: any) => {
           const sendData = message.data;
           const targets = sendData.targets;
           if (
             !targets ||
             targets.length === 0 ||
-            targets.findIndex(target => target === peerId) > -1
+            targets.findIndex((target: string) => target === peerId) > -1
           ) {
             if (sendData.type === "NOTICE_OTHER_PLAYER") {
               const filtered = sendData.value.room.members.filter(
-                memberObj => memberObj.peerId === rootState.private.self.peerId
+                (memberObj: any) => memberObj.peerId === rootState.private.self.peerId
               );
               if (filtered.length > 0) {
                 roomFindFunc("この部屋は現在あなたが入室している部屋です。");
@@ -380,7 +386,7 @@ export default {
         });
       };
       peer.on("connection", connectFunc);
-      peer.on("open", id => {
+      peer.on("open", (id: string) => {
         peerId = id;
         const room = peer.joinRoom(roomName);
         room.on("open", () => {
@@ -396,14 +402,14 @@ export default {
           }, 1000);
         });
       });
-      peer.on("error", err => {
+      peer.on("error", (err: any) => {
         window.console.error(err);
       });
     },
     /** ========================================================================
      * ログアウト処理（画面遷移なし）
      */
-    logout({ rootState }) {
+    logout({rootState}: { rootState: any }) {
         quoridornLog("ログアウト");
       rootState.private.peerId = null;
       rootState.public.room.id = "";
@@ -421,7 +427,7 @@ export default {
     /** ========================================================================
      * データ送信
      */
-    sendRoomData({ rootState }, payload) {
+    sendRoomData({rootState}: { rootState: any }, payload: any) {
       if (rootState.room.webRtcRoom) {
         rootState.room.webRtcRoom.send(payload);
         switch (payload.type) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="container" :style="containerStyle">
+  <div :style="containerStyle" class="deckContainer">
     <fieldset>
       <legend>{{deck.name}}</legend>
       <div class="refArea">
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import Card from "./Card";
 
 export default {
@@ -127,7 +127,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.container {
+.deckContainer {
   position: absolute;
   top: 130px;
   left: 240px;

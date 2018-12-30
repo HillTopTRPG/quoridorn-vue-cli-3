@@ -203,7 +203,7 @@ export default {
      * @param getters
      * @param property
      */
-    windowOpen({ state, getters }, property) {
+    windowOpen({state, getters}: { state: any; getters: any }, property: string) {
         // quoridornLog(`window open => ${property}`)
       const windowObj = getters.getStateValue(property);
       if (!windowObj.isDisplay) {
@@ -253,7 +253,7 @@ export default {
      * @param getters
      * @param property
      */
-    windowClose({ state, getters }, property) {
+    windowClose({state, getters}: { state: any; getters: any }, property: string) {
       const windowObj = getters.getStateValue(property);
 
       // 閉じる
@@ -284,7 +284,7 @@ export default {
      * @param getters
      * @param property
      */
-    windowActive({ state }, property) {
+    windowActive({state}: { state: any }, property: string) {
       let current = 0;
       let maxIndex = 0;
       const splits = property.split(".");
@@ -355,7 +355,7 @@ export default {
     // }
   },
   getters: {
-    masterMute: state => state.display.jukeboxWindow.masterMute,
-    masterVolume: state => state.display.jukeboxWindow.masterVolume
+    masterMute: (state: any) => state.display.jukeboxWindow.masterMute,
+    masterVolume: (state: any) => state.display.jukeboxWindow.masterVolume
   }
 };

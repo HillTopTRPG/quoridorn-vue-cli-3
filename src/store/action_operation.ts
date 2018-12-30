@@ -3,7 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-import {quoridornLog} from "../components/common/Utility";
+import {quoridornLog} from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -16,13 +16,13 @@ export default {
     /** ========================================================================
      * チャットログを追加する
      */
-    addChatLog: ({ dispatch }, payload) => {
+    addChatLog: ({dispatch}: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddChatLog"
       });
     },
-    doAddChatLog: ({ dispatch, rootState, rootGetters }, payload) => {
+    doAddChatLog: ({dispatch, rootState, rootGetters}: { dispatch: Function, rootState: any, rootGetters: any }, payload: any) => {
       let text = payload.text;
       if (!text.startsWith("@")) {
         const activeChatTab = rootGetters.activeChatTab;
@@ -53,7 +53,7 @@ export default {
         // 未読カウントアップ
         if (tab !== activeChatTab.name) {
           const tabObj = rootState.public.chat.tabs.filter(
-            tabObj => tabObj.name === tab
+            (tabObj: any) => tabObj.name === tab
           )[0];
           tabObj.unRead++;
           const index = rootState.public.chat.tabs.indexOf(tabObj);
@@ -68,31 +68,31 @@ export default {
     /** ========================================================================
      * チャット文字色変更
      */
-    changeChatFontColor: ({ dispatch }, payload) => {
+    changeChatFontColor: ({dispatch}: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doChangeChatFontColor"
       });
     },
     doChangeChatFontColor: (
-      { dispatch, rootState, rootGetters },
-      { key, color, historyChange }
+      {dispatch, rootState, rootGetters}: { dispatch: Function; rootState: any; rootGetters: any },
+      {key, color, historyChange}: { key: string; color: string; historyChange: boolean }
     ) => {
       window.console.log("doChangeChatFontColor", key, color, historyChange);
       const kind = key.split("-")[0];
       const target = rootState.public[kind].list.filter(
-        obj => obj.key === key
+        (obj: any) => obj.key === key
       )[0];
       window.console.log(target, rootState.public[kind]);
       if (!target) return;
       target.fontColor = color;
       if (!historyChange) return;
-      const change = {};
+      const change: any = {};
       for (const tab in rootState.public.chat.logs) {
         if (!rootState.public.chat.logs.hasOwnProperty(tab)) continue;
-        const changeTab = {};
+        const changeTab: any = {};
         change[tab] = changeTab;
-        rootState.public.chat.logs[tab].forEach((log, index) => {
+        rootState.public.chat.logs[tab].forEach((log: any, index: number) => {
           window.console.log(
             "chatLogs",
             tab,
@@ -121,9 +121,12 @@ export default {
     /** ========================================================================
      * チャット文字連携処理
      */
-    chatLinkage: ({ dispatch, rootState, rootGetters }, text) => {
+    chatLinkage: (
+      {dispatch, rootState, rootGetters}: { dispatch: Function; rootState: any; rootGetters: any },
+      text: string
+    ) => {
       rootState.setting.bgm.list
-        .filter(bgmObj => {
+        .filter((bgmObj: any) => {
           if (
             bgmObj.chatLinkage === 1 &&
             text.endsWith(bgmObj.chatLinkageSearch)
@@ -135,31 +138,34 @@ export default {
             new RegExp(bgmObj.chatLinkageSearch).test(text)
           );
         })
-        .sort((a, b) => {
+        .sort((a: any, b: any) => {
           if (a.title.length > b.title.length) return -1;
           if (a.title.length < b.title.length) return 1;
           return 0;
         })
         .filter(
-          (bgmObj, index, self) =>
-            self.filter((s, i) => index > i && s.tag === bgmObj.tag).length ===
+          (bgmObj: any, index: number, self: any) =>
+            self.filter((s: any, i: number) => index > i && s.tag === bgmObj.tag).length ===
             0
         )
-        .forEach(bgmObj => {
+        .forEach((bgmObj: any) => {
           dispatch("setProperty", {
             property: "private.display.jukeboxWindow.command",
             isNotice: true,
-            value: { command: "add", payload: bgmObj.key }
+            value: {command: "add", payload: bgmObj.key}
           });
         });
     },
     /** ========================================================================
      * 画像を追加する
      */
-    addImage: ({ dispatch }, payload) => {
-      dispatch("sendNoticeOperation", { value: payload, method: "doAddImage" });
+    addImage: ({dispatch}: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {value: payload, method: "doAddImage"});
     },
-    doAddImage: ({ rootState }, { tag, data, ownerPeerId }) => {
+    doAddImage: (
+      {rootState}: { rootState: any },
+      {tag, data, ownerPeerId}: { tag: string, data: any, ownerPeerId: string }
+    ) => {
       // 欠番を埋める方式は不採用
       let maxKey = rootState.public.image.maxKey;
       const key = `image-${++maxKey}`;
@@ -170,13 +176,13 @@ export default {
         key: key
       });
       if (rootState.private.self.peerId === ownerPeerId) {
-        rootState.private.history.push({ type: "add", key: key });
+        rootState.private.history.push({type: "add", key: key});
       }
     },
     /** ========================================================================
      * 名前を変更する
      */
-    changeName: ({ dispatch, rootState }, name) => {
+    changeName: ({dispatch, rootState}: { dispatch: Function, rootState: any }, name: string) => {
       dispatch("setProperty", {
         property: "private.self.currentChatName",
         value: name,
@@ -195,10 +201,10 @@ export default {
     /** ========================================================================
      * BGMを追加する
      */
-    addBGM: ({ dispatch }, payload) => {
-      dispatch("sendNoticeOperation", { value: payload, method: "doAddBGM" });
+    addBGM: ({dispatch}: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {value: payload, method: "doAddBGM"});
     },
-    doAddBGM: ({ rootState }, payload) => {
+    doAddBGM: ({rootState}: { rootState: any }, payload: any) => {
       // 欠番を埋める方式は不採用
       let maxKey = rootState.setting.bgm.maxKey;
       const key = `bgm-${++maxKey}`;
@@ -209,19 +215,19 @@ export default {
     /** ========================================================================
      * マップオブジェクトを追加する
      */
-    addPieceInfo: ({ dispatch }, payload) => {
+    addPieceInfo: ({dispatch}: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddPieceInfo"
       });
     },
-    doAddPieceInfo: ({ rootState }, payload) => {
-      const obj = {
+    doAddPieceInfo: ({rootState}: { rootState: any }, payload: any) => {
+      const obj: any = {
         isDraggingLeft: false,
         move: {
-          from: { x: 0, y: 0 },
-          dragging: { x: 0, y: 0 },
-          gridOffset: { x: 0, y: 0 }
+          from: {x: 0, y: 0},
+          dragging: {x: 0, y: 0},
+          gridOffset: {x: 0, y: 0}
         },
         angle: {
           total: 0,
@@ -244,26 +250,26 @@ export default {
       quoridornLog(
         `[mutations] doAddPieceInfo => {type: ${obj.type}, key:${
           obj.key
-        }, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${
+          }, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${
           obj.columns
-        }, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`
+          }, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`
       );
 
       rootState.public[payload.propName].list.push(obj);
       if (rootState.private.self.peerId === payload.ownerPeerId) {
-        rootState.private.history.push({ type: "add", key: key });
+        rootState.private.history.push({type: "add", key: key});
       }
     },
     /** ========================================================================
      * マップオブジェクト情報を変更する
      */
-    changePieceInfo: ({ dispatch }, payload) => {
+    changePieceInfo: ({dispatch}: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doChangePieceInfo"
       });
     },
-    doChangePieceInfo: ({ rootState, rootGetters }, payload) => {
+    doChangePieceInfo: ({rootState, rootGetters}: { rootState: any; rootGetters: any }, payload: any) => {
       const key = payload.key;
       const propName = payload.propName;
 
@@ -277,7 +283,7 @@ export default {
           quoridornLog(
             `[mutations] update ${propName}(${key}) => ${prop}: ${
               pieceObj[prop]
-            } -> ${payload[prop]}`
+              } -> ${payload[prop]}`
           );
           pieceObj[prop] = payload[prop];
         }
@@ -288,13 +294,13 @@ export default {
     /** ========================================================================
      * マップオブジェクトの削除
      */
-    deletePieceInfo: ({ dispatch }, payload) => {
+    deletePieceInfo: ({dispatch}: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doDeletePieceInfo"
       });
     },
-    doDeletePieceInfo: ({ rootState, rootGetters }, payload) => {
+    doDeletePieceInfo: ({rootState, rootGetters}: { rootState: any; rootGetters: any }, payload: any) => {
       // quoridornLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
       const obj = rootGetters.getPieceObj(payload.propName, payload.key);
       const index = rootState.public[payload.propName].list.indexOf(obj);
@@ -303,7 +309,7 @@ export default {
       if (rootState.private.self.peerId === payload.ownerPeerId) {
         rootState.private.history.splice(
           rootState.private.history.findIndex(
-            hisObj => hisObj.key === payload.key
+            (hisObj: any) => hisObj.key === payload.key
           ),
           1
         );
@@ -312,10 +318,10 @@ export default {
     /** ========================================================================
      * デッキのシャッフル
      */
-    shuffleDeck: ({ dispatch }) => {
-      dispatch("sendNoticeOperation", { value: {}, method: "doShuffleDeck" });
+    shuffleDeck: ({dispatch}: { dispatch: Function }) => {
+      dispatch("sendNoticeOperation", {value: {}, method: "doShuffleDeck"});
     },
-    doShuffleDeck: ({ rootState }) => {
+    doShuffleDeck: ({rootState}: { rootState: any }) => {
       const cardList = rootState.public.deck.cards.list.concat();
       for (let i = cardList.length - 1; i >= 0; i--) {
         // 0~iのランダムな数値を取得
@@ -334,10 +340,10 @@ export default {
     /** ========================================================================
      * カードのドロー
      */
-    drawCard: ({ dispatch }, payload) => {
-      dispatch("sendNoticeOperation", { value: payload, method: "doDrawCard" });
+    drawCard: ({dispatch}: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {value: payload, method: "doDrawCard"});
     },
-    doDrawCard: ({ rootState, rootGetters }, payload) => {
+    doDrawCard: ({rootState, rootGetters}: { rootState: any, rootGetters: any }, payload: any) => {
       const index = payload.index;
       // const cardKey = payload.key
 
@@ -361,13 +367,13 @@ export default {
     /** ========================================================================
      * グループチャットの追加
      */
-    addGroupTargetTab: ({ dispatch }, payload) => {
+    addGroupTargetTab: ({dispatch}: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddGroupTargetTab"
       });
     },
-    doAddGroupTargetTab: ({ rootState }, payload) => {
+    doAddGroupTargetTab: ({rootState}: { rootState: any }, payload: any) => {
       const addObj = {
         key: `groupTargetTab-${++rootState.public.chat.groupTargetTab.maxKey}`,
         isSecret: false,
@@ -380,60 +386,60 @@ export default {
     }
   },
   getters: {
-    chatLogList: (state, getters, rootState) => {
+    chatLogList: (state: any, getters: any, rootState: any) => {
       return rootState.public.chat.logs[rootState.chat.activeTab].filter(
-          log => {
-            if (log.from === getters.selfPlayerKey) return true;
-            if (!log.target) return true;
-            if (log.target === "groupTargetTab-0") return true;
-            const kind = log.target.split("-")[0];
-            if (kind === "groupTargetTab") {
-              const target = getters.getObj(log.target);
-              if (!target.isSecret) return true;
-              if (target.isAll) return true;
-              const findIndex = target.group.findIndex(g => {
-                const kind = g.split("-")[0];
-                if (kind === "player") {
-                  if (g === getters.selfPlayerKey) return true;
-                } else if (kind === "character") {
-                  if (getters.getObj(g).owner === getters.selfPlayerKey)
-                    return true;
-                }
-                return false;
-              });
-              return findIndex > -1;
-            } else if (kind === "player") {
-              window.console.log(
-                  "-----player",
-                  log.target,
-                  getters.selfPlayerKey,
-                  log.target === getters.selfPlayerKey
-              );
-              return log.target === getters.selfPlayerKey;
-            } else {
-              const target = getters.getObj(log.target);
-              return target.owner === getters.selfPlayerKey;
-            }
+        (log: any) => {
+          if (log.from === getters.selfPlayerKey) return true;
+          if (!log.target) return true;
+          if (log.target === "groupTargetTab-0") return true;
+          const kind = log.target.split("-")[0];
+          if (kind === "groupTargetTab") {
+            const target = getters.getObj(log.target);
+            if (!target.isSecret) return true;
+            if (target.isAll) return true;
+            const findIndex = target.group.findIndex((g: string) => {
+              const kind = g.split("-")[0];
+              if (kind === "player") {
+                if (g === getters.selfPlayerKey) return true;
+              } else if (kind === "character") {
+                if (getters.getObj(g).owner === getters.selfPlayerKey)
+                  return true;
+              }
+              return false;
+            });
+            return findIndex > -1;
+          } else if (kind === "player") {
+            window.console.log(
+              "-----player",
+              log.target,
+              getters.selfPlayerKey,
+              log.target === getters.selfPlayerKey
+            );
+            return log.target === getters.selfPlayerKey;
+          } else {
+            const target = getters.getObj(log.target);
+            return target.owner === getters.selfPlayerKey;
           }
+        }
       );
     },
-    chatTabList: (state, getters, rootState) => rootState.public.chat.tabs,
-    playerList: (state, getters, rootState) => rootState.public.player.list,
-    characterList: (state, getters, rootState) =>
-        rootState.public.character.list,
-    groupTargetTabList: (state, getters, rootState) => {
-      return rootState.public.chat.groupTargetTab.list.filter(tab => {
+    chatTabList: (state: any, getters: any, rootState: any) => rootState.public.chat.tabs,
+    playerList: (state: any, getters: any, rootState: any) => rootState.public.player.list,
+    characterList: (state: any, getters: any, rootState: any) =>
+      rootState.public.character.list,
+    groupTargetTabList: (state: any, getters: any, rootState: any) => {
+      return rootState.public.chat.groupTargetTab.list.filter((tab: any) => {
         if (tab.isAll) return true;
-        const filterObj = tab.group.filter(targetKey => {
+        const filterObj = tab.group.filter((targetKey: string) => {
           if (targetKey === getters.currentActorKey) return true;
           if (getters.currentActorKey.split("-")[0] === "player") {
             const targetCharacter = getters.characterList
-                .filter(character => character.owner === getters.currentActorKey)
-                .filter(character => character.key === targetKey)[0];
+              .filter((character: any) => character.owner === getters.currentActorKey)
+              .filter((character: any) => character.key === targetKey)[0];
             if (targetCharacter) return true;
           } else if (getters.currentActorKey.split("-")[0] === "character") {
             const targetCharacter = getters.characterList.filter(
-                character => character.key === getters.currentActorKey
+              (character: any) => character.key === getters.currentActorKey
             )[0];
             if (targetCharacter) return true;
           }
@@ -442,109 +448,108 @@ export default {
         if (filterObj.length > 0) return true;
       });
     },
-    members: (state, getters, rootState) =>
-        rootState.public.room.members.filter(member => {
-          return member.peerId !== rootState.private.self.peerId;
-        }),
-    currentCount: (state, getters, rootState) => rootState.count,
-    currentChatName: (state, getters, rootState) =>
-        rootState.private.self.currentChatName,
-    inputting: (state, getters, rootState) => rootState.public.chat.inputting,
-    createInputtingMsg: (state, getters, rootState) => {
-      return function (name) {
+    members: (state: any, getters: any, rootState: any) =>
+      rootState.public.room.members.filter((member: any) => {
+        return member.peerId !== rootState.private.self.peerId;
+      }),
+    currentCount: (state: any, getters: any, rootState: any) => rootState.count,
+    currentChatName: (state: any, getters: any, rootState: any) =>
+      rootState.private.self.currentChatName,
+    inputting: (state: any, getters: any, rootState: any) => rootState.public.chat.inputting,
+    createInputtingMsg: () => {
+      return function (name: string) {
         return `${name}が入力中...`;
       };
     },
-    fontColor: (state, getters, rootState) => rootState.private.self.color,
-    chatTargetList: (state, getters, rootState) => {
-      const list = [
+    fontColor: (state: any, getters: any, rootState: any) => rootState.private.self.color,
+    chatTargetList: (state: any, getters: any) => {
+      return [
         ...getters.groupTargetTabList,
         ...getters.playerList,
         ...getters.characterList.filter(
-            character => character.place === "field"
+          (character: any) => character.place === "field"
         )
       ];
-      return list;
     },
-    activeTab: (state, getters, rootState) => rootState.chat.activeTab,
-    hoverTab: (state, getters, rootState) => rootState.chat.hoverTab,
-    selfPlayerKey: (state, getters, rootState) => {
+    activeTab: (state: any, getters: any, rootState: any) => rootState.chat.activeTab,
+    hoverTab: (state: any, getters: any, rootState: any) => rootState.chat.hoverTab,
+    selfPlayerKey: (state: any, getters: any, rootState: any) => {
       const player = rootState.public.player.list.filter(
-          player => player.name === rootState.private.self.playerName
+        (player: any) => player.name === rootState.private.self.playerName
       )[0];
       return player ? player.key : null;
     },
-    chatOptionPageNum: (state, getters, rootState) => {
+    chatOptionPageNum: (state: any, getters: any) => {
       if (getters.chatOptionSelectMode === "from") {
         const index = getters.getPeerActors.findIndex(
-            target => target.key === getters.chatTarget
+          (target: any) => target.key === getters.chatTarget
         );
         if (index === -1) return -1;
         return Math.floor(index / getters.chatOptionPagingSize) + 1;
       }
       if (getters.chatOptionSelectMode === "target") {
         const index = getters.chatTargetList.findIndex(
-            target => target.key === getters.chatTarget
+          (target: any) => target.key === getters.chatTarget
         );
         if (index === -1) return -1;
         return Math.floor(index / getters.chatOptionPagingSize) + 1;
       }
       if (getters.chatOptionSelectMode === "tab") {
         const index = getters.chatTabList.findIndex(
-            target => target.name === getters.activeTab
+          (target: any) => target.name === getters.activeTab
         );
         if (index === -1) return -1;
         return Math.floor(index / getters.chatOptionPagingSize) + 1;
       }
       return -1;
     },
-    chatOptionPageMaxNum: (state, getters, rootState) => {
+    chatOptionPageMaxNum: (state: any, getters: any) => {
       if (getters.chatOptionSelectMode === "from") {
         return (
-            Math.floor(
-                getters.getPeerActors.length / getters.chatOptionPagingSize
-            ) + 1
+          Math.floor(
+            getters.getPeerActors.length / getters.chatOptionPagingSize
+          ) + 1
         );
       }
       if (getters.chatOptionSelectMode === "target") {
         return (
-            Math.floor(
-                getters.chatTargetList.length / getters.chatOptionPagingSize
-            ) + 1
+          Math.floor(
+            getters.chatTargetList.length / getters.chatOptionPagingSize
+          ) + 1
         );
       }
       if (getters.chatOptionSelectMode === "tab") {
         return (
-            Math.floor(
-                getters.chatTabList.length / getters.chatOptionPagingSize
-            ) + 1
+          Math.floor(
+            getters.chatTabList.length / getters.chatOptionPagingSize
+          ) + 1
         );
       }
       return 0;
     },
-    chatOptionPagingList: (state, getters, rootState) => {
+    chatOptionPagingList: (state: any, getters: any) => {
       const pageNum = getters.chatOptionPageNum;
       const startIndex = (pageNum - 1) * getters.chatOptionPagingSize;
       if (getters.chatOptionSelectMode === "from") {
         const endIndex = Math.min(
-            pageNum * getters.chatOptionPagingSize,
-            getters.getPeerActors.length
+          pageNum * getters.chatOptionPagingSize,
+          getters.getPeerActors.length
         );
         const result = getters.getPeerActors.concat();
         return result.splice(startIndex, endIndex - startIndex);
       }
       if (getters.chatOptionSelectMode === "target") {
         const endIndex = Math.min(
-            pageNum * getters.chatOptionPagingSize,
-            getters.chatTargetList.length
+          pageNum * getters.chatOptionPagingSize,
+          getters.chatTargetList.length
         );
         const result = getters.chatTargetList.concat();
         return result.splice(startIndex, endIndex - startIndex);
       }
       if (getters.chatOptionSelectMode === "tab") {
         const endIndex = Math.min(
-            pageNum * getters.chatOptionPagingSize,
-            getters.chatTabList.length
+          pageNum * getters.chatOptionPagingSize,
+          getters.chatTabList.length
         );
         const result = getters.chatTabList.concat();
         return result.splice(startIndex, endIndex - startIndex);
