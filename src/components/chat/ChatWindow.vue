@@ -164,7 +164,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import DiceBotSelect from "../dice/DiceBotSelect.vue";
 
-import { Component, Emit, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
@@ -194,7 +194,6 @@ export default class ChatWindow extends Vue {
   @Getter("characterList") characterList: any;
   @Getter("groupTargetTabList") groupTargetTabList: any;
   @Getter("members") members: any;
-  @Getter("currentCount") currentCount: any;
   @Getter("currentChatName") currentChatName: any;
   @Getter("inputting") inputting: any;
   @Getter("createInputtingMsg") createInputtingMsg: any;
@@ -555,7 +554,7 @@ export default class ChatWindow extends Vue {
     // -------------------
     // ダイスBot処理
     // -------------------
-    console.log(this.$refs.diceBot);
+    window.console.log(this.$refs.diceBot);
     const bcDice: any = this.$refs.diceBot.bcDice;
     if (bcDice) {
       bcDice.setMessage(this.currentMessage);

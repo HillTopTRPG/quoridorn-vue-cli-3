@@ -128,10 +128,6 @@ export default new Vuex.Store({
         // location.href = newUrl;
       }
 
-      window.console.log(
-        `playerName: ${playerName}, playerPassword: ${playerPassword}`
-      );
-
       // dispatch("addPlayer", {
       //   name: rootState.private.self.playerName,
       //   color: "#000000",
@@ -496,6 +492,23 @@ export default new Vuex.Store({
     paramPlayerPassword: state => state.param.playerPassword,
     paramPlayerType: state => state.param.playerType,
     isRoomExist: state => state.room.isExist,
-    isMordal: state => state.isMordal
+    isMordal: state => state.isMordal,
+    activeTab: state => state.chat.activeTab,
+    hoverTab: state => state.chat.hoverTab,
+    rollObj: state => state.map.rollObj,
+    isDraggingLeft: state => state.map.isDraggingLeft,
+    isMouseDownRight: state => state.map.isMouseDownRight,
+    isOverEvent: state => state.map.isOverEvent,
+    isDraggingRight: state => state.map.isDraggingRight,
+    move: state => state.map.move,
+    anglevolatile: state => state.map.angle,
+    mouseOnScreen: state => state.map.mouse.onScreen,
+    mouseOnTable: state => state.map.mouse.onTable,
+    mouseOnCanvas: state => state.map.mouse.onCanvas,
+    mouseLocate: state => state.mouse,
+    volatileSaveData: state => state.volatileSaveData,
+    deckCommand: state => state.deck.command,
+    deckHoverIndex: state => state.deck.hoverIndex,
+    deckHoverKey: state => state.deck.hoverKey
   }
 });

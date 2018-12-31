@@ -199,83 +199,44 @@ export default {
 
     /**
      * 指定されたプロパティパスの子画面を開く
+     * @param dispatch
      * @param state
      * @param getters
      * @param property
      */
-    windowOpen({state, getters}: { state: any; getters: any }, property: string) {
-        // quoridornLog(`window open => ${property}`)
+    windowOpen(
+      {
+        dispatch,
+        state,
+        getters
+      }: { dispatch: Function; state: any; getters: any },
+      property: string
+    ) {
       const windowObj = getters.getStateValue(property);
-      if (!windowObj.isDisplay) {
-        // まだ表示していないウィンドウを開いた場合
-        windowObj.command = { command: "open" };
-
-        // ウィンドウの表示前後の調整(z-index)
-        let maxIndex = 0;
-        for (const key in state.display) {
-          if (!state.display.hasOwnProperty(key)) continue;
-          const value = state.display[key];
-          if (!value.isDisplay) {
-            continue;
-          }
-          if (maxIndex < value.zIndex) {
-            maxIndex = value.zIndex;
-          }
-        }
-        windowObj.zIndex = maxIndex + 1;
-      } else {
-        // 既に表示しているウィンドウを開いた場合
-        windowObj.command = { command: "reset" };
-
-        // ウィンドウの表示前後の調整(z-index)
-        let maxIndex = 0;
-        for (const key in state.display) {
-          if (!state.display.hasOwnProperty(key)) continue;
-          const value = state.display[key];
-          if (!value.isDisplay) {
-            continue;
-          }
-          if (maxIndex < value.zIndex) {
-            maxIndex = value.zIndex;
-          }
-          // z-indexをずらす
-          if (windowObj.zIndex <= value.zIndex) {
-            value.zIndex--;
-          }
-        }
-        windowObj.zIndex = maxIndex;
-      }
+      windowObj.command = {command: !windowObj.isDisplay ? "open" : "reset"};
+      windowObj.isDisplay = true;
+      dispatch("windowActive", {property: property, isClose: false});
     },
 
     /**
      * 指定されたプロパティパスの子画面を閉じる
+     * @param dispatch
      * @param state
      * @param getters
      * @param property
      */
-    windowClose({state, getters}: { state: any; getters: any }, property: string) {
+    windowClose(
+      {
+        dispatch,
+        state,
+        getters
+      }: { dispatch: Function; state: any; getters: any },
+      property: string
+    ) {
       const windowObj = getters.getStateValue(property);
-
-      // 閉じる
       windowObj.command = { command: "close" };
-
-      // ウィンドウの表示前後の調整(z-index)
-      if (windowObj.key !== undefined) {
-        windowObj.key = -1;
-      }
-      // ウィンドウの表示前後の調整(z-index)
-      for (const key in state.display) {
-        if (!state.display.hasOwnProperty(key)) continue;
-        const value = state.display[key];
-        if (!value.isDisplay) {
-          continue;
-        }
-        // z-indexをずらす
-        if (windowObj.zIndex < value.zIndex) {
-          value.zIndex--;
-        }
-      }
-      windowObj.zIndex = -1;
+      windowObj.isDisplay = false;
+      dispatch("windowActive", {property: property, isClose: true});
     },
 
     /**
@@ -284,46 +245,47 @@ export default {
      * @param getters
      * @param property
      */
-    windowActive({state}: { state: any }, property: string) {
-      let current = 0;
-      let maxIndex = 0;
+    windowActive(
+      {state}: { state: any },
+      {property, isClose}: { property: string; isClose: boolean }
+    ) {
       const splits = property.split(".");
       const dispName = splits[splits.length - 1];
-        // quoridornLog(`windowActive => ${dispName}`)
-      for (const key in state.display) {
-        if (!state.display.hasOwnProperty(key)) continue;
-        const value = state.display[key];
-        if (!value.isDisplay) {
-          continue;
-        }
-        if (key === dispName) {
-          current = value.zIndex;
-        }
-        if (maxIndex < value.zIndex) {
-          maxIndex = value.zIndex;
-        }
-      }
-      for (const key in state.display) {
-        if (!state.display.hasOwnProperty(key)) continue;
-        const value = state.display[key];
-        if (!value.isDisplay) {
-          continue;
-        }
-        if (key === dispName) {
-          value.zIndex = maxIndex;
+      // window.console.log(`windowActive => ${ dispName }`);
+
+      // displayの表示済みの画面を表示順ソートしたプロパティのリスト（指定のもの含まない）
+      const propList = Object.entries(state.display)
+        .map(([key, value]) => ({key, value}))
+        .filter((obj: any) => {
+          if (obj.key === dispName) return false;
+          if (!obj.value) return false;
+          return obj.value.isDisplay;
+        })
+        .sort((val1: any, val2: any) => {
+          if (val1.value.zIndex < val2.value.zIndex) return -1;
+          if (val1.value.zIndex > val2.value.zIndex) return 1;
+          return 0;
+        })
+        .map((obj: any) => obj.key);
+
+      // 指定以外の画面のz-indexを順番に再設定
+      propList.forEach((propName: string, index: number) => {
+        if (isClose && index === propList.length - 1) {
+          state.display[propName].zIndex = index + 100001;
         } else {
-          if (current <= value.zIndex) {
-            value.zIndex--;
-          }
+          state.display[propName].zIndex = index + 1;
         }
-      }
+      });
+
+      // 指定された画面のz-indexを最大に設定（モーダルスクリーンより手前にする）
+      if (!isClose) state.display[dispName].zIndex = propList.length + 100001;
     }
   } /* end of actions */,
   mutations: {
     // /**
     //  * プレイヤーを追加する
     //  * @param state
-    //  * @returns {*[]}
+    //  * @returns { *[] }
     //  */
     // addPlayerWidth: (state) => {
     //   const widthList = state.display.settingChatTargetTabWindow.widthList
@@ -356,6 +318,10 @@ export default {
   },
   getters: {
     masterMute: (state: any) => state.display.jukeboxWindow.masterMute,
-    masterVolume: (state: any) => state.display.jukeboxWindow.masterVolume
+    masterVolume: (state: any) => state.display.jukeboxWindow.masterVolume,
+    fontColor: (state: any) => state.self.color,
+    playerName: (state: any) => state.self.playerName,
+    angle: (state: any) => state.map.angle,
+    wheel: (state: any) => state.map.wheel
   }
 };

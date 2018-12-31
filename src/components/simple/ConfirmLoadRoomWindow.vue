@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 
@@ -44,7 +44,7 @@ export default {
         return;
       }
       this.logout();
-      const roomName = this.importData.public.room.id;
+      const roomName = this.importData.public.room.name;
       const peerId = this.importData.private.self.peerId;
       this.createPeer({
         roomName: roomName,
@@ -63,7 +63,7 @@ export default {
   computed: mapState({
     importData: state => state.private.display.confirmLoadRoomWindow.importData,
     roomName() {
-      return !this.importData ? "" : this.importData.public.room.id;
+      return !this.importData ? "" : this.importData.public.room.name;
     }
   })
 };

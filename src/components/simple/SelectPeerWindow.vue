@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 
@@ -83,7 +83,7 @@ export default {
       return null;
     },
     members: state => state.public.room.members,
-    roomName: state => state.public.room.id,
+    roomName: state => state.public.room.name,
     currentMemberObj() {
       return this.members.filter(
         memberObj => memberObj.peerId === this.currentPeerId

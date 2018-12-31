@@ -38,7 +38,7 @@ export default {
         memberObj => memberObj.peerId !== this.$store.state.private.self.peerId
       );
     },
-    roomName: state => state.public.room.id,
+    roomName: state => state.public.room.name,
     password: state => state.public.room.password
   })
 };

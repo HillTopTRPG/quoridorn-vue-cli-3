@@ -9,120 +9,123 @@
         <div class="refUrlContainer"><a v-for="(ref, index) in deck.refs" :key="index" :href="ref.url" target="_blank" :title="createRefStr(ref, index)">{{createRefStr(ref, index)}}</a></div>
       </div>
       <div class="deck" ref="deck" :style="deckStyle">
-        <Card v-for="(card, index) in cardList" :class="[card.key]" :key="card.key" :objKey="card.key" :index="index" :ref="card.key"></Card>
-        <Card :objKey="hoverKey" :isViewer="true" :index="hoverIndex" ref="centerCard"></Card>
+        <Card :class="[card.key]" :index="index" :key="card.key" :objKey="card.key" :ref="card.key"
+              v-for="(card, index) in deckCardList"></Card>
+        <Card :index="deckHoverIndex" :isViewer="true" :objKey="deckHoverKey" ref="centerCard"></Card>
         カードなし
       </div>
     </fieldset>
   </div>
 </template>
 
-<script>
-import { mapActions, mapGetters, mapState } from "vuex";
-import Card from "./Card";
+<script lang="ts">
+import Card from "./Card.vue";
 
-export default {
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+// import { quoridornLog } from "../../common/Utility";
+
+@Component<Deck>({
   name: "deck",
-  mixins: [],
   components: {
     Card
-  },
-  data() {
-    return {};
-  },
-  methods: {
-    ...mapActions(["setProperty"]),
-    createRefStr({ author, title }, index) {
-      if (!author && !title) return `link-${index}`;
-      if (author && title) return `${title}(${author})`;
-      if (author) return `${author}`;
-      if (title) return `${title}`;
-      return "";
+  }
+})
+export default class Deck extends Vue {
+  @Action("setProperty") setProperty: any;
+  @Getter("deck") deck: any;
+  @Getter("deckCardList") deckCardList: any;
+  @Getter("deckWidth") deckWidth: any;
+  @Getter("deckHeight") deckHeight: any;
+  @Getter("deckCommand") deckCommand: any;
+  @Getter("deckHoverIndex") deckHoverIndex: any;
+  @Getter("deckHoverKey") deckHoverKey: any;
+  @Getter("isMordal") isMordal: any;
+
+  createRefStr(
+    { author, title }: { author: string; title: string },
+    index: number
+  ): string {
+    if (!author && !title) return `link-${index}`;
+    if (author && title) return `${title}(${author})`;
+    if (author) return `${author}`;
+    if (title) return `${title}`;
+    return "";
+  }
+
+  get containerStyle(): any {
+    const obj: any = {};
+    obj.width = this.deckWidth * 0.8 + 22 + "px";
+    if (this.isMordal) {
+      obj.filter = "blur(3px)";
     }
-  },
-  watch: {
-    command: {
-      handler(command) {
-        if (!command) return;
-        if (command.type === "draw") {
-          let cards = Array.prototype.slice.call(
-            this.$refs.deck.getElementsByClassName(this.hoverKey)
-          );
-          window.console.log(this.hoverKey, cards);
-          let cardElm = cards[0];
-          if (!cardElm) {
-            const key = this.cardList[this.cardList.length - 1].key;
-            cards = Array.prototype.slice.call(
-              this.$refs.deck.getElementsByClassName(key)
-            );
-            window.console.log(key, cards);
-            cardElm = cards[0];
-          }
-          if (cardElm.classList.contains("turn-animation")) {
-            cardElm.classList.remove("turn-animation");
+    return obj;
+  }
+
+  get deckStyle(): any {
+    const obj: any = {};
+    obj.width = this.deckWidth * 0.8 + 15 + "px";
+    obj.height = this.deckHeight * 0.8 + 15 + "px";
+    return obj;
+  }
+
+  @Watch("deckCommand")
+  onChangeDeckCommand(this: any, deckCommand: any): void {
+    if (!deckCommand) return;
+    if (deckCommand.type === "draw") {
+      let cards = Array.prototype.slice.call(
+        this.$refs.deck.getElementsByClassName(this.deckHoverKey)
+      );
+      window.console.log(this.deckHoverKey, cards);
+      let cardElm = cards[0];
+      if (!cardElm) {
+        const key = this.deckCardList[this.deckCardList.length - 1].key;
+        cards = Array.prototype.slice.call(
+          this.$refs.deck.getElementsByClassName(key)
+        );
+        window.console.log(key, cards);
+        cardElm = cards[0];
+      }
+      if (cardElm.classList.contains("turn-animation")) {
+        cardElm.classList.remove("turn-animation");
+      } else {
+        cardElm.classList.add("turn-animation");
+      }
+      this.setProperty({
+        property: "deck",
+        value: {
+          hoverIndex: -1,
+          hoverKey: ""
+        },
+        logOff: true
+      });
+    } else if (deckCommand.type === "changeViewMode") {
+      this.setProperty({
+        property: "deck.viewMode",
+        value: deckCommand.value,
+        logOff: true
+      });
+    } else if (deckCommand.type === "shuffle") {
+      const cards = Array.prototype.slice.call(
+        this.$refs.deck.getElementsByClassName("card")
+      );
+      if (cards.length) {
+        cards.forEach(cardElm => {
+          if (cardElm.classList.contains("shuffle-animation")) {
+            cardElm.classList.remove("shuffle-animation");
           } else {
-            cardElm.classList.add("turn-animation");
+            cardElm.classList.add("shuffle-animation");
           }
-          this.setProperty({
-            property: "deck",
-            value: {
-              hoverIndex: -1,
-              hoverKey: ""
-            },
-            logOff: true
-          });
-        } else if (command.type === "changeViewMode") {
-          this.setProperty({
-            property: "deck.viewMode",
-            value: command.value,
-            logOff: true
-          });
-        } else if (command.type === "shuffle") {
-          const cards = Array.prototype.slice.call(
-            this.$refs.deck.getElementsByClassName("card")
-          );
-          if (cards.length) {
-            cards.forEach(cardElm => {
-              if (cardElm.classList.contains("shuffle-animation")) {
-                cardElm.classList.remove("shuffle-animation");
-              } else {
-                cardElm.classList.add("shuffle-animation");
-              }
-            });
-          }
-        }
-        this.setProperty({
-          property: "deck.command",
-          value: null,
-          logOff: true
         });
-      },
-      deep: true
+      }
     }
-  },
-  computed: mapState({
-    ...mapGetters([]),
-    deck: state => state.public.deck,
-    cardList: state => state.public.deck.cards.list,
-    command: state => state.deck.command,
-    hoverIndex: state => state.deck.hoverIndex,
-    viewMode: state => state.deck.viewMode,
-    hoverKey: state => state.deck.hoverKey,
-    width: state => state.public.deck.width,
-    height: state => state.public.deck.height,
-    containerStyle() {
-      const obj = {};
-      obj.width = this.width * 0.8 + 22 + "px";
-      return obj;
-    },
-    deckStyle() {
-      const obj = {};
-      obj.width = this.width * 0.8 + 15 + "px";
-      obj.height = this.height * 0.8 + 15 + "px";
-      return obj;
-    }
-  })
-};
+    this.setProperty({
+      property: "deck.command",
+      value: null,
+      logOff: true
+    });
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -56,7 +56,7 @@ export default {
     // }
   },
   computed: mapState({
-    roomName: state => state.public.room.id,
+    roomName: state => state.public.room.name,
     password: state => state.public.room.password,
     playerList: state => state.public.player.list,
     yourPeerId: state => state.private.self.peerId,
@@ -68,7 +68,7 @@ export default {
     },
     inviteUrl(state) {
       const baseUrl = location.href.replace(/\?.+$/, "");
-      const roomName = state.public.room.id;
+      const roomName = state.public.room.name;
       const password = state.public.room.password;
       const passwordParam = password ? `&password=${password}` : "";
       return `${baseUrl}?roomName=${roomName}${passwordParam}`;

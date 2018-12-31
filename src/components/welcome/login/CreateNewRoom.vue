@@ -120,8 +120,11 @@ export default class CreateNewRoom extends Vue {
       this.playerType = this.paramPlayerType;
     }
 
-    if (this.paramRoomPassword) {
+    if (this.paramRoomPassword !== null) {
       this.isViewWait = true;
+    }
+    if (this.paramPlayerName) {
+      this.isViewNewRoom = true;
     }
   }
 
@@ -203,6 +206,11 @@ export default class CreateNewRoom extends Vue {
         playerType: this.playerType,
         currentChatName: `${this.playerName}(${this.playerType})`
       },
+      logOff: true
+    });
+    this.setProperty({
+      property: "isMordal",
+      value: false,
       logOff: true
     });
 

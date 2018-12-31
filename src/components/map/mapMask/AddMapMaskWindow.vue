@@ -5,7 +5,12 @@
         <tr>
           <th>文字：</th>
           <td><input type="text" v-model="name"></td>
-          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" draggable="true" :style="mapMaskStyle" @dragstart="dragStart" @mousedown.stop="windowActive('private.display.addMapMaskWindow')">{{name}}</div></td>
+          <td class="mapMaskGrid" rowspan="6">
+            <div :style="mapMaskStyle" @dragstart="dragStart"
+                 @mousedown.stop="windowActive({ property: 'private.display.addMapMaskWindow', isClose: false })"
+                 class="mapMask" draggable="true">{{name}}
+            </div>
+          </td>
         </tr>
         <tr>
           <th>色：</th>
@@ -32,7 +37,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import WindowFrame from "../../WindowFrame";
 import WindowMixin from "../../WindowMixin";
 

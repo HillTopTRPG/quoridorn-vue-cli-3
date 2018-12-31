@@ -235,7 +235,7 @@ export default {
     },
 
     /** 部屋情報 */
-    room: { id: "", members: [], system: "DiceBot", password: "" },
+    room: {name: "", members: [], system: "DiceBot", password: ""},
 
     /** プレイヤー */
     player: { list: [] },
@@ -322,12 +322,12 @@ export default {
      * @returns {*}
      */
     addMember: (
-        {commit}: { commit: Function },
-        {
-            peerId,
-            name,
-            isCame
-        }: { peerId: string; name: string; isCame: boolean }
+      {commit}: { commit: Function },
+      {
+        peerId,
+        name,
+        isCame
+      }: { peerId: string; name: string; isCame: boolean }
     ) => commit("addMember", {peerId, name, isCame}),
 
     /**
@@ -339,8 +339,8 @@ export default {
      * @returns {*}
      */
     addPlayer: (
-        {commit}: { commit: Function },
-        {name, color, type}: { name: string; color: string; type: string }
+      {commit}: { commit: Function },
+      {name, color, type}: { name: string; color: string; type: string }
     ) => {
       return commit("addPlayer", { name, color, type });
       // commit('addPlayerWidth')
@@ -360,7 +360,7 @@ export default {
      * @returns {*}
      */
     chatTabSelect: ({commit}: { commit: Function }, tab: string) =>
-        commit("chatTabSelect", tab),
+      commit("chatTabSelect", tab),
 
     /**
      * チャット対象のタブを選択したことをデータに反映する
@@ -378,7 +378,7 @@ export default {
      * @returns {*}
      */
     imageTagChange: ({commit}: { commit: Function }, payload: any) =>
-        commit("imageTagChange", payload),
+      commit("imageTagChange", payload),
 
     /**
      * チャットのタブの構成を変更する
@@ -388,8 +388,8 @@ export default {
      * @returns {*}
      */
     changeChatTab: (
-        {getters, commit}: { getters: any; commit: Function },
-        tabsText: string
+      {getters, commit}: { getters: any; commit: Function },
+      tabsText: string
     ) =>
       commit("changeChatTab", {
         tabsText: tabsText,
@@ -403,8 +403,8 @@ export default {
      * @param name
      */
     noticeInput: (
-        {commit, state}: { commit: Function; state: any },
-        {name, target}: { name: string; target: any }
+      {commit, state}: { commit: Function; state: any },
+      {name, target}: { name: string; target: any }
     ) => {
       // 即時入力カウントアップ
       commit("inputPeerId", { name: name, add: 1 });
@@ -422,15 +422,15 @@ export default {
      * @param peerId
      * @param name
      * @param isCame
-     * @returns {*[]}
+     * @returns { *[] }
      */
     addMember: (
-        state: any,
-        {
-            peerId,
-            name,
-            isCame
-        }: { peerId: string; name: string; isCame: boolean }
+      state: any,
+      {
+        peerId,
+        name,
+        isCame
+      }: { peerId: string; name: string; isCame: boolean }
     ) => {
       state.room.members.push({
         peerId: peerId,
@@ -445,11 +445,11 @@ export default {
      * @param name
      * @param color
      * @param type
-     * @returns {*[]}
+     * @returns { *[] }
      */
     addPlayer: (
-        state: any,
-        {name, color, type}: { name: string; color: string; type: string }
+      state: any,
+      {name, color, type}: { name: string; color: string; type: string }
     ) => {
       const key = `player-${name}`;
       state.player.list.push({
@@ -464,7 +464,7 @@ export default {
     /**
      * ルームメンバを空にする
      * @param state
-     * @returns {*[]}
+     * @returns { *[] }
      */
     emptyMember: (state: any) =>
       state.room.members.splice(0, state.room.members.length),
@@ -500,7 +500,11 @@ export default {
      * @param state
      * @param payload
      */
-    inputPeerId(state: any, {name, add}: { name: string; add: number }) {
+    inputPeerId(
+      this: any,
+      state: any,
+      {name, add}: { name: string; add: number }
+    ) {
       // プロパティが無ければ、リアクティブになる形式で登録をする
       if (!state.chat.inputting[name]) {
         this._vm.$set(state.chat.inputting, name, 0);
@@ -516,14 +520,14 @@ export default {
      * @param imageList
      */
     imageTagChange(
-        state: any,
-        {key, imageList}: { key: string; imageList: any[] }
+      state: any,
+      {key, imageList}: { key: string; imageList: any[] }
     ) {
-        const useTexts: any[] = [];
+      const useTexts: any[] = [];
       /* eslint no-control-regex: 0 */
       const regExp = new RegExp("[　\t \r\n,]+", "g");
-        // quoridornLog(imageList)
-        imageList.forEach((imageObj: any) => {
+      // quoridornLog(imageList)
+      imageList.forEach((imageObj: any) => {
         Array.prototype.push.apply(
           useTexts,
           imageObj.currentTag.replace(regExp, ",").split(",")
@@ -531,7 +535,7 @@ export default {
       });
 
       let addList = useTexts.concat(); // 配列をシャロ―コピー
-        const deleteList = state.image.tags.list.filter((tag: any) => {
+      const deleteList = state.image.tags.list.filter((tag: any) => {
         // 「(全て)」は消させない
         if (tag.key === "imgTag-0") {
           return;
@@ -544,11 +548,11 @@ export default {
           addList = addList.filter(item => item !== filteredList[0]);
         }
         if (!findFlg) {
-            state.image.list.forEach((imageObj: any) => {
+          state.image.list.forEach((imageObj: any) => {
             if (findFlg) return;
             const filteredList = imageObj.tag
               .split(",")
-                .filter((imgTag: any) => imgTag === tag.name);
+              .filter((imgTag: any) => imgTag === tag.name);
             if (filteredList.length > 0) {
               findFlg = true;
             }
@@ -557,7 +561,7 @@ export default {
         return !findFlg;
       });
       // 削除リストに基づいてタグを消していく
-        deleteList.forEach((delTagObj: any) =>
+      deleteList.forEach((delTagObj: any) =>
         state.image.tags.list.splice(
           state.image.tags.list.indexOf(delTagObj),
           1
@@ -588,17 +592,17 @@ export default {
      * @param lastActiveTab
      */
     changeChatTab(
-        state: any,
-        {tabsText, lastActiveTab}: { tabsText: string; lastActiveTab: any }
+      state: any,
+      {tabsText, lastActiveTab}: { tabsText: string; lastActiveTab: any }
     ) {
       // 秘匿チャット以外を削除
       state.chat.tabs
-          .map((tab: any, index: number) => {
+        .map((tab: any, index: number) => {
           if (!tab.secretInfo) return;
           return index;
         })
         .reverse()
-          .forEach((index: number) => state.chat.tabs.splice(index, 1));
+        .forEach((index: number) => state.chat.tabs.splice(index, 1));
 
       tabsText = "メイン " + tabsText;
       const regExp = new RegExp("[ 　]+", "g");
@@ -641,7 +645,7 @@ export default {
       );
 
       // 追加されたタブの検知
-        state.chat.tabs.forEach((tabsTab: any) => {
+      state.chat.tabs.forEach((tabsTab: any) => {
         if (!state.chat.logs[tabsTab.name]) {
           // this.$set(state.chat.logs, tabsTab.name, [])
           const newLogs = { ...state.chat.logs };
@@ -660,7 +664,7 @@ export default {
      * @returns any
      */
     activeChatTab: (state: any) =>
-        state.chat.tabs.filter((tabObj: any) => tabObj.isActive)[0],
+      state.chat.tabs.filter((tabObj: any) => tabObj.isActive)[0],
 
     /**
      * すべての障害物を取得
@@ -668,20 +672,20 @@ export default {
      */
     getAllObstacle: (state: any) => {
       // TODO obstacle属性の作成
-        return state.character.list
-            .filter((o: any) => o.place === "field")
-            .concat(state.chit.list.filter((o: any) => o.place === "field"))
-            .concat(state.mapMask.list.filter((o: any) => o.place === "field"));
+      return state.character.list
+        .filter((o: any) => o.place === "field")
+        .concat(state.chit.list.filter((o: any) => o.place === "field"))
+        .concat(state.mapMask.list.filter((o: any) => o.place === "field"));
     },
 
     /**
      * グリッドに合わせるかどうか
      * @param state
-     * @returns {boolean}
+     * @returns { boolean }
      */
     isFitGrid: (state: any) => state.setting.isFitGrid,
 
-      getPieceObj: (state: any, getters: any) =>
+    getPieceObj: (state: any, getters: any) =>
       /**
        * 指定されたタイプのオブジェクトの中から、指定されたキーのオブジェクトを絞り込んで取得する
        * @param type
@@ -692,7 +696,7 @@ export default {
       (type: any, key: any, logOff: boolean = true) => {
         const result = getters.getKeyObj(state[type].list, key);
         if (!logOff) {
-            quoridornLog(
+          quoridornLog(
             `  [getters] pieceObj[${type}]#${key} => ${getters.objToString(
               result
             )}`
@@ -701,7 +705,7 @@ export default {
         return result;
       },
 
-      pieceKeyList: (state: any) =>
+    pieceKeyList: (state: any) =>
       /**
        * 指定されたタイプのオブジェクトの、キーの一覧を取得する
        * @param type
@@ -709,8 +713,8 @@ export default {
        */
       (type: any) =>
         state[type].list
-            .filter((pieceObj: any) => pieceObj.place === "field")
-            .map((pieceObj: any) => pieceObj.key),
+          .filter((pieceObj: any) => pieceObj.place === "field")
+          .map((pieceObj: any) => pieceObj.key),
 
     /**
      * 現在の背景画像
@@ -718,18 +722,18 @@ export default {
      * @returns {*}
      */
     getBackgroundImage: (state: any) =>
-        state.image.list.filter((d: any) => d.key === state.map.imageKey)[0].data,
+      state.image.list.filter((d: any) => d.key === state.map.imageKey)[0].data,
 
-      getPeerActors: (state: any, getters: any, rootState: any) => {
+    getPeerActors: (state: any, getters: any, rootState: any) => {
       const playerName = rootState.private.self.playerName;
-          const player = state.player.list.filter(
-              (p: any) => p.name === playerName
-          )[0];
+      const player = state.player.list.filter(
+        (p: any) => p.name === playerName
+      )[0];
       if (player) {
         return [
           player,
           ...state.character.list.filter(
-              (character: any) => character.owner === player.key
+            (character: any) => character.owner === player.key
           )
         ];
       } else {
@@ -737,26 +741,26 @@ export default {
       }
     },
 
-      getObj: (state: any) => (key: string) => {
+    getObj: (state: any) => (key: string) => {
       if (!key) return;
       const kind = key.split("-")[0];
       if (kind === "player") {
         // プレイヤー
-          return state.player.list.filter((player: any) => player.key === key)[0];
+        return state.player.list.filter((player: any) => player.key === key)[0];
       } else if (kind === "character") {
         // キャラクター
         return state.character.list.filter(
-            (character: any) => character.key === key
+          (character: any) => character.key === key
         )[0];
       } else if (kind === "groupTargetTab") {
         // グループチャットタブ
-          return state.chat.groupTargetTab.list.filter(
-              (tab: any) => tab.key === key
-          )[0];
+        return state.chat.groupTargetTab.list.filter(
+          (tab: any) => tab.key === key
+        )[0];
       }
     },
 
-      getViewName: (state: any, getters: any) => (key: string) => {
+    getViewName: (state: any, getters: any) => (key: string) => {
       const obj = getters.getObj(key);
       if (!obj) return "名無し(PL)";
       const kind = obj.key.split("-")[0];
@@ -767,6 +771,26 @@ export default {
       } else {
         return `${obj.name}`;
       }
-    }
+    },
+    chatTabList: (state: any) => state.chat.tabs,
+    playerList: (state: any) => state.player.list,
+    inputting: (state: any) => state.chat.inputting,
+    marginGridColor: (state: any) => state.map.margin.gridColor,
+    marginMaskColor: (state: any) => state.map.margin.maskColor,
+    marginMaskAlpha: (state: any) => state.map.margin.maskAlpha,
+    isUseGridColor: (state: any) => state.map.margin.isUseGridColor,
+    isUseImage: (state: any) => state.map.margin.isUseImage,
+    columns: (state: any) => state.map.grid.totalColumn,
+    rows: (state: any) => state.map.grid.totalRow,
+    gridSize: (state: any) => state.map.grid.size,
+    borderWidth: (state: any) => state.map.margin.borderWidth,
+    marginGridSize: (state: any) => state.map.margin.gridSize,
+    roomName: (state: any) => state.room.name,
+    memberNum: (state: any) =>
+      state.room.members.filter((memberObj: any) => memberObj.isCame).length,
+    deck: (state: any) => state.deck,
+    deckCardList: (state: any) => state.deck.cards.list,
+    deckWidth: (state: any) => state.deck.width,
+    deckHeight: (state: any) => state.deck.height
   } /* end of getters */
 };

@@ -1,6 +1,7 @@
-
 <template>
-  <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown="windowActive(displayProperty)" @touchstart="windowActive(displayProperty)" @mouseup="mouseUp" @touchend="mouseUp" @touchcancel="mouseUp">
+  <div :style="windowStyle" @mousedown="windowActive({ property: displayProperty, isClose: false })" @mouseup="mouseUp"
+       @touchcancel="mouseUp" @touchend="mouseUp" @touchstart="deckHoverKey(displayProperty)" class="window"
+       v-if="isDisplay">
     <div class="_contents" :style="{ fontSize: fontSize + 'px' }" @wheel.stop @contextmenu.prevent>
       <slot></slot>
     </div>
@@ -41,7 +42,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
-import { quoridornLog } from "./common/Utility";
 
 @Component<WindowFrame>({
   name: "windowFrame",
@@ -60,6 +60,7 @@ export default class WindowFrame extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("windowActive") windowActive: any;
   @Getter("getStateValue") getStateValue: any;
+  @Getter("isMordal") isMordal: any;
 
   private moveMode: string = "";
   private mouse: any = {
@@ -331,22 +332,15 @@ export default class WindowFrame extends Vue {
       this.windowFactor.w = 0;
       this.windowFactor.h = 0;
     }
-    const val: any = { command: null };
     if (command.command === "open") {
-      val.isDisplay = true;
       setTimeout(this.addEventForIFrame, 0);
     }
-    if (command.command === "close") {
-      val.isDisplay = false;
-    }
     this.setProperty({
-      property: `${this.displayProperty}`,
-      value: val,
+      property: `private.display.${this.displayProperty.command}`,
+      value: null,
       logOff: true
     });
-    this.$emit("command", command);
-    const _ = this;
-    setTimeout(() => _.$emit(command.command, command.payload), 0);
+    setTimeout(() => this.$emit(command.command, command.payload), 0);
   }
 
   get isDisplay(this: any): string {
@@ -425,7 +419,7 @@ export default class WindowFrame extends Vue {
       right: this.align.indexOf("right") >= 0 ? right + "px" : undefined,
       top: this.align.indexOf("top") >= 0 ? top + 37 + "px" : undefined,
       bottom: this.align.indexOf("bottom") >= 0 ? bottom + "px" : undefined,
-      "z-index": this.zIndex + 10000
+      "z-index": this.zIndex
     };
     if (
       this.align.indexOf("left") < 0 &&
@@ -461,440 +455,13 @@ export default class WindowFrame extends Vue {
           ? `${this.base.h + height}px`
           : `calc(100% - ${-this.base.h - height - 10}px)`;
     }
+    if (this.isMordal && this.zIndex <= 99999) {
+      obj.filter = "blur(3px)";
+    }
     return obj;
   }
 }
 </script>
-
-<!--
-<script>
-import { mapState, mapActions, mapGetters } from "vuex";
-
-export default {
-  props: {
-    titleText: { type: String, required: true },
-    displayProperty: { type: String, required: true },
-    align: { type: String, required: true },
-    baseSize: String,
-    fixSize: String,
-    isBanClose: Boolean,
-    fontSizeBar: { type: Boolean, default: false }
-  },
-  data() {
-    return {
-      moveMode: "",
-      mouse: {
-        x: 0,
-        y: 0,
-        saveX: 0,
-        saveY: 0
-      },
-      windowFactor: {
-        l: 0, // left
-        r: 0, // right
-        t: 0, // top
-        b: 0, // bottom
-        w: 0, // width
-        h: 0, // height
-        draggingX: 0,
-        draggingY: 0
-      },
-      fontSize: 12
-    };
-  },
-  mounted() {
-    const _ = this;
-    document.addEventListener("mousemove", event => {
-      _.mouse.x = event.pageX;
-      _.mouse.y = event.pageY;
-      _.reflesh();
-    });
-    document.addEventListener("touchmove", event => {
-      _.mouse.x = event.changedTouches[0].pageX;
-      _.mouse.y = event.changedTouches[0].pageY;
-      _.reflesh();
-    });
-    this.addEventForIFrame();
-  },
-  methods: {
-    ...mapActions(["windowClose", "setProperty", "windowActive"]),
-    closeWindow() {
-      // quoridornLog(`  [methods] closeWindow(click [x]button)`)
-      this.windowClose(this.displayProperty);
-      this.$emit("cancel");
-    },
-    mouseUp(event) {
-      const evtObj = {
-        clientX: event.pageX,
-        clientY: event.pageY,
-        button: event.button
-      };
-      if (event.button === 2) {
-        this.setProperty({
-          property: `map.isOverEvent`,
-          value: true,
-          logOff: true
-        });
-      }
-      document
-        .getElementById("mapBoardFrame")
-        .dispatchEvent(new MouseEvent("mouseUp", evtObj));
-    },
-    resize(event, direct, flg, isTouch) {
-      if (flg) {
-        this.mouse.saveX = isTouch
-          ? event.changedTouches[0].pageX
-          : event.pageX;
-        this.mouse.saveY = isTouch
-          ? event.changedTouches[0].pageY
-          : event.pageY;
-      } else {
-        const moveMode = this.moveMode;
-        const winFac = this.windowFactor;
-        // quoridornLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
-        if (moveMode.indexOf("right") >= 0) {
-          winFac.r -= winFac.draggingX;
-          winFac.w += winFac.draggingX;
-        }
-        if (moveMode.indexOf("left") >= 0) {
-          winFac.l += winFac.draggingX;
-          winFac.w -= winFac.draggingX;
-        }
-        if (moveMode.indexOf("top") >= 0) {
-          winFac.t += winFac.draggingY;
-          winFac.h -= winFac.draggingY;
-        }
-        if (moveMode.indexOf("bottom") >= 0) {
-          winFac.b -= winFac.draggingY;
-          winFac.h += winFac.draggingY;
-        }
-        winFac.draggingX = 0;
-        winFac.draggingY = 0;
-        this.mouseUp(event);
-      }
-      // quoridornLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
-      this.moveMode = flg ? direct : "";
-    },
-    reflesh() {
-      const x = this.mouse.x;
-      const y = this.mouse.y;
-      const moveX = x - this.mouse.saveX;
-      const moveY = y - this.mouse.saveY;
-      switch (this.moveMode) {
-        case "side-top":
-        case "side-bottom":
-        case "corner-left-top":
-        case "corner-left-bottom":
-        case "corner-right-top":
-        case "corner-right-bottom":
-        case "move":
-          this.windowFactor.draggingY = moveY;
-      }
-      switch (this.moveMode) {
-        case "side-left":
-        case "side-right":
-        case "corner-left-top":
-        case "corner-left-bottom":
-        case "corner-right-top":
-        case "corner-right-bottom":
-        case "move":
-          this.windowFactor.draggingX = moveX;
-      }
-      // quoridornLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
-    },
-    move(event, flg, isTouch) {
-      if (flg) {
-        this.mouse.saveX = isTouch
-          ? event.changedTouches[0].pageX
-          : event.pageX;
-        this.mouse.saveY = isTouch
-          ? event.changedTouches[0].pageY
-          : event.pageY;
-      } else {
-        this.windowFactor.r -= this.windowFactor.draggingX;
-        this.windowFactor.t += this.windowFactor.draggingY;
-        this.windowFactor.l += this.windowFactor.draggingX;
-        this.windowFactor.b -= this.windowFactor.draggingY;
-        this.windowFactor.draggingX = 0;
-        this.windowFactor.draggingY = 0;
-        this.mouseUp(event);
-      }
-      this.moveMode = flg ? "move" : "";
-    },
-    addEventForIFrame() {
-      const elms = document.getElementsByTagName("iFrame");
-      for (const iFrameElm of elms) {
-        // マウス移動
-        const mouseMoveListener = event => {
-          const iFrameRect = iFrameElm.getBoundingClientRect();
-          const evtObj = {
-            clientX: event.pageX + iFrameRect.left,
-            clientY: event.pageY + iFrameRect.top
-          };
-          document.dispatchEvent(new MouseEvent("mousemove", evtObj));
-        };
-        // タッチ移動
-        const touchMoveListener = event => {
-          const iFrameRect = iFrameElm.getBoundingClientRect();
-          const evtObj = {
-            changedTouches: [
-              {
-                clientX: event.changedTouches[0].pageX + iFrameRect.left,
-                clientY: event.changedTouches[0].pageY + iFrameRect.top
-              }
-            ]
-          };
-          document.dispatchEvent(new MouseEvent("touchmove", evtObj));
-        };
-        // クリック
-        const clickListener = event => {
-          const iFrameRect = iFrameElm.getBoundingClientRect();
-          const evtObj = {
-            clientX: event.pageX + iFrameRect.left,
-            clientY: event.pageY + iFrameRect.top,
-            button: event.button
-          };
-          document
-            .getElementById("mapBoardFrame")
-            .dispatchEvent(new MouseEvent("click", evtObj));
-        };
-        // マウス離す
-        const _ = this;
-        const mouseUpListener = event => {
-          const iFrameRect = iFrameElm.getBoundingClientRect();
-          const evtObj = {
-            clientX: event.pageX + iFrameRect.left,
-            clientY: event.pageY + iFrameRect.top,
-            button: event.button
-          };
-          if (event.button === 2) {
-            _.setProperty({
-              property: `map.isOverEvent`,
-              value: true,
-              logOff: true
-            });
-          }
-          document
-            .getElementById("mapBoardFrame")
-            .dispatchEvent(new MouseEvent("mouseUp", evtObj));
-        };
-        // コンテキストメニュー防止
-        const contextMenuListener = () => {
-          return false;
-        };
-        if (!iFrameElm.onload) {
-          try {
-            iFrameElm.onload = () => {
-              try {
-                const bodyElm = iFrameElm.contentWindow.document;
-                if (!bodyElm.onmousemove) {
-                  bodyElm.onmousemove = mouseMoveListener;
-                }
-                if (!bodyElm.ontouchmove) {
-                  bodyElm.ontouchmove = touchMoveListener;
-                }
-                if (!bodyElm.onmouseUp) {
-                  bodyElm.onmouseUp = mouseUpListener;
-                }
-                if (!bodyElm.oncontextmenu) {
-                  bodyElm.oncontextmenu = contextMenuListener;
-                }
-                if (!bodyElm.onclick) {
-                  bodyElm.onclick = clickListener;
-                }
-                /*
-                const aElms = bodyElm.getElementsByTagName('a')
-                for (const aElm of aElms) {
-                  if (!aElm.onmousemove) { aElm.onmousemove = mouseMoveListener }
-                  if (!aElm.ontouchmove) { aElm.ontouchmove = touchMoveListener }
-                  if (!aElm.oncontextmenu) { aElm.oncontextmenu = contextMenuListener }
-                  if (!aElm.onclick) { aElm.onclick = clickListener }
-                }
-                */
-              } catch (error) {
-                /* Nothing */
-              }
-            };
-          } catch (error) {
-            /* Nothing */
-          }
-        }
-        /*
-        */
-        if (!iFrameElm.onmousemove) {
-          iFrameElm.onmousemove = mouseMoveListener;
-        }
-        if (!iFrameElm.ontouchmove) {
-          iFrameElm.ontouchmove = touchMoveListener;
-        }
-        if (!iFrameElm.onmouseUp) {
-          iFrameElm.onmouseUp = mouseUpListener;
-        }
-        if (!iFrameElm.onclick) {
-          iFrameElm.onclick = clickListener;
-        }
-      }
-    }
-  },
-  watch: {
-    command(command) {
-      if (!command) {
-        return;
-      }
-      if (command.command === "open" || command.command === "reset") {
-        this.windowFactor.l = 0;
-        this.windowFactor.r = 0;
-        this.windowFactor.t = 0;
-        this.windowFactor.b = 0;
-        this.windowFactor.w = 0;
-        this.windowFactor.h = 0;
-      }
-      const val = { command: null };
-      if (command.command === "open") {
-        val.isDisplay = true;
-        setTimeout(this.addEventForIFrame, 0);
-      }
-      if (command.command === "close") {
-        val.isDisplay = false;
-      }
-      this.setProperty({
-        property: `${this.displayProperty}`,
-        value: val,
-        logOff: true
-      });
-      this.$emit("command", command);
-      const _ = this;
-      setTimeout(() => _.$emit(command.command, command.payload), 0);
-    }
-  },
-  computed: mapState({
-    ...mapGetters(["isWindowOpen", "getStateValue"]),
-    isDisplay() {
-      return !this.displayProperty
-        ? ""
-        : this.getStateValue(this.displayProperty).isDisplay;
-    },
-    command() {
-      return !this.displayProperty
-        ? ""
-        : this.getStateValue(this.displayProperty).command;
-    },
-    zIndex() {
-      return this.getStateValue(this.displayProperty).zIndex;
-    },
-    isFix() {
-      return this.fixSize !== undefined;
-    },
-    fixW() {
-      return !this.isFix ? -1 : parseInt(this.fixSize.split(",")[0].trim(), 10);
-    },
-    fixH() {
-      return !this.isFix ? -1 : parseInt(this.fixSize.split(",")[1].trim(), 10);
-    },
-    base() {
-      if (!this.baseSize) {
-        return { w: 0, h: 0 };
-      }
-      return {
-        w: parseInt(this.baseSize.split(",")[0].trim(), 10),
-        h: parseInt(this.baseSize.split(",")[1].trim(), 10)
-      };
-    },
-    min() {
-      if (!this.minSize) {
-        return { w: 0, h: 0 };
-      }
-      return {
-        w: parseInt(this.minSize.split(",")[0].trim(), 10),
-        h: parseInt(this.minSize.split(",")[1].trim(), 10)
-      };
-    },
-    windowStyle() {
-      const moveMode = this.moveMode;
-      const winFac = this.windowFactor;
-
-      let left = winFac.l;
-      let bottom = winFac.b;
-      let right = winFac.r;
-      let top = winFac.t;
-      let height = winFac.h;
-      let width = winFac.w;
-
-      if (moveMode.indexOf("top") >= 0 || moveMode === "move") {
-        top += winFac.draggingY;
-        if (moveMode.indexOf("top") >= 0) {
-          height -= winFac.draggingY;
-        }
-      }
-
-      if (moveMode.indexOf("bottom") >= 0 || moveMode === "move") {
-        bottom -= winFac.draggingY;
-        if (moveMode.indexOf("bottom") >= 0) {
-          height += winFac.draggingY;
-        }
-      }
-
-      if (moveMode.indexOf("right") >= 0 || moveMode === "move") {
-        right -= winFac.draggingX;
-        if (moveMode.indexOf("right") >= 0) {
-          width += winFac.draggingX;
-        }
-      }
-
-      if (moveMode.indexOf("left") >= 0 || moveMode === "move") {
-        left += winFac.draggingX;
-        if (moveMode.indexOf("left") >= 0) {
-          width -= winFac.draggingX;
-        }
-      }
-
-      const obj = {
-        left: this.align.indexOf("left") >= 0 ? left + "px" : undefined,
-        right: this.align.indexOf("right") >= 0 ? right + "px" : undefined,
-        top: this.align.indexOf("top") >= 0 ? top + 37 + "px" : undefined,
-        bottom: this.align.indexOf("bottom") >= 0 ? bottom + "px" : undefined,
-        "z-index": this.zIndex + 10000
-      };
-      if (
-        this.align.indexOf("left") < 0 &&
-        this.align.indexOf("right") < 0 &&
-        this.align.indexOf("top") < 0 &&
-        this.align.indexOf("bottom") < 0
-      ) {
-        if (this.isFix) {
-          // obj.left = `calc((100% - ${this.fixW}px) / 2 + ${left}px)`
-          obj.left = `calc(50% - ${this.fixW / 2 - left}px)`;
-          obj.top = `calc(50% - ${this.fixH / 2 - top}px)`;
-        } else {
-          obj.left =
-            this.base.w > 0
-              ? `calc(50% - ${this.base.w / 2 - left}px)`
-              : `calc(${-this.base.w / 2 + left}px)`;
-          obj.top =
-            this.base.h > 0
-              ? `calc(50% - ${this.base.h / 2 - top}px)`
-              : `calc(${-this.base.h / 2 + top}px)`;
-        }
-      }
-      if (this.isFix) {
-        obj.width = this.fixW + "px";
-        obj.height = this.fixH + "px";
-      } else {
-        obj.width =
-          this.base.w > 0
-            ? `${this.base.w + width}px`
-            : `calc(100% - ${-this.base.w - width + 10}px)`;
-        obj.height =
-          this.base.h > 0
-            ? `${this.base.h + height}px`
-            : `calc(100% - ${-this.base.h - height - 10}px)`;
-      }
-      return obj;
-    }
-  })
-};
-</script>
--->
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

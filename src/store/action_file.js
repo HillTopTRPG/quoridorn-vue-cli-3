@@ -302,8 +302,8 @@ export default {
           dispatch("windowOpen", "private.display.selectPeerWindow");
         }
       };
-      if (publicData.room && publicData.room.id !== "") {
-        const roomName = publicData.room.id;
+      if (publicData.room && publicData.room.name !== "") {
+        const roomName = publicData.room.name;
         const peerId = privateData.self.peerId;
         // 部屋の存在チェック
         dispatch("checkRoomName", {
@@ -325,7 +325,7 @@ export default {
             // })
 
             if (peerId) {
-              dispatch("createPeer", {peerId: peerId, roomName: roomName});
+              dispatch("createPeer", { peerId: peerId, roomName: roomName });
             }
             importFunc();
           }
