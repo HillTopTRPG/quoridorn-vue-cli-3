@@ -1,18 +1,19 @@
 <template>
-  <div>
-    <select v-model="currentSystem" :title="helpMessage">
-      <option v-for="systemObj in diceBotSystems" :key="systemObj.value" :value="systemObj.value">{{systemObj.name}}</option>
-    </select>
-  </div>
+  <select :title="helpMessage" v-model="currentSystem">
+    <option :key="systemObj.value" :value="systemObj.value" v-for="systemObj in diceBotSystems">{{systemObj.name}}
+    </option>
+  </select>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import { Action } from "vuex-class";
 
 @Component<DiceBotSelect>({
   name: "diceBotSelect"
 })
 export default class DiceBotSelect extends Vue {
+  @Action("loading") loading: any;
   @Prop() public value!: string;
 
   /*
@@ -46,8 +47,6 @@ export default class DiceBotSelect extends Vue {
     return this.value;
   }
   public set currentSystem(value: string) {
-    this.value = value;
-
     const diceObj = this.diceBotSystems.filter(obj => obj.value === value)[0];
 
     if (!this.bcDice) return;
@@ -80,8 +79,10 @@ export default class DiceBotSelect extends Vue {
 
     /* bcdice-js を Dynamic import */
     setTimeout(() => {
+      _.loading(true);
       import(/* webpackChunkName: "bcdice-js" */ "bcdice-js").then(module => {
         _.bcDice = new module.BCDice();
+        _.loading(false);
 
         const DiceBotLoader = module.DiceBotLoader;
         DiceBotLoader["collectDiceBots"]().forEach(

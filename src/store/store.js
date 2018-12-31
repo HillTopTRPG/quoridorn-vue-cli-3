@@ -80,7 +80,8 @@ export default new Vuex.Store({
     volatileSaveData: {
       members: []
     },
-    isMordal: true
+    isMordal: true,
+    isLoading: 0
   },
   actions: {
     /**
@@ -127,31 +128,6 @@ export default new Vuex.Store({
         // if (playerType) newUrl += `&playerType=${playerType}`;
         // location.href = newUrl;
       }
-
-      // dispatch("addPlayer", {
-      //   name: rootState.private.self.playerName,
-      //   color: "#000000",
-      //   type: rootState.private.self.playerType
-      // });
-      //
-      // dispatch("setProperty", {
-      //   property: `private.self`,
-      //   value: {
-      //     password: playerPassword || "",
-      //     playerName: playerName || "名無し",
-      //     playerType: "PL",
-      //     currentChatName: `${playerName}(${"PL"})`
-      //   },
-      //   logOff: false
-      // });
-      //
-      // // 部屋が指定されていたら接続しにいく
-      // if (roomName) {
-      //   dispatch("createPeer", {
-      //     roomName: roomName,
-      //     peerId: peerId
-      //   });
-      // }
 
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定
@@ -212,6 +188,16 @@ export default new Vuex.Store({
        * チャットタブの設定
        */
       dispatch("changeChatTab", "雑談");
+    },
+
+    /**
+     * =================================================================================================================
+     * ルームメンバがいる場合は部屋主に対して処理の通知を出し、そうでない場合はこの場で処理を実行する
+     * @param state
+     * @param isStart
+     */
+    loading({ state }, isStart) {
+      state.isLoading += isStart ? 1 : -1;
     },
 
     /**
@@ -493,6 +479,7 @@ export default new Vuex.Store({
     paramPlayerType: state => state.param.playerType,
     isRoomExist: state => state.room.isExist,
     isMordal: state => state.isMordal,
+    isLoading: state => state.isLoading,
     activeTab: state => state.chat.activeTab,
     hoverTab: state => state.chat.hoverTab,
     rollObj: state => state.map.rollObj,

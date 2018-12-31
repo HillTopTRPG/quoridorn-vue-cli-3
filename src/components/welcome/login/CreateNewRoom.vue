@@ -82,6 +82,7 @@ export default class CreateNewRoom extends Vue {
   @Action("emptyMember") emptyMember: any;
   @Action("createPeer") createPeer: any;
   @Action("windowClose") windowClose: any;
+  @Action("loading") loading: any;
   @Getter("paramRoomName") paramRoomName: any;
   @Getter("paramRoomPassword") paramRoomPassword: any;
   @Getter("paramPlayerName") paramPlayerName: any;
@@ -160,9 +161,11 @@ export default class CreateNewRoom extends Vue {
         value: isExist,
         logOff: false
       });
+      this.loading(false);
     };
 
     // 部屋存在チェック
+    this.loading(true);
     this.checkRoomName({
       roomName: this.roomName,
       roomFindFunc: () => func(true),

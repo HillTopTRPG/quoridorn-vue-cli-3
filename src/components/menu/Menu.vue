@@ -23,7 +23,7 @@
     </div>
     <!-- 部屋情報 -->
     <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isConnected}">
-      ルームID.<span :class="{isDisconnect : !isConnected}">{{ roomName || "未接続" }}</span>
+      ルーム名.<span :class="{isDisconnect : !isConnected}">{{ roomName || "未接続" }}</span>
       :
       <span>{{ memberNum }}</span>名
     </div>
