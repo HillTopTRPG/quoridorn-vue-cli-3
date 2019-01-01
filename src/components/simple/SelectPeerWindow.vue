@@ -29,13 +29,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions([
-      "windowClose",
-      "setProperty",
-      "createPeer",
-      "windowOpen",
-      "updateCame"
-    ]),
+    ...mapActions(["windowClose", "setProperty", "createPeer", "windowOpen"]),
     commit() {
       quoridornLog(this.currentPeerId);
       const currentMemberObj = this.currentMemberObj;
@@ -52,7 +46,7 @@ export default {
       this.setProperty({ property: `private`, value: privateData });
 
       const peerId = privateData.self.peerId;
-      this.updateCame(peerId);
+      // TODO 引数修正
       this.createPeer({
         peerId: peerId,
         roomName: this.roomName

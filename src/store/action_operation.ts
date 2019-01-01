@@ -224,7 +224,7 @@ export default {
       // if (myMemberObjList.length > 0) {
       //   const memberObj = myMemberObjList[0]
       //   const index = members.indexOf(memberObj)
-      //   dispatch('setProperty', { property: `public.room.members.${index }.name`, value: name, logOff: true})
+      //   dispatch('setProperty', { property: `public.room.members.${index}.name`, value: name, logOff: true})
       //   dispatch('sendRoomData', { type: 'CHANGE_PLAYER_NAME', value: name })
       // }
     },
@@ -487,10 +487,6 @@ export default {
         if (filterObj.length > 0) return true;
       });
     },
-    members: (state: any, getters: any, rootState: any) =>
-      rootState.public.room.members.filter((member: any) => {
-        return member.peerId !== rootState.private.self.peerId;
-      }),
     currentChatName: (state: any, getters: any, rootState: any) =>
       rootState.private.self.currentChatName,
     createInputtingMsg: () => (name: string) => `${name}が入力中...`,

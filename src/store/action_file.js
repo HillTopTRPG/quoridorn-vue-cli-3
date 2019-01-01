@@ -213,11 +213,6 @@ export default {
         dispatch("windowOpen", "private.display.dropZipWindow");
       });
     },
-    updateCame({ dispatch, rootState }, peerId) {
-      rootState.public.room.members.forEach(memberObj => {
-        memberObj.isCame = memberObj.peerId === peerId;
-      });
-    },
     doImport({ dispatch, rootState }, importData) {
       const publicData = importData.public;
       const privateData = importData.private;
@@ -318,13 +313,9 @@ export default {
           roomNonFindFunc: () => {
             // ルームメンバーを自分も含めて、一旦入室前の状態にする
             rootState.public.room = publicData.room;
-            dispatch("updateCame", "");
-            // FIXME 以下処理は不要？(動作に問題がなければ削除)
-            // publicData.room.members.forEach(memberObj => {
-            //   memberObj.isCame = false
-            // })
 
             if (peerId) {
+              // TODO 引数修正
               dispatch("createPeer", { peerId: peerId, roomName: roomName });
             }
             importFunc();

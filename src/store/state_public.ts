@@ -318,17 +318,12 @@ export default {
      * @param commit
      * @param peerId
      * @param name
-     * @param isCame
      * @returns {*}
      */
     addMember: (
       {commit}: { commit: Function },
-      {
-        peerId,
-        name,
-        isCame
-      }: { peerId: string; name: string; isCame: boolean }
-    ) => commit("addMember", {peerId, name, isCame}),
+      {peerId, name}: { peerId: string; name: string }
+    ) => commit("addMember", {peerId, name}),
 
     /**
      * プレイヤーを追加する
@@ -421,21 +416,15 @@ export default {
      * @param state
      * @param peerId
      * @param name
-     * @param isCame
      * @returns { *[] }
      */
     addMember: (
       state: any,
-      {
-        peerId,
-        name,
-        isCame
-      }: { peerId: string; name: string; isCame: boolean }
+      {peerId, name}: { peerId: string; name: string }
     ) => {
       state.room.members.push({
         peerId: peerId,
-        name: name,
-        isCame: isCame
+        name: name
       });
     },
 
@@ -443,21 +432,30 @@ export default {
      * プレイヤーを追加する
      * @param state
      * @param name
+     * @param password
      * @param color
      * @param type
      * @returns { *[] }
      */
     addPlayer: (
       state: any,
-      {name, color, type}: { name: string; color: string; type: string }
+      {
+        name,
+        password,
+        color,
+        type
+      }: { name: string; password: string; color: string; type: string }
     ) => {
       const key = `player-${name}`;
-      state.player.list.push({
+      const obj = {
         key: key,
         name: name,
+        password: password,
         fontColor: color,
         type: type
-      });
+      };
+      state.player.list.push(obj);
+      window.console.log("addPlayer", obj);
       return key;
     },
 
@@ -786,8 +784,7 @@ export default {
     borderWidth: (state: any) => state.map.margin.borderWidth,
     marginGridSize: (state: any) => state.map.margin.gridSize,
     roomName: (state: any) => state.room.name,
-    memberNum: (state: any) =>
-      state.room.members.filter((memberObj: any) => memberObj.isCame).length,
+    members: (state: any) => state.room.members,
     deck: (state: any) => state.deck,
     deckCardList: (state: any) => state.deck.cards.list,
     deckWidth: (state: any) => state.deck.width,

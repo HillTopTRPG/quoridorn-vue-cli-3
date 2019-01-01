@@ -25,7 +25,7 @@
     <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isConnected}">
       ルーム名.<span :class="{isDisconnect : !isConnected}">{{ roomName || "未接続" }}</span>
       :
-      <span>{{ memberNum }}</span>名
+      <span>{{ members.length }}</span>名
     </div>
     <!-- 共有メモ -->
     <div class="menu-button" @click="clickPublicMemo" :title="publicMemoTitle">共有メモ</div>
@@ -147,8 +147,9 @@ export default class Menu extends Vue {
   @Action("doExport") doExport: any;
   @Getter("roomName") roomName: any;
   @Getter("volatileSaveData") volatileSaveData: any;
-  @Getter("memberNum") memberNum: any;
   @Getter("isMordal") isMordal: any;
+  @Getter("peerId") peerId: any;
+  @Getter("members") members: any;
 
   private isConnectHover: boolean = false;
   private isSelecting: boolean = false;
@@ -440,7 +441,7 @@ export default class Menu extends Vue {
 
   @Watch("volatileSaveData")
   onChangeVolatileSaveData(volatileSaveData: any[]) {
-    if (volatileSaveData.length === this.memberNum) {
+    if (volatileSaveData.length === this.members.length) {
       this.doExport();
     }
   }
@@ -454,13 +455,12 @@ export default class Menu extends Vue {
   }
 
   get isConnected(): boolean {
-    const peerId = this.$store.state.private.self.peerId;
-    if (!peerId) return false;
-    const filtered = this.$store.state.public.room.members.filter(
-      (memberObj: any) => memberObj.peerId === peerId
+    if (!this.peerId) return false;
+    return (
+      this.members.findIndex(
+        (memberObj: any) => memberObj.peerId === this.peerId
+      ) > -1
     );
-    if (filtered.length === 0) return false;
-    return filtered[0].isCame;
   }
 
   get roomInfoTitle(): string {

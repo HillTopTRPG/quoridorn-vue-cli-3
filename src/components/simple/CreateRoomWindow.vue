@@ -158,6 +158,7 @@ export default class CreateRoomWindow extends Vue {
     this.emptyMember();
 
     // 部屋に接続する
+    // TODO 引数修正
     this.createPeer({
       roomName: this.roomName
     });

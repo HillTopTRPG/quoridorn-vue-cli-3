@@ -66,7 +66,7 @@
 import { Action, Getter } from "vuex-class";
 import SubBlockTitle from "./SubBlockTitle.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import DiceBotSelect from "@/components/dice/DiceBotSelect.vue";
 
 @Component<CreateNewRoom>({
@@ -99,19 +99,19 @@ export default class CreateNewRoom extends Vue {
   private playerName: string = "";
   private playerPassword: string = "";
   private currentSystem: string = "DiceBot";
-  private existCheckMessage: string = "";
   private playerType: string = "PL";
   private isViewWait: boolean = false;
   private isViewNewRoom: boolean = false;
 
   /*
+   * ====================================================================================================
    * lifecycle hook
    */
   created(): void {
-    this.roomName = this.paramRoomName;
-    this.roomPassword = this.paramRoomPassword;
-    this.playerName = this.paramPlayerName;
-    this.playerPassword = this.paramPlayerPassword;
+    this.roomName = this.paramRoomName || "";
+    this.roomPassword = this.paramRoomPassword || "";
+    this.playerName = this.paramPlayerName || "";
+    this.playerPassword = this.paramPlayerPassword || "";
 
     if (
       this.roles.findIndex(
@@ -130,32 +130,53 @@ export default class CreateNewRoom extends Vue {
   }
 
   /**
+   * ====================================================================================================
    * 部屋名を入力してチェックボタンを押下した際の処理
    */
   commitRoomName() {
-    // URLを書き換える（リロードなし）
+    /* ------------------------------
+     * 入力チェック
+     */
+    const errorMsg = [];
+    if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
+    if (errorMsg.length > 0) {
+      alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
+      return;
+    }
+
+    /* ------------------------------
+     * URLを書き換える（リロードなし）
+     */
     const paramList: string[] = [];
     paramList.push(`roomName=${this.roomName}`);
-    if (this.paramRoomPassword)
+    if (this.paramRoomPassword !== null)
       paramList.push(`roomPassword=${this.paramRoomPassword}`);
-    if (this.paramPlayerName)
+    if (this.paramPlayerName !== null)
       paramList.push(`playerName=${this.paramPlayerName}`);
-    if (this.paramPlayerPassword)
+    if (this.paramPlayerPassword !== null)
       paramList.push(`playerPassword=${this.paramPlayerPassword}`);
-    if (this.paramPlayerType)
+    if (this.paramPlayerType !== null)
       paramList.push(`playerType=${this.paramPlayerType}`);
     const newUrl = `?${paramList.join("&")}`;
     window.history.replaceState("", "", newUrl);
 
+    // パラメータ更新
+    this.setProperty({
+      property: `param.roomName`,
+      value: this.roomName,
+      logOff: false
+    });
+
+    /* ------------------------------
+     * 部屋存在チェック
+     */
+    this.loading(true);
     const func = (isExist: boolean) => {
       window.console.log(
         `roomName: ${this.roomName} is ${isExist ? "" : "not "}exist.`
       );
-      this.setProperty({
-        property: `param.roomName`,
-        value: this.roomName,
-        logOff: false
-      });
+
+      // 部屋存在チェックの結果を画面に反映
       this.setProperty({
         property: `room.isExist`,
         value: isExist,
@@ -163,36 +184,58 @@ export default class CreateNewRoom extends Vue {
       });
       this.loading(false);
     };
-
-    // 部屋存在チェック
-    this.loading(true);
     this.checkRoomName({
       roomName: this.roomName,
       roomFindFunc: () => func(true),
       roomNonFindFunc: () => func(false)
     });
+    // end of 部屋存在チェック
   }
 
   openWaitRoom() {
     this.isViewWait = !this.isViewWait;
   }
 
-  doWaitRoom() {
-    // TODO
-  }
-
-  doJoinRoom() {
-    // TODO
-  }
-
   openNewRoom() {
     this.isViewNewRoom = !this.isViewNewRoom;
   }
 
+  doWaitRoom() {
+    // TODO
+  }
+
   /**
+   * ====================================================================================================
    * 新しい部屋をつくる
    */
   doNewRoom() {
+    /* ------------------------------
+     * 入力チェック
+     */
+    const errorMsg = [];
+    if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
+    if (!this.playerName) errorMsg.push("・プレイヤー名は必須項目です。");
+    if (errorMsg.length > 0) {
+      alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
+      return;
+    }
+
+    /* ------------------------------
+     * URLを書き換える（リロードなし）
+     */
+    const paramList: string[] = [];
+    paramList.push(`roomName=${this.roomName}`);
+    if (this.paramRoomPassword !== null)
+      paramList.push(`roomPassword=${this.paramRoomPassword}`);
+    if (this.paramPlayerName !== null)
+      paramList.push(`playerName=${this.paramPlayerName}`);
+    if (this.paramPlayerPassword !== null)
+      paramList.push(`playerPassword=${this.paramPlayerPassword}`);
+    if (this.paramPlayerType !== null)
+      paramList.push(`playerType=${this.paramPlayerType}`);
+    const newUrl = `?${paramList.join("&")}`;
+    window.history.replaceState("", "", newUrl);
+
     // 利用システムの設定
     this.setProperty({
       property: "public.room.system",
@@ -211,6 +254,8 @@ export default class CreateNewRoom extends Vue {
       },
       logOff: true
     });
+
+    // モーダル状態の解除
     this.setProperty({
       property: "isMordal",
       value: false,
@@ -222,81 +267,68 @@ export default class CreateNewRoom extends Vue {
 
     // 部屋に接続する
     this.createPeer({
-      roomName: this.roomName
+      roomName: this.roomName,
+      roomPassword: this.roomPassword,
+      playerName: this.playerName,
+      playerPassword: this.playerPassword,
+      playerType: this.playerType
     });
   }
 
-  @Watch("roomName")
-  onChangeRoomName() {
-    this.existCheckMessage = "";
-  }
-
-  onClickDescription(): void {
-    alert(
-      this.roles.filter((role: any) => role.value === this.playerType)[0]
-        .description
-    );
-  }
-
   /**
-   * 確定ボタン押下時
+   * ====================================================================================================
+   * 入室処理
    */
-  commit(): void {
-    // 入力チェック
+  doJoinRoom() {
+    /* ------------------------------
+     * 入力チェック
+     */
     const errorMsg = [];
-    if (this.roomName === "") errorMsg.push("・部屋名は必須項目です。");
-    if (this.playerName === "") errorMsg.push("・あなたの名前は必須項目です。");
+    if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
+    if (!this.playerName) errorMsg.push("・プレイヤー名は必須項目です。");
     if (errorMsg.length > 0) {
       alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
       return;
     }
 
-    // 利用システムの設定
-    this.setProperty({
-      property: "public.room.system",
-      value: this.currentSystem
-    });
+    /* ------------------------------
+     * URLを書き換える（リロードなし）
+     */
+    const paramList: string[] = [];
+    paramList.push(`roomName=${this.roomName}`);
+    paramList.push(`roomPassword=${this.roomPassword}`);
+    paramList.push(`playerName=${this.playerName}`);
+    paramList.push(`playerPassword=${this.playerPassword}`);
+    paramList.push(`playerType=${this.playerType}`);
+    const newUrl = `?${paramList.join("&")}`;
+    window.history.replaceState("", "", newUrl);
 
-    // 利用者情報の設定
+    // モーダル状態の解除
     this.setProperty({
-      property: "private.self",
-      value: {
-        password: this.roomPassword,
-        playerPassword: this.playerPassword,
-        playerName: this.playerName,
-        playerType: this.playerType,
-        currentChatName: `${this.playerName}(${this.playerType})`
-      },
+      property: "isMordal",
+      value: false,
       logOff: true
     });
 
-    // メンバーのリセット
-    this.emptyMember();
-
     // 部屋に接続する
     this.createPeer({
-      roomName: this.roomName
+      roomName: this.roomName,
+      roomPassword: this.roomPassword,
+      playerName: this.playerName,
+      playerPassword: this.playerPassword,
+      playerType: this.playerType
     });
-
-    // この画面を閉じる
-    this.windowClose("private.display.createRoomWindow");
   }
 
   /**
-   * 部屋の存在チェック
+   * ====================================================================================================
+   * 権限に関する説明リンクをクリックした際の処理
    */
-  checkRoomExist(): void {
-    if (this.roomName === "") {
-      this.existCheckMessage = "部屋名を入力してください。";
-      return;
-    }
-    this.existCheckMessage = "存在確認中です...";
-    this.checkRoomName({
-      roomName: this.roomName,
-      roomFindFunc: (message: string) => (this.existCheckMessage = message),
-      roomNonFindFunc: () =>
-        (this.existCheckMessage = "この部屋は存在しません。")
-    });
+  onClickDescription(): void {
+    alert(
+      this.roles.filter((role: any) => role.value === this.playerType)[0]
+        .description
+    );
   }
 }
 </script>

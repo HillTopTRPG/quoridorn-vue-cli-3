@@ -9,6 +9,7 @@
       <div class="unUse"><div id="YoutubePlayer005"></div></div>
     </div>
     <MordalScreen/>
+    <LoadingScreen/>
     <Loading/>
     <ChatWindow/>
     <Menu/>
@@ -95,6 +96,7 @@ import PlayerBoxWindow from "../components/simple/PlayerBoxWindow";
 import EditGroupChatWindow from "../components/chat/EditGroupChatWindow";
 import MordalScreen from "../components/simple/MordalScreen";
 import Loading from "../components/simple/Loading";
+import LoadingScreen from "../components/simple/LoadingScreen";
 
 export default {
   name: "App2",
@@ -139,7 +141,8 @@ export default {
     EditGroupChatWindow,
     Deck,
     MordalScreen,
-    Loading
+    Loading,
+    LoadingScreen
   },
   mounted() {
     this.onSettingMount();

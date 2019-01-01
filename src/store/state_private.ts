@@ -321,6 +321,7 @@ export default {
     masterVolume: (state: any) => state.display.jukeboxWindow.masterVolume,
     fontColor: (state: any) => state.self.color,
     playerName: (state: any) => state.self.playerName,
+    peerId: (state: any) => state.self.peerId,
     angle: (state: any) => state.map.angle,
     wheel: (state: any) => state.map.wheel
   }

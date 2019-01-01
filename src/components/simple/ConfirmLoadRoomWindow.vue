@@ -29,13 +29,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions([
-      "windowClose",
-      "logout",
-      "createPeer",
-      "windowOpen",
-      "updateCame"
-    ]),
+    ...mapActions(["windowClose", "logout", "createPeer", "windowOpen"]),
     cancel() {
       this.windowClose("private.display.confirmLoadRoomWindow");
     },
@@ -46,6 +40,7 @@ export default {
       this.logout();
       const roomName = this.importData.public.room.name;
       const peerId = this.importData.private.self.peerId;
+      // TODO 引数修正
       this.createPeer({
         roomName: roomName,
         peerId: peerId
