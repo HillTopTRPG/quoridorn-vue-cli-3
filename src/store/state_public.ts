@@ -3,7 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-import {quoridornLog} from "@/components/common/Utility";
+import { quoridornLog } from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
