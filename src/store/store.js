@@ -34,7 +34,8 @@ export default new Vuex.Store({
       roomName: "",
       roomPassword: "",
       playerName: "",
-      playerPassword: ""
+      playerPassword: "",
+      playerType: ""
     },
     room: {
       webRtcRoom: null,
@@ -496,6 +497,12 @@ export default new Vuex.Store({
     volatileSaveData: state => state.volatileSaveData,
     deckCommand: state => state.deck.command,
     deckHoverIndex: state => state.deck.hoverIndex,
-    deckHoverKey: state => state.deck.hoverKey
+    deckHoverKey: state => state.deck.hoverKey,
+    playerKey: (state, getters, rootState) => {
+      const player = rootState.public.player.list.filter(
+        player => player.name === rootState.private.self.playerName
+      )[0];
+      return player ? player.key : null;
+    }
   }
 });

@@ -329,15 +329,26 @@ export default {
      * プレイヤーを追加する
      * @param commit
      * @param name
+     * @param password
      * @param color
      * @param type
      * @returns {*}
      */
     addPlayer: (
       { commit }: { commit: Function },
-      { name, color, type }: { name: string; color: string; type: string }
+      {
+        name,
+        password,
+        type,
+        color
+      }: {
+        name: string;
+        password: string;
+        type: string;
+        color: string;
+      }
     ) => {
-      return commit("addPlayer", { name, color, type });
+      return commit("addPlayer", { name, password, type, color });
       // commit('addPlayerWidth')
     },
 
@@ -422,6 +433,7 @@ export default {
       state: any,
       { peerId, name }: { peerId: string; name: string }
     ) => {
+      window.console.log(`!!!!! [addMember] ${name}(${peerId})`);
       state.room.members.push({
         peerId: peerId,
         name: name
@@ -441,9 +453,9 @@ export default {
       state: any,
       {
         name,
+        type,
         password,
-        color,
-        type
+        color
       }: { name: string; password: string; color: string; type: string }
     ) => {
       const key = `player-${name}`;
@@ -455,7 +467,6 @@ export default {
         type: type
       };
       state.player.list.push(obj);
-      window.console.log("addPlayer", obj);
       return key;
     },
 
@@ -772,6 +783,7 @@ export default {
     },
     chatTabList: (state: any) => state.chat.tabs,
     playerList: (state: any) => state.player.list,
+    characterList: (state: any) => state.character.list,
     inputting: (state: any) => state.chat.inputting,
     marginGridColor: (state: any) => state.map.margin.gridColor,
     marginMaskColor: (state: any) => state.map.margin.maskColor,
@@ -788,6 +800,16 @@ export default {
     deck: (state: any) => state.deck,
     deckCardList: (state: any) => state.deck.cards.list,
     deckWidth: (state: any) => state.deck.width,
-    deckHeight: (state: any) => state.deck.height
+    deckHeight: (state: any) => state.deck.height,
+    getMapObjectList: (state: any) => (kind: string, playerKey: string, place: string) => {
+      return state[kind].list.filter(
+        (target: any) =>
+          target.owner === playerKey && target.place === place
+      );
+    },
+    getMembers: (state: any, getters: any) => (playerKey: string) => {
+      const player = getters.getObj(playerKey);
+      return getters.members.filter((m: any) => m.name === player.name)
+    }
   } /* end of getters */
 };

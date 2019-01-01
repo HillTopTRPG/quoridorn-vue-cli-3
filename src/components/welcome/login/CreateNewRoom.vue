@@ -33,7 +33,7 @@
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
         <div>権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
-      <button @click="doJoinRoom" type="button"><i class="icon-home3"></i> 入室</button>
+      <button @click="roomProcess" type="button"><i class="icon-home3"></i> 入室</button>
     </div>
 
     <SubBlockTitle @open="openNewRoom" text="新しい部屋をつくる"/>
@@ -57,7 +57,7 @@
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
         <div>権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
-      <button @click="doNewRoom" type="button"><i class="icon-home3"></i> 作成</button>
+      <button @click="roomProcess" type="button"><i class="icon-home3"></i> 作成</button>
     </div>
   </fieldset>
 </template>
@@ -170,7 +170,6 @@ export default class CreateNewRoom extends Vue {
     /* ------------------------------
      * 部屋存在チェック
      */
-    this.loading(true);
     const func = (isExist: boolean) => {
       window.console.log(
         `roomName: ${this.roomName} is ${isExist ? "" : "not "}exist.`
@@ -182,7 +181,6 @@ export default class CreateNewRoom extends Vue {
         value: isExist,
         logOff: false
       });
-      this.loading(false);
     };
     this.checkRoomName({
       roomName: this.roomName,
@@ -206,12 +204,10 @@ export default class CreateNewRoom extends Vue {
 
   /**
    * ====================================================================================================
-   * 新しい部屋をつくる
+   * 部屋建て・入室振り分け
    */
-  doNewRoom() {
-    /* ------------------------------
-     * 入力チェック
-     */
+  roomProcess() {
+    // 入力チェック
     const errorMsg = [];
     if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
     if (!this.playerName) errorMsg.push("・プレイヤー名は必須項目です。");
@@ -220,26 +216,25 @@ export default class CreateNewRoom extends Vue {
       return;
     }
 
-    /* ------------------------------
-     * URLを書き換える（リロードなし）
-     */
+    // URLを書き換える（リロードなし）
     const paramList: string[] = [];
     paramList.push(`roomName=${this.roomName}`);
-    if (this.paramRoomPassword !== null)
-      paramList.push(`roomPassword=${this.paramRoomPassword}`);
-    if (this.paramPlayerName !== null)
-      paramList.push(`playerName=${this.paramPlayerName}`);
-    if (this.paramPlayerPassword !== null)
-      paramList.push(`playerPassword=${this.paramPlayerPassword}`);
-    if (this.paramPlayerType !== null)
-      paramList.push(`playerType=${this.paramPlayerType}`);
+    paramList.push(`roomPassword=${this.roomPassword}`);
+    paramList.push(`playerName=${this.playerName}`);
+    paramList.push(`playerPassword=${this.playerPassword}`);
+    paramList.push(`playerType=${this.playerType}`);
     const newUrl = `?${paramList.join("&")}`;
     window.history.replaceState("", "", newUrl);
-
-    // 利用システムの設定
     this.setProperty({
-      property: "public.room.system",
-      value: this.currentSystem
+      property: "param",
+      value: {
+        roomName: this.roomName,
+        roomPassword: this.roomPassword,
+        playerPassword: this.playerPassword,
+        playerName: this.playerName,
+        playerType: this.playerType
+      },
+      logOff: true
     });
 
     // 利用者情報の設定
@@ -255,6 +250,28 @@ export default class CreateNewRoom extends Vue {
       logOff: true
     });
 
+    // メンバーのリセット
+    this.emptyMember();
+
+    // 存在チェックしてから決める
+    this.checkRoomName({
+      roomName: this.roomName,
+      roomFindFunc: this.doJoinRoom,
+      roomNonFindFunc: this.doNewRoom
+    });
+  }
+
+  /**
+   * ====================================================================================================
+   * 新しい部屋をつくる
+   */
+  doNewRoom() {
+    // 利用システムの設定
+    this.setProperty({
+      property: "public.room.system",
+      value: this.currentSystem
+    });
+
     // モーダル状態の解除
     this.setProperty({
       property: "isMordal",
@@ -262,16 +279,15 @@ export default class CreateNewRoom extends Vue {
       logOff: true
     });
 
-    // メンバーのリセット
-    this.emptyMember();
-
     // 部屋に接続する
     this.createPeer({
       roomName: this.roomName,
       roomPassword: this.roomPassword,
       playerName: this.playerName,
       playerPassword: this.playerPassword,
-      playerType: this.playerType
+      playerType: this.playerType,
+      resolved: () => {},
+      rejected: () => {}
     });
   }
 
@@ -280,43 +296,22 @@ export default class CreateNewRoom extends Vue {
    * 入室処理
    */
   doJoinRoom() {
-    /* ------------------------------
-     * 入力チェック
-     */
-    const errorMsg = [];
-    if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
-    if (!this.playerName) errorMsg.push("・プレイヤー名は必須項目です。");
-    if (errorMsg.length > 0) {
-      alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
-      return;
-    }
-
-    /* ------------------------------
-     * URLを書き換える（リロードなし）
-     */
-    const paramList: string[] = [];
-    paramList.push(`roomName=${this.roomName}`);
-    paramList.push(`roomPassword=${this.roomPassword}`);
-    paramList.push(`playerName=${this.playerName}`);
-    paramList.push(`playerPassword=${this.playerPassword}`);
-    paramList.push(`playerType=${this.playerType}`);
-    const newUrl = `?${paramList.join("&")}`;
-    window.history.replaceState("", "", newUrl);
-
-    // モーダル状態の解除
-    this.setProperty({
-      property: "isMordal",
-      value: false,
-      logOff: true
-    });
-
     // 部屋に接続する
     this.createPeer({
       roomName: this.roomName,
       roomPassword: this.roomPassword,
       playerName: this.playerName,
       playerPassword: this.playerPassword,
-      playerType: this.playerType
+      playerType: this.playerType,
+      resolved: () => {
+        // モーダル状態の解除
+        this.setProperty({
+          property: "isMordal",
+          value: false,
+          logOff: true
+        });
+      },
+      rejected: () => {}
     });
   }
 
