@@ -16,7 +16,7 @@ export default {
     /** ========================================================================
      * チャットログを追加する
      */
-    addChatLog: ({dispatch}: { dispatch: Function }, payload: any) => {
+    addChatLog: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddChatLog"
@@ -76,7 +76,7 @@ export default {
      * チャット文字色変更
      */
     changeChatFontColor: (
-      {dispatch}: { dispatch: Function },
+      { dispatch }: { dispatch: Function },
       payload: any
     ) => {
       dispatch("sendNoticeOperation", {
@@ -175,18 +175,18 @@ export default {
           dispatch("setProperty", {
             property: "private.display.jukeboxWindow.command",
             isNotice: true,
-            value: {command: "add", payload: bgmObj.key}
+            value: { command: "add", payload: bgmObj.key }
           });
         });
     },
     /** ========================================================================
      * 画像を追加する
      */
-    addImage: ({dispatch}: { dispatch: Function }, payload: any) => {
-      dispatch("sendNoticeOperation", {value: payload, method: "doAddImage"});
+    addImage: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", { value: payload, method: "doAddImage" });
     },
     doAddImage: (
-      {rootState}: { rootState: any },
+      { rootState }: { rootState: any },
       {
         tag,
         data,
@@ -203,14 +203,14 @@ export default {
         key: key
       });
       if (rootState.private.self.peerId === ownerPeerId) {
-        rootState.private.history.push({type: "add", key: key});
+        rootState.private.history.push({ type: "add", key: key });
       }
     },
     /** ========================================================================
      * 名前を変更する
      */
     changeName: (
-      {dispatch, rootState}: { dispatch: Function; rootState: any },
+      { dispatch, rootState }: { dispatch: Function; rootState: any },
       name: string
     ) => {
       dispatch("setProperty", {
@@ -224,17 +224,17 @@ export default {
       // if (myMemberObjList.length > 0) {
       //   const memberObj = myMemberObjList[0]
       //   const index = members.indexOf(memberObj)
-      //   dispatch('setProperty', { property: `public.room.members.${index}.name`, value: name, logOff: true})
+      //   dispatch('setProperty', { property: `public.room.members.${index}.name`, value: name, logOff: true })
       //   dispatch('sendRoomData', { type: 'CHANGE_PLAYER_NAME', value: name })
       // }
     },
     /** ========================================================================
      * BGMを追加する
      */
-    addBGM: ({dispatch}: { dispatch: Function }, payload: any) => {
-      dispatch("sendNoticeOperation", {value: payload, method: "doAddBGM"});
+    addBGM: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", { value: payload, method: "doAddBGM" });
     },
-    doAddBGM: ({rootState}: { rootState: any }, payload: any) => {
+    doAddBGM: ({ rootState }: { rootState: any }, payload: any) => {
       // 欠番を埋める方式は不採用
       let maxKey = rootState.setting.bgm.maxKey;
       const key = `bgm-${++maxKey}`;
@@ -245,19 +245,19 @@ export default {
     /** ========================================================================
      * マップオブジェクトを追加する
      */
-    addPieceInfo: ({dispatch}: { dispatch: Function }, payload: any) => {
+    addPieceInfo: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddPieceInfo"
       });
     },
-    doAddPieceInfo: ({rootState}: { rootState: any }, payload: any) => {
+    doAddPieceInfo: ({ rootState }: { rootState: any }, payload: any) => {
       const obj: any = {
         isDraggingLeft: false,
         move: {
-          from: {x: 0, y: 0},
-          dragging: {x: 0, y: 0},
-          gridOffset: {x: 0, y: 0}
+          from: { x: 0, y: 0 },
+          dragging: { x: 0, y: 0 },
+          gridOffset: { x: 0, y: 0 }
         },
         angle: {
           total: 0,
@@ -280,27 +280,27 @@ export default {
       quoridornLog(
         `[mutations] doAddPieceInfo => { type: ${obj.type}, key:${
           obj.key
-          }, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${
+        }, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${
           obj.columns
-          }, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`
+        }, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}" }`
       );
 
       rootState.public[payload.propName].list.push(obj);
       if (rootState.private.self.peerId === payload.ownerPeerId) {
-        rootState.private.history.push({type: "add", key: key});
+        rootState.private.history.push({ type: "add", key: key });
       }
     },
     /** ========================================================================
      * マップオブジェクト情報を変更する
      */
-    changePieceInfo: ({dispatch}: { dispatch: Function }, payload: any) => {
+    changePieceInfo: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doChangePieceInfo"
       });
     },
     doChangePieceInfo: (
-      {rootState, rootGetters}: { rootState: any; rootGetters: any },
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
       payload: any
     ) => {
       const key = payload.key;
@@ -316,7 +316,7 @@ export default {
           quoridornLog(
             `[mutations] update ${propName}(${key}) => ${prop}: ${
               pieceObj[prop]
-              } -> ${payload[prop]}`
+            } -> ${payload[prop]}`
           );
           pieceObj[prop] = payload[prop];
         }
@@ -327,14 +327,14 @@ export default {
     /** ========================================================================
      * マップオブジェクトの削除
      */
-    deletePieceInfo: ({dispatch}: { dispatch: Function }, payload: any) => {
+    deletePieceInfo: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doDeletePieceInfo"
       });
     },
     doDeletePieceInfo: (
-      {rootState, rootGetters}: { rootState: any; rootGetters: any },
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
       payload: any
     ) => {
       // quoridornLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
@@ -354,10 +354,10 @@ export default {
     /** ========================================================================
      * デッキのシャッフル
      */
-    shuffleDeck: ({dispatch}: { dispatch: Function }) => {
-      dispatch("sendNoticeOperation", {value: {}, method: "doShuffleDeck"});
+    shuffleDeck: ({ dispatch }: { dispatch: Function }) => {
+      dispatch("sendNoticeOperation", { value: {}, method: "doShuffleDeck" });
     },
-    doShuffleDeck: ({rootState}: { rootState: any }) => {
+    doShuffleDeck: ({ rootState }: { rootState: any }) => {
       const cardList = rootState.public.deck.cards.list.concat();
       for (let i = cardList.length - 1; i >= 0; i--) {
         // 0~iのランダムな数値を取得
@@ -376,11 +376,11 @@ export default {
     /** ========================================================================
      * カードのドロー
      */
-    drawCard: ({dispatch}: { dispatch: Function }, payload: any) => {
-      dispatch("sendNoticeOperation", {value: payload, method: "doDrawCard"});
+    drawCard: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", { value: payload, method: "doDrawCard" });
     },
     doDrawCard: (
-      {rootState, rootGetters}: { rootState: any; rootGetters: any },
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
       payload: any
     ) => {
       const index = payload.index;
@@ -406,13 +406,13 @@ export default {
     /** ========================================================================
      * グループチャットの追加
      */
-    addGroupTargetTab: ({dispatch}: { dispatch: Function }, payload: any) => {
+    addGroupTargetTab: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddGroupTargetTab"
       });
     },
-    doAddGroupTargetTab: ({rootState}: { rootState: any }, payload: any) => {
+    doAddGroupTargetTab: ({ rootState }: { rootState: any }, payload: any) => {
       const addObj = {
         key: `groupTargetTab-${++rootState.public.chat.groupTargetTab.maxKey}`,
         isSecret: false,

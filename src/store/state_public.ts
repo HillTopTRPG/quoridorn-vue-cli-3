@@ -235,7 +235,7 @@ export default {
     },
 
     /** 部屋情報 */
-    room: {name: "", members: [], system: "DiceBot", password: ""},
+    room: { name: "", members: [], system: "DiceBot", password: "" },
 
     /** プレイヤー */
     player: { list: [] },
@@ -321,9 +321,9 @@ export default {
      * @returns {*}
      */
     addMember: (
-      {commit}: { commit: Function },
-      {peerId, name}: { peerId: string; name: string }
-    ) => commit("addMember", {peerId, name}),
+      { commit }: { commit: Function },
+      { peerId, name }: { peerId: string; name: string }
+    ) => commit("addMember", { peerId, name }),
 
     /**
      * プレイヤーを追加する
@@ -334,8 +334,8 @@ export default {
      * @returns {*}
      */
     addPlayer: (
-      {commit}: { commit: Function },
-      {name, color, type}: { name: string; color: string; type: string }
+      { commit }: { commit: Function },
+      { name, color, type }: { name: string; color: string; type: string }
     ) => {
       return commit("addPlayer", { name, color, type });
       // commit('addPlayerWidth')
@@ -346,7 +346,7 @@ export default {
      * @param commit
      * @returns {*}
      */
-    emptyMember: ({commit}: { commit: Function }) => commit("emptyMember"),
+    emptyMember: ({ commit }: { commit: Function }) => commit("emptyMember"),
 
     /**
      * チャットのタブを選択したことをデータに反映する
@@ -354,7 +354,7 @@ export default {
      * @param tab
      * @returns {*}
      */
-    chatTabSelect: ({commit}: { commit: Function }, tab: string) =>
+    chatTabSelect: ({ commit }: { commit: Function }, tab: string) =>
       commit("chatTabSelect", tab),
 
     /**
@@ -363,7 +363,7 @@ export default {
      * @param tab
      * @returns {*}
      */
-    groupTargetTabSelect: ({commit}: { commit: Function }, tab: string) =>
+    groupTargetTabSelect: ({ commit }: { commit: Function }, tab: string) =>
       commit("groupTargetTabSelect", tab),
 
     /**
@@ -372,7 +372,7 @@ export default {
      * @param payload
      * @returns {*}
      */
-    imageTagChange: ({commit}: { commit: Function }, payload: any) =>
+    imageTagChange: ({ commit }: { commit: Function }, payload: any) =>
       commit("imageTagChange", payload),
 
     /**
@@ -383,7 +383,7 @@ export default {
      * @returns {*}
      */
     changeChatTab: (
-      {getters, commit}: { getters: any; commit: Function },
+      { getters, commit }: { getters: any; commit: Function },
       tabsText: string
     ) =>
       commit("changeChatTab", {
@@ -398,8 +398,8 @@ export default {
      * @param name
      */
     noticeInput: (
-      {commit, state}: { commit: Function; state: any },
-      {name, target}: { name: string; target: any }
+      { commit, state }: { commit: Function; state: any },
+      { name, target }: { name: string; target: any }
     ) => {
       // 即時入力カウントアップ
       commit("inputPeerId", { name: name, add: 1 });
@@ -420,7 +420,7 @@ export default {
      */
     addMember: (
       state: any,
-      {peerId, name}: { peerId: string; name: string }
+      { peerId, name }: { peerId: string; name: string }
     ) => {
       state.room.members.push({
         peerId: peerId,
@@ -501,7 +501,7 @@ export default {
     inputPeerId(
       this: any,
       state: any,
-      {name, add}: { name: string; add: number }
+      { name, add }: { name: string; add: number }
     ) {
       // プロパティが無ければ、リアクティブになる形式で登録をする
       if (!state.chat.inputting[name]) {
@@ -519,7 +519,7 @@ export default {
      */
     imageTagChange(
       state: any,
-      {key, imageList}: { key: string; imageList: any[] }
+      { key, imageList }: { key: string; imageList: any[] }
     ) {
       const useTexts: any[] = [];
       /* eslint no-control-regex: 0 */
@@ -591,7 +591,7 @@ export default {
      */
     changeChatTab(
       state: any,
-      {tabsText, lastActiveTab}: { tabsText: string; lastActiveTab: any }
+      { tabsText, lastActiveTab }: { tabsText: string; lastActiveTab: any }
     ) {
       // 秘匿チャット以外を削除
       state.chat.tabs

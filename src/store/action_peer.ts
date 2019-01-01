@@ -17,7 +17,7 @@ export default {
      * WebRTCでPeer接続し、Roomにも接続する
      */
     createPeer(
-      {rootState, dispatch}: { rootState: any; dispatch: any },
+      { rootState, dispatch }: { rootState: any; dispatch: any },
       {
         peerId,
         roomName,
@@ -43,11 +43,11 @@ export default {
 
       let peer: any = null;
       try {
-        peer = new Peer(peerId, {key: __SKYWAY_KEY__, debug: 1});
+        peer = new Peer(peerId, { key: __SKYWAY_KEY__, debug: 1 });
       } catch (err) {
         alert(
           "__SKYWAY_KEY__の設定を見直してください。\n現在の値：" +
-          __SKYWAY_KEY__
+            __SKYWAY_KEY__
         );
       }
 
@@ -109,7 +109,7 @@ export default {
           alert(
             `接続に失敗しました。\n原因は以下のメッセージを参考にしてください。\n${
               err.message
-              }`
+            }`
           );
         }
       });
@@ -407,7 +407,7 @@ export default {
      * 部屋の存在確認チェック
      */
     checkRoomName(
-      {rootState}: { rootState: any },
+      { rootState }: { rootState: any },
       {
         roomName,
         roomFindFunc,
@@ -423,7 +423,7 @@ export default {
       } catch (err) {
         alert(
           "__SKYWAY_KEY__の設定を見直してください。\n現在の値：" +
-          __SKYWAY_KEY__
+            __SKYWAY_KEY__
         );
         window.console.error(err);
       }
@@ -479,7 +479,7 @@ export default {
     /** ========================================================================
      * ログアウト処理（画面遷移なし）
      */
-    logout({rootState}: { rootState: any }) {
+    logout({ rootState }: { rootState: any }) {
       quoridornLog("ログアウト");
       rootState.private.peerId = null;
       rootState.public.room.name = "";
@@ -497,7 +497,7 @@ export default {
     /** ========================================================================
      * データ送信
      */
-    sendRoomData({rootState}: { rootState: any }, payload: any) {
+    sendRoomData({ rootState }: { rootState: any }, payload: any) {
       if (rootState.room.webRtcRoom) {
         switch (payload.type) {
           case "NOTICE_INPUT":

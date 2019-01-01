@@ -213,9 +213,9 @@ export default {
       property: string
     ) {
       const windowObj = getters.getStateValue(property);
-      windowObj.command = {command: !windowObj.isDisplay ? "open" : "reset"};
+      windowObj.command = { command: !windowObj.isDisplay ? "open" : "reset" };
       windowObj.isDisplay = true;
-      dispatch("windowActive", {property: property, isClose: false});
+      dispatch("windowActive", { property: property, isClose: false });
     },
 
     /**
@@ -236,7 +236,7 @@ export default {
       const windowObj = getters.getStateValue(property);
       windowObj.command = { command: "close" };
       windowObj.isDisplay = false;
-      dispatch("windowActive", {property: property, isClose: true});
+      dispatch("windowActive", { property: property, isClose: true });
     },
 
     /**
@@ -246,8 +246,8 @@ export default {
      * @param property
      */
     windowActive(
-      {state}: { state: any },
-      {property, isClose}: { property: string; isClose: boolean }
+      { state }: { state: any },
+      { property, isClose }: { property: string; isClose: boolean }
     ) {
       const splits = property.split(".");
       const dispName = splits[splits.length - 1];
@@ -255,7 +255,7 @@ export default {
 
       // displayの表示済みの画面を表示順ソートしたプロパティのリスト（指定のもの含まない）
       const propList = Object.entries(state.display)
-        .map(([key, value]) => ({key, value}))
+        .map(([key, value]) => ({ key, value }))
         .filter((obj: any) => {
           if (obj.key === dispName) return false;
           if (!obj.value) return false;
