@@ -1,7 +1,6 @@
 <template>
   <select :title="helpMessage" v-model="currentSystem">
-    <option :key="systemObj.value" :value="systemObj.value" v-for="systemObj in diceBotSystems">{{systemObj.name}}
-    </option>
+    <option :key="systemObj.value" :value="systemObj.value" v-for="systemObj in diceBotSystems">{{systemObj.name}}</option>
   </select>
 </template>
 

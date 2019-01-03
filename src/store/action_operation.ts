@@ -186,7 +186,7 @@ export default {
       dispatch("sendNoticeOperation", { value: payload, method: "doAddImage" });
     },
     doAddImage: (
-      { rootState }: { rootState: any },
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
       {
         tag,
         data,
@@ -202,31 +202,9 @@ export default {
         data: data,
         key: key
       });
-      if (rootState.private.self.peerId === ownerPeerId) {
+      if (rootGetters.peerId === ownerPeerId) {
         rootState.private.history.push({ type: "add", key: key });
       }
-    },
-    /** ========================================================================
-     * 名前を変更する
-     */
-    changeName: (
-      { dispatch, rootState }: { dispatch: Function; rootState: any },
-      name: string
-    ) => {
-      dispatch("setProperty", {
-        property: "private.self.currentChatName",
-        value: name,
-        logOff: false
-      });
-      // const myPeerId = rootState.private.self.peerId
-      // const members = rootState.public.room.members
-      // const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
-      // if (myMemberObjList.length > 0) {
-      //   const memberObj = myMemberObjList[0]
-      //   const index = members.indexOf(memberObj)
-      //   dispatch('setProperty', { property: `public.room.members.${index}.name`, value: name, logOff: true })
-      //   dispatch('sendRoomData', { type: 'CHANGE_PLAYER_NAME', value: name })
-      // }
     },
     /** ========================================================================
      * BGMを追加する
@@ -251,7 +229,10 @@ export default {
         method: "doAddPieceInfo"
       });
     },
-    doAddPieceInfo: ({ rootState }: { rootState: any }, payload: any) => {
+    doAddPieceInfo: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
       const obj: any = {
         isDraggingLeft: false,
         move: {
@@ -286,7 +267,7 @@ export default {
       );
 
       rootState.public[payload.propName].list.push(obj);
-      if (rootState.private.self.peerId === payload.ownerPeerId) {
+      if (rootGetters.peerId === payload.ownerPeerId) {
         rootState.private.history.push({ type: "add", key: key });
       }
     },
@@ -306,7 +287,7 @@ export default {
       const key = payload.key;
       const propName = payload.propName;
 
-      const pieceObj = rootGetters.getPieceObj(propName, key);
+      const pieceObj = rootGetters.getObj(key);
       for (let prop in payload) {
         if (!payload.hasOwnProperty(prop)) continue;
         if (prop === "key" || prop === "propName") {
@@ -338,11 +319,11 @@ export default {
       payload: any
     ) => {
       // quoridornLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
-      const obj = rootGetters.getPieceObj(payload.propName, payload.key);
+      const obj = rootGetters.getObj(payload.key);
       const index = rootState.public[payload.propName].list.indexOf(obj);
       rootState.public[payload.propName].list.splice(index, 1);
 
-      if (rootState.private.self.peerId === payload.ownerPeerId) {
+      if (rootGetters.peerId === payload.ownerPeerId) {
         rootState.private.history.splice(
           rootState.private.history.findIndex(
             (hisObj: any) => hisObj.key === payload.key
@@ -392,16 +373,6 @@ export default {
 
       // TODO 手札に加える処理
       rootState.private.self.cards.push(card);
-
-      // const obj = rootGetters.getPieceObj(payload.propName, payload.key)
-      // const index = rootState.public[payload.propName].list.indexOf(obj)
-      // rootState.public[payload.propName].list.splice(index, 1)
-      //
-      // if (rootState.private.self.peerId === payload.ownerPeerId) {
-      //   const delHistoryObj = rootState.private.history.filter(hisObj => hisObj.key === payload.key)[0]
-      //   const delHistoryIndex = rootState.private.history.indexOf(delHistoryObj)
-      //   rootState.private.history.splice(delHistoryIndex, 1)
-      // }
     },
     /** ========================================================================
      * グループチャットの追加
@@ -412,23 +383,22 @@ export default {
         method: "doAddGroupTargetTab"
       });
     },
-    doAddGroupTargetTab: ({ rootState }: { rootState: any }, payload: any) => {
-      const addObj = {
-        key: `groupTargetTab-${++rootState.public.chat.groupTargetTab.maxKey}`,
+    doAddGroupTargetTab: ({ rootGetters }: { rootGetters: any }, payload: any) => {
+      rootGetters.groupTargetTab.list.push({
+        key: `groupTargetTab-${++rootGetters.groupTargetTab.maxKey}`,
         isSecret: false,
         name: "",
         targetTab: null,
         isAll: false,
         group: [payload.ownerKey]
-      };
-      rootState.public.chat.groupTargetTab.list.push(addObj);
+      });
     }
   },
   getters: {
-    chatLogList: (state: any, getters: any, rootState: any) => {
-      return rootState.public.chat.logs[rootState.chat.activeTab].filter(
+    chatLogList: (state: any, getters: any, rootState: any, rootGetters: any) => {
+      return rootState.public.chat.logs[rootGetters.activeTab].filter(
         (log: any) => {
-          if (log.from === getters.selfPlayerKey) return true;
+          if (log.from === rootGetters.playerKey) return true;
           if (!log.target) return true;
           if (log.target === "groupTargetTab-0") return true;
           const kind = log.target.split("-")[0];
@@ -439,9 +409,9 @@ export default {
             const findIndex = target.group.findIndex((g: string) => {
               const kind = g.split("-")[0];
               if (kind === "player") {
-                if (g === getters.selfPlayerKey) return true;
+                if (g === rootGetters.playerKey) return true;
               } else if (kind === "character") {
-                if (getters.getObj(g).owner === getters.selfPlayerKey)
+                if (getters.getObj(g).owner === rootGetters.playerKey)
                   return true;
               }
               return false;
@@ -451,33 +421,30 @@ export default {
             window.console.log(
               "-----player",
               log.target,
-              getters.selfPlayerKey,
-              log.target === getters.selfPlayerKey
+              rootGetters.playerKey,
+              log.target === rootGetters.playerKey
             );
-            return log.target === getters.selfPlayerKey;
+            return log.target === rootGetters.playerKey;
           } else {
             const target = getters.getObj(log.target);
-            return target.owner === getters.selfPlayerKey;
+            return target.owner === rootGetters.playerKey;
           }
         }
       );
     },
-    characterList: (state: any, getters: any, rootState: any) =>
-      rootState.public.character.list,
-    groupTargetTabList: (state: any, getters: any, rootState: any) => {
-      return rootState.public.chat.groupTargetTab.list.filter((tab: any) => {
+    groupTargetTabList: (state: any, getters: any, rootState: any, rootGetters: any) => {
+      return rootGetters.groupTargetTab.list.filter((tab: any) => {
         if (tab.isAll) return true;
         const filterObj = tab.group.filter((targetKey: string) => {
           if (targetKey === getters.currentActorKey) return true;
+          const characterList = rootGetters.getMapObjectList({ kind: "character" });
           if (getters.currentActorKey.split("-")[0] === "player") {
-            const targetCharacter = getters.characterList
-              .filter(
-                (character: any) => character.owner === getters.currentActorKey
-              )
+            const targetCharacter = characterList
+              .filter((character: any) => character.owner === getters.currentActorKey)
               .filter((character: any) => character.key === targetKey)[0];
             if (targetCharacter) return true;
           } else if (getters.currentActorKey.split("-")[0] === "character") {
-            const targetCharacter = getters.characterList.filter(
+            const targetCharacter = characterList.filter(
               (character: any) => character.key === getters.currentActorKey
             )[0];
             if (targetCharacter) return true;
@@ -487,25 +454,15 @@ export default {
         if (filterObj.length > 0) return true;
       });
     },
-    currentChatName: (state: any, getters: any, rootState: any) =>
-      rootState.private.self.currentChatName,
     createInputtingMsg: () => (name: string) => `${name}が入力中...`,
-    chatTargetList: (state: any, getters: any, rootState: any) => {
+    chatTargetList: (state: any, getters: any, rootState: any, rootGetters: any) => {
       return [
         ...getters.groupTargetTabList,
-        ...rootState.public.player.list,
-        ...getters.characterList.filter(
-          (character: any) => character.place === "field"
-        )
+        ...rootGetters.playerList,
+        ...rootGetters.getMapObjectList({ kind: "character", place: "field" })
       ];
     },
-    selfPlayerKey: (state: any, getters: any, rootState: any) => {
-      const player = rootState.public.player.list.filter(
-        (player: any) => player.name === rootState.private.self.playerName
-      )[0];
-      return player ? player.key : null;
-    },
-    chatOptionPageNum: (state: any, getters: any, rootState: any) => {
+    chatOptionPageNum: (state: any, getters: any, rootState: any, rootGetters: any) => {
       if (getters.chatOptionSelectMode === "from") {
         const index = getters.getPeerActors.findIndex(
           (target: any) => target.key === getters.chatTarget
@@ -522,7 +479,7 @@ export default {
       }
       if (getters.chatOptionSelectMode === "tab") {
         const index = rootState.public.chat.tabs.findIndex(
-          (target: any) => target.name === rootState.chat.activeTab
+          (target: any) => target.name === rootGetters.activeTab
         );
         if (index === -1) return -1;
         return Math.floor(index / getters.chatOptionPagingSize) + 1;

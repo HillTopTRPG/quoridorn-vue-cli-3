@@ -1,13 +1,13 @@
 <template>
   <WindowFrame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
     <div class="contents">
-      <label>
+      <label class="playerSelect">
         <select v-model="currentPlayerKey">
           <option v-for="player in playerList" :key="player.key" :value="player.key">{{player.name}}</option>
         </select>
       </label>
       <fieldset v-if="currentPlayerKey">
-        <legend>{{getPlayerName(currentPlayerKey)}}({{getPlayer ? getPlayer.type : ""}})</legend>
+        <legend>{{getPlayerName(currentPlayerKey)}}（{{getPlayer ? getPlayer.type : ""}}）</legend>
         <label>
           チャット文字色
           <input
@@ -34,7 +34,7 @@
         <fieldset>
           <legend>マップ</legend>
           <ul class="objList">
-            <li v-for="character in getMapObjectList('character', currentPlayerKey, 'field')" :key="character.key">
+            <li v-for="character in getMapObjectList({ kind: 'character', place: 'field', playerKey: currentPlayerKey })" :key="character.key">
               <CharacterChip :type="character.kind" :objKey="character.key" />
               <fieldset class="fontColorArea">
                 <legend>チャット文字色</legend>
@@ -55,10 +55,10 @@
                 <label>過去ログ反映<input type="checkbox" checked /></label>
               </fieldset>
             </li>
-            <li v-for="mapMask in getMapObjectList('mapMask', currentPlayerKey, 'field')" :key="mapMask.key">
+            <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'field', playerKey: currentPlayerKey })" :key="mapMask.key">
               <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
             </li>
-            <li v-for="chit in getMapObjectList('chit', currentPlayerKey, 'field')" :key="chit.key">
+            <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'field', playerKey: currentPlayerKey })" :key="chit.key">
               <ChitChip :type="chit.kind" :objKey="chit.key" />
             </li>
           </ul>
@@ -69,7 +69,7 @@
         <fieldset v-if="playerType === 'GM' || currentPlayerKey === playerKey">
           <legend>キャラクター待合室</legend>
           <ul class="objList">
-            <li v-for="character in getMapObjectList('character', currentPlayerKey, 'waiting')" :key="character.key">
+            <li v-for="character in getMapObjectList({ kind: 'character', place: 'waiting', playerKey: currentPlayerKey })" :key="character.key">
               <CharacterChip :type="character.kind" :objKey="character.key" />
               <button @click="toMap(character.key)">マップへ</button>
             </li>
@@ -81,15 +81,15 @@
         <fieldset v-if="playerType === 'GM' || currentPlayerKey === playerKey">
           <legend>墓場</legend>
           <ul class="objList">
-            <li v-for="character in getMapObjectList('character', currentPlayerKey, 'graveyard')" :key="character.key">
+            <li v-for="character in getMapObjectList({ kind: 'character', place: 'graveyard', playerKey: currentPlayerKey })" :key="character.key">
               <CharacterChip :type="character.kind" :objKey="character.key" />
               <button @click="toMap(character.key)">マップへ</button>
             </li>
-            <li v-for="mapMask in getMapObjectList('mapMask', currentPlayerKey, 'graveyard')" :key="mapMask.key">
+            <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'graveyard', playerKey: currentPlayerKey })" :key="mapMask.key">
               <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
               <button @click="toMap(mapMask.key)">マップへ</button>
             </li>
-            <li v-for="chit in getMapObjectList('chit', currentPlayerKey, 'graveyard')" :key="chit.key">
+            <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'graveyard', playerKey: currentPlayerKey })" :key="chit.key">
               <ChitChip :type="chit.kind" :objKey="chit.key" />
               <button @click="toMap(chit.key)">マップへ</button>
             </li>
@@ -123,13 +123,11 @@ export default class PlayerBoxWindow extends Vue {
   @Action("windowClose") windowClose: any;
   @Action("emptyProperty") emptyProperty: any;
   @Action("setProperty") setProperty: any;
-  @Action("getPieceObj") getPieceObj: any;
   @Action("changeChatFontColor") changeChatFontColor: any;
   @Action("changePieceInfo") changePieceInfo: any;
   @Getter("getObj") getObj: any;
   @Getter("members") members: any;
   @Getter("playerList") playerList: any;
-  @Getter("characterList") characterList: any;
   @Getter("peerId") peerId: any;
   @Getter("playerType") playerType: any;
   @Getter("playerKey") playerKey: any;
@@ -139,11 +137,12 @@ export default class PlayerBoxWindow extends Vue {
   private currentPlayerKey: string = "";
 
   changeFontColorType(this: any, key: string, value: string): void {
-    const targetCharacter = this.characterList.filter(
+    const characterList = this.getMapObjectList({ kind: "character" });
+    const targetCharacter = characterList.filter(
       (character: any) => character.key === key
     )[0];
     if (!targetCharacter) return;
-    const index = this.characterList.indexOf(targetCharacter);
+    const index = characterList.indexOf(targetCharacter);
     this.setProperty({
       property: `public.character.list.${index}.fontColorType`,
       value: value,
@@ -210,6 +209,10 @@ export default class PlayerBoxWindow extends Vue {
 fieldset {
   padding: 0 0.5rem 0.5rem;
 }
+.playerSelect {
+  display: block;
+  margin-bottom: 0.5rem;
+}
 li {
   position: relative;
 }
@@ -228,22 +231,18 @@ select {
 }
 ul {
   margin: 0;
-  padding: 0 0.5rem;
+  list-style: none;
+  padding: 0 0.5rem 0 0;
 
-  &.objList {
-    list-style: none;
-    padding-left: 0;
+  &.objList > li {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
 
-    > li {
-      display: flex;
-      flex-direction: row;
-      justify-content: left;
-      align-items: center;
-
-      .character {
-        margin-top: 1em;
-        margin-right: 0.5rem;
-      }
+    .character {
+      margin-top: 1em;
+      margin-right: 0.5rem;
     }
   }
 }

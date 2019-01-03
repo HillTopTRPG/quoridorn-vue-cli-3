@@ -3,7 +3,7 @@
     <div class="contents">
       <div>以下のルームメンバーが保存されていました。<br>あなたを選んでください。</div>
       <ul>
-        <li v-for="memberObj in members" :key="memberObj.peerId"><label><input type="radio" name="peerId" :value="memberObj.peerId" v-model="currentPeerId" />{{memberObj.name}}({{memberObj.peerId}})</label></li>
+        <li v-for="member in members" :key="member.peerId"><label><input type="radio" name="peerId" :value="member.peerId" v-model="currentPeerId" />{{getObj(member.playerKey).name}}({{member.peerId}})</label></li>
       </ul>
       <div class="operateArea">
         <button @click="commit">決定</button>
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 
@@ -56,31 +56,15 @@ export default {
     }
   },
   watch: {
-    yourPeerId(yourPeerId) {
-      this.currentPeerId = yourPeerId;
+    peerId(peerId) {
+      this.currentPeerId = peerId;
     }
   },
   computed: mapState({
-    yourPeerId() {
-      const privatePeerId = this.$store.state.private.self.peerId;
-      if (privatePeerId) {
-        const filtered = this.members.filter(
-          memberObj => memberObj.peerId === privatePeerId
-        );
-        if (filtered.length > 0) {
-          return privatePeerId;
-        }
-      }
-      if (this.members.length > 0) {
-        return this.members[0].peerId;
-      }
-      return null;
-    },
-    members: state => state.public.room.members,
-    roomName: state => state.public.room.name,
+    ...mapGetters(["getObj", "peerId", "members", "roomName"]),
     currentMemberObj() {
       return this.members.filter(
-        memberObj => memberObj.peerId === this.currentPeerId
+        member => member.peerId === this.currentPeerId
       )[0];
     }
   })

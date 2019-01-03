@@ -149,7 +149,7 @@ export default class CreateRoomWindow extends Vue {
         playerPassword: this.playerPassword,
         playerName: this.playerName,
         playerType: this.playerType,
-        currentChatName: `${this.playerName}(${this.playerType})`
+        currentChatKey: `player-${this.playerName}`
       },
       logOff: true
     });

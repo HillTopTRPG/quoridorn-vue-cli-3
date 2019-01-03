@@ -459,18 +459,16 @@ export default new Vuex.Store({
        * @returns {string}
        */
       obj => {
-        let text = "{ ";
+        const params = [];
         for (const key in obj) {
           if (!obj.hasOwnProperty(key)) continue;
           let val = obj[key];
           if (typeof val === "string") {
             val = `"${val}"`;
           }
-          text += `${key}:${val}, `;
+          params.push(`${key}:${val}`);
         }
-        text = text.substr(0, text.length - 2);
-        text += " }";
-        return text;
+        return `{ ${params.join(", ")} }`;
       },
 
     paramRoomName: state => state.param.roomName,
@@ -498,11 +496,7 @@ export default new Vuex.Store({
     deckCommand: state => state.deck.command,
     deckHoverIndex: state => state.deck.hoverIndex,
     deckHoverKey: state => state.deck.hoverKey,
-    playerKey: (state, getters, rootState) => {
-      const player = rootState.public.player.list.filter(
-        player => player.name === rootState.private.self.playerName
-      )[0];
-      return player ? player.key : null;
-    }
+    webRtcPeer: state => state.self.webRtcPeer,
+    webRtcRoom: state => state.room.webRtcRoom
   }
 });

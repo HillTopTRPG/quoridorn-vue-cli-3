@@ -181,7 +181,7 @@ export default {
     },
     open() {
       this.isOpenSwitch = false;
-      let characterObj = this.getPieceObj("character", this.key);
+      let characterObj = this.getObj("character", this.key);
       this.currentImageTag = characterObj.currentImageTag;
       this.switchImageList.splice(0, this.switchImageList.length);
       characterObj.useImageList.split("|").forEach((imageStr, index) => {
@@ -202,7 +202,7 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["getPieceObj", "parseColor"]),
+    ...mapGetters(["getObj", "parseColor"]),
     key: state => state.private.display["editCharacterWindow"].key,
     selectedTagIndexText() {
       const imageList = this.imageList;

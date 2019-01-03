@@ -82,16 +82,15 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["getPieceObj"]),
+    ...mapGetters(["getObj"]),
     objKey: state => state.private.display["characterContext"].key,
     url() {
       return this.objKey === -1 ? null : this.storeObj.url;
     },
     storeObj() {
-      const type = "character";
       const key = this.objKey;
       // quoridornLog(`key:${key}`)
-      return this.getPieceObj(type, key, true);
+      return this.getObj(key);
     }
   })
 };

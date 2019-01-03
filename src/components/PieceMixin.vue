@@ -225,9 +225,9 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["isFitGrid", "getPieceObj"]),
+    ...mapGetters(["isFitGrid", "getObj"]),
     storeObj() {
-      return this.getPieceObj(this.type, this.objKey);
+      return this.getObj(this.type, this.objKey);
     },
     storeIndex(state) {
       return state.public[this.type].list.indexOf(this.storeObj);

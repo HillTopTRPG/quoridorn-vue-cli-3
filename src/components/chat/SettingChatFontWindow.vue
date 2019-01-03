@@ -2,10 +2,10 @@
   <WindowFrame titleText="チャットフォント設定画面" display-property="private.display.settingChatFontWindow" align="center" fixSize="320, 132" @open="initWindow" @reset="initWindow">
     <div class="contents">
       <div>この画面の操作は即時反映されます。</div>
-      <label v-if="members.length === 0">文字色<input type="color" :value="privateFontColor" @change="event => changePrivateFontColor(event)"></label>
+      <label v-if="members.length === 0">文字色<input type="color" :value="fontColor" @change="event => changePrivateFontColor(event)"></label>
       <label v-if="members.length === 0">過去ログ反映<input type="checkbox" v-model="historyChange"></label>
-      <fieldset v-if="members.length > 0" class="memberArea" v-for="member in members" :key="member.peerId">
-        <legend>{{member.name ? member.name : `(${member.peerId})`}}</legend>
+      <fieldset class="memberArea" v-for="member in members" :key="member.peerId">
+        <legend>{{getObj(member.playerKey).name || `(${member.peerId})`}}</legend>
         <div>
           <label>文字色<input type="color" :value="member.color" @change="event => changePeerFontColor(member.peerId, event)"></label>
           <label>過去ログ反映<input type="checkbox" value="false"></label>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 
@@ -101,8 +101,8 @@ export default {
     }
   },
   computed: mapState({
+    ...mapGetters(["getObj", "fontColor"]),
     members: state => state.public.room.members,
-    privateFontColor: state => state.private.self.color,
     chatLogs: state => state.public.chat.logs
   })
 };

@@ -35,8 +35,6 @@ export default class Deck extends Vue {
   @Action("setProperty") setProperty: any;
   @Getter("deck") deck: any;
   @Getter("deckCardList") deckCardList: any;
-  @Getter("deckWidth") deckWidth: any;
-  @Getter("deckHeight") deckHeight: any;
   @Getter("deckCommand") deckCommand: any;
   @Getter("deckHoverIndex") deckHoverIndex: any;
   @Getter("deckHoverKey") deckHoverKey: any;
@@ -55,7 +53,7 @@ export default class Deck extends Vue {
 
   get containerStyle(): any {
     const obj: any = {};
-    obj.width = this.deckWidth * 0.8 + 22 + "px";
+    obj.width = this.deck.width * 0.8 + 22 + "px";
     if (this.isMordal) {
       obj.filter = "blur(3px)";
     }
@@ -64,8 +62,8 @@ export default class Deck extends Vue {
 
   get deckStyle(): any {
     const obj: any = {};
-    obj.width = this.deckWidth * 0.8 + 15 + "px";
-    obj.height = this.deckHeight * 0.8 + 15 + "px";
+    obj.width = this.deck.width * 0.8 + 15 + "px";
+    obj.height = this.deck.height * 0.8 + 15 + "px";
     return obj;
   }
 

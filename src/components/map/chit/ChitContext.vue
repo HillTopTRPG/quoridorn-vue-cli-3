@@ -55,13 +55,12 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["getPieceObj"]),
+    ...mapGetters(["getObj"]),
     objKey: state => state.private.display["chitContext"].key,
     storeObj() {
-      const type = "chit";
       const key = this.objKey;
       // quoridornLog(`key:${key}`)
-      return this.getPieceObj(type, key);
+      return this.getObj(key);
     }
   })
 };

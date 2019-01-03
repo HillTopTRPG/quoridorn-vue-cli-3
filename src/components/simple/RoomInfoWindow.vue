@@ -8,7 +8,7 @@
       <ul v-if="playerList.length > 0">
         <li v-for="(player, index) in playerList" :key="player.key">
           <b v-if="index === 0">[親]</b>
-          <b v-if="player.key === selfPlayerKey">[あなた]</b>
+          <b v-if="player.key === playerKey">[あなた]</b>
           <span>{{player.name}}</span>
           <div class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createURL(player)"/></div>
         </li>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 
@@ -56,26 +56,7 @@ export default {
     // }
   },
   computed: mapState({
-    roomName: state => state.public.room.name,
-    password: state => state.public.room.password,
-    playerList: state => state.public.player.list,
-    yourPeerId: state => state.private.self.peerId,
-    selfPlayerKey: state => {
-      const player = state.public.player.list.filter(
-        player => player.name === state.private.self.playerName
-      )[0];
-      return player ? player.key : null;
-    },
-    inviteUrl(state) {
-      const baseUrl = location.href.replace(/\?.+$/, "");
-      const roomName = state.public.room.name;
-      const password = state.public.room.password;
-      const passwordParam = password ? `&password=${password}` : "";
-      return `${baseUrl}?roomName=${roomName}${passwordParam}`;
-    },
-    text() {
-      return location.pathname;
-    }
+    ...mapGetters(["roomName", "playerKey", "playerList", "inviteUrl"])
   })
 };
 </script>

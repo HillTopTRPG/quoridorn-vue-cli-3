@@ -89,7 +89,7 @@ export default {
       return filteredList[0];
     },
     initWindow() {
-      let chitObj = this.getPieceObj("chit", this.key);
+      let chitObj = this.getObj(this.key);
       this.currentImageTag = chitObj.currentImageTag;
       this.imageKey = chitObj.imageKey;
       this.isReverse = chitObj.isReverse;
@@ -99,7 +99,7 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["getPieceObj"]),
+    ...mapGetters(["getObj"]),
     key: state => state.private.display["editChitWindow"].key,
     selectedTagIndexText() {
       const imageList = this.imageList;

@@ -203,15 +203,6 @@ export default {
       }
       this.changeProp(groupTargetTab, "group", newArr);
     },
-    getChatFromKey() {
-      const obj = this.getPeerActors
-        .map(actor => ({ name: this.getViewName(actor.key), key: actor.key }))
-        .filter(obj => obj.name === this.currentChatName)[0];
-      if (!obj) {
-        return "";
-      }
-      return obj.key;
-    },
     getViewNames(tab) {
       return tab.isAll
         ? "全員"
@@ -239,7 +230,14 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["getPeerActors", "getViewName"]),
+    ...mapGetters([
+      "getPeerActors",
+      "getViewName",
+      "currentChatKey",
+      "chatTabList",
+      "playerList",
+      "getMapObjectList"
+    ]),
     objKey: state => state.private.display["editGroupChatWindow"].key,
     storeObj() {
       return this.groupTargetTabList.filter(tab => tab.key === this.objKey)[0];
@@ -260,25 +258,20 @@ export default {
         return { width: `${this.widthList[index]}px` };
       },
     /* End 列幅可変テーブルのプロパティ */
-    playerList: state => state.public.player.list,
-    characterList: state => state.public.character.list,
     windowSize: state => state.private.display.editGroupChatWindow.windowSize,
-    chatTabList: state => state.public.chat.tabs,
-    selfPlayerKey: state => {
-      const player = state.public.player.list.filter(
-        player => player.name === state.private.self.playerName
-      )[0];
-      return player ? player.key : null;
-    },
-    currentChatName: state => state.private.self.currentChatName,
     targetList() {
       const result = [];
       this.playerList.forEach(player => {
         result.push(player);
-        this.characterList
-          .filter(character => character.owner === player.key)
-          .filter(character => character.place === "field")
-          .forEach(character => result.push(character));
+        // 破壊的に追加
+        result.push.apply(
+          result,
+          this.getMapObjectList({
+            kind: "character",
+            place: "field",
+            playerKey: player.key
+          })
+        );
       });
       return result;
     }

@@ -188,13 +188,10 @@ export default {
       this.changeProp(groupTargetTab, "group", newArr);
     },
     getChatFromKey() {
-      const obj = this.getPeerActors
-        .map(actor => ({ name: this.getViewName(actor.key), key: actor.key }))
-        .filter(obj => obj.name === this.currentChatName)[0];
-      if (!obj) {
-        return "";
-      }
-      return obj.key;
+      const actor = this.getPeerActors.filter(
+        actor => actor.key === this.currentChatKey
+      )[0];
+      return actor ? actor.key : "";
     },
     getViewNames(tab) {
       return tab.isAll
@@ -203,16 +200,23 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["getPeerActors", "getViewName", "getObj"]),
+    ...mapGetters([
+      "getPeerActors",
+      "getViewName",
+      "getObj",
+      "playerKey",
+      "currentChatKey",
+      "chatTabList"
+    ]),
     groupTargetTabList(state) {
       return state.public.chat.groupTargetTab.list.filter(tab => {
         if (tab.isAll) return true;
         const targetList = tab.group.map(g => this.getObj(g)).filter(obj => {
           const kind = obj.key.split("-")[0];
           if (kind === "player") {
-            if (obj.key === this.selfPlayerKey) return true;
+            if (obj.key === this.playerKey) return true;
           } else {
-            if (obj.owner === this.selfPlayerKey) return true;
+            if (obj.owner === this.playerKey) return true;
           }
           return false;
         });
@@ -236,17 +240,8 @@ export default {
         return { width: `${this.widthList[index]}px` };
       },
     /* End 列幅可変テーブルのプロパティ */
-    players: state => state.public.player.list,
     windowSize: state =>
-      state.private.display.settingChatTargetTabWindow.windowSize,
-    chatTabList: state => state.public.chat.tabs,
-    selfPlayerKey: state => {
-      const player = state.public.player.list.filter(
-        player => player.name === state.private.self.playerName
-      )[0];
-      return player ? player.key : null;
-    },
-    currentChatName: state => state.private.self.currentChatName
+      state.private.display.settingChatTargetTabWindow.windowSize
   })
 };
 </script>

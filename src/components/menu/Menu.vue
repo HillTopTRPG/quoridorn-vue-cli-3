@@ -23,8 +23,8 @@
     </div>
     <!-- 部屋情報 -->
     <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isConnected}">
-      ルーム名.<span :class="{isDisconnect : !isConnected}">{{ roomName || "未接続" }}</span>
-      :
+      <span :class="{isDisconnect : !isConnected}">{{ `${roomName}` || "未接続" }}</span>
+      ：
       <span>{{ members.length }}</span>名
     </div>
     <!-- 共有メモ -->
@@ -457,9 +457,8 @@ export default class Menu extends Vue {
   get isConnected(): boolean {
     if (!this.peerId) return false;
     return (
-      this.members.findIndex(
-        (memberObj: any) => memberObj.peerId === this.peerId
-      ) > -1
+      this.members.findIndex((member: any) => member.peerId === this.peerId) >
+      -1
     );
   }
 

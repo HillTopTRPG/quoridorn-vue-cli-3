@@ -12,9 +12,21 @@
     </label>
 
     <SubBlockTitle @open="openWaitRoom" text="部屋ができるのを待つ" v-if="!isRoomExist"/>
+    <div class="indentDescription description" v-if="paramRoomName && !isRoomExist">部屋が作られたら自動で入室します。それまでは仮部屋での待機となります。</div>
     <div :class="{isShow: isViewWait && !isRoomExist}" class="subBlock waitRoom">
-      <div class="description">部屋が作られたら自動で入室します。それまでは仮部屋での待機となります。</div>
       <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword"/></label>
+      <fieldset class="playerInfo">
+        <legend>あなたの情報</legend>
+        <div>
+          <label>権限：<select v-model="playerType">
+            <option :key="role.value" :value="role.value" v-for="role in roles">{{role.label}}</option>
+          </select><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="playerName"/>
+          </label>
+        </div>
+        <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
+        <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
+        <div>権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
+      </fieldset>
       <button @click="doWaitRoom" type="button"><i class="icon-home3"></i> 仮入室</button>
     </div>
 
@@ -37,8 +49,8 @@
     </div>
 
     <SubBlockTitle @open="openNewRoom" text="新しい部屋をつくる"/>
-    <div class="newRoomDescription description" v-if="paramRoomName && !isRoomExist">「{{paramRoomName}}」は作成可能です。</div>
-    <div class="newRoomDescription description" v-if="paramRoomName && isRoomExist">「{{paramRoomName}}」はすでに作成済みです。<br>同じ名前の部屋はひとつのサーバでひとつしか作成できません。<br>部屋名を変更して、もう一度チェックしてください。
+    <div class="indentDescription description" v-if="paramRoomName && !isRoomExist">「{{paramRoomName}}」は作成可能です。</div>
+    <div class="indentDescription description" v-if="paramRoomName && isRoomExist">「{{paramRoomName}}」はすでに作成済みです。<br>同じ名前の部屋はひとつのサーバでひとつしか作成できません。<br>部屋名を変更して、もう一度チェックしてください。
     </div>
     <div :class="{isShow: isViewNewRoom && !isRoomExist}" class="subBlock newRoom">
       <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword"/></label>
@@ -94,6 +106,7 @@ export default class CreateNewRoom extends Vue {
   /*
    * data
    */
+  static ENTRANCE_ROOM_NAME = "待機部屋";
   private roomName: string = "";
   private roomPassword: string = "";
   private playerName: string = "";
@@ -113,6 +126,7 @@ export default class CreateNewRoom extends Vue {
     this.playerName = this.paramPlayerName || "";
     this.playerPassword = this.paramPlayerPassword || "";
 
+    // 選択肢と一致していれば、権限をセットする
     if (
       this.roles.findIndex(
         (role: any) => role.value === this.paramPlayerType
@@ -121,12 +135,17 @@ export default class CreateNewRoom extends Vue {
       this.playerType = this.paramPlayerType;
     }
 
-    if (this.paramRoomPassword !== null) {
-      this.isViewWait = true;
-    }
-    if (this.paramPlayerName) {
-      this.isViewNewRoom = true;
-    }
+    // if (this.paramRoomPassword !== null || this.playerName) {
+    //   this.isViewWait = true;
+    // }
+  }
+
+  openWaitRoom() {
+    this.isViewWait = !this.isViewWait;
+  }
+
+  openNewRoom() {
+    this.isViewNewRoom = !this.isViewNewRoom;
   }
 
   /**
@@ -190,18 +209,6 @@ export default class CreateNewRoom extends Vue {
     // end of 部屋存在チェック
   }
 
-  openWaitRoom() {
-    this.isViewWait = !this.isViewWait;
-  }
-
-  openNewRoom() {
-    this.isViewNewRoom = !this.isViewNewRoom;
-  }
-
-  doWaitRoom() {
-    // TODO
-  }
-
   /**
    * ====================================================================================================
    * 部屋建て・入室振り分け
@@ -225,6 +232,8 @@ export default class CreateNewRoom extends Vue {
     paramList.push(`playerType=${this.playerType}`);
     const newUrl = `?${paramList.join("&")}`;
     window.history.replaceState("", "", newUrl);
+
+    // 格納しているパラメータ値を更新
     this.setProperty({
       property: "param",
       value: {
@@ -245,7 +254,7 @@ export default class CreateNewRoom extends Vue {
         playerPassword: this.playerPassword,
         playerName: this.playerName,
         playerType: this.playerType,
-        currentChatName: `${this.playerName}(${this.playerType})`
+        currentChatKey: `player-${this.playerName}`
       },
       logOff: true
     });
@@ -258,6 +267,49 @@ export default class CreateNewRoom extends Vue {
       roomName: this.roomName,
       roomFindFunc: this.doJoinRoom,
       roomNonFindFunc: this.doNewRoom
+    });
+  }
+
+  /**
+   * ====================================================================================================
+   * 部屋ができるのを待つ
+   */
+  doWaitRoom() {
+    // 入力チェック
+    const errorMsg = [];
+    if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
+    if (errorMsg.length > 0) {
+      alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
+      return;
+    }
+
+    // 再帰呼び出しでチェックし続け、部屋ができたら入室する
+    const checkFunc = () => {
+      this.checkRoomName({
+        roomName: this.roomName,
+        roomFindFunc: this.doJoinRoom,
+        roomNonFindFunc: checkFunc,
+        loadingFlg: false
+      });
+    };
+    checkFunc.call(this);
+
+    // モーダル状態の解除
+    this.setProperty({
+      property: "isMordal",
+      value: false,
+      logOff: true
+    });
+
+    // エントランス部屋に接続する
+    this.createPeer({
+      roomName: "エントランス",
+      roomPassword: "",
+      playerName: this.playerName,
+      playerPassword: this.playerPassword,
+      playerType: this.playerType,
+      resolved: () => {},
+      rejected: () => {}
     });
   }
 
@@ -338,8 +390,7 @@ fieldset.root > legend {
 }
 
 .roomName {
-  margin-top: 0.5rem;
-  margin-bottom: 1em;
+  margin: 0.5rem 0;
 }
 
 .subBlock {
@@ -360,23 +411,21 @@ fieldset.root > legend {
   }
 
   &.waitRoom {
-    transition-duration: 0.1s;
+    transition-duration: 0.2s;
 
     &.isShow {
-      height: 5.3em;
+      height: 12.6em;
     }
   }
 
   &.joinRoom {
-    transition-duration: 0.1s;
-
     &.isShow {
       height: 12.7em;
     }
   }
 
   &.newRoom {
-    transition-duration: 0.3s;
+    transition-duration: 0.2s;
 
     &.isShow {
       height: 14.3em;
@@ -384,7 +433,7 @@ fieldset.root > legend {
   }
 }
 
-.newRoomDescription {
+.indentDescription {
   margin-left: 4rem;
 }
 

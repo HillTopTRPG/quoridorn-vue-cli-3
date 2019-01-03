@@ -71,7 +71,7 @@ export default {
     },
     initWindow() {
       // quoridornLog(`initWindow`)
-      let mapMaskObj = this.getPieceObj("mapMask", this.key);
+      let mapMaskObj = this.getObj("mapMask", this.key);
       this.name = mapMaskObj.name;
       this.width = mapMaskObj.columns;
       this.height = mapMaskObj.rows;
@@ -88,7 +88,7 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["parseColor", "getPieceObj"]),
+    ...mapGetters(["parseColor", "getObj"]),
     key: state => state.private.display["editMapMaskWindow"].key,
     mapMaskStyle() {
       let width = this.width * this.gridSize;

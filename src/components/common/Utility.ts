@@ -11,8 +11,6 @@ export function getUrlParam(
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-// quoridornLog = window.console.log.bind(console, '%c[System] %c%s', 'color:blue;font-weight:bold', '')
-
 export function quoridornLog(...a: any): void {
   // window.console.log(...arguments)
 
@@ -106,40 +104,29 @@ export function quoridornLog(...a: any): void {
     }
   });
   window.console.log(format, ...logs);
-
-  // // あとで元に戻すためにバックアップ
-  // const backupPrepare = Error.prepareStackTrace
-  //
-  // // 第2引数に渡した関数はスタックトレースから除外される
-  // Error.captureStackTrace(this, quoridornLog)
-  //
-  // Error.prepareStackTrace = function (_, stack) {
-  //   // window.console.log('---------------------', stack)
-  //   // stackはCallSiteオブジェクトの配列
-  //   stack.forEach(function (callSite, i, self) {
-  //     // if (i < stack.length - 1) return
-  //     // window.console.log(i, self.length, self)
-  //     let fileName = callSite.getFileName()
-  //     // window.console.log('FileName', fileName)
-  //     if (fileName) {
-  //       fileName = fileName.replace(/^.+\//, '')
-  //     }
-  //     const lineNumber = callSite.getLineNumber()
-  //     const txt = `${i} ${fileName}:${lineNumber}`
-  //     format += '%c%s'
-  //     logs.push('margin-left: 20px; color:white; border-radius: 3px; background-color: black; padding: 2px 5px;')
-  //     logs.push(txt)
-  //     // window.console.log(format, ...logs)
-  //   })
-  // }
-  //
-  // // stackプロパティにアクセスしないとprepareStackTraceが呼ばれない
-  // this.stack
-  //
-  // // デフォルトのprepareStackTrace関数に戻す
-  // setTimeout(() => {
-  //   Error.prepareStackTrace = backupPrepare
-  // })
 }
 
-// quoridornLog('aaaa -> bbb: val1', {rrr: 123, qqq: 432}, 'bbb ccc: val2 ddd', {ppp: 222, fff: 4444})
+/**
+ * 文字列をクリップボードにコピーする
+ * @param text
+ */
+export function execCopy(text: string): boolean {
+  const temp = document.createElement("div");
+
+  temp.appendChild(document.createElement("pre")).textContent = text;
+
+  const s = temp.style;
+  s.position = "fixed";
+  s.left = "-100%";
+
+  document.body.appendChild(temp);
+  document.getSelection()!.selectAllChildren(temp);
+
+  const result = document.execCommand("copy");
+
+  document.body.removeChild(temp);
+  // true なら実行できている falseなら失敗か対応していないか
+  return result;
+}
+
+// quoridornLog("aaaa -> bbb: val1", {rrr: 123, qqq: 432}, "bbb ccc: val2 ddd", {ppp: 222, fff: 4444})

@@ -69,13 +69,12 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["isWindowOpen", "getPieceObj"]),
+    ...mapGetters(["isWindowOpen", "getObj"]),
     objKey: state => state.private.display["mapMaskContext"].key,
     storeObj() {
-      const type = "mapMask";
       const key = this.objKey;
       // quoridornLog(`key:${key}`)
-      return this.getPieceObj(type, key);
+      return this.getObj(key);
     },
     isLock() {
       if (!this.isWindowOpen("private.display.mapMaskContext")) {

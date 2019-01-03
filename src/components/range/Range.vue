@@ -397,8 +397,7 @@ export default {
           const cornerDistance = Math.sqrt(
             Math.pow(corner.x - center.x, 2) + Math.pow(corner.y - center.y, 2)
           );
-          if (cornerDistance > useDistance) {
-          } else {
+          if (cornerDistance <= useDistance) {
             // 罫線引いて繋げる
             ctx.beginPath();
             ctx.moveTo(corner.canvasX, corner.canvasY);
@@ -519,7 +518,7 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["getPieceObj", "getAllObstacle"]),
+    ...mapGetters(["getAllObstacle"]),
     rangeStyle() {
       const rect = this.rect;
       const transform = `rotateZ(${-this.arrangeAngle(

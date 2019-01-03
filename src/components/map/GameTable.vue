@@ -17,14 +17,15 @@
       <MapBoard/>
     </div>
 
-    <MapMask :key="key" :objKey="key" @drag="dragging" @leftDown="leftDown"
-             @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="mapMask"
-             v-for="key in pieceKeyList('mapMask')"/>
-    <Character :key="key" :objKey="key" @drag="dragging" @leftDown="leftDown"
-               @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="character"
-               v-for="key in pieceKeyList('character')"/>
-    <Chit :key="key" :objKey="key" @drag="dragging" @leftDown="leftDown"
-          @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="chit" v-for="key in pieceKeyList('chit')"/>
+    <MapMask v-for="obj in getMapObjectList({ kind: 'mapMask', place: 'field' })"
+             :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
+             @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="mapMask"/>
+    <Character v-for="obj in getMapObjectList({ kind: 'character', place: 'field' })"
+               :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
+               @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="character"/>
+    <Chit v-for="obj in getMapObjectList({ kind: 'chit', place: 'field' })"
+          :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
+          @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="chit"/>
 
   </div>
 </template>
@@ -58,7 +59,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Action("setProperty") setProperty: any;
   @Action("windowClose") windowClose: any;
   @Action("importStart") importStart: any;
-  @Getter("pieceKeyList") pieceKeyList: any;
   @Getter("isFitGrid") isFitGrid: any;
   @Getter("parseColor") parseColor: any;
   @Getter("getBackgroundImage") getBackgroundImage: any;
@@ -77,6 +77,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("move") move: any;
   @Getter("anglevolatile") anglevolatile: any;
   @Getter("isMordal") isMordal: any;
+  @Getter("getMapObjectList") getMapObjectList: any;
 
   mounted(): void {
     document.addEventListener("mousemove", this.mouseMove);

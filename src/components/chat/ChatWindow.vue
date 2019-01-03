@@ -23,21 +23,16 @@
       <!----------------
        ! 操作盤
        !--------------->
-      <div class="oneLine dep">
+      <label class="oneLine dep">
         <span class="label">名前(！)</span>
-        <select :tabindex="chatTabList.length + 2" :value="nameToKeyView(currentChatName)" @change="inputName" title="">
+        <select :tabindex="chatTabList.length + 2" :value="currentChatKey" @change="event => inputName(event.target.value)" title="">
           <option v-for="actor in getPeerActors" :key="actor.key" :value="actor.key">{{getViewName(actor.key)}}</option>
         </select>
-        <!--<select :tabindex="chatTabList.length + 5" v-model="secretTarget">-->
-          <!--<option></option>-->
-          <!--<option v-for="member in members" :key="member.peerId" :value="member.peerId">{{member.name}}</option>-->
-        <!--</select>-->
         <DiceBotSelect ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabList.length + 6" class="diceBotSystem"/>
-        <!--<select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select>-->
         <span class="icon"><i class="icon-dice" title="ダイスボットの設定" @click="settingDiceBot" :tabindex="chatTabList.length + 7"></i></span>
         <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabList.length + 8"></i></span>-->
-        <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabList.length + 9"></i></span>
-      </div>
+        <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabList.length + 8"></i></span>
+      </label>
       <!----------------
        ! 発言
        !--------------->
@@ -53,7 +48,7 @@
                   :class="{ active: tabObj.key === chatTarget }"
                   @mousedown.prevent="groupTargetTabSelect(tabObj.key)"
                   :tabindex="chatTabList.length + 12 + index"
-            >> {{tabObj.name}}{{otherMatcherName(tabObj) ? `(${otherMatcherName(tabObj)})` : ''}}</span>
+            >> {{tabObj.name}}{{otherMatcherObj(tabObj) ? `(${getViewName(otherMatcherObj(tabObj))})` : ''}}</span>
             <span class="tab addButton"
                   @click="addTargetTab"
                   :tabindex="chatTabList.length + chatTabList.length + 12"
@@ -73,7 +68,7 @@
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
               <li v-for="actor in getPeerActors"
                   :key="actor.key"
-                  :class="{selected: currentChatName === getViewName(actor.key)}"
+                  :class="{selected: currentChatKey === actor.key}"
                   tabindex="-1"
               >{{getViewName(actor.key)}}</li>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
@@ -116,12 +111,12 @@
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
             </ul>
           </div>
-          <div class="chatInputArea">
-            <div class="chatOption" @click="clickChatOption">
-              <div class="emphasis">! {{currentChatName}}</div>
-              <div :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{getGroupTargetName()}}</div>
-              <div :class="{emphasis: outputTab !== '[選択中]'}"># {{outputTab}}</div>
-            </div>
+          <label class="chatInputArea">
+            <span class="chatOption" @click="clickChatOption">
+              <span class="emphasis">! {{getViewName(currentChatKey)}}</span>
+              <span :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{getGroupTargetName()}}</span>
+              <span :class="{emphasis: outputTab !== '[選択中]'}"># {{outputTab}}</span>
+            </span>
             <!----------------
              ! 入力欄
              !--------------->
@@ -137,7 +132,7 @@
                       :tabindex="chatTabList.length + chatTabList.length + 14"
                       :placeholder="'メッセージ（改行はShift + Enter）'"
             ></textarea>
-          </div>
+          </label>
         </div>
         <button :tabindex="chatTabList.length + chatTabList.length + 15">送信</button>
       </div>
@@ -150,6 +145,7 @@
           :key="name"
         >
           <img
+            alt=""
             v-show="inputtingPeerIdList.length>0"
             :src="require('../../assets/inputting.gif')"
           >
@@ -184,24 +180,22 @@ export default class ChatWindow extends Vue {
   @Action("windowOpen") windowOpen: any;
   @Action("setProperty") setProperty: any;
   @Action("sendRoomData") sendRoomData: any;
-  @Action("changeName") changeName: any;
   @Getter("getPeerActors") getPeerActors: any;
   @Getter("getViewName") getViewName: any;
   @Getter("getObj") getObj: any;
   @Getter("chatLogList") chatLogList: any;
   @Getter("chatTabList") chatTabList: any;
   @Getter("playerList") playerList: any;
-  @Getter("characterList") characterList: any;
   @Getter("groupTargetTabList") groupTargetTabList: any;
   @Getter("members") members: any;
-  @Getter("currentChatName") currentChatName: any;
+  @Getter("currentChatKey") currentChatKey: any;
   @Getter("inputting") inputting: any;
   @Getter("createInputtingMsg") createInputtingMsg: any;
   @Getter("fontColor") fontColor: any;
   @Getter("chatTargetList") chatTargetList: any;
   @Getter("activeTab") activeTab: any;
   @Getter("hoverTab") hoverTab: any;
-  @Getter("selfPlayerKey") selfPlayerKey: any;
+  @Getter("playerKey") playerKey: any;
   @Getter("chatOptionPageNum") chatOptionPageNum: any;
   @Getter("chatOptionPageMaxNum") chatOptionPageMaxNum: any;
   @Getter("chatOptionPagingList") chatOptionPagingList: any;
@@ -235,17 +229,17 @@ export default class ChatWindow extends Vue {
   onInput(event: any): void {
     const text = event.target.value;
 
-    let selectFrom: any = null;
+    let selectFrom: string = "";
     if (text.startsWith("!") || text.startsWith("！")) {
       const useText = text.substring(1);
       if (useText.length === 0) {
-        selectFrom = this.currentChatName;
+        selectFrom = this.currentChatKey;
       }
       this.getPeerActors.forEach((target: any) => {
         if (selectFrom) return;
         if (this.getViewName(target.key).startsWith(useText)) {
           window.console.log(target);
-          selectFrom = this.getViewName(target.key);
+          selectFrom = target.key;
         }
       });
     }
@@ -284,7 +278,7 @@ export default class ChatWindow extends Vue {
     if (selectFrom) {
       this.chatOptionSelectMode = "from";
       this.setProperty({
-        property: "private.self.currentChatName",
+        property: "private.self.currentChatKey",
         value: selectFrom,
         isNotice: false,
         logOff: true
@@ -299,7 +293,7 @@ export default class ChatWindow extends Vue {
       this.chatOptionSelectMode = "";
       this.sendRoomData({
         type: "NOTICE_INPUT",
-        value: { name: this.currentChatName, target: this.chatTarget }
+        value: { name: this.currentChatKey, target: this.chatTarget }
       });
     }
   }
@@ -312,7 +306,7 @@ export default class ChatWindow extends Vue {
    */
   chatOptionSelectChange(direction: string, event: any): void {
     // 変化前の値を保存
-    if (!this.volatileFrom) this.volatileFrom = this.currentChatName;
+    if (!this.volatileFrom) this.volatileFrom = this.currentChatKey;
     if (!this.volatileTarget) this.volatileTarget = this.chatTarget;
     if (!this.volatileActiveTab) this.volatileActiveTab = this.activeTab;
     if (!this.volatileTargetTab) this.volatileTargetTab = this.outputTab;
@@ -329,13 +323,13 @@ export default class ChatWindow extends Vue {
     if (this.chatOptionSelectMode === "from") {
       event.preventDefault();
       let index = this.getPeerActors.findIndex(
-        (s: any) => this.getViewName(s.key) === this.currentChatName
+        (s: any) => s.key === this.currentChatKey
       );
       const newValue = arrangeIndex(this.getPeerActors, index);
 
       this.setProperty({
-        property: "private.self.currentChatName",
-        value: this.getViewName(newValue.key),
+        property: "private.self.currentChatKey",
+        value: newValue.key,
         isNotice: false,
         logOff: true
       });
@@ -389,7 +383,7 @@ export default class ChatWindow extends Vue {
       this.currentMessage = "";
       if (this.volatileFrom)
         this.setProperty({
-          property: "private.self.currentChatName",
+          property: "private.self.currentChatKey",
           value: this.volatileFrom,
           isNotice: false,
           logOff: true
@@ -415,27 +409,27 @@ export default class ChatWindow extends Vue {
   groupTargetTabSelect(targetKey: string): void {
     this.chatTarget = targetKey;
 
-    if (this.chatTarget.split("-")[0] === "groupTargetTab") {
+    if (targetKey.split("-")[0] === "groupTargetTab") {
       const tabObj = this.getObj(this.chatTarget);
       if (tabObj.targetTab) this.outputTab = tabObj.targetTab;
-      const otherName = this.otherMatcherName(tabObj);
-      if (otherName.length > 0) {
+      const otherObj: any = this.otherMatcherObj(tabObj);
+      if (otherObj) {
         this.setProperty({
-          property: "private.self.currentChatName",
-          value: otherName,
+          property: "private.self.currentChatKey",
+          value: otherObj.key,
           isNotice: false,
           logOff: true
         });
       }
     }
   }
-  inputName(event: any): void {
-    const actorKey = event.target.value;
-    this.currentActorKey = actorKey;
-    const actor = this.getPeerActors.filter(
-      (actor: any) => actor.key === actorKey
-    )[0];
-    this.changeName(this.getViewName(actor.key));
+  inputName(key: string): void {
+    this.currentActorKey = key;
+    this.setProperty({
+      property: "private.self.currentChatKey",
+      value: key,
+      logOff: false
+    });
   }
   clickChatOption(): void {
     window.console.log("clickChatOption");
@@ -518,13 +512,12 @@ export default class ChatWindow extends Vue {
     }
 
     let ownerKey = null;
-    const currentChatKey = this.nameToKey(this.currentChatName);
-    if (currentChatKey) {
-      const kind = currentChatKey.split("-")[0];
+    if (this.currentChatKey) {
+      const kind = this.currentChatKey.split("-")[0];
       if (kind === "player") {
-        ownerKey = this.selfPlayerKey;
+        ownerKey = this.playerKey;
       } else if (kind === "character") {
-        ownerKey = this.getObj(currentChatKey).owner;
+        ownerKey = this.getObj(this.currentChatKey).owner;
       } else {
         ownerKey = undefined;
       }
@@ -537,7 +530,7 @@ export default class ChatWindow extends Vue {
     )[0];
 
     const messageObj = {
-      name: this.currentChatName,
+      name: this.getViewName(this.currentChatKey),
       text: text,
       color: color,
       tab: outputTab,
@@ -583,9 +576,6 @@ export default class ChatWindow extends Vue {
       this.currentMessage = "";
     }
   }
-  memberToName(member: any) {
-    return member.name ? member.name : "名無し";
-  }
   nameToKeyView(name: string): string {
     const key = this.nameToKey(name);
     this.currentActorKey = key;
@@ -598,26 +588,21 @@ export default class ChatWindow extends Vue {
         key: actor.key
       }))
       .filter((obj: any) => obj.name === name)[0];
-    if (!obj) {
-      return "";
-    }
-    return obj.key;
+    return obj ? obj.key : "";
   }
-  otherMatcherName(tabObj: any): string {
+  otherMatcherObj(tabObj: any): string {
     if (tabObj.isAll) return "";
-    const matchNameList = this.tabMatchObj(tabObj).map((obj: any) =>
-      this.getViewName(obj.key)
-    );
-    if (matchNameList.indexOf(this.currentChatName) >= 0) return "";
-    return matchNameList[0];
+    return this.tabMatchObj(tabObj).filter(
+      (obj: any) => obj.key !== this.currentChatKey
+    )[0];
   }
   tabMatchObj(tabObj: any): any {
     return tabObj.group.map((g: any) => this.getObj(g)).filter((obj: any) => {
       const kind = obj.key.split("-")[0];
       if (kind === "player") {
-        if (obj.key === this.selfPlayerKey) return true;
+        if (obj.key === this.playerKey) return true;
       } else {
-        if (obj.owner === this.selfPlayerKey) return true;
+        if (obj.owner === this.playerKey) return true;
       }
       return false;
     });
@@ -642,6 +627,7 @@ export default class ChatWindow extends Vue {
   onChangeInputting(this: any, inputting: any) {
     this.inputtingPeerIdList.splice(0, this.inputtingPeerIdList.length);
     for (const name in inputting) {
+      if (!inputting.hasOwnProperty(name)) continue;
       if (inputting[name] > 0) {
         this.inputtingPeerIdList.push(name);
       }
@@ -656,640 +642,6 @@ export default class ChatWindow extends Vue {
   }
 }
 </script>
-
-<!--
-<script>
-// import 'bcdice-js/lib/preload-dicebots'
-import { mapState, mapActions, mapGetters } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-import DiceBotSelect from "@/components/dice/DiceBotSelect.vue";
-
-export default {
-  name: "chat",
-  mixins: [WindowMixin],
-  components: {
-    WindowFrame,
-    DiceBotSelect
-  },
-  data() {
-    return {
-      enterPressing: false,
-      /** 入力されたチャット文字 */
-      currentMessage: "",
-      /** 発言時に「」を付与するかどうか */
-      addBrackets: false,
-      /** チャットオプション入力モード('tab':# or 'target':@ or '') */
-      chatOptionSelectMode: "",
-      chatOptionPagingSize: 8,
-      /** 発言先 */
-      chatTarget: "groupTargetTab-0",
-      /** 出力先のタブ */
-      outputTab: "[選択中]",
-      /** 選択されているシステム */
-      currentDiceBotSystem: "DiceBot",
-      /** 現在発言中のアクターのkey */
-      currentActorKey: null,
-      /** 秘匿チャットの相手 */
-      secretTarget: "",
-      /** 入力中のルームメンバーのpeerIdの配列 */
-      inputtingPeerIdList: []
-    };
-  },
-  methods: {
-    ...mapActions([
-      "addChatLog",
-      "chatTabSelect",
-      "windowOpen",
-      "setProperty",
-      "sendRoomData",
-      "changeName"
-    ]),
-    onInput(event) {
-      const text = event.target.value;
-
-      let selectFrom = null;
-      if (text.startsWith("!") || text.startsWith("！")) {
-        const useText = text.substring(1);
-        if (useText.length === 0) {
-          selectFrom = this.currentChatName;
-        }
-        this.getPeerActors.forEach(target => {
-          if (selectFrom) return;
-          if (this.getViewName(target.key).startsWith(useText)) {
-            window.console.log(target);
-            selectFrom = this.getViewName(target.key);
-          }
-        });
-      }
-
-      let selectTarget = null;
-      if (text.startsWith(">") || text.startsWith("＞")) {
-        const useText = text.substring(1);
-        if (useText.length === 0) {
-          selectTarget = this.chatTarget;
-        }
-        this.chatTargetList.forEach(target => {
-          if (selectTarget) return;
-          if (target.name.startsWith(useText)) {
-            window.console.log(target);
-            selectTarget = target.key;
-          }
-        });
-      }
-
-      let selectTab = null;
-      if (text.startsWith("#") || text.startsWith("＃")) {
-        const useText = text.substring(1);
-        if (useText.length === 0) {
-          selectTab = this.outputTab;
-        }
-        const selection = [
-          "[選択中]",
-          ...this.chatTabList.map(tab => tab.name)
-        ];
-        selection.forEach(tabName => {
-          if (selectTab) return;
-          if (tabName.startsWith(useText)) selectTab = tabName;
-        });
-      }
-
-      if (selectFrom) {
-        this.chatOptionSelectMode = "from";
-        this.setProperty({
-          property: "private.self.currentChatName",
-          value: selectFrom,
-          isNotice: false,
-          logOff: true
-        });
-      } else if (selectTarget) {
-        this.chatOptionSelectMode = "target";
-        this.chatTarget = selectTarget;
-      } else if (selectTab) {
-        this.chatOptionSelectMode = "tab";
-        this.outputTab = selectTab;
-      } else {
-        this.chatOptionSelectMode = "";
-        this.sendRoomData({
-          type: "NOTICE_INPUT",
-          value: { name: this.currentChatName, target: this.chatTarget }
-        });
-      }
-    },
-    getGroupTargetName() {
-      let target = this.getObj(this.chatTarget);
-      return target ? this.getViewName(target.key) : null;
-    },
-    /**
-     * 上下キーを押下されてチャットオプションの選択項目を移動させる処理
-     */
-    chatOptionSelectChange(direction, event) {
-      // 変化前の値を保存
-      if (!this.volatileFrom) this.volatileFrom = this.currentChatName;
-      if (!this.volatileTarget) this.volatileTarget = this.chatTarget;
-      if (!this.volatileActiveTab) this.volatileActiveTab = this.activeTab;
-      if (!this.volatileTargetTab) this.volatileTargetTab = this.outputTab;
-
-      // カーソル移動と、移動後の輪転処理
-      const arrangeIndex = (list, index) => {
-        index += direction === "up" ? -1 : 1;
-        if (index < 0) index = list.length - 1;
-        if (index === list.length) index = 0;
-        return list[index];
-      };
-
-      // 発言者の選択の場合
-      if (this.chatOptionSelectMode === "from") {
-        event.preventDefault();
-        let index = this.getPeerActors.findIndex(
-                s => this.getViewName(s.key) === this.currentChatName
-        );
-        const newValue = arrangeIndex(this.getPeerActors, index);
-
-        this.setProperty({
-          property: "private.self.currentChatName",
-          value: this.getViewName(newValue.key),
-          isNotice: false,
-          logOff: true
-        });
-      }
-
-      // 発言先の選択の場合
-      if (this.chatOptionSelectMode === "target") {
-        event.preventDefault();
-        let index = this.chatTargetList.findIndex(
-                s => s.key === this.chatTarget
-        );
-        const newValue = arrangeIndex(this.chatTargetList, index);
-
-        this.groupTargetTabSelect(newValue.key);
-      }
-
-      // タブの選択の場合
-      if (this.chatOptionSelectMode === "tab") {
-        const selection = [
-          "[選択中]",
-          ...this.chatTabList.map(tab => tab.name)
-        ];
-
-        event.preventDefault();
-        let index = selection.indexOf(this.outputTab);
-        const newValue = arrangeIndex(selection, index);
-
-        this.selectChatTab(
-                newValue !== "[選択中]" ? newValue : this.volatileActiveTab
-        );
-        this.outputTab = newValue;
-      }
-    },
-    /**
-     * 入力欄からフォーカスが外れた場合
-     */
-    blurTextArea() {
-      this.resetChatOption();
-    },
-    /**
-     * 入力欄でESCキーを押下した場合
-     */
-    pressEsc() {
-      this.resetChatOption();
-    },
-    /**
-     * チャットオプションを仮変更前の状態に戻す
-     */
-    resetChatOption() {
-      if (this.chatOptionSelectMode) {
-        this.currentMessage = "";
-        if (this.volatileFrom)
-          this.setProperty({
-            property: "private.self.currentChatName",
-            value: this.volatileFrom,
-            isNotice: false,
-            logOff: true
-          });
-        if (this.volatileTarget) this.chatTarget = this.volatileTarget;
-        if (this.volatileActiveTab) this.selectChatTab(this.volatileActiveTab);
-        if (this.volatileTargetTab) this.outputTab = this.volatileTargetTab;
-      }
-      this.chatOptionSelectMode = "";
-      this.volatileFrom = "";
-      this.volatileTarget = "";
-      this.volatileActiveTab = "";
-      this.volatileTargetTab = "";
-    },
-    selectChatTab(name) {
-      this.setProperty({
-        property: "chat.activeTab",
-        value: name,
-        logOff: true
-      });
-      this.chatTabSelect(name);
-    },
-    groupTargetTabSelect(targetKey) {
-      this.chatTarget = targetKey;
-
-      if (this.chatTarget.split("-")[0] === "groupTargetTab") {
-        const tabObj = this.getObj(this.chatTarget);
-        if (tabObj.targetTab) this.outputTab = tabObj.targetTab;
-        const otherName = this.otherMatcherName(tabObj);
-        if (otherName.length > 0) {
-          this.setProperty({
-            property: "private.self.currentChatName",
-            value: otherName,
-            isNotice: false,
-            logOff: true
-          });
-        }
-      }
-    },
-    inputName(event) {
-      const actorKey = event.target.value;
-      this.currentActorKey = actorKey;
-      const actor = this.getPeerActors.filter(
-              actor => actor.key === actorKey
-      )[0];
-      this.changeName(this.getViewName(actor.key));
-    },
-    clickChatOption() {
-      window.console.log("clickChatOption");
-      document.getElementById("chatTextArea").focus();
-    },
-    addTab() {
-      this.windowOpen("private.display.settingChatTabWindow");
-    },
-    addTargetTab() {
-      this.windowOpen("private.display.settingChatTargetTabWindow");
-    },
-    settingDiceBot() {
-      this.setProperty({
-        property: "private.display.unSupportWindow.title",
-        value: "ダイスボット用表管理",
-        logOff: true
-      });
-      this.windowOpen("private.display.unSupportWindow");
-    },
-    settingFont() {
-      this.windowOpen("private.display.settingChatFontWindow");
-    },
-    settingBGM() {
-      this.windowOpen("private.display.settingBGMWindow");
-    },
-    commitChatOption() {
-      if (this.chatOptionSelectMode) {
-        this.currentMessage = "";
-      }
-      this.chatOptionSelectMode = "";
-      this.volatileFrom = "";
-      this.volatileTarget = "";
-      this.volatileActiveTab = "";
-      this.volatileTargetTab = "";
-    },
-    sendMessage(e, flg) {
-      if (this.enterPressing === flg) return;
-      this.enterPressing = flg;
-      if (!flg) return;
-      if (e.shiftKey) {
-        this.currentMessage += "\r\n";
-        return;
-      }
-      if (this.currentMessage === "") return;
-
-      // チャット送信オプション選択中のEnterは特別仕様
-      if (this.chatOptionSelectMode) {
-        this.commitChatOption();
-        return;
-      }
-
-      // 文字色決定
-      const actor = this.getPeerActors.filter(
-              actor => actor.key === this.currentActorKey
-      )[0];
-      let color = "black";
-      if (actor) {
-        if (actor.key.split("-")[0] === "character") {
-          if (actor.fontColorType === 0) {
-            // プレイヤーと同じ色を使う
-            color = this.getPeerActors[0].color;
-          } else {
-            color = actor.fontColor;
-          }
-        } else {
-          color = actor.fontColor;
-        }
-      }
-
-      // 括弧をつけるオプション
-      let text = this.currentMessage;
-      if (this.addBrackets) {
-        text = `「${text}」`;
-      }
-
-      // 出力先タブ決定
-      let outputTab = this.outputTab;
-      if (outputTab === "[選択中]") {
-        outputTab = this.activeTab;
-      }
-
-      let ownerKey = null;
-      const currentChatKey = this.nameToKey(this.currentChatName);
-      if (currentChatKey) {
-        const kind = currentChatKey.split("-")[0];
-        if (kind === "player") {
-          ownerKey = this.selfPlayerKey;
-        } else if (kind === "character") {
-          ownerKey = this.getObj(currentChatKey).owner;
-        } else {
-          ownerKey = undefined;
-        }
-      } else {
-        ownerKey = undefined;
-      }
-
-      const currentActor = this.getPeerActors.filter(
-              actor => actor.key === this.currentActorKey
-      )[0];
-
-      const messageObj = {
-        name: this.currentChatName,
-        text: text,
-        color: color,
-        tab: outputTab,
-        from: ownerKey,
-        target: this.chatTarget,
-        owner: currentActor ? currentActor.key : null
-      };
-
-      // -------------------
-      // プレイヤー発言
-      // -------------------
-      this.addChatLog(messageObj);
-
-      // -------------------
-      // ダイスBot処理
-      // -------------------
-      if (this.bcDice) {
-        this.bcDice.setMessage(this.currentMessage);
-        const resultObj = this.bcDice.dice_command();
-        const diceResult = resultObj[0]
-                .replace(/(^: )/g, "")
-                .replace(/＞/g, "→");
-        const isSecret = resultObj[1];
-        if (diceResult !== "1") {
-          if (isSecret) {
-            this.addChatLog({
-              name: this.currentDiceBotSystem,
-              text: `シークレットダイス`,
-              color: "black",
-              tab: this.activeTab,
-              owner: "SYSTEM"
-            });
-          } else {
-            this.addChatLog({
-              name: this.currentDiceBotSystem,
-              text: diceResult,
-              color: "black",
-              tab: this.activeTab,
-              owner: "SYSTEM"
-            });
-          }
-        }
-        this.currentMessage = "";
-      }
-    },
-    memberToName: member => (member.name ? member.name : "名無し"),
-    nameToKeyView(name) {
-      const key = this.nameToKey(name);
-      this.currentActorKey = key;
-      return key;
-    },
-    nameToKey(name) {
-      const obj = this.getPeerActors
-              .map(actor => ({ name: this.getViewName(actor.key), key: actor.key }))
-              .filter(obj => obj.name === name)[0];
-      if (!obj) {
-        return "";
-      }
-      return obj.key;
-    },
-    otherMatcherName(tabObj) {
-      if (tabObj.isAll) return "";
-      const matchNameList = this.tabMatchObj(tabObj).map(obj =>
-              this.getViewName(obj.key)
-      );
-      if (matchNameList.indexOf(this.currentChatName) >= 0) return "";
-      return matchNameList[0];
-    },
-    tabMatchObj(tabObj) {
-      return tabObj.group.map(g => this.getObj(g)).filter(obj => {
-        const kind = obj.key.split("-")[0];
-        if (kind === "player") {
-          if (obj.key === this.selfPlayerKey) return true;
-        } else {
-          if (obj.owner === this.selfPlayerKey) return true;
-        }
-        return false;
-      });
-    }
-  },
-  watch: {
-    currentDiceBotSystem() {
-      quoridornLog(
-              `ダイスボットシステムを${this.currentDiceBotSystem}に変更`
-      );
-      const diceObj = this.diceBotSystems.filter(
-              obj => obj.value === this.currentDiceBotSystem
-      )[0];
-      this.bcDice.setDiceBot(diceObj.diceBot);
-    },
-    chatLogList() {
-      setTimeout(function() {
-        const elm = document.getElementById("chatLog");
-        if (elm) {
-          elm.scrollTop = elm.scrollHeight;
-        }
-      }, 0);
-    },
-    inputting: {
-      handler(inputting) {
-        this.inputtingPeerIdList.splice(0, this.inputtingPeerIdList.length);
-        for (const name in inputting) {
-          if (inputting[name] > 0) {
-            this.inputtingPeerIdList.push(name);
-          }
-        }
-      },
-      deep: true
-    },
-    secretTarget(secretTarget) {
-      if (!secretTarget) return;
-      quoridornLog("selectSecretTalk", secretTarget);
-      this.secretTarget = "";
-    }
-  },
-  computed: mapState({
-    ...mapGetters(["getPeerActors", "getViewName", "getObj"]),
-    chatLogList(state) {
-      return state.public.chat.logs[state.chat.activeTab].filter(log => {
-        if (log.from === this.selfPlayerKey) return true;
-        if (!log.target) return true;
-        if (log.target === "groupTargetTab-0") return true;
-        const kind = log.target.split("-")[0];
-        if (kind === "groupTargetTab") {
-          const target = this.getObj(log.target);
-          if (!target.isSecret) return true;
-          if (target.isAll) return true;
-          const findIndex = target.group.findIndex(g => {
-            const kind = g.split("-")[0];
-            if (kind === "player") {
-              if (g === this.selfPlayerKey) return true;
-            } else if (kind === "character") {
-              if (this.getObj(g).owner === this.selfPlayerKey) return true;
-            }
-            return false;
-          });
-          return findIndex > -1;
-        } else if (kind === "player") {
-          window.console.log(
-                  "-----player",
-                  log.target,
-                  this.selfPlayerKey,
-                  log.target === this.selfPlayerKey
-          );
-          return log.target === this.selfPlayerKey;
-        } else {
-          const target = this.getObj(log.target);
-          return target.owner === this.selfPlayerKey;
-        }
-      });
-    },
-    chatTabList: state => state.public.chat.tabs,
-    playerList: state => state.public.player.list,
-    characterList: state => state.public.character.list,
-    groupTargetTabList(state) {
-      return state.public.chat.groupTargetTab.list.filter(tab => {
-        if (tab.isAll) return true;
-        const filterObj = tab.group.filter(targetKey => {
-          if (targetKey === this.currentActorKey) return true;
-          if (this.currentActorKey.split("-")[0] === "player") {
-            const targetCharacter = this.characterList
-                    .filter(character => character.owner === this.currentActorKey)
-                    .filter(character => character.key === targetKey)[0];
-            if (targetCharacter) return true;
-          } else if (this.currentActorKey.split("-")[0] === "character") {
-            const targetCharacter = this.characterList.filter(
-                    character => character.key === this.currentActorKey
-            )[0];
-            if (targetCharacter) return true;
-          }
-          return false;
-        });
-        if (filterObj.length > 0) return true;
-      });
-    },
-    members: state =>
-            state.public.room.members.filter(member => {
-              return member.peerId !== state.private.self.peerId;
-            }),
-    currentCount: state => state.count,
-    currentChatName: state => state.private.self.currentChatName,
-    inputting: state => state.public.chat.inputting,
-    createInputtingMsg(state) {
-      return function(name) {
-        return `${name}が入力中...`;
-      };
-    },
-    fontColor: state => state.private.self.color,
-    chatTargetList() {
-      const list = [
-        ...this.groupTargetTabList,
-        ...this.playerList,
-        ...this.characterList.filter(character => character.place === "field")
-      ];
-      return list;
-    },
-    activeTab: state => state.chat.activeTab,
-    hoverTab: state => state.chat.hoverTab,
-    selfPlayerKey: state => {
-      const player = state.public.player.list.filter(
-              player => player.name === state.private.self.playerName
-      )[0];
-      return player ? player.key : null;
-    },
-    chatOptionPageNum() {
-      if (this.chatOptionSelectMode === "from") {
-        const index = this.getPeerActors.findIndex(
-                target => target.key === this.chatTarget
-        );
-        if (index === -1) return -1;
-        return Math.floor(index / this.chatOptionPagingSize) + 1;
-      }
-      if (this.chatOptionSelectMode === "target") {
-        const index = this.chatTargetList.findIndex(
-                target => target.key === this.chatTarget
-        );
-        if (index === -1) return -1;
-        return Math.floor(index / this.chatOptionPagingSize) + 1;
-      }
-      if (this.chatOptionSelectMode === "tab") {
-        const index = this.chatTabList.findIndex(
-                target => target.name === this.activeTab
-        );
-        if (index === -1) return -1;
-        return Math.floor(index / this.chatOptionPagingSize) + 1;
-      }
-      return -1;
-    },
-    chatOptionPageMaxNum() {
-      if (this.chatOptionSelectMode === "from") {
-        return (
-                Math.floor(this.getPeerActors.length / this.chatOptionPagingSize) + 1
-        );
-      }
-      if (this.chatOptionSelectMode === "target") {
-        return (
-                Math.floor(this.chatTargetList.length / this.chatOptionPagingSize) + 1
-        );
-      }
-      if (this.chatOptionSelectMode === "tab") {
-        return (
-                Math.floor(this.chatTabList.length / this.chatOptionPagingSize) + 1
-        );
-      }
-      return 0;
-    },
-    chatOptionPagingList() {
-      const pageNum = this.chatOptionPageNum;
-      const startIndex = (pageNum - 1) * this.chatOptionPagingSize;
-      if (this.chatOptionSelectMode === "from") {
-        const endIndex = Math.min(
-                pageNum * this.chatOptionPagingSize,
-                this.getPeerActors.length
-        );
-        const result = this.getPeerActors.concat();
-        return result.splice(startIndex, endIndex - startIndex);
-      }
-      if (this.chatOptionSelectMode === "target") {
-        const endIndex = Math.min(
-                pageNum * this.chatOptionPagingSize,
-                this.chatTargetList.length
-        );
-        const result = this.chatTargetList.concat();
-        return result.splice(startIndex, endIndex - startIndex);
-      }
-      if (this.chatOptionSelectMode === "tab") {
-        const endIndex = Math.min(
-                pageNum * this.chatOptionPagingSize,
-                this.chatTabList.length
-        );
-        const result = this.chatTabList.concat();
-        return result.splice(startIndex, endIndex - startIndex);
-      }
-      return 0;
-    }
-  })
-};
-</script>
--->
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

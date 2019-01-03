@@ -345,7 +345,7 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters([]),
+    ...mapGetters(["peerId"]),
     selectedTagIndexText() {
       const imageList = this.imageList;
       const keyObj = this.getKeyObj(imageList, this.edit.imageKey);
@@ -365,8 +365,7 @@ export default {
         return obj.tag.indexOf(this.edit.imageTag) >= 0;
       });
     },
-    storeMapObj: state => state.public.map,
-    peerId: state => state.private.self.peerId
+    storeMapObj: state => state.public.map
   })
 };
 </script>

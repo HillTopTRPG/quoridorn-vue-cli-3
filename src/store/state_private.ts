@@ -16,9 +16,10 @@ export default {
     self: {
       peerId: null,
       playerKey: null,
+      currentChatKey: "",
+
       playerName: "",
       playerType: "",
-      currentChatName: "",
       password: "",
       color: "black",
       cards: []
@@ -320,8 +321,11 @@ export default {
     masterMute: (state: any) => state.display.jukeboxWindow.masterMute,
     masterVolume: (state: any) => state.display.jukeboxWindow.masterVolume,
     fontColor: (state: any) => state.self.color,
+    playerKey: (state: any) => state.self.playerKey,
     playerName: (state: any) => state.self.playerName,
+    playerPassword: (state: any) => state.self.password,
     playerType: (state: any) => state.self.playerType,
+    currentChatKey: (state: any) => state.self.currentChatKey,
     peerId: (state: any) => state.self.peerId,
     angle: (state: any) => state.map.angle,
     wheel: (state: any) => state.map.wheel

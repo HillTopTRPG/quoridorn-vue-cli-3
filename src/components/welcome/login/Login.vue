@@ -1,22 +1,33 @@
 <template>
   <div class="loginContainer">
-    <CreateRoomFromRoomData/>
+    <CreateRoomFromRoomData v-if="!isRoomExist"/>
     <CreateNewRoom/>
     <NonUseRoom/>
+    <RoomInfo/>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CreateRoomFromRoomData from "./CreateRoomFromRoomData.vue";
 import CreateNewRoom from "./CreateNewRoom.vue";
 import NonUseRoom from "./NonUseRoom.vue";
-export default {
+import RoomInfo from "./RoomInfo.vue";
+
+import { Component, Vue } from "vue-property-decorator";
+import { Getter } from "vuex-class";
+
+@Component<Login>({
+  name: "login",
   components: {
     CreateRoomFromRoomData,
     CreateNewRoom,
-    NonUseRoom
+    NonUseRoom,
+    RoomInfo
   }
-};
+})
+export default class Login extends Vue {
+  @Getter("isRoomExist") isRoomExist: any;
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

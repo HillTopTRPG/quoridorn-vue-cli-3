@@ -314,18 +314,6 @@ export default {
 
   actions: {
     /**
-     * ルームメンバを追加する
-     * @param commit
-     * @param peerId
-     * @param name
-     * @returns {*}
-     */
-    addMember: (
-      { commit }: { commit: Function },
-      { peerId, name }: { peerId: string; name: string }
-    ) => commit("addMember", { peerId, name }),
-
-    /**
      * プレイヤーを追加する
      * @param commit
      * @param name
@@ -337,18 +325,20 @@ export default {
     addPlayer: (
       { commit }: { commit: Function },
       {
+        peerId,
         name,
         password,
         type,
         color
       }: {
+        peerId: string;
         name: string;
         password: string;
         type: string;
         color: string;
       }
     ) => {
-      return commit("addPlayer", { name, password, type, color });
+      commit("addPlayer", { peerId, name, password, type, color });
       // commit('addPlayerWidth')
     },
 
@@ -423,26 +413,9 @@ export default {
 
   mutations: {
     /**
-     * ルームメンバを追加する
-     * @param state
-     * @param peerId
-     * @param name
-     * @returns { *[] }
-     */
-    addMember: (
-      state: any,
-      { peerId, name }: { peerId: string; name: string }
-    ) => {
-      window.console.log(`!!!!! [addMember] ${name}(${peerId})`);
-      state.room.members.push({
-        peerId: peerId,
-        name: name
-      });
-    },
-
-    /**
      * プレイヤーを追加する
      * @param state
+     * @param peerId
      * @param name
      * @param password
      * @param color
@@ -452,22 +425,36 @@ export default {
     addPlayer: (
       state: any,
       {
+        peerId,
         name,
         type,
         password,
         color
-      }: { name: string; password: string; color: string; type: string }
+      }: {
+        peerId: string;
+        name: string;
+        password: string;
+        color: string;
+        type: string
+      }
     ) => {
-      const key = `player-${name}`;
-      const obj = {
-        key: key,
-        name: name,
-        password: password,
-        fontColor: color,
-        type: type
-      };
-      state.player.list.push(obj);
-      return key;
+      const player: any = state.player.list.filter((p: any) => {
+          return p.name === name;
+      })[0];
+      const playerKey: string = player ? player.key : `player-${name}`;
+      state.room.members.push({
+        peerId: peerId,
+        playerKey: playerKey
+      });
+      if (!player) {
+        state.player.list.push({
+          key: playerKey,
+          name: name,
+          password: password,
+          fontColor: color,
+          type: type
+        });
+      }
     },
 
     /**
@@ -694,47 +681,16 @@ export default {
      */
     isFitGrid: (state: any) => state.setting.isFitGrid,
 
-    getPieceObj: (state: any, getters: any) =>
-      /**
-       * 指定されたタイプのオブジェクトの中から、指定されたキーのオブジェクトを絞り込んで取得する
-       * @param type
-       * @param key
-       * @param logOff
-       * @returns {*}
-       */
-      (type: any, key: any, logOff: boolean = true) => {
-        const result = getters.getKeyObj(state[type].list, key);
-        if (!logOff) {
-          quoridornLog(
-            `  [getters] pieceObj[${type}]#${key} => ${getters.objToString(
-              result
-            )}`
-          );
-        }
-        return result;
-      },
-
-    pieceKeyList: (state: any) =>
-      /**
-       * 指定されたタイプのオブジェクトの、キーの一覧を取得する
-       * @param type
-       * @returns {*}
-       */
-      (type: any) =>
-        state[type].list
-          .filter((pieceObj: any) => pieceObj.place === "field")
-          .map((pieceObj: any) => pieceObj.key),
-
     /**
      * 現在の背景画像
      * @param state
      * @returns {*}
      */
     getBackgroundImage: (state: any) =>
-      state.image.list.filter((d: any) => d.key === state.map.imageKey)[0].data,
+      state.image.list.filter((image: any) => image.key === state.map.imageKey)[0].data,
 
-    getPeerActors: (state: any, getters: any, rootState: any) => {
-      const playerName = rootState.private.self.playerName;
+    getPeerActors: (state: any, getters: any, rootState: any, rootGetters: any) => {
+      const playerName = rootGetters.playerName;
       const player = state.player.list.filter(
         (p: any) => p.name === playerName
       )[0];
@@ -750,26 +706,20 @@ export default {
       }
     },
 
-    getObj: (state: any) => (key: string) => {
-      if (!key) return;
+    getObj: (state: any) => (key: string): any => {
+      if (!key) return null;
       const kind = key.split("-")[0];
-      if (kind === "player") {
-        // プレイヤー
-        return state.player.list.filter((player: any) => player.key === key)[0];
-      } else if (kind === "character") {
-        // キャラクター
-        return state.character.list.filter(
-          (character: any) => character.key === key
-        )[0];
-      } else if (kind === "groupTargetTab") {
+      const filterFunc: Function = (obj: any) => obj.key === key;
+      if (kind === "groupTargetTab") {
         // グループチャットタブ
-        return state.chat.groupTargetTab.list.filter(
-          (tab: any) => tab.key === key
-        )[0];
+        return state.chat.groupTargetTab.list.filter(filterFunc)[0];
+      } else {
+        // その他
+        return state[kind].list.filter(filterFunc)[0];
       }
     },
 
-    getViewName: (state: any, getters: any) => (key: string) => {
+    getViewName: (state: any, getters: any) => (key: string): string => {
       const obj = getters.getObj(key);
       if (!obj) return "名無し(PL)";
       const kind = obj.key.split("-")[0];
@@ -778,38 +728,63 @@ export default {
         const type = obj.type;
         return `${obj.name}(${type})`;
       } else {
-        return `${obj.name}`;
+        return obj.name;
       }
     },
-    chatTabList: (state: any) => state.chat.tabs,
-    playerList: (state: any) => state.player.list,
-    characterList: (state: any) => state.character.list,
-    inputting: (state: any) => state.chat.inputting,
-    marginGridColor: (state: any) => state.map.margin.gridColor,
-    marginMaskColor: (state: any) => state.map.margin.maskColor,
-    marginMaskAlpha: (state: any) => state.map.margin.maskAlpha,
-    isUseGridColor: (state: any) => state.map.margin.isUseGridColor,
-    isUseImage: (state: any) => state.map.margin.isUseImage,
-    columns: (state: any) => state.map.grid.totalColumn,
-    rows: (state: any) => state.map.grid.totalRow,
-    gridSize: (state: any) => state.map.grid.size,
-    borderWidth: (state: any) => state.map.margin.borderWidth,
-    marginGridSize: (state: any) => state.map.margin.gridSize,
-    roomName: (state: any) => state.room.name,
-    members: (state: any) => state.room.members,
-    deck: (state: any) => state.deck,
-    deckCardList: (state: any) => state.deck.cards.list,
-    deckWidth: (state: any) => state.deck.width,
-    deckHeight: (state: any) => state.deck.height,
-    getMapObjectList: (state: any) => (kind: string, playerKey: string, place: string) => {
-      return state[kind].list.filter(
-        (target: any) =>
-          target.owner === playerKey && target.place === place
-      );
+    chatTabList: (state: any): any[] => state.chat.tabs,
+    playerList: (state: any): any[] => state.player.list,
+    inputting: (state: any): any => state.chat.inputting,
+    marginGridColor: (state: any): string => state.map.margin.gridColor,
+    marginMaskColor: (state: any): string => state.map.margin.maskColor,
+    marginMaskAlpha: (state: any): number => state.map.margin.maskAlpha,
+    isUseGridColor: (state: any): boolean => state.map.margin.isUseGridColor,
+    isUseImage: (state: any): boolean => state.map.margin.isUseImage,
+    columns: (state: any): number => state.map.grid.totalColumn,
+    rows: (state: any): number => state.map.grid.totalRow,
+    gridSize: (state: any): number => state.map.grid.size,
+    borderWidth: (state: any): number => state.map.margin.borderWidth,
+    marginGridSize: (state: any): number => state.map.margin.gridSize,
+    roomName: (state: any): string => state.room.name,
+    roomPassword: (state: any): string => state.room.password,
+    members: (state: any): any[] => state.room.members,
+    deck: (state: any): any => state.deck,
+    deckCardList: (state: any): any[] => state.deck.cards.list,
+    getMapObjectList: (state: any) => (
+      {
+        kind,
+        place = "",
+        playerKey = ""
+      }: { kind: string; place: string; playerKey: string}
+    ): any[] => {
+      const list: any[] = state[kind].list;
+      if (!place && !playerKey) {
+        return list;
+      } else {
+        return list.filter(
+          (target: any) => {
+            if (playerKey && target.owner !== playerKey) return false;
+            return !(place && target.place !== place);
+          }
+        );
+      }
     },
-    getMembers: (state: any, getters: any) => (playerKey: string) => {
+    getMembers: (state: any, getters: any) => (playerKey: string): any[] => {
       const player = getters.getObj(playerKey);
-      return getters.members.filter((m: any) => m.name === player.name)
-    }
+      return getters.members.filter((member: any) => member.playerKey === player.key)
+    },
+    getPlayer: (state: any, getters: any) => (peerId: string): any => {
+      const member = getters.members.filter((member: any) => member.peerId === peerId);
+      if (!member) return null;
+      return getters.getObj(member.playerKey);
+    },
+    inviteUrl: (state: any, getters: any): string => {
+      const baseUrl = location.href.replace(/\?.+$/, "");
+      const params: string[] = [];
+      params.push(`roomName=${getters.roomName}`);
+      params.push(`roomPassword=${getters.roomPassword}`);
+      return `${baseUrl}?${params.join("&")}`;
+    },
+    isMapEditing: (state: any): boolean => state.map.isEditting,
+    groupTargetTab: (state: any): any => state.chat.groupTargetTab
   } /* end of getters */
 };

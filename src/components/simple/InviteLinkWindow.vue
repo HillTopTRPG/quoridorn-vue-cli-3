@@ -3,14 +3,14 @@
     <div class="contents">
       <div>おかえりなさい！！<br>他のメンバーをこの部屋に呼び戻すには、<br>メンバーに以下のURLを開いてもらってください！</div>
       <ul>
-        <li v-for="memberObj in members" :key="memberObj.peerId"><label>{{memberObj.name}}({{memberObj.peerId}})：<input type="text" readonly="readonly" :value="createURL(memberObj.peerId)" /></label></li>
+        <li v-for="member in members" :key="member.peerId"><label>{{getObj(member.playerKey).name}}({{member.peerId}})：<input type="text" readonly="readonly" :value="createURL(member.peerId)" /></label></li>
       </ul>
     </div>
   </WindowFrame>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 
@@ -33,9 +33,10 @@ export default {
     }
   },
   computed: mapState({
+    ...mapGetters(["getObj"]),
     members() {
       return this.$store.state.public.room.members.filter(
-        memberObj => memberObj.peerId !== this.$store.state.private.self.peerId
+        member => member.peerId !== this.$store.state.private.self.peerId
       );
     },
     roomName: state => state.public.room.name,
