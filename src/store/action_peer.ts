@@ -283,38 +283,19 @@ export default {
                 // 受け取ったpublic情報でローカルを更新する
                 rootState.public = value;
 
-                // プレイヤーを追加する
-                dispatch("addPlayer", {
-                  peerId: peerId,
-                  name: playerName,
-                  password: playerPassword,
-                  type: playerType,
-                  color: "#000000"
-                });
-
-                quoridornLog(
-                  `Room: ${roomName} のルームメンバーとして認識されました。`
-                );
-
-                // チャット追加
-                dispatch("addChatLog", {
-                  name: logName,
-                  text: `Room: ${roomName} に接続しました！！`,
-                  color: logColor,
-                  tab: logTab,
-                  owner: "SYSTEM"
-                });
-
-                // ルームメンバーに自己紹介する
-                dispatch("sendRoomData", {
-                  type: "NOTICE_NEW_MEMBER",
+                // プレイヤー情報を入力してもらう
+                dispatch("setProperty", {
+                  property: "private.display.inputPlayerInfoWindow",
                   value: {
-                    name: playerName,
-                    password: playerPassword,
-                    type: playerType,
-                    color: "#000000"
-                  }
+                    peerId: peerId,
+                    roomName: roomName,
+                    playerName: playerName,
+                    playerPassword: playerPassword,
+                    playerType: playerType
+                  },
+                  logOff: true
                 });
+                dispatch("windowOpen", "private.display.inputPlayerInfoWindow");
                 break;
               }
               /* ------------------------------
@@ -398,6 +379,59 @@ export default {
             }
           });
         });
+      });
+    },
+    joinPlayer(
+      { dispatch }: { dispatch: Function; },
+      {
+        peerId,
+        roomName,
+        playerName,
+        playerPassword,
+        playerType
+      }: {
+        peerId: string;
+        roomName: string;
+        playerName: string;
+        playerPassword: string;
+        playerType: string;
+      }
+    ) {
+      // プレイヤーを追加する
+      dispatch("addPlayer", {
+        peerId: peerId,
+        name: playerName,
+        password: playerPassword,
+        type: playerType,
+        color: "#000000"
+      });
+
+      quoridornLog(
+        `Room: ${roomName} のルームメンバーとして認識されました。`
+      );
+
+      const logName = "SYSTEM";
+      const logColor = "red";
+      const logTab = "メイン";
+
+      // チャット追加
+      dispatch("addChatLog", {
+        name: logName,
+        text: `Room: ${roomName} に接続しました！！`,
+        color: logColor,
+        tab: logTab,
+        owner: "SYSTEM"
+      });
+
+      // ルームメンバーに自己紹介する
+      dispatch("sendRoomData", {
+        type: "NOTICE_NEW_MEMBER",
+        value: {
+          name: playerName,
+          password: playerPassword,
+          type: playerType,
+          color: "#000000"
+        }
       });
     },
     /** ========================================================================
@@ -493,7 +527,7 @@ export default {
       rootGetters
     }: {
       dispatch: Function;
-      rootGetters: any
+      rootGetters: any;
     }) {
       quoridornLog("ログアウト");
       dispatch("setProperty", {

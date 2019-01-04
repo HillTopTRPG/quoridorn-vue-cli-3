@@ -45,7 +45,7 @@
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
-        <div>権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
+        <div class="description">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
       <button @click="roomProcess(false)" type="button"><i class="icon-home3"></i> 入室</button>
     </div>
@@ -72,7 +72,7 @@
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
-        <div>権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
+        <div class="description">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
       <button @click="roomProcess(true)" type="button"><i class="icon-home3"></i> 作成</button>
     </div>
@@ -99,6 +99,7 @@ export default class CreateNewRoom extends Vue {
   @Action("emptyMember") emptyMember: any;
   @Action("createPeer") createPeer: any;
   @Action("windowClose") windowClose: any;
+  @Action("windowOpen") windowOpen: any;
   @Action("loading") loading: any;
   @Getter("paramRoomName") paramRoomName: any;
   @Getter("paramRoomPassword") paramRoomPassword: any;
@@ -162,9 +163,9 @@ export default class CreateNewRoom extends Vue {
      * 入力チェック
      */
     const errorMsg = [];
-    if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
+    if (!this.roomName) errorMsg.push("・部屋名");
     if (errorMsg.length > 0) {
-      alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
+      alert(`必須項目未入力エラー\n${errorMsg.join("\n")}\n入力をお願いします。`);
       return;
     }
 
@@ -205,10 +206,10 @@ export default class CreateNewRoom extends Vue {
   roomProcess(isNewRoom: boolean) {
     // 入力チェック
     const errorMsg = [];
-    if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
-    if (!this.playerName) errorMsg.push("・プレイヤー名は必須項目です。");
+    if (!this.roomName) errorMsg.push("・部屋名");
+    if (!this.playerName) errorMsg.push("・ユーザ名");
     if (errorMsg.length > 0) {
-      alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
+      alert(`必須項目未入力エラー\n${errorMsg.join("\n")}\n入力をお願いします。`);
       return;
     }
 
@@ -270,9 +271,9 @@ export default class CreateNewRoom extends Vue {
   doWaitRoom() {
     // 入力チェック
     const errorMsg = [];
-    if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
+    if (!this.roomName) errorMsg.push("・部屋名");
     if (errorMsg.length > 0) {
-      alert(`${errorMsg.join("\n")}\n入力をお願いします。`);
+      alert(`必須項目未入力エラー\n${errorMsg.join("\n")}\n入力をお願いします。`);
       return;
     }
 
@@ -331,6 +332,7 @@ export default class CreateNewRoom extends Vue {
       playerName: this.playerName,
       playerPassword: this.playerPassword,
       playerType: this.playerType,
+      isNewRoom: true,
       resolved: () => {},
       rejected: () => {}
     });
@@ -348,14 +350,8 @@ export default class CreateNewRoom extends Vue {
       playerName: this.playerName,
       playerPassword: this.playerPassword,
       playerType: this.playerType,
-      resolved: () => {
-        // モーダル状態の解除
-        this.setProperty({
-          property: "isMordal",
-          value: false,
-          logOff: true
-        });
-      },
+      isNewRoom: false,
+      resolved: () => {},
       rejected: () => {}
     });
   }

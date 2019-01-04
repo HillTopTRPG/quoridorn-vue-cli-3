@@ -3,7 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-import { quoridornLog } from "@/components/common/Utility";
+// import { quoridornLog } from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -316,6 +316,7 @@ export default {
     /**
      * プレイヤーを追加する
      * @param commit
+     * @param peerId
      * @param name
      * @param password
      * @param color
@@ -400,7 +401,7 @@ export default {
      */
     noticeInput: (
       { commit, state }: { commit: Function; state: any },
-      { name, target }: { name: string; target: any }
+      { name }: { name: string; }
     ) => {
       // 即時入力カウントアップ
       commit("inputPeerId", { name: name, add: 1 });

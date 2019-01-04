@@ -186,7 +186,15 @@ export default {
       },
       gameTableContext: { command: null, isDisplay: false, x: 0, y: 0 },
       chitContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 },
-      cardContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 }
+      cardContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 },
+      inputPlayerInfoWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        playerName: "",
+        playerPassword: "",
+        playerType: ""
+      }
     }
   } /* end of state */,
   actions: {
@@ -328,6 +336,8 @@ export default {
     currentChatKey: (state: any) => state.self.currentChatKey,
     peerId: (state: any) => state.self.peerId,
     angle: (state: any) => state.map.angle,
-    wheel: (state: any) => state.map.wheel
+    wheel: (state: any) => state.map.wheel,
+    getWindowParam: (state: any) => (windowName: any): any =>
+      state.display[windowName]
   }
 };

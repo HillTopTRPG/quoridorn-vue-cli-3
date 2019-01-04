@@ -49,6 +49,7 @@
     <PlayerBoxWindow/>
     <EditGroupChatWindow/>
     <Deck/>
+    <InputPlayerInfoWindow/>
   </div>
 </template>
 
@@ -98,6 +99,7 @@ import EditGroupChatWindow from "../components/chat/EditGroupChatWindow";
 import MordalScreen from "../components/simple/MordalScreen";
 import Loading from "../components/simple/Loading";
 import LoadingScreen from "../components/simple/LoadingScreen";
+import InputPlayerInfoWindow from "../components/welcome/login/InputPlayerInfoWindow";
 
 export default {
   name: "App2",
@@ -143,7 +145,8 @@ export default {
     Deck,
     MordalScreen,
     Loading,
-    LoadingScreen
+    LoadingScreen,
+    InputPlayerInfoWindow
   },
   mounted() {
     this.onSettingMount();
