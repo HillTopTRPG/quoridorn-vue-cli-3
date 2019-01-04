@@ -43,9 +43,9 @@ export default class VolumeComponent extends Vue {
   @Getter("masterMute") masterMute: any;
 
   /** 音量 */
-  private volume: number = 0;
+  public volume: number = 0;
   /** ミュートかどうか */
-  private mute: boolean = false;
+  public mute: boolean = false;
 
   /**
    * ライフサイクルメソッド

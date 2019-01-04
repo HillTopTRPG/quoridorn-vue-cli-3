@@ -5,7 +5,8 @@
     :title="title"
     :initVolume="initVolume"
     :url="url"
-    :maxSecond="maxSecond"
+    :startSecond="startSecond"
+    :endSecond="endSecond"
     @mounted="mounted"
     @destroyed="destroyed"
     @mute="mute"
@@ -31,7 +32,8 @@ export default {
     title: { type: String, required: true },
     initVolume: { type: Number, required: true },
     url: { type: String, required: true },
-    maxSecond: { type: Number, required: true }
+    startSecond: { type: Number, required: true },
+    endSecond: { type: Number, required: true }
   },
   components: {
     BGMCoreComponent: BGMCoreComponent

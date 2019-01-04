@@ -54,6 +54,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+
 import GameTable from "../components/map/GameTable";
 import Deck from "../components/map/card/Deck";
 

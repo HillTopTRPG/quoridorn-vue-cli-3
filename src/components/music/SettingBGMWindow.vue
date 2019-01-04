@@ -37,7 +37,7 @@
                 <i class="icon-file-music" v-if="bgmObj.url && !isYoutube(bgmObj.url)"></i>
               </td><Divider :index="2" prop="settingBGMWindow"/>
               <td :style="colStyle(3)">{{bgmObj.title}}</td><Divider :index="3" prop="settingBGMWindow"/>
-              <td :style="colStyle(4)">{{bgmObj.url ? convertSecond(bgmObj.playLength) : '-'}}</td><Divider :index="4" prop="settingBGMWindow"/>
+              <td :style="colStyle(4)">{{bgmObj.url ? convertSecond(bgmObj.start, bgmObj.end) : '-'}}</td><Divider :index="4" prop="settingBGMWindow"/>
               <td :style="colStyle(5)"><i class="icon-loop" v-if="bgmObj.url && bgmObj.isLoop"></i>{{bgmObj.url && bgmObj.isLoop ? '' : '-'}}</td><Divider :index="5" prop="settingBGMWindow"/>
               <td :style="colStyle(6)">{{bgmObj.url ? bgmObj.volume * 100 : '-'}}</td><Divider :index="6" prop="settingBGMWindow"/>
               <td :style="colStyle(7)" :title="fadeTitle(bgmObj)">{{bgmObj.url ? fadeStr(bgmObj) : '-'}}</td>
@@ -175,10 +175,10 @@ export default {
   },
   computed: mapState({
     importData: state => state.private.display.confirmLoadRoomWindow.importData,
-    convertSecond: () => playLength => {
-      if (playLength > 0) {
-        return `${playLength}秒`;
-      }
+    convertSecond: () => (start, end) => {
+      if (start && end) return `${start}〜${end}`;
+      if (start) return `${start}〜`;
+      if (end) return `〜${end}`;
       return "All";
     },
     bgmList: state => state.setting.bgm.list,

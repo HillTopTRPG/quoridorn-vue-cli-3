@@ -319,7 +319,7 @@ export default class WindowFrame extends Vue {
     });
   }
 
-  @Watch("command")
+  @Watch("command", { deep: true })
   onChangeCommand(this: any, command: any) {
     if (!command) {
       return;

@@ -307,10 +307,6 @@ label input[type="text"] {
   flex: 1;
   margin-left: 5px;
 }
-.operateArea {
-  margin-top: 5px;
-  text-align: center;
-}
 /* Start 列幅可変テーブルのCSS */
 .tableContainer {
   flex: 1;

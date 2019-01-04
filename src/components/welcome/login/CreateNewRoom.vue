@@ -11,6 +11,9 @@
       <button @click="commitRoomName" type="button">チェック</button>
     </label>
 
+    <!----------------------
+     ! 部屋ができるのを待つ
+     !--------------------->
     <SubBlockTitle @open="openWaitRoom" text="部屋ができるのを待つ" v-if="!isRoomExist"/>
     <div class="indentDescription description" v-if="paramRoomName && !isRoomExist">部屋が作られたら自動で入室します。それまでは仮部屋での待機となります。</div>
     <div :class="{isShow: isViewWait && !isRoomExist}" class="subBlock waitRoom">
@@ -18,18 +21,17 @@
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
-          <label>権限：<select v-model="playerType">
-            <option :key="role.value" :value="role.value" v-for="role in roles">{{role.label}}</option>
-          </select><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="playerName"/>
-          </label>
+          <label>ユーザ名：<input placeholder="必須項目" type="text" v-model="playerName"/></label>
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
-        <div>権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
       <button @click="doWaitRoom" type="button"><i class="icon-home3"></i> 仮入室</button>
     </div>
 
+    <!----------------------
+     ! この部屋に入る
+     !--------------------->
     <SubBlockTitle @open="openNewRoom" text="この部屋に入る" v-if="isRoomExist"/>
     <div class="subBlock joinRoom isShow" v-if="isRoomExist">
       <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword"/></label>
@@ -45,9 +47,12 @@
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
         <div>権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
-      <button @click="roomProcess" type="button"><i class="icon-home3"></i> 入室</button>
+      <button @click="roomProcess(false)" type="button"><i class="icon-home3"></i> 入室</button>
     </div>
 
+    <!----------------------
+     ! 新しい部屋をつくる
+     !--------------------->
     <SubBlockTitle @open="openNewRoom" text="新しい部屋をつくる"/>
     <div class="indentDescription description" v-if="paramRoomName && !isRoomExist">「{{paramRoomName}}」は作成可能です。</div>
     <div class="indentDescription description" v-if="paramRoomName && isRoomExist">「{{paramRoomName}}」はすでに作成済みです。<br>同じ名前の部屋はひとつのサーバでひとつしか作成できません。<br>部屋名を変更して、もう一度チェックしてください。
@@ -69,7 +74,7 @@
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
         <div>権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
-      <button @click="roomProcess" type="button"><i class="icon-home3"></i> 作成</button>
+      <button @click="roomProcess(true)" type="button"><i class="icon-home3"></i> 作成</button>
     </div>
   </fieldset>
 </template>
@@ -189,23 +194,7 @@ export default class CreateNewRoom extends Vue {
     /* ------------------------------
      * 部屋存在チェック
      */
-    const func = (isExist: boolean) => {
-      window.console.log(
-        `roomName: ${this.roomName} is ${isExist ? "" : "not "}exist.`
-      );
-
-      // 部屋存在チェックの結果を画面に反映
-      this.setProperty({
-        property: `room.isExist`,
-        value: isExist,
-        logOff: false
-      });
-    };
-    this.checkRoomName({
-      roomName: this.roomName,
-      roomFindFunc: () => func(true),
-      roomNonFindFunc: () => func(false)
-    });
+    this.checkRoomName({ roomName: this.roomName });
     // end of 部屋存在チェック
   }
 
@@ -213,7 +202,7 @@ export default class CreateNewRoom extends Vue {
    * ====================================================================================================
    * 部屋建て・入室振り分け
    */
-  roomProcess() {
+  roomProcess(isNewRoom: boolean) {
     // 入力チェック
     const errorMsg = [];
     if (!this.roomName) errorMsg.push("・部屋名は必須項目です。");
@@ -265,8 +254,12 @@ export default class CreateNewRoom extends Vue {
     // 存在チェックしてから決める
     this.checkRoomName({
       roomName: this.roomName,
-      roomFindFunc: this.doJoinRoom,
-      roomNonFindFunc: this.doNewRoom
+      roomFindFunc: () => {
+        if (!isNewRoom) this.doJoinRoom();
+      },
+      roomNonFindFunc: () => {
+        if (isNewRoom) this.doNewRoom();
+      }
     });
   }
 
@@ -414,7 +407,7 @@ fieldset.root > legend {
     transition-duration: 0.2s;
 
     &.isShow {
-      height: 12.6em;
+      height: 11.1em;
     }
   }
 

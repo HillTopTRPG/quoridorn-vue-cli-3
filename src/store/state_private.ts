@@ -122,7 +122,7 @@ export default {
         doResetPosition: false,
         zIndex: 1,
         // テーブル形式用データここから
-        widthList: [30, 30, 30, 125, 40, 25, 30, 40],
+        widthList: [30, 30, 30, 112, 53, 25, 30, 40],
         selectLineKey: null,
         hoverDevIndex: -1,
         movingIndex: -1,

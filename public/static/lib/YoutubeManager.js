@@ -51,7 +51,15 @@ const YoutubeControlManager = () => {
 
     playerObj.player.a.parentNode.classList.remove("unUse");
 
-    const videoId = window["getUrlParam"]("v", url);
+    const getUrlParam = (name, url) => {
+      name = name.replace(/[[\]]/g, "\\$&");
+      const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+      let results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return "";
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    };
+    const videoId = getUrlParam("v", url);
     youtubeMethod.loadVideoById(tag, videoId, startSeconds, "small");
 
     return true;

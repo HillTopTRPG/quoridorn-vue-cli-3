@@ -47,7 +47,7 @@
           <!-- フェードアウト -->
           <label class="fadeOut"><span>fadeOut</span><input type="number" min="0" step="0.1" max="10" v-model="fadeOut" placeholder="秒"></label>
           <!-- 無限ループ -->
-          <span class="icon loop" :class="{active: isLoop}"><i class="icon-infinite" @click="change('isLoop')" :title="'リピート再生' + (isLoop ? 'あり' : 'なし')"></i></span>
+          <span class="icon loop" :class="{active: isLoop}"><i class="icon-loop" @click="change('isLoop')" :title="'リピート再生' + (isLoop ? 'あり' : 'なし')"></i></span>
         </div>
       </fieldset>
       <fieldset>
@@ -75,12 +75,12 @@
 </template>
 
 <script>
-  import {mapActions, mapState} from "vuex";
-  import WindowFrame from "../WindowFrame";
-  import WindowMixin from "../WindowMixin";
-  import VolumeComponent from "./component/VolumeComponent";
+import { mapActions, mapState } from "vuex";
+import WindowFrame from "../WindowFrame";
+import WindowMixin from "../WindowMixin";
+import VolumeComponent from "./component/VolumeComponent";
 
-  export default {
+export default {
   name: "addBGMWindow",
   mixins: [WindowMixin],
   components: {

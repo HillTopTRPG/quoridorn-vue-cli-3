@@ -7,24 +7,26 @@
         :key="bgmObj.key"
         :bgmKey="bgmObj.key"
         :ref="bgmObj.key"
-        :tag="bgmObj.tag"
-        :isLoop="bgmObj.isLoop"
-        :title="bgmObj.title"
-        :initVolume="bgmObj.volume"
-        :url="bgmObj.url"
+        :tag="bgmObj.tag || ''"
+        :isLoop="bgmObj.isLoop || false"
+        :title="bgmObj.title || ''"
+        :initVolume="bgmObj.volume || 0.5"
+        :url="bgmObj.url || ''"
         @end="remove(bgmObj.key)"
-        :maxSecond="bgmObj.playLength"></BGMYoutubeComponent>
+        :startSecond="bgmObj.start || 0"
+        :endSecond="bgmObj.end || 0"></BGMYoutubeComponent>
       <BGMFileComponent
         v-for="bgmObj in playList.filter(pl => !/www\.youtube\.com/.test(pl.url))"
         :key="bgmObj.key"
         :ref="bgmObj.key"
-        :tag="bgmObj.tag"
-        :isLoop="bgmObj.isLoop"
-        :title="bgmObj.title"
-        :initVolume="bgmObj.volume"
-        :url="bgmObj.url"
+        :tag="bgmObj.tag || ''"
+        :isLoop="bgmObj.isLoop || false"
+        :title="bgmObj.title || ''"
+        :initVolume="bgmObj.volume || 0.5"
+        :url="bgmObj.url || ''"
         @end="remove(bgmObj.key)"
-        :maxSecond="bgmObj.playLength"></BGMFileComponent>
+        :startSecond="bgmObj.start || 0"
+        :endSecond="bgmObj.end || 0"></BGMFileComponent>
     </div>
   </WindowFrame>
 </template>
@@ -54,10 +56,12 @@ export default {
   methods: {
     ...mapActions(["windowClose", "windowOpen"]),
     add(bgmKey) {
+      window.console.log(bgmKey, this.bgmList);
       if (!bgmKey) return;
       const addBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0];
       // 見つからなかったらタイミング悪く削除されたということなので、処理しない
       if (!addBgmObj) return;
+      window.console.log(addBgmObj, this.playList);
 
       // タグが同じものはプレイリストから削除する
       const delList = this.playList.filter(plObj => {
@@ -70,6 +74,7 @@ export default {
         }
         return addBgmObj.tag === bgmObj.tag;
       });
+      window.console.log("delList:", delList);
       delList.forEach(delObj => {
         const index = this.playList.indexOf(delObj);
         this.playList.splice(index, 1);
@@ -91,6 +96,8 @@ export default {
       const delBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0];
       // 見つからなかったらタイミング悪く削除されたということなので、処理しない
       if (!delBgmObj) return;
+
+      console.log("remove List;;:");
 
       const index = this.playList.indexOf(delBgmObj);
       this.playList.splice(index, 1);

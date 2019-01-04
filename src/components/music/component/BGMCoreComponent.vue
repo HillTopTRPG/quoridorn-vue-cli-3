@@ -19,18 +19,21 @@
           ref="volumeComponent"/>
       </div>
       <div class="playLengthArea">
-        <input class="playLength" :class="{isPlay: isPlay}" :style="playLengthStyle" type="range" min="0" :max="Math.round(bgmLength * 100) / 100" step="0.01" v-model="playLength" @input="seekTo">
-        <span class="playLengthText">{{Math.round(playLength)}}/{{Math.round(bgmLength)}}</span>
+        <input class="playLength" :class="{isPlay: isPlay}" :style="playLengthStyle" type="range" min="0" :max="Math.round(duration * 100) / 100" step="0.01" v-model="playLength" @input="seekTo">
+        <span class="playLengthText">{{Math.round(playLength)}}/{{Math.round(duration)}}</span>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import { mapState, mapActions } from "vuex";
-import VolumeComponent from "./VolumeComponent";
+<script lang="ts">
+import { mapState } from "vuex";
+import VolumeComponent from "./VolumeComponent.vue";
+import { getUrlParam } from "../../common/Utility";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
 
-export default {
+@Component<BGMCoreComponent>({
   name: "bgmCoreComponent",
   props: {
     tag: { type: String, required: true },
@@ -38,121 +41,143 @@ export default {
     title: { type: String, required: true },
     initVolume: { type: Number, required: true },
     url: { type: String, required: true },
-    maxSecond: { type: Number, required: true }
+    startSecond: { type: Number, required: true },
+    endSecond: { type: Number, required: true }
   },
   components: {
-    VolumeComponent: VolumeComponent
-  },
-  data() {
-    return {
-      jukeboxAudio: null,
-      isYoutube: false,
-      isPlay: true,
-      playLength: 0,
-      duration: 0,
-      thumbnailData: ""
-    };
-  },
-  mounted() {
+    VolumeComponent
+  }
+})
+export default class BGMCoreComponent extends Vue {
+  @Getter("masterMute") masterMute: any;
+  @Getter("masterVolume") masterVolume: any;
+
+  private jukeboxAudio: any = null;
+  isYoutube: boolean = false;
+  isPlay: boolean = true;
+  playLength: number = 0;
+  duration: number = 0;
+  thumbnailData: string = "";
+
+  mounted(this: any): void {
     this.isYoutube = /www\.youtube\.com/.test(this.url);
-    this.thumbnailData = `http://i.ytimg.com/vi/${window["getUrlParam"](
+    this.thumbnailData = `http://i.ytimg.com/vi/${getUrlParam(
       "v",
       this.url
     )}/default.jpg`;
     this.$refs.volumeComponent.setVolume(this.initVolume);
     this.$refs.volumeComponent.setMute(false);
     this.$emit("mounted");
-  },
-  destroyed() {
+  }
+  destroyed(): void {
     this.changePlay(false);
     this.$emit("destroyed");
-  },
-  methods: {
-    ...mapActions([]),
-    thumbnailClick() {
-      window.open(this.url, "_blank");
-    },
-    audioMute() {
-      this.$emit("mute", this.masterMute || this.$refs.volumeComponent.mute);
-    },
-    audioVolume() {
-      this.$emit(
-        "volume",
-        this.masterVolume * this.$refs.volumeComponent.volume
-      );
-    },
-    setMute() {
-      this.audioMute();
-    },
-    setVolume() {
-      this.audioVolume();
-    },
-    changePlay(isPlay = !this.isPlay) {
-      this.isPlay = isPlay;
-      this.$emit(isPlay ? "play" : "pause");
-    },
-    seekTo() {
-      this.$emit("seekTo", this.playLength);
-      this.changePlay(true);
-    },
-    timeUpdate(time) {
-      this.playLength = time;
-      if (this.playLength >= this.bgmLength) {
-        if (this.isLoop) {
-          this.playLength = 0;
-          this.$emit("seekTo", 0);
-        } else {
-          this.$emit("pause");
-          this.$emit("end");
-        }
+  }
+
+  thumbnailClick(this: any): void {
+    window.open(this.url, "_blank");
+  }
+  audioMute(this: any): void {
+    this.$emit(
+      "mute",
+      this.masterMute ||
+        (this.$refs.volumeComponent ? this.$refs.volumeComponent.mute : false)
+    );
+  }
+  audioVolume(this: any): void {
+    this.$emit(
+      "volume",
+      this.masterVolume *
+        (this.$refs.volumeComponent ? this.$refs.volumeComponent.volume : 0)
+    );
+  }
+  setMute(): void {
+    this.audioMute();
+  }
+  setVolume(): void {
+    this.audioVolume();
+  }
+  changePlay(isPlay = !this.isPlay): void {
+    this.isPlay = isPlay;
+    this.$emit(isPlay ? "play" : "pause");
+  }
+  seekTo(): void {
+    this.$emit("seekTo", this.playLength);
+    this.changePlay(true);
+  }
+  timeUpdate(this: any, time: number): void {
+    this.playLength = time;
+    if (this.playLength < this.bgmStart) {
+      this.playLength = this.bgmStart;
+      this.$emit("seekTo", this.bgmStart);
+    }
+    if (this.playLength >= this.bgmEnd) {
+      if (this.isLoop) {
+        this.playLength = this.bgmStart;
+        this.$emit("seekTo", this.bgmStart);
+      } else {
+        this.$emit("pause");
+        this.$emit("end");
       }
-    },
-    pause() {
-      this.isPlay = false;
-    },
-    play() {
-      this.isPlay = true;
-    },
-    setDuration(duration) {
-      this.duration = duration;
     }
-  },
-  watch: {
-    masterMute: {
-      handler() {
-        setTimeout(() => this.audioMute(), 0);
-      },
-      immediate: true
-    },
-    masterVolume: {
-      handler() {
-        setTimeout(() => this.audioVolume(), 0);
-      },
-      immediate: true
+  }
+  pause(): void {
+    this.isPlay = false;
+  }
+  play(): void {
+    this.isPlay = true;
+  }
+  setDuration(duration: number): void {
+    this.duration = duration;
+  }
+
+  get playLengthStyle(): any {
+    const useColor = this.isPlay ? "black" : "#8A084B";
+    const per = (this.playLength * 100) / this.duration;
+    return {
+      background: `linear-gradient(to right, ${useColor} 0%, ${useColor} ${per}%, rgba(100, 100, 100, 1) ${per}%, rgba(100, 100, 100, 1) 100%)`
+    };
+  }
+  get bgmStart(this: any): number {
+    let start = 0;
+    if (this.startSecond > 0) {
+      start = this.startSecond;
+    } else if (this.startSecond < 0) {
+      start = this.duration + this.startSecond;
     }
-  },
-  computed: mapState({
-    playLengthStyle() {
-      const useColor = this.isPlay ? "black" : "#8A084B";
-      const per = (this.playLength * 100) / this.bgmLength;
-      return {
-        background: `linear-gradient(to right, ${useColor} 0%, ${useColor} ${per}%, rgba(100, 100, 100, 1) ${per}%, rgba(100, 100, 100, 1) 100%)`
-      };
-    },
-    bgmLength() {
-      return this.maxSecond > 0 ? this.maxSecond : this.duration;
-    },
-    masterMute: state => state.private.display.jukeboxWindow.masterMute,
-    masterVolume: state => state.private.display.jukeboxWindow.masterVolume,
-    thumbnailTitle() {
-      let title = `【タイトル】\n${this.title}`;
-      if (this.isYoutube) {
-        title += `\n\n【URL】\n${this.url}`;
-      }
-      return title;
+    if (start > this.duration) start = this.duration;
+    if (start < 0) start = 0;
+    return start;
+  }
+  get bgmEnd(this: any): number {
+    let end = this.duration;
+    if (this.endSecond > 0) {
+      end = this.endSecond;
+    } else if (this.endSecond < 0) {
+      end = this.duration + this.endSecond;
     }
-  })
-};
+    if (end > this.duration) end = this.duration;
+    if (end < 0) end = 0;
+    return end;
+  }
+  get thumbnailTitle(this: any): string {
+    let title = `【タイトル】\n${this.title}`;
+    if (this.isYoutube) {
+      title += `\n\n【URL】\n${this.url}`;
+    }
+    return title;
+  }
+
+  @Watch("masterMute", { immediate: true })
+  onChangeMasterMute() {
+    setTimeout(() => this.audioMute(), 0);
+  }
+
+  @Watch("masterVolume", { immediate: true })
+  onChangeMasterVolue() {
+    setTimeout(() => this.audioVolume(), 0);
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

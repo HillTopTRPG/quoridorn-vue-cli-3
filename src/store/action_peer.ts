@@ -443,14 +443,13 @@ export default {
             targets.findIndex((target: string) => target === peerId) > -1
           ) {
             if (sendData.type === "NOTICE_ROOM_INFO") {
-              const index = sendData.value.room.members.findIndex(
-                (member: any) => member.peerId === rootGetters.peerId
-              );
-              if (index > -1) {
-                roomFindFunc();
-              } else {
-                roomFindFunc();
-              }
+              if (roomFindFunc) roomFindFunc.call(null);
+              window.console.log(`roomName: ${roomName} is exist.`);
+              dispatch("setProperty", {
+                property: `room.isExist`,
+                value: true,
+                logOff: true
+              });
               if (loadingFlg) dispatch("loading", false);
               if (peer && !peer.destroyed) {
                 peer.destroy();
@@ -469,12 +468,16 @@ export default {
             if (peer && !peer.destroyed) {
               peer.destroy();
               peer = null;
-              if (roomNonFindFunc) {
-                roomNonFindFunc();
-              }
+              if (roomNonFindFunc) roomNonFindFunc.call(null);
+              window.console.log(`roomName: ${roomName} is not exist.`);
+              dispatch("setProperty", {
+                property: `room.isExist`,
+                value: false,
+                logOff: true
+              });
               if (loadingFlg) dispatch("loading", false);
             }
-          }, 1000);
+          }, 500);
         });
       });
       peer.on("error", (err: any) => {

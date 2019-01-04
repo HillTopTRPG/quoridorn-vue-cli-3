@@ -42,15 +42,33 @@
           <button class="preview" @click="preview">プレビュー</button>
         </div>
         <div>
-          <!-- </label> -->
-          <!-- 再生時間 -->
-          <label class="playLength"><span title="0で全て再生">時間</span><input type="number" min="0" step="0.1" max="10000" v-model="playLength"></label>
+          <!-- 再生開始 -->
+          <label class="start">
+            <span>再生開始</span>
+            <input type="number" step="0.1" min="-10000" max="10000" v-model="start">
+            <span>秒</span>
+          </label>〜
+          <!-- 再生終了 -->
+          <label class="end">
+            <span>再生終了</span>
+            <input type="number" step="0.1" min="-10000" max="10000" v-model="end">
+            <span>秒</span>
+          </label>
+        </div>
+        <div>
           <!-- フェードイン -->
-          <label class="fadeIn"><span>fadeIn</span><input type="number" min="0" step="0.1" max="10" v-model="fadeIn" placeholder="秒"></label>
+          <label class="fadeIn">
+            <span>fadeIn</span>
+            <input type="number" min="0" step="0.1" max="10" v-model="fadeIn" placeholder="秒">
+          </label>
           <!-- フェードアウト -->
-          <label class="fadeOut"><span>fadeOut</span><input type="number" min="0" step="0.1" max="10" v-model="fadeOut" placeholder="秒"></label>
+          <label class="fadeOut">
+            <span>fadeOut</span>
+            <input type="number" min="0" step="0.1" max="10" v-model="fadeOut" placeholder="秒">
+          </label>
           <!-- 無限ループ -->
-          <span class="icon loop" :class="{active: isLoop}"><i class="icon-infinite" @click="change('isLoop')" :title="'リピート再生' + (isLoop ? 'あり' : 'なし')"></i></span>
+          <span class="icon loop" :class="{active: isLoop}" @click="change('isLoop')">
+            <i class="icon-loop"></i>リピート{{isLoop ? "あり" : "なし"}}</span>
         </div>
       </fieldset>
       <fieldset>
@@ -103,7 +121,6 @@ export default {
       fadeOut: 0,
       start: 0,
       end: 0,
-      playLength: 0,
       isMute: false,
       volume: 0.8,
       options: [
@@ -134,7 +151,8 @@ export default {
       this.isLoop = bgmObj.isLoop;
       this.fadeIn = bgmObj.fadeIn;
       this.fadeOut = bgmObj.fadeOut;
-      this.playLength = bgmObj.playLength;
+      this.start = bgmObj.start;
+      this.end = bgmObj.end;
       this.isMute = bgmObj.isMute;
       this.volume = Math.floor(parseFloat(bgmObj.volume) * 100) / 100;
       this.$refs.volumeComponent.setVolume(this.volume);
@@ -199,7 +217,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
@@ -213,59 +231,63 @@ fieldset {
   padding-left: 5px;
   padding-right: 5px;
   padding-bottom: 5px;
-}
-fieldset:not(:last-child) {
-  margin-bottom: 5px;
-}
-fieldset > div {
-  display: flex;
-  justify-content: left;
-  align-content: center;
-}
-fieldset > div:not(:last-child) {
-  margin-bottom: 5px;
+
+  &:not(:last-child) {
+    margin-bottom: 5px;
+  }
+
+  > div {
+    display: flex;
+    justify-content: left;
+    align-content: center;
+
+    &:not(:last-child) {
+      margin-bottom: 5px;
+    }
+
+    i:not(:first-child) {
+      margin-left: 7px;
+    }
+  }
 }
 .icon {
   display: flex;
-}
-.icon i {
-  position: relative;
-  color: black;
-  border-radius: 50%;
-  font-size: 12px;
-  width: 1.4em;
-  height: 1.4em;
-  border: 2px solid black;
-  display: flex;
-  justify-content: center;
-  align-content: start;
-}
-.icon i:before {
-  display: flex;
-  justify-content: center;
-  align-content: start;
-  position: absolute;
-  top: 50%;
-  margin-top: calc(-12px / 2);
-}
-.icon:not(.active) i:hover {
-  background-color: lightyellow;
-}
-.icon.active.loop i {
-  font-weight: bold;
-  background-color: deepskyblue;
-}
-.icon.active.fadeIn i {
-  font-weight: bold;
-  background-color: deepskyblue;
-}
-.icon.active.fadeOut i {
-  font-weight: bold;
-  background-color: deepskyblue;
-}
 
-fieldset > div i:not(:first-child) {
-  margin-left: 7px;
+  i {
+    position: relative;
+    font-size: 12px;
+    width: 1.4em;
+    height: 1.4em;
+    display: flex;
+    justify-content: center;
+    align-content: start;
+    font-weight: bold;
+
+    &:before {
+      display: flex;
+      justify-content: center;
+      align-content: start;
+      position: absolute;
+      top: 50%;
+      margin-top: calc(-12px / 2);
+    }
+  }
+
+  &.loop {
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 0.5em;
+    color: black;
+
+    &.active {
+      border-color: black;
+      color: black;
+    }
+    &:not(.active) {
+      border-color: gray;
+      color: gray;
+    }
+  }
 }
 .firstWide > :first-child {
   flex: 1;
@@ -297,22 +319,25 @@ label {
   vertical-align: middle;
   white-space: nowrap;
   padding: auto;
-}
-label span {
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  margin: auto;
-}
-label input,
-label .mask {
-  flex: 1;
-  padding: 2.5px 0;
-}
-label .mask {
-  border: 1px solid black;
-  background-color: lightgray;
-  padding: 2px 0;
+
+  span {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin: auto;
+  }
+
+  input,
+  .mask {
+    flex: 1;
+    padding: 2.5px 0;
+  }
+
+  .mask {
+    border: 1px solid black;
+    background-color: lightgray;
+    padding: 2px 0;
+  }
 }
 .volumeComponent {
   flex: 1;
