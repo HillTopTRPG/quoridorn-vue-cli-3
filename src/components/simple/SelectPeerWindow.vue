@@ -31,13 +31,13 @@ export default {
   methods: {
     ...mapActions(["windowClose", "setProperty", "createPeer", "windowOpen"]),
     commit() {
-      quoridornLog(this.currentPeerId);
+      qLog(this.currentPeerId);
       const currentMemberObj = this.currentMemberObj;
       if (!currentMemberObj) {
         alert("ルームメンバーからあなたを選んでください。");
         return;
       }
-      quoridornLog(currentMemberObj);
+      qLog(currentMemberObj);
       const privateData = currentMemberObj.private;
       if (!privateData) {
         this.windowClose("private.display.selectPeerWindow");

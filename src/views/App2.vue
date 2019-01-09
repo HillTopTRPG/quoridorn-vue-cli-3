@@ -8,7 +8,7 @@
       <div class="unUse"><div id="YoutubePlayer004"></div></div>
       <div class="unUse"><div id="YoutubePlayer005"></div></div>
     </div>
-    <MordalScreen/>
+    <ModalScreen/>
     <LoadingScreen/>
     <Loading/>
     <ChatWindow/>
@@ -96,7 +96,7 @@ import VersionWindow from "../components/simple/VersionWindow";
 import SettingChatTargetTabWindow from "../components/chat/SettingChatTargetTabWindow";
 import PlayerBoxWindow from "../components/simple/PlayerBoxWindow";
 import EditGroupChatWindow from "../components/chat/EditGroupChatWindow";
-import MordalScreen from "../components/simple/MordalScreen";
+import ModalScreen from "../components/simple/ModalScreen";
 import Loading from "../components/simple/Loading";
 import LoadingScreen from "../components/simple/LoadingScreen";
 import InputPlayerInfoWindow from "../components/welcome/login/InputPlayerInfoWindow";
@@ -143,7 +143,7 @@ export default {
     PlayerBoxWindow,
     EditGroupChatWindow,
     Deck,
-    MordalScreen,
+    ModalScreen,
     Loading,
     LoadingScreen,
     InputPlayerInfoWindow

@@ -3,7 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-import { quoridornLog } from "@/components/common/Utility";
+import { qLog } from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -258,7 +258,7 @@ export default {
       obj.key = key;
       rootState.public[payload.propName].maxKey = maxKey;
 
-      quoridornLog(
+      qLog(
         `[mutations] doAddPieceInfo => { type: ${obj.type}, key:${
           obj.key
         }, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${
@@ -294,7 +294,7 @@ export default {
           continue;
         }
         if (pieceObj[prop] !== payload[prop]) {
-          quoridornLog(
+          qLog(
             `[mutations] update ${propName}(${key}) => ${prop}: ${
               pieceObj[prop]
             } -> ${payload[prop]}`
@@ -318,7 +318,7 @@ export default {
       { rootState, rootGetters }: { rootState: any; rootGetters: any },
       payload: any
     ) => {
-      // quoridornLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
+      // qLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
       const obj = rootGetters.getObj(payload.key);
       const index = rootState.public[payload.propName].list.indexOf(obj);
       rootState.public[payload.propName].list.splice(index, 1);
@@ -383,7 +383,10 @@ export default {
         method: "doAddGroupTargetTab"
       });
     },
-    doAddGroupTargetTab: ({ rootGetters }: { rootGetters: any }, payload: any) => {
+    doAddGroupTargetTab: (
+      { rootGetters }: { rootGetters: any },
+      payload: any
+    ) => {
       rootGetters.groupTargetTab.list.push({
         key: `groupTargetTab-${++rootGetters.groupTargetTab.maxKey}`,
         isSecret: false,
@@ -395,7 +398,12 @@ export default {
     }
   },
   getters: {
-    chatLogList: (state: any, getters: any, rootState: any, rootGetters: any) => {
+    chatLogList: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
       return rootState.public.chat.logs[rootGetters.activeTab].filter(
         (log: any) => {
           if (log.from === rootGetters.playerKey) return true;
@@ -432,15 +440,24 @@ export default {
         }
       );
     },
-    groupTargetTabList: (state: any, getters: any, rootState: any, rootGetters: any) => {
+    groupTargetTabList: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
       return rootGetters.groupTargetTab.list.filter((tab: any) => {
         if (tab.isAll) return true;
         const filterObj = tab.group.filter((targetKey: string) => {
           if (targetKey === getters.currentActorKey) return true;
-          const characterList = rootGetters.getMapObjectList({ kind: "character" });
+          const characterList = rootGetters.getMapObjectList({
+            kind: "character"
+          });
           if (getters.currentActorKey.split("-")[0] === "player") {
             const targetCharacter = characterList
-              .filter((character: any) => character.owner === getters.currentActorKey)
+              .filter(
+                (character: any) => character.owner === getters.currentActorKey
+              )
               .filter((character: any) => character.key === targetKey)[0];
             if (targetCharacter) return true;
           } else if (getters.currentActorKey.split("-")[0] === "character") {
@@ -455,14 +472,24 @@ export default {
       });
     },
     createInputtingMsg: () => (name: string) => `${name}が入力中...`,
-    chatTargetList: (state: any, getters: any, rootState: any, rootGetters: any) => {
+    chatTargetList: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
       return [
         ...getters.groupTargetTabList,
         ...rootGetters.playerList,
         ...rootGetters.getMapObjectList({ kind: "character", place: "field" })
       ];
     },
-    chatOptionPageNum: (state: any, getters: any, rootState: any, rootGetters: any) => {
+    chatOptionPageNum: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
       if (getters.chatOptionSelectMode === "from") {
         const index = getters.getPeerActors.findIndex(
           (target: any) => target.key === getters.chatTarget

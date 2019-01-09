@@ -70,7 +70,7 @@ export default {
       this.windowClose("private.display.editMapMaskWindow");
     },
     initWindow() {
-      // quoridornLog(`initWindow`)
+      // qLog(`initWindow`)
       let mapMaskObj = this.getObj("mapMask", this.key);
       this.name = mapMaskObj.name;
       this.width = mapMaskObj.columns;
@@ -78,7 +78,7 @@ export default {
       const colorObj = this.parseColor(mapMaskObj.color);
       this.color = colorObj.getColorCode();
       this.transparency = 100 - Math.floor(colorObj.a * 100);
-      quoridornLog(
+      qLog(
         `  [methods] init window => EditMapMask:{name:"${this.name}", color:${
           this.color
         }, size:(${this.width}, ${this.height}), transparency:${

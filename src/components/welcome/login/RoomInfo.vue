@@ -53,7 +53,6 @@ export default class RoomInfo extends Vue {
   @Getter("inviteUrl") inviteUrl: any;
   // @Action("setProperty") setProperty: any;
   // @Action("emptyMember") emptyMember: any;
-  // @Action("createPeer") createPeer: any;
   // @Action("windowClose") windowClose: any;
   // @Action("checkRoomName") checkRoomName: any;
   //

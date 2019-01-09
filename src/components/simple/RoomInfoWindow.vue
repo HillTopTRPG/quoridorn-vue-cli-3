@@ -38,7 +38,7 @@ export default {
     //     elms.forEach((elm) => {
     //       elm.focus()
     //       elm.value += ''
-    //       quoridornLog(elm.value)
+    //       qLog(elm.value)
     //     })
     //   }, 100)
     // }
@@ -50,7 +50,7 @@ export default {
     //     elms.forEach((elm) => {
     //       elm.focus()
     //       elm.value += ''
-    //       quoridornLog(elm.value)
+    //       qLog(elm.value)
     //     })
     //   }, 0)
     // }

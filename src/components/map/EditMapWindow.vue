@@ -234,11 +234,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        quoridornLog(`key:"${key}" is not find.`);
+        qLog(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        quoridornLog(`key:"(${key})" is duplicate.`);
+        qLog(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];

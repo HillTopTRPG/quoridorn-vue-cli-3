@@ -11,7 +11,7 @@ export function getUrlParam(
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-export function quoridornLog(...a: any): void {
+export function qLog(...a: any): void {
   // window.console.log(...arguments)
 
   let format = "";
@@ -129,4 +129,4 @@ export function execCopy(text: string): boolean {
   return result;
 }
 
-// quoridornLog("aaaa -> bbb: val1", {rrr: 123, qqq: 432}, "bbb ccc: val2 ddd", {ppp: 222, fff: 4444})
+// qLog("aaaa -> bbb: val1", {rrr: 123, qqq: 432}, "bbb ccc: val2 ddd", {ppp: 222, fff: 4444})

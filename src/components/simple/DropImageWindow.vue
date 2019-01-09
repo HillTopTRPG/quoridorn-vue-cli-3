@@ -2,7 +2,7 @@
   <WindowFrame titleText="画像データ登録" display-property="private.display.dropImageWindow" align="center" fixSize="385, 660">
     <div class="contents">
       <div v-if="!imageList">画像読込中...</div>
-      <fieldset v-if="imageList" v-for="imageObj in imageList" :key="imageObj.key">
+      <fieldset v-for="imageObj in imageList" :key="imageObj.key">
         <legend>{{imageObj.name}}</legend>
         <div>
           <img class="image" v-img="imageObj.image" draggable="false" />
@@ -64,23 +64,23 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        quoridornLog(`key:"${key}" is not find.`);
+        qLog(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        quoridornLog(`key:"(${key})" is duplicate.`);
+        qLog(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];
     },
     changeTag(key) {
       // 入力によってタグの追加・削除が発生する可能性があるので、タグリストを整理してもらう
-      quoridornLog("changeTag");
+      qLog("changeTag");
       this.imageTagChange({ key: key, imageList: this.imageList });
     },
     selectTag(key) {
       const imgObj = this.getKeyObj(this.imageList, key);
-      quoridornLog(imgObj.currentTag, imgObj.selectTag);
+      qLog(imgObj.currentTag, imgObj.selectTag);
       imgObj.currentTag = imgObj.selectTag;
       // const index = this.imageList.indexOf(imgObj)
       // this.imageList.splice(index, 1, imgObj)

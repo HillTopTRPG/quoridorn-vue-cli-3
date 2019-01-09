@@ -71,15 +71,13 @@ import { mapState, mapActions } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 import Divider from "../parts/Divider";
-import PropNumber from "./component/PropNumber";
 
 export default {
   name: "settingBGMWindow",
   mixins: [WindowMixin],
   components: {
     WindowFrame,
-    Divider,
-    PropNumber
+    Divider
   },
   methods: {
     ...mapActions(["setProperty", "windowOpen"]),
@@ -115,12 +113,12 @@ export default {
       this.windowOpen("private.display.editBGMWindow");
     },
     doDelete() {
-      quoridornLog(`doDelete: ${this.selectLineKey}`);
+      qLog(`doDelete: ${this.selectLineKey}`);
       alert("未実装の機能です。");
     },
     changeSortMode(event) {
       const val = event.target.checked;
-      quoridornLog(`changeSortMode: ${val}`);
+      qLog(`changeSortMode: ${val}`);
       if (val) {
         setTimeout(() => {
           alert("未実装の機能です。");

@@ -96,7 +96,7 @@ export default class CreateRoomWindow extends Vue {
       const DiceBotLoader = module.DiceBotLoader;
       DiceBotLoader["collectDiceBots"]().forEach(
         (diceBot: any): void => {
-          // quoridornLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
+          // qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
           _.diceBotSystems.push({
             name: diceBot.gameName(),
             value: diceBot.gameType()

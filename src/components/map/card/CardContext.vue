@@ -93,7 +93,7 @@ export default {
     objKey: state => state.private.display["chitContext"].key,
     storeObj() {
       const key = this.objKey;
-      // quoridornLog(`key:${key}`)
+      // qLog(`key:${key}`)
       return this.getObj(key);
     },
     isReverse: state => state.deck.isReverse,

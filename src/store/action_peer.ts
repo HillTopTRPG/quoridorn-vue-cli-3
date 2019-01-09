@@ -4,7 +4,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Peer from "skyway-js";
-import { quoridornLog } from "@/components/common/Utility";
+import { qLog } from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -13,6 +13,509 @@ Vue.use(Vuex);
  */
 export default {
   actions: {
+    simpleJoinRoom(
+      {
+        rootState,
+        dispatch,
+        rootGetters
+      }: { rootState: any; dispatch: any; rootGetters: any },
+      { roomName }: { roomName: string }
+    ) {
+      return new Promise((resolved: Function, rejected: Function) => {
+        qLog(`Peer接続開始`);
+
+        const connectFunc = () => {
+          qLog(`Peer接続開始2`);
+          // peer接続作成
+          let peer: any = null;
+          try {
+            peer = new Peer({ key: __SKYWAY_KEY__, debug: 1 });
+          } catch (err) {
+            alert(
+              "__SKYWAY_KEY__の設定を見直してください。\n現在の値：" +
+                __SKYWAY_KEY__
+            );
+            rejected.call(null);
+            return;
+          }
+          rootState.self.webRtcPeer = peer;
+
+          /* ------------------------------
+           * Peer接続成功時
+           */
+          peer.on("open", (peerId: string) => {
+            qLog(`Peer接続成功 => PeerId: ${peerId}`);
+            qLog(`Room接続開始 => Room: ${roomName}`);
+            const room = rootGetters.webRtcPeer.joinRoom(roomName, {
+              mode: "sfu"
+            });
+            rootState.room.webRtcRoom = room;
+
+            /* ------------------------------
+             * Room接続成功時
+             */
+            room.on("open", () => {
+              qLog(`Room接続成功 => Room: ${roomName}`);
+              resolved(peerId);
+            });
+          });
+
+          // 画面が閉じられたらPeer接続を破棄
+          window.onunload = window.onbeforeunload = () => {
+            // マップ編集中のロックを解除
+            if (rootGetters.isMapEditing === rootGetters.peerId) {
+              dispatch("setProperty", {
+                property: "public.map.isEditting",
+                isNotice: true,
+                value: null,
+                logOff: true
+              });
+            }
+            if (peer && !peer.destroyed) {
+              peer.destroy();
+              rootState.self.webRtcPeer = null;
+            }
+          };
+
+          /* ------------------------------
+           * エラーハンドリング
+           */
+          peer.on("error", (err: any) => {
+            if (
+              err.message.indexOf("Please make sure the peerId is correct") > 0
+            ) {
+              // 切断済みの相手に対するSkyWayAPIの内部的な処理によるエラーのため無視する
+              window.console.error(err.message);
+              return;
+            }
+
+            // その他エラー
+            window.console.error(err.message);
+            window.console.error(err);
+            rejected.call(null);
+            alert(
+              `接続に失敗しました。\n原因は以下のメッセージを参考にしてください。\n${
+                err.message
+              }`
+            );
+          });
+        };
+
+        // 既にPeer接続していたら、その接続は破棄する
+        if (rootGetters.webRtcRoom) {
+          rootGetters.webRtcRoom.close();
+          dispatch("setProperty", {
+            property: "room.webRtcRoom",
+            value: null,
+            logOff: true
+          });
+        }
+        if (rootGetters.webRtcPeer && !rootGetters.webRtcPeer.destroyed) {
+          rootGetters.webRtcPeer.on("disconnected", () => {
+            setTimeout(() => {
+              connectFunc();
+            }, 100);
+          });
+          rootGetters.webRtcPeer.destroy();
+          rootGetters.webRtcPeer.disconnect();
+        } else {
+          connectFunc();
+        }
+      });
+    },
+    /**
+     * 誰かが入室してきた場合の処理
+     * @param peerId
+     */
+    onJoinMember(obj: any, { peerId }: { peerId: string }) {
+      qLog(`入室を感知 => peerId: ${peerId}`);
+    },
+    /**
+     * 誰かが退室した場合の処理
+     * @param dispatch
+     * @param rootGetters
+     * @param peerId
+     */
+    onLeaveMember(
+      { dispatch, rootGetters }: { dispatch: any; rootGetters: any },
+      { peerId }: { peerId: string }
+    ) {
+      qLog(`退室を感知 => peerId: ${peerId}`);
+      const index = rootGetters.members.findIndex(
+        (member: any) => member.peerId === peerId
+      );
+      if (index < 0) return;
+
+      // メンバーリストから削除する
+      const member = rootGetters.members.splice(index, 1)[0];
+      const player = rootGetters.playerList.filter(
+        (p: any) => p.key === member.playerKey
+      )[0];
+      dispatch("addChatLog", {
+        name: rootGetters.systemLog.name,
+        text: `${player.name}(${peerId}) が退室しました。`,
+        color: rootGetters.systemLog.color,
+        tab: rootGetters.systemLog.tab,
+        owner: rootGetters.systemLog.owner
+      });
+    },
+    /**
+     * NOTICE_NEW_MEMBER
+     * ルームメンバーの自己紹介を受け取ったとき
+     *
+     * @param rootState
+     * @param dispatch
+     * @param rootGetters
+     * @param value
+     * @param fromPeerId
+     */
+    onNoticeNewMember(
+      {
+        rootState,
+        dispatch,
+        rootGetters
+      }: { rootState: any; dispatch: any; rootGetters: any },
+      { value, fromPeerId }: { value: any; fromPeerId: string }
+    ) {
+      // Player追加
+      dispatch("addPlayer", {
+        peerId: fromPeerId,
+        name: value.name,
+        password: value.password,
+        type: value.type,
+        color: value.color
+      });
+
+      // チャットログ
+      dispatch("addChatLog", {
+        name: rootGetters.systemLog.name,
+        text: `${value.name}(${fromPeerId}) が入室しました。`,
+        color: rootGetters.systemLog.color,
+        tab: rootGetters.systemLog.tab,
+        owner: rootGetters.systemLog.owner
+      });
+
+      // 自分が親だったら、入ってきた人に部屋情報を教えてあげる
+      if (rootGetters.members[0].peerId === rootGetters.peerId) {
+        dispatch("sendRoomData", {
+          type: "NOTICE_ROOM_INFO",
+          value: rootState.public,
+          targets: [fromPeerId]
+        });
+      }
+    },
+    /**
+     * NOTICE_ROOM_INFO
+     * ルームメンバーの情報を受け取ったとき
+     *
+     * @param rootState
+     * @param dispatch
+     * @param rootGetters
+     * @param peerId
+     * @param roomName
+     * @param roomPassword
+     * @param playerName
+     * @param playerPassword
+     * @param playerType
+     * @param resolved
+     * @param rejected
+     * @param isCheck
+     * @param value
+     */
+    onNoticeRoomInfo(
+      {
+        rootState,
+        dispatch,
+        rootGetters
+      }: { rootState: any; dispatch: any; rootGetters: any },
+      {
+        roomName,
+        roomPassword,
+        playerName,
+        playerPassword,
+        playerType,
+        resolved,
+        rejected,
+        isGui,
+        value
+      }: {
+        roomName: string;
+        roomPassword: string;
+        playerName: any;
+        playerPassword: any;
+        playerType: any;
+        resolved: Function;
+        rejected: Function;
+        isGui: boolean;
+        value: any;
+      }
+    ) {
+      let isShowWindow = false;
+      let isError = false;
+      // 部屋パスワードチェック
+      if (value.room.password !== roomPassword) {
+        isShowWindow = true;
+        isError = true;
+        window.console.log(
+          "部屋パスワードエラー",
+          value.room.password,
+          roomPassword
+        );
+        if (isGui) {
+          alert("部屋パスワードエラー");
+        }
+      }
+      const myPlayer = value.player.list.filter(
+        (p: any) => p.name === playerName
+      )[0];
+      if (myPlayer) {
+        // 同名プレイヤーが既に部屋にいる場合
+
+        // プレイヤーパスワードチェック
+        if (myPlayer.password !== playerPassword) {
+          isShowWindow = true;
+          isError = true;
+          window.console.log(
+            "プレイヤーパスワードエラー",
+            myPlayer.pass,
+            playerPassword
+          );
+          if (isGui) {
+            alert("プレイヤーパスワードエラー");
+          }
+        }
+      }
+
+      if (playerName === null || playerPassword === null) {
+        isError = true;
+      }
+
+      if (playerType === null) {
+        isShowWindow = true;
+      }
+
+      // 受け取ったpublic情報でローカルを更新する
+      rootState.public = value;
+
+      const showInputWindow = () => {
+        // 情報を入力してもらう
+        dispatch("setProperty", {
+          property: "private.display.inputPlayerInfoWindow",
+          value: {
+            roomName: roomName,
+            roomPassword: roomPassword,
+            playerName: playerName,
+            playerPassword: playerPassword,
+            playerType: playerType
+          },
+          logOff: true
+        });
+        dispatch("windowOpen", "private.display.inputPlayerInfoWindow");
+      };
+
+      if (isError) {
+        if (!isGui) {
+          rejected.call(null);
+        } else {
+          showInputWindow();
+        }
+        return;
+      }
+
+      if (isShowWindow) {
+        if (isGui) {
+          showInputWindow();
+          return;
+        }
+      }
+
+      // プレイヤーを追加する
+      dispatch("addPlayer", {
+        peerId: rootGetters.peerId,
+        name: playerName,
+        password: playerPassword,
+        type: playerType,
+        color: "#000000"
+      });
+
+      qLog(`Room: ${roomName} のルームメンバーとして認識されました。`);
+
+      // チャット追加
+      dispatch("addChatLog", {
+        name: rootGetters.systemLog.name,
+        text: `Room: ${roomName} に接続しました！！`,
+        color: rootGetters.systemLog.color,
+        tab: rootGetters.systemLog.tab,
+        owner: rootGetters.systemLog.owner
+      });
+
+      dispatch("windowOpen", "private.display.playerBoxWindow");
+
+      // 入室通知
+      resolved.call(null);
+    },
+    /**
+     * SEND_PRIVATE_DATA
+     * privateデータを受けたとき
+     * @param rootState
+     * @param dispatch
+     * @param rootGetters
+     * @param value
+     */
+    onSendPrivateData(
+      {
+        rootState,
+        dispatch,
+        rootGetters
+      }: { rootState: any; dispatch: any; rootGetters: any },
+      { value }: { value: any }
+    ) {
+      rootState.volatileSaveData.members.push(value);
+      if (
+        rootState.volatileSaveData.members.length === rootGetters.members.length
+      ) {
+        dispatch("doExport");
+      }
+    },
+    /**
+     * NOTICE_OPERATION
+     * 親によるDO_METHODの発令要請を受けた時
+     * @param rootState
+     * @param dispatch
+     * @param rootGetters
+     * @param value
+     * @param method
+     */
+    onNoticeOperation(
+      {
+        rootState,
+        dispatch,
+        rootGetters
+      }: { rootState: any; dispatch: any; rootGetters: any },
+      { value, method }: { value: any; method: string }
+    ) {
+      // 自分が親だったら、この通知を処理して、ルームメンバーに土管する
+      if (rootGetters.members[0].peerId === rootGetters.peerId) {
+        dispatch("sendRoomData", {
+          type: "DO_METHOD",
+          value: value,
+          method: method
+        });
+        dispatch(method, value);
+      }
+    },
+    /**
+     * 部屋データを受け取ったとき
+     * @param rootState
+     * @param dispatch
+     * @param rootGetters
+     * @param peerId
+     * @param roomName
+     * @param roomPassword
+     * @param playerName
+     * @param playerPassword
+     * @param playerType
+     * @param resolved
+     * @param rejected
+     * @param isCheck
+     * @param message
+     */
+    onReceiveData(
+      {
+        rootState,
+        dispatch,
+        rootGetters
+      }: { rootState: any; dispatch: any; rootGetters: any },
+      {
+        roomName,
+        roomPassword,
+        playerName,
+        playerPassword,
+        playerType,
+        resolved,
+        rejected,
+        isCheck,
+        message
+      }: {
+        roomName: string;
+        roomPassword: string;
+        playerName: string;
+        playerPassword: string;
+        playerType: string;
+        resolved: Function;
+        rejected: Function;
+        isCheck: boolean;
+        message: any;
+      }
+    ) {
+      const fromPeerId = message.src;
+
+      const type: string = message.data.type;
+      const value: any = message.data.value;
+      const method: string = message.data.method;
+
+      // ターゲットでなければ処理しない
+      const targets = message.data.targets;
+      if (
+        targets &&
+        targets.findIndex((target: string) => target === rootGetters.peerId) ===
+          -1
+      ) {
+        return;
+      }
+
+      // ログ出力
+      const methodMsg = type === "DO_METHOD" ? `METHOD: ${method}, ` : "";
+      qLog(`RoomData受信 => TYPE: ${type}, ${methodMsg}VALUE:`, value);
+
+      /*
+       * 通信内容に従って処理する
+       */
+      // ルームメンバーの情報を受け取ったとき
+      if (type === "NOTICE_ROOM_INFO")
+        dispatch("onNoticeRoomInfo", {
+          roomName: roomName,
+          roomPassword: roomPassword,
+          playerName: playerName,
+          playerPassword: playerPassword,
+          playerType: playerType,
+          resolved: resolved,
+          rejected: rejected,
+          isCheck: isCheck,
+          value: value
+        });
+      // ルームメンバーの自己紹介を受け取ったとき
+      if (type === "NOTICE_NEW_MEMBER")
+        dispatch("onNoticeNewMember", {
+          value: value,
+          fromPeerId: fromPeerId
+        });
+      // privateデータの要求を受けたとき
+      if (type === "REQUEST_PRIVATE_DATA")
+        dispatch("sendRoomData", {
+          type: "SEND_PRIVATE_DATA",
+          value: rootState.private,
+          targets: [fromPeerId]
+        });
+      // privateデータを受けたとき
+      if (type === "SEND_PRIVATE_DATA")
+        dispatch("onSendPrivateData", {
+          value: value
+        });
+      // 親によるDO_METHODの発令要請を受けた時
+      if (type === "NOTICE_OPERATION")
+        dispatch("onNoticeOperation", {
+          value: value,
+          method: method
+        });
+      // 入力中の通知を受けたとき
+      if (type === "NOTICE_OPERATION") dispatch("noticeInput", value);
+      // 画面操作を受け取ったとき
+      if (type === "DO_METHOD") {
+        delete value.isNotice;
+        dispatch(method, value);
+      }
+    },
     /** ========================================================================
      * WebRTCでPeer接続し、Roomにも接続する
      */
@@ -23,7 +526,6 @@ export default {
         rootGetters
       }: { rootState: any; dispatch: any; rootGetters: any },
       {
-        peerId,
         roomName,
         roomPassword,
         playerName,
@@ -32,7 +534,6 @@ export default {
         resolved,
         rejected
       }: {
-        peerId: string;
         roomName: string;
         roomPassword: string;
         playerName: string;
@@ -42,396 +543,82 @@ export default {
         rejected: Function;
       }
     ) {
+      // 入力チェック
       if (!roomName) {
         window.console.error(`部屋名は必須項目です。`);
         alert(`部屋名は必須項目です。`);
         rejected.call(null);
         return;
       }
-      quoridornLog(`Peer接続開始 => PeerId: ${peerId}`);
-
-      // peer接続作成
-      let peer: any = null;
-      try {
-        peer = new Peer(peerId, { key: __SKYWAY_KEY__, debug: 1 });
-      } catch (err) {
-        alert(
-          "__SKYWAY_KEY__の設定を見直してください。\n現在の値：" +
-            __SKYWAY_KEY__
-        );
-        rejected.call(null);
-        return;
-      }
-
-      // 既にPeer接続していたら、その接続は破棄する
-      if (rootGetters.webRtcPeer && !rootGetters.webRtcPeer.destroyed) {
-        rootGetters.webRtcPeer.destroy();
-        dispatch("setProperty", {
-          property: "room.webRtcRoom",
-          value: null,
-          logOff: true
-        });
-      }
-      rootState.self.webRtcPeer = peer;
-
-      // 画面が閉じられたらPeer接続を破棄
-      window.onunload = window.onbeforeunload = () => {
-        // マップ編集中のロックを解除
-        if (rootGetters.isMapEditing === rootGetters.peerId) {
-          dispatch("setProperty", {
-            property: "public.map.isEditting",
-            isNotice: true,
-            value: null,
-            logOff: true
-          });
-        }
-        if (peer && !peer.destroyed) {
-          peer.destroy();
-        }
-      };
-
-      /* ------------------------------
-       * エラーハンドリング
-       */
-      peer.on("error", (err: any) => {
-        if (err.message.indexOf("is already in use") > 0) {
-          window.console.error(err.message);
-          window.console.error(err);
-          alert(
-            `接続に失敗しました。\npeerId:${peerId}は既に使われています。\n異なるpeerIdを指定してください。`
-          );
-          rejected.call(null);
-          return;
-        }
-
-        if (err.message.indexOf("Please make sure the peerId is correct") > 0) {
-          // 切断済みの相手に対するSkyWayAPIの内部的な処理によるエラーのため無視する
-          window.console.log(err.message);
-          return;
-        }
-
-        // その他エラー
-        window.console.error(err.message);
-        window.console.error(err);
-        rejected.call(null);
-        alert(
-          `接続に失敗しました。\n原因は以下のメッセージを参考にしてください。\n${
-            err.message
-          }`
-        );
-      });
-
-      /* ------------------------------
-       * Peer接続成功時
-       */
-      peer.on("open", (peerId: string) => {
-        quoridornLog(`Peer接続成功 => PeerId: ${peerId}`);
-        // セーブデータからの復元の場合は既にpeerIdが格納されている
-        if (rootGetters.peerId !== peerId) {
-          dispatch("setProperty", {
-            property: "private.self.peerId",
-            value: peerId,
-            logOff: true
-          });
-          dispatch("setProperty", {
-            property: "public.room.password",
-            value: rootGetters.playerPassword,
-            logOff: true
-          });
-          dispatch("addPlayer", {
-            peerId: peerId,
-            name: playerName,
-            password: playerPassword,
-            type: playerType,
-            color: "#000000"
-          });
-        }
-        quoridornLog(`Room接続開始 => Room: ${roomName}`);
-        const room = rootGetters.webRtcPeer.joinRoom(roomName);
-
-        /* ------------------------------
-         * Room接続成功時
-         */
-        room.on("open", () => {
-          quoridornLog(`Room接続成功 => Room: ${roomName}`);
-          rootState.room.webRtcRoom = room;
-
-          const logName = "SYSTEM";
-          const logColor = "red";
-          const logTab = "メイン";
-
-          dispatch("setProperty", {
-            property: "public.room.name",
-            value: roomName,
-            logOff: true
-          });
-
+      dispatch("simpleJoinRoom", {
+        roomName: roomName,
+        resolved: () => {
           dispatch("windowOpen", "private.display.playerBoxWindow");
-
-          /* ------------------------------
-           * 誰かが入室してきた場合
-           */
-          room.on("peerJoin", (peerId: string) => {
-            quoridornLog(`入室を感知 => peerId: ${peerId}`);
-            // 自分が親だったら、入ってきた人に部屋情報を教えてあげる
-            if (rootGetters.members[0].peerId === rootGetters.peerId) {
-              dispatch("sendRoomData", {
-                type: "NOTICE_ROOM_INFO",
-                value: rootState.public,
-                targets: [peerId]
-              });
-            }
-          });
-
-          /* ------------------------------
-           * 誰かが退室した場合
-           */
-          room.on("peerLeave", (peerId: string) => {
-            quoridornLog(`退室を感知 => peerId: ${peerId}`);
-            // quoridornLog(peerId, rootState.public.room.members)
-            const index = rootGetters.members.findIndex(
-              (member: any) => member.peerId === peerId
-            );
-            if (index < 0) return;
-
-            // メンバーリストから削除する
-            const member = rootGetters.members.splice(index, 1)[0];
-            const player = rootGetters.playerList.filter(
-              (p: any) => p.key === member.playerKey
-            )[0];
-            dispatch("addChatLog", {
-              name: logName,
-              text: `${player.name}(${peerId}) が退室しました。`,
-              color: logColor,
-              tab: logTab,
-              owner: "SYSTEM"
-            });
-          });
-
-          /* ------------------------------
-           * 誰かがデータを送信した場合
-           */
-          room.on("data", (message: any) => {
-            const fromPeerId = message.src;
-
-            // ターゲットでなければ処理しない
-            const targets = message.data.targets;
-            if (
-              targets &&
-              targets.findIndex(
-                (target: string) => target === rootGetters.peerId
-              ) === -1
-            ) {
-              return;
-            }
-
-            const type: string = message.data.type;
-            const value: any = message.data.value;
-            const method: string = message.data.method;
-
-            // ログ出力
-            if (type === "DO_METHOD") {
-              quoridornLog(
-                `RoomData受信 => TYPE: ${type}, METHOD: ${method}, VALUE:`,
-                value
-              );
-            } else {
-              quoridornLog(`RoomData受信 => TYPE: ${type}, VALUE:`, value);
-            }
-
-            // 通信内容に従って処理する
-            switch (type) {
-              /* ------------------------------
-               * ルームメンバーの情報を受け取ったとき
-               */
-              case "NOTICE_ROOM_INFO": {
-                // 部屋パスワードチェック
-                if (value.room.password !== roomPassword) {
-                  alert("部屋パスワードエラー");
-                  window.console.log(
-                    "部屋パスワードエラー",
-                    value.room.password,
-                    roomPassword
-                  );
-                  rejected.call(null);
-                  dispatch("logout");
-                  break;
-                }
-                const myPlayer = value.player.list.filter(
-                  (p: any) => p.name === playerName
-                )[0];
-                if (myPlayer) {
-                  // 同名プレイヤーが既に部屋にいる場合
-
-                  // プレイヤーパスワードチェック
-                  if (myPlayer.password !== playerPassword) {
-                    alert("プレイヤーパスワードエラー");
-                    window.console.log(
-                      "プレイヤーパスワードエラー",
-                      myPlayer.pass,
-                      playerPassword
-                    );
-                    rejected.call(null);
-                    dispatch("logout");
-                    break;
-                  }
-                }
-
-                // ここまでで入室チェック済み
-                resolved.call(null);
-
-                // 受け取ったpublic情報でローカルを更新する
-                rootState.public = value;
-
-                // プレイヤー情報を入力してもらう
-                dispatch("setProperty", {
-                  property: "private.display.inputPlayerInfoWindow",
-                  value: {
-                    peerId: peerId,
-                    roomName: roomName,
-                    playerName: playerName,
-                    playerPassword: playerPassword,
-                    playerType: playerType
-                  },
-                  logOff: true
-                });
-                dispatch("windowOpen", "private.display.inputPlayerInfoWindow");
-                break;
-              }
-              /* ------------------------------
-               * ルームメンバーの自己紹介を受け取ったとき
-               */
-              case "NOTICE_NEW_MEMBER": {
-                // Player追加
-                dispatch("addPlayer", {
-                  peerId: fromPeerId,
-                  name: value.name,
-                  password: value.password,
-                  type: value.type,
-                  color: value.color
-                });
-
-                // チャットログ
-                dispatch("addChatLog", {
-                  name: logName,
-                  text: `${value.name}(${fromPeerId}) が入室しました。`,
-                  color: logColor,
-                  tab: logTab,
-                  owner: "SYSTEM"
-                });
-                break;
-              }
-              /* ------------------------------
-               * privateデータの要求を受けたとき
-               */
-              case "REQUEST_PRIVATE_DATA": {
-                dispatch("sendRoomData", {
-                  type: "SEND_PRIVATE_DATA",
-                  value: rootState.private,
-                  targets: [fromPeerId]
-                });
-                break;
-              }
-              /* ------------------------------
-               * privateデータの要求を受けたとき
-               */
-              case "SEND_PRIVATE_DATA": {
-                rootState.volatileSaveData.members.push(value);
-                if (
-                  rootState.volatileSaveData.members.length ===
-                  rootGetters.members.length
-                ) {
-                  dispatch("doExport");
-                }
-                break;
-              }
-              /* ------------------------------
-               * 親によるDO_METHODの発令要請を受けた時
-               */
-              case "NOTICE_OPERATION": {
-                // 自分が親だったら、この通知を処理して、ルームメンバーに土管する
-                if (rootGetters.members[0].peerId === rootGetters.peerId) {
-                  dispatch("sendRoomData", {
-                    type: "DO_METHOD",
-                    value: value,
-                    method: method
-                  });
-                  dispatch(method, value);
-                }
-                break;
-              }
-              /* ------------------------------
-               * 画面操作を受け取ったとき
-               */
-              case "DO_METHOD": {
-                delete value.isNotice;
-                dispatch(method, value);
-                break;
-              }
-              /* ------------------------------
-               * 入力中の通知を受けたとき
-               */
-              case "NOTICE_INPUT": {
-                dispatch("noticeInput", value);
-                break;
-              }
-              default:
-            }
-          });
-        });
+        },
+        rejected: rejected
       });
     },
     joinPlayer(
-      { dispatch }: { dispatch: Function; },
       {
-        peerId,
+        dispatch,
+        rootGetters,
+        rootState
+      }: { dispatch: Function; rootGetters: any; rootState: any },
+      {
         roomName,
+        roomPassword,
         playerName,
         playerPassword,
         playerType
       }: {
-        peerId: string;
         roomName: string;
+        roomPassword: string;
         playerName: string;
         playerPassword: string;
         playerType: string;
       }
     ) {
-      // プレイヤーを追加する
-      dispatch("addPlayer", {
-        peerId: peerId,
-        name: playerName,
-        password: playerPassword,
-        type: playerType,
-        color: "#000000"
-      });
+      return new Promise((resolve: Function, reject: Function) => {
+        /* ------------------------------
+         * 誰かが入室してきた場合
+         */
+        rootGetters.webRtcRoom.on("peerJoin", (peerId: string) => {
+          dispatch("onJoinMember", { peerId: peerId });
+        });
 
-      quoridornLog(
-        `Room: ${roomName} のルームメンバーとして認識されました。`
-      );
+        /* ------------------------------
+         * 誰かが退室した場合
+         */
+        rootGetters.webRtcRoom.on("peerLeave", (peerId: string) => {
+          dispatch("onLeaveMember", { peerId: peerId });
+        });
 
-      const logName = "SYSTEM";
-      const logColor = "red";
-      const logTab = "メイン";
+        /* ------------------------------
+         * 部屋データを受信した場合
+         */
+        rootGetters.webRtcRoom.on("data", (message: any) => {
+          dispatch("onReceiveData", {
+            roomName: roomName,
+            roomPassword: roomPassword,
+            playerName: playerName,
+            playerPassword: playerPassword,
+            playerType: playerType,
+            resolved: resolve,
+            rejected: reject,
+            message: message
+          });
+        });
 
-      // チャット追加
-      dispatch("addChatLog", {
-        name: logName,
-        text: `Room: ${roomName} に接続しました！！`,
-        color: logColor,
-        tab: logTab,
-        owner: "SYSTEM"
-      });
-
-      // ルームメンバーに自己紹介する
-      dispatch("sendRoomData", {
-        type: "NOTICE_NEW_MEMBER",
-        value: {
-          name: playerName,
-          password: playerPassword,
-          type: playerType,
-          color: "#000000"
-        }
+        // ルームメンバーに自己紹介する
+        dispatch("sendRoomData", {
+          type: "NOTICE_NEW_MEMBER",
+          value: {
+            name: playerName,
+            password: playerPassword,
+            type: playerType,
+            color: "#000000"
+          }
+        });
       });
     },
     /** ========================================================================
@@ -441,82 +628,56 @@ export default {
       { dispatch, rootGetters }: { dispatch: Function; rootGetters: any },
       {
         roomName,
-        roomFindFunc,
-        roomNonFindFunc,
         loadingFlg = true
       }: {
         roomName: string;
-        roomFindFunc: Function;
-        roomNonFindFunc: Function;
         loadingFlg: boolean;
       }
     ) {
-      let peer: any = null;
-      try {
-        peer = new Peer({
-          key: __SKYWAY_KEY__,
-          debug: 1
-        });
-      } catch (err) {
-        alert(
-          "__SKYWAY_KEY__の設定を見直してください。\n現在の値：" +
-            __SKYWAY_KEY__
-        );
-        window.console.error(err);
-      }
+      return new Promise((resolve: Function) => {
+        // 入力チェック
+        if (!roomName) {
+          window.console.error(`部屋名は必須項目です。`);
+          alert(`部屋名は必須項目です。`);
+          return;
+        }
 
-      if (loadingFlg) dispatch("loading", true);
-      let peerId: string = "";
-      const connectFunc = (room: any) => {
-        room.on("data", (message: any) => {
-          const sendData = message.data;
-          const targets = sendData.targets;
-          if (
-            !targets ||
-            targets.length === 0 ||
-            targets.findIndex((target: string) => target === peerId) > -1
-          ) {
-            if (sendData.type === "NOTICE_ROOM_INFO") {
-              if (roomFindFunc) roomFindFunc.call(null);
-              window.console.log(`roomName: ${roomName} is exist.`);
-              dispatch("setProperty", {
-                property: `room.isExist`,
-                value: true,
-                logOff: true
-              });
-              if (loadingFlg) dispatch("loading", false);
-              if (peer && !peer.destroyed) {
-                peer.destroy();
-                peer = null;
+        rootGetters.webRtcRoom.getLog();
+        rootGetters.webRtcRoom.on("log", (logs: string[]) => {
+          dispatch("setProperty", {
+            property: "public.room.name",
+            value: roomName,
+            logOff: true
+          });
+          const peerIdList: string[] = [];
+          logs.forEach((log: string) => {
+            // window.console.log(log);
+            // 部屋存在チェック処理
+            const logObj = JSON.parse(log);
+            if (
+              logObj.messageType === "ROOM_DATA" &&
+              logObj.message.data.type === "NOTICE_NEW_MEMBER"
+            ) {
+              // window.console.log(`addPeerId:${logObj.message.src}`);
+              peerIdList.push(logObj.message.src)
+            }
+            if (logObj.messageType === "ROOM_USER_LEAVE") {
+              const index = peerIdList.findIndex(peerId => peerId === logObj.message.src);
+              if (index > -1) {
+                // window.console.log(`removePeerId:${peerIdList[index]}`);
+                peerIdList.splice(index, 1);
               }
             }
-          }
+          });
+          let isExist = peerIdList.length > 0;
+          window.console.log(`isExist:${isExist}, peerIdList:`, peerIdList);
+          dispatch("setProperty", {
+            property: `room.isExist`,
+            value: isExist,
+            logOff: true
+          });
+          resolve(isExist);
         });
-      };
-      peer.on("open", (id: string) => {
-        peerId = id;
-        const room = peer.joinRoom(roomName);
-        room.on("open", () => {
-          connectFunc(room);
-          setTimeout(() => {
-            if (peer && !peer.destroyed) {
-              peer.destroy();
-              peer = null;
-              if (roomNonFindFunc) roomNonFindFunc.call(null);
-              window.console.log(`roomName: ${roomName} is not exist.`);
-              dispatch("setProperty", {
-                property: `room.isExist`,
-                value: false,
-                logOff: true
-              });
-              if (loadingFlg) dispatch("loading", false);
-            }
-          }, 500);
-        });
-      });
-      peer.on("error", (err: any) => {
-        window.console.error(err);
-        if (loadingFlg) dispatch("loading", false);
       });
     },
     /** ========================================================================
@@ -529,7 +690,7 @@ export default {
       dispatch: Function;
       rootGetters: any;
     }) {
-      quoridornLog("ログアウト");
+      qLog("ログアウト");
       dispatch("setProperty", {
         property: "public.room",
         value: {
@@ -567,7 +728,7 @@ export default {
           case "NOTICE_INPUT":
             break;
           default:
-            quoridornLog("RoomData送信 =>", payload);
+            qLog("RoomData送信 =>", payload);
         }
         rootGetters.webRtcRoom.send(payload);
       }

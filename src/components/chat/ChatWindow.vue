@@ -164,7 +164,7 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
-import { quoridornLog } from "../common/Utility";
+import { qLog } from "../common/Utility";
 
 @Component<ChatWindow>({
   name: "chatWindow",
@@ -610,7 +610,7 @@ export default class ChatWindow extends Vue {
 
   @Watch("currentDiceBotSystem")
   onChangeCurrentDiceBotSystem(currentDiceBotSystem: any) {
-    quoridornLog(`ダイスボットシステムを${currentDiceBotSystem}に変更`);
+    qLog(`ダイスボットシステムを${currentDiceBotSystem}に変更`);
   }
 
   @Watch("chatLogList")
@@ -637,7 +637,7 @@ export default class ChatWindow extends Vue {
   @Watch("secretTarget")
   onChangeSecretTarget(this: any, secretTarget: any) {
     if (!secretTarget) return;
-    quoridornLog("selectSecretTalk", secretTarget);
+    qLog("selectSecretTalk", secretTarget);
     this.secretTarget = "";
   }
 }

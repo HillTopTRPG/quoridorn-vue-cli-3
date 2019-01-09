@@ -39,7 +39,7 @@ import Chit from "./chit/Chit.vue";
 
 import { Component, Mixins } from "vue-mixin-decorator";
 import { Action, Getter } from "vuex-class";
-import { quoridornLog } from "../common/Utility";
+import { qLog } from "../common/Utility";
 import { Watch } from "vue-property-decorator";
 
 @Component({
@@ -76,7 +76,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("isDraggingRight") isDraggingRight: any;
   @Getter("move") move: any;
   @Getter("anglevolatile") anglevolatile: any;
-  @Getter("isMordal") isMordal: any;
+  @Getter("isModal") isModal: any;
   @Getter("getMapObjectList") getMapObjectList: any;
 
   mounted(): void {
@@ -123,7 +123,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   leftDown(this: any): void {
-    // quoridornLog(`  [methods] mousedown left on GameTable`)
+    // qLog(`  [methods] mousedown left on GameTable`)
     const obj = {
       move: {
         from: {
@@ -137,7 +137,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   leftUp(): void {
-    // quoridornLog(`  [methods] mouseup left on GameTable`)
+    // qLog(`  [methods] mouseup left on GameTable`)
     if (this.rollObj.isRolling) {
       // マップ上のオブジェクトを回転中の場合
       const pieceObj = this.$store.state.public[
@@ -155,7 +155,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         pieceObj.angle.dragging + pieceObj.angle.total
       );
       const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30);
-      // quoridornLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
+      // qLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
       const obj = {
         total: total,
         dragging: 0
@@ -186,9 +186,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   rightDown(this: any): void {
-    quoridornLog(
-      `  [methods] GameTableイベント => event: mousedown, mouse: right`
-    );
+    qLog(`  [methods] GameTableイベント => event: mousedown, mouse: right`);
     const obj = {
       angle: {
         dragStart: this.calcCoordinate(
@@ -203,9 +201,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   rightUp(event: any): void {
-    quoridornLog(
-      `  [methods] GameTableイベント => event: mouseup, mouse: right`
-    );
+    qLog(`  [methods] GameTableイベント => event: mouseup, mouse: right`);
     const isDraggingRight = this.isDraggingRight;
     this.setProperty({
       property: "map.isMouseDownRight",
@@ -250,7 +246,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
           logOff: true
         });
         this.windowOpen(`private.display.gameTableContext`);
-        quoridornLog(`  [methods] open context => gameTableContext`);
+        qLog(`  [methods] open context => gameTableContext`);
       }
     } else {
       this.setProperty({
@@ -332,7 +328,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         (Math.ceil(locateOnTable.y / this.gridSize) - 1) * this.gridSize;
     }
 
-    quoridornLog(
+    qLog(
       `  [methods] drop on GameTable => type: ${kind}, address: (${
         canvasAddress.grid.column
       },${canvasAddress.grid.row})`
@@ -460,7 +456,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     if (imageFiles.length > 0) {
       // どこに使う画像ファイルなのかを選んでもらう
       const thumbnailSize = { w: 96, h: 96 };
-      const promiseList = [];
+      const promiseList: [PromiseLike] = [];
       for (const file of imageFiles) {
         promiseList.push(this.createBase64DataSet(file, thumbnailSize));
       }
@@ -485,9 +481,9 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     }
   }
 
-  createBase64DataSet(imageFile: any, { w, h }: { w: number; h: number }) {
+  createBase64DataSet(imageFile: any, { w, h }: { w: number; h: number }): any {
     return new Promise(function(resolve, reject) {
-      const createPromise = function(isThumbnail: boolean) {
+      const createPromise = function(isThumbnail: boolean): any {
         // eslint-disable-next-line
           return new Promise(function (resolve2) {
           // 画像の読み込み処理
@@ -598,7 +594,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     if (this.isUseImage) {
       result.backgroundImage = `url(${this.getBackgroundImage})`;
     }
-    if (this.isMordal) {
+    if (this.isModal) {
       result.filter = "blur(3px)";
     }
     return result;

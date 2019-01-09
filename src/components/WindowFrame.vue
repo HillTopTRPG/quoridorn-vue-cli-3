@@ -60,7 +60,7 @@ export default class WindowFrame extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("windowActive") windowActive: any;
   @Getter("getStateValue") getStateValue: any;
-  @Getter("isMordal") isMordal: any;
+  @Getter("isModal") isModal: any;
 
   private moveMode: string = "";
   private mouse: any = {
@@ -96,7 +96,7 @@ export default class WindowFrame extends Vue {
     this.addEventForIFrame();
   }
   closeWindow(this: any): void {
-    // quoridornLog(`  [methods] closeWindow(click [x]button)`)
+    // qLog(`  [methods] closeWindow(click [x]button)`)
     this.windowClose(this.displayProperty);
     this.$emit("cancel");
   }
@@ -134,7 +134,7 @@ export default class WindowFrame extends Vue {
     } else {
       const moveMode = this.moveMode;
       const winFac = this.windowFactor;
-      // quoridornLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
+      // qLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
       if (moveMode.indexOf("right") >= 0) {
         winFac.r -= winFac.draggingX;
         winFac.w += winFac.draggingX;
@@ -155,7 +155,7 @@ export default class WindowFrame extends Vue {
       winFac.draggingY = 0;
       this.mouseUp(event);
     }
-    // quoridornLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+    // qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     this.moveMode = flg ? direct : "";
   }
   reflesh(this: any): void {
@@ -183,7 +183,7 @@ export default class WindowFrame extends Vue {
       case "move":
         this.windowFactor.draggingX = moveX;
     }
-    // quoridornLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+    // qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
   }
   move(this: any, event: any, flg: boolean, isTouch: boolean): void {
     if (flg) {
@@ -455,7 +455,7 @@ export default class WindowFrame extends Vue {
           ? `${this.base.h + height}px`
           : `calc(100% - ${-this.base.h - height - 10}px)`;
     }
-    if (this.isMordal && this.zIndex <= 99999) {
+    if (this.isModal && this.zIndex <= 99999) {
       obj.filter = "blur(3px)";
     }
     return obj;

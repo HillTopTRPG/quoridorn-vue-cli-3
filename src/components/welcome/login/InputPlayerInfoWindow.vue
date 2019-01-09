@@ -3,12 +3,12 @@
     titleText="入室情報入力画面"
     display-property="private.display.inputPlayerInfoWindow"
     align="center"
-    fixSize="375, 199"
+    fixSize="375, 210"
     @open="initWindow"
     :isBanClose="true"
   >
     <div class="contents">
-      <div class="welcomeMessage">部屋「{{roomName}}」へようこそ！<br>ユーザ情報を入力してください。</div>
+      <div class="welcomeMessage">部屋「{{useRoomName}}」へようこそ！<br>ユーザ情報を入力してください。</div>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <label>
@@ -34,7 +34,7 @@ import WindowMixin from "../../WindowMixin.vue";
 
 import { Action, Getter } from "vuex-class";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 @Component<InputPlayerInfoWindow>({
   name: "inputPlayerInfoWindow",
@@ -54,8 +54,10 @@ export default class InputPlayerInfoWindow extends Vue {
   private inputPlayerName: string = "";
   private inputPlayerPassword: string = "";
   private inputPlayerType: string = "";
+  private useRoomName: string = "";
 
   initWindow(): void {
+    this.useRoomName = this.roomName;
     this.inputPlayerName = this.playerName;
     this.inputPlayerPassword = this.playerPassword;
     this.inputPlayerType = this.playerType;
@@ -66,30 +68,34 @@ export default class InputPlayerInfoWindow extends Vue {
     const errorMsg = [];
     if (!this.inputPlayerName) errorMsg.push("・ユーザ名");
     if (errorMsg.length > 0) {
-      alert(`必須項目未入力エラー\n${errorMsg.join("\n")}\n入力をお願いします。`);
+      alert(
+        `必須項目未入力エラー\n${errorMsg.join("\n")}\n入力をお願いします。`
+      );
       return;
     }
-    const player = this.playerList.filter((p: any) =>
-      p.name === this.inputPlayerName
-    );
+    const player = this.playerList.filter(
+      (p: any) => p.name === this.inputPlayerName
+    )[0];
+    window.console.log(player, this.inputPlayerPassword, this.playerList);
     if (player && player.password !== this.inputPlayerPassword) {
-      alert("パスワードが違います。\nパスワードを入力し直すか、別人で参加してください。");
+      alert(
+        "パスワードが違います。\nパスワードを入力し直すか、別人で参加してください。"
+      );
       return;
     }
     // モーダル状態の解除
     this.setProperty({
-      property: "isMordal",
+      property: "isModal",
       value: false,
       logOff: true
     });
     this.windowClose("private.display.inputPlayerInfoWindow");
     this.joinPlayer({
-      peerId: "",
       roomName: this.roomName,
       playerName: this.inputPlayerName,
       playerPassword: this.inputPlayerPassword,
       playerType: this.inputPlayerType
-    })
+    });
   }
 
   get roomName(this: any): string {
@@ -124,7 +130,6 @@ export default class InputPlayerInfoWindow extends Vue {
   position: absolute;
   height: 100%;
   width: 100%;
-  overflow-y: scroll;
 
   font-size: 12px;
 }

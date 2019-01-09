@@ -23,7 +23,7 @@ import Card from "./Card.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
-// import { quoridornLog } from "../../common/Utility";
+// import { qLog } from "../../common/Utility";
 
 @Component<Deck>({
   name: "deck",
@@ -38,7 +38,7 @@ export default class Deck extends Vue {
   @Getter("deckCommand") deckCommand: any;
   @Getter("deckHoverIndex") deckHoverIndex: any;
   @Getter("deckHoverKey") deckHoverKey: any;
-  @Getter("isMordal") isMordal: any;
+  @Getter("isModal") isModal: any;
 
   createRefStr(
     { author, title }: { author: string; title: string },
@@ -54,7 +54,7 @@ export default class Deck extends Vue {
   get containerStyle(): any {
     const obj: any = {};
     obj.width = this.deck.width * 0.8 + 22 + "px";
-    if (this.isMordal) {
+    if (this.isModal) {
       obj.filter = "blur(3px)";
     }
     return obj;

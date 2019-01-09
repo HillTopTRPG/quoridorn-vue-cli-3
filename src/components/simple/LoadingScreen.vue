@@ -9,7 +9,7 @@ import { Getter } from "vuex-class";
 @Component({
   name: "loadingScreen"
 })
-export default class MordalScreen extends Vue {
+export default class ModalScreen extends Vue {
   @Getter("isLoading") isLoading: any;
 }
 </script>

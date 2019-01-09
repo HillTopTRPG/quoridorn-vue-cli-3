@@ -20,7 +20,6 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 export default class NonUseRoom extends Vue {
   // @Action("setProperty") setProperty: any;
   // @Action("emptyMember") emptyMember: any;
-  // @Action("createPeer") createPeer: any;
   // @Action("windowClose") windowClose: any;
   // @Action("checkRoomName") checkRoomName: any;
   //

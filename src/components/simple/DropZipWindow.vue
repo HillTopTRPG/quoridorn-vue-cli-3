@@ -3,7 +3,7 @@
     <div class="contents">
       <div v-if="!saveDataList">部屋データを読み込んでいます...</div>
       <div v-if="saveDataList">複数のセーブデータで同じ項目を読み込ませる場合、各セーブデータで順次上書きされていきます。</div>
-      <fieldset v-if="saveDataList" v-for="(saveDataObj, index) in saveDataList" :key="index">
+      <fieldset v-for="(saveDataObj, index) in saveDataList" :key="index">
         <legend>{{saveDataObj.fileName}}</legend>
         <button @click="allSelect(index)">全て対象</button><button @click="allDisSelect(index)">全て除外</button>
         <div class="useCheckList">
@@ -55,7 +55,7 @@ export default {
               if (!target[prop]) {
                 target[prop] = {};
               }
-              // quoridornLog(target[prop], val)
+              // qLog(target[prop], val)
               propProc(target[prop], val);
             }
           }
@@ -82,7 +82,7 @@ export default {
             toObj = toObj[prop];
             fromObj = fromObj[prop];
           });
-          // quoridornLog('$$ ', toObj, fromObj, importData)
+          // qLog('$$ ', toObj, fromObj, importData)
           if (toObj) {
             propProc(toObj, fromObj);
           }

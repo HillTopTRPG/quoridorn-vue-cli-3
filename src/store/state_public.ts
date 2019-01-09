@@ -3,7 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-// import { quoridornLog } from "@/components/common/Utility";
+// import { qLog } from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -401,7 +401,7 @@ export default {
      */
     noticeInput: (
       { commit, state }: { commit: Function; state: any },
-      { name }: { name: string; }
+      { name }: { name: string }
     ) => {
       // 即時入力カウントアップ
       commit("inputPeerId", { name: name, add: 1 });
@@ -436,11 +436,11 @@ export default {
         name: string;
         password: string;
         color: string;
-        type: string
+        type: string;
       }
     ) => {
       const player: any = state.player.list.filter((p: any) => {
-          return p.name === name;
+        return p.name === name;
       })[0];
       const playerKey: string = player ? player.key : `player-${name}`;
       state.room.members.push({
@@ -523,7 +523,7 @@ export default {
       const useTexts: any[] = [];
       /* eslint no-control-regex: 0 */
       const regExp = new RegExp("[　\t \r\n,]+", "g");
-      // quoridornLog(imageList)
+      // qLog(imageList)
       imageList.forEach((imageObj: any) => {
         Array.prototype.push.apply(
           useTexts,
@@ -688,9 +688,16 @@ export default {
      * @returns {*}
      */
     getBackgroundImage: (state: any) =>
-      state.image.list.filter((image: any) => image.key === state.map.imageKey)[0].data,
+      state.image.list.filter(
+        (image: any) => image.key === state.map.imageKey
+      )[0].data,
 
-    getPeerActors: (state: any, getters: any, rootState: any, rootGetters: any) => {
+    getPeerActors: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
       const playerName = rootGetters.playerName;
       const player = state.player.list.filter(
         (p: any) => p.name === playerName
@@ -750,31 +757,35 @@ export default {
     members: (state: any): any[] => state.room.members,
     deck: (state: any): any => state.deck,
     deckCardList: (state: any): any[] => state.deck.cards.list,
-    getMapObjectList: (state: any) => (
-      {
-        kind,
-        place = "",
-        playerKey = ""
-      }: { kind: string; place: string; playerKey: string}
-    ): any[] => {
+    getMapObjectList: (state: any) => ({
+      kind,
+      place = "",
+      playerKey = ""
+    }: {
+      kind: string;
+      place: string;
+      playerKey: string;
+    }): any[] => {
       const list: any[] = state[kind].list;
       if (!place && !playerKey) {
         return list;
       } else {
-        return list.filter(
-          (target: any) => {
-            if (playerKey && target.owner !== playerKey) return false;
-            return !(place && target.place !== place);
-          }
-        );
+        return list.filter((target: any) => {
+          if (playerKey && target.owner !== playerKey) return false;
+          return !(place && target.place !== place);
+        });
       }
     },
     getMembers: (state: any, getters: any) => (playerKey: string): any[] => {
       const player = getters.getObj(playerKey);
-      return getters.members.filter((member: any) => member.playerKey === player.key)
+      return getters.members.filter(
+        (member: any) => member.playerKey === player.key
+      );
     },
     getPlayer: (state: any, getters: any) => (peerId: string): any => {
-      const member = getters.members.filter((member: any) => member.peerId === peerId);
+      const member = getters.members.filter(
+        (member: any) => member.peerId === peerId
+      );
       if (!member) return null;
       return getters.getObj(member.playerKey);
     },

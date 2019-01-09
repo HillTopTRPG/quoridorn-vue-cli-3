@@ -14,14 +14,10 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import PieceMixin from "../../PieceMixin";
-import Range from "../../range/Range";
 
 export default {
   name: "characterChip",
   mixins: [PieceMixin],
-  components: {
-    Range
-  },
   data() {
     return {};
   },
@@ -29,11 +25,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        quoridornLog(`key:"${key}" is not find.`);
+        qLog(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        quoridornLog(`key:"(${key})" is duplicate.`);
+        qLog(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];
@@ -48,7 +44,7 @@ export default {
       obj.width = this.gridSize + "px";
       obj.height = this.gridSize + "px";
       // delete obj.transform
-      // quoridornLog(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+      // qLog(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
       return obj;
     },
     name() {
@@ -66,7 +62,7 @@ export default {
         return "";
       }
       const imageStr = this.useImageList.split("|")[this.useImageIndex];
-      // quoridornLog(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
+      // qLog(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
       const isReverse = imageStr.indexOf(":R") >= 0;
       const imageKey = imageStr.replace(":R", "");
       return {

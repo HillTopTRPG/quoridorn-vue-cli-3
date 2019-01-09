@@ -81,7 +81,7 @@ export default new Vuex.Store({
     volatileSaveData: {
       members: []
     },
-    isMordal: true,
+    isModal: true,
     isLoading: 0
   },
   actions: {
@@ -110,15 +110,25 @@ export default new Vuex.Store({
       state.param.playerType = playerType;
 
       if (roomName) {
-        dispatch("checkRoomName", {
-          roomName: roomName,
-          roomFindFunc: message => {
-            state.room.isExist = true;
-          },
-          roomNonFindFunc: () => {
-            state.room.isExist = false;
-          }
-        });
+        /* ------------------------------
+         * 部屋存在チェック
+         */
+        dispatch("loading", true);
+        Promise.resolve()
+          .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
+          .then(() => dispatch("checkRoomName", { roomName: roomName }))
+          .then(() => dispatch("loading", false))
+          .catch(() => dispatch("loading", false));
+        //
+        // dispatch("checkRoomName", {
+        //   roomName: roomName,
+        //   roomFindFunc: message => {
+        //     state.room.isExist = true;
+        //   },
+        //   roomNonFindFunc: () => {
+        //     state.room.isExist = false;
+        //   }
+        // });
       }
 
       if (!roomName) {
@@ -477,7 +487,7 @@ export default new Vuex.Store({
     paramPlayerPassword: state => state.param.playerPassword,
     paramPlayerType: state => state.param.playerType,
     isRoomExist: state => state.room.isExist,
-    isMordal: state => state.isMordal,
+    isModal: state => state.isModal,
     isLoading: state => state.isLoading,
     activeTab: state => state.chat.activeTab,
     hoverTab: state => state.chat.hoverTab,

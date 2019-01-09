@@ -1,5 +1,5 @@
 <template>
-  <div @mousemove.stop class="mordalScreen" v-if="isMordal"></div>
+  <div @mousemove.stop class="mordalScreen" v-if="isModal"></div>
 </template>
 
 <script lang="ts">
@@ -9,8 +9,8 @@ import { Getter } from "vuex-class";
 @Component({
   name: "mordalScreen"
 })
-export default class MordalScreen extends Vue {
-  @Getter("isMordal") isMordal: any;
+export default class ModalScreen extends Vue {
+  @Getter("isModal") isModal: any;
 }
 </script>
 

@@ -49,13 +49,13 @@ export default {
       this.$refs.core.play();
     },
     onError(event) {
-      quoridornLog(event);
+      qLog(event);
     },
     onPaused() {
       this.$refs.core.pause();
     },
     onReject() {
-      quoridornLog("youtube - onReject => reload");
+      qLog("youtube - onReject => reload");
       this.setProperty({
         property: "private.display.jukeboxWindow.command",
         logOff: true,

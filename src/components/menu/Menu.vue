@@ -147,7 +147,7 @@ export default class Menu extends Vue {
   @Action("doExport") doExport: any;
   @Getter("roomName") roomName: any;
   @Getter("volatileSaveData") volatileSaveData: any;
-  @Getter("isMordal") isMordal: any;
+  @Getter("isModal") isModal: any;
   @Getter("peerId") peerId: any;
   @Getter("members") members: any;
 
@@ -448,7 +448,7 @@ export default class Menu extends Vue {
 
   get menuStyle(): any {
     const result: any = {};
-    if (this.isMordal) {
+    if (this.isModal) {
       result.filter = "blur(3px)";
     }
     return result;
