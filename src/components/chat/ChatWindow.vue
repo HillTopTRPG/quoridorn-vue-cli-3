@@ -196,9 +196,7 @@ export default class ChatWindow extends Vue {
   @Getter("activeTab") activeTab: any;
   @Getter("hoverTab") hoverTab: any;
   @Getter("playerKey") playerKey: any;
-  @Getter("chatOptionPageNum") chatOptionPageNum: any;
-  @Getter("chatOptionPageMaxNum") chatOptionPageMaxNum: any;
-  @Getter("chatOptionPagingList") chatOptionPagingList: any;
+  @Getter("chatOptionPagingSize") chatOptionPagingSize: any;
 
   private enterPressing: boolean = false;
   /** 入力されたチャット文字 */
@@ -638,6 +636,71 @@ export default class ChatWindow extends Vue {
     if (!secretTarget) return;
     qLog("selectSecretTalk", secretTarget);
     this.secretTarget = "";
+  }
+  get chatOptionPageNum() {
+    if (this.chatOptionSelectMode === "from") {
+      const index = this.getPeerActors.findIndex(
+        (target: any) => target.key === this.chatTarget
+      );
+      if (index === -1) return -1;
+      return Math.floor(index / this.chatOptionPagingSize) + 1;
+    }
+    if (this.chatOptionSelectMode === "target") {
+      const index = this.chatTargetList.findIndex(
+        (target: any) => target.key === this.chatTarget
+      );
+      if (index === -1) return -1;
+      return Math.floor(index / this.chatOptionPagingSize) + 1;
+    }
+    if (this.chatOptionSelectMode === "tab") {
+      const index = this.chatTabList.findIndex(
+        (target: any) => target.name === this.activeTab
+      );
+      if (index === -1) return -1;
+      return Math.floor(index / this.chatOptionPagingSize) + 1;
+    }
+    return -1;
+  }
+  get chatOptionPageMaxNum() {
+    let length: number = 0;
+    if (this.chatOptionSelectMode === "from")
+      length = this.getPeerActors.length;
+    if (this.chatOptionSelectMode === "target")
+      length = this.chatTargetList.length;
+    if (this.chatOptionSelectMode === "tab") length = this.chatTabList.length;
+    const result = Math.floor(length / this.chatOptionPagingSize) + 1;
+    window.console.log(`pattern: ${this.chatOptionSelectMode}`);
+    window.console.log(`result: ${result}`);
+    return result;
+  }
+  get chatOptionPagingList() {
+    const pageNum = this.chatOptionPageNum;
+    const startIndex = (pageNum - 1) * this.chatOptionPagingSize;
+    if (this.chatOptionSelectMode === "from") {
+      const endIndex = Math.min(
+        pageNum * this.chatOptionPagingSize,
+        this.getPeerActors.length
+      );
+      const result = this.getPeerActors.concat();
+      return result.splice(startIndex, endIndex - startIndex);
+    }
+    if (this.chatOptionSelectMode === "target") {
+      const endIndex = Math.min(
+        pageNum * this.chatOptionPagingSize,
+        this.chatTargetList.length
+      );
+      const result = this.chatTargetList.concat();
+      return result.splice(startIndex, endIndex - startIndex);
+    }
+    if (this.chatOptionSelectMode === "tab") {
+      const endIndex = Math.min(
+        pageNum * this.chatOptionPagingSize,
+        this.chatTabList.length
+      );
+      const result = this.chatTabList.concat();
+      return result.splice(startIndex, endIndex - startIndex);
+    }
+    return 0;
   }
 }
 </script>
