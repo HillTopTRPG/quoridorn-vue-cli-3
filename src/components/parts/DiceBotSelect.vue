@@ -62,7 +62,7 @@ export default class DiceBotSelect extends Vue {
   }
 
   /*
-   * lifecycle hook
+   * ライフサイクルメソッド
    */
   created(): void {}
   mounted(): void {

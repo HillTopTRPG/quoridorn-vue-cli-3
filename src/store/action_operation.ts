@@ -338,8 +338,14 @@ export default {
     shuffleDeck: ({ dispatch }: { dispatch: Function }) => {
       dispatch("sendNoticeOperation", { value: {}, method: "doShuffleDeck" });
     },
-    doShuffleDeck: ({ rootState }: { rootState: any }) => {
-      const cardList = rootState.public.deck.cards.list.concat();
+    doShuffleDeck: ({
+      rootState,
+      rootGetters
+    }: {
+      rootState: any;
+      rootGetters: any;
+    }) => {
+      const cardList = rootGetters.deckCardList.concat();
       for (let i = cardList.length - 1; i >= 0; i--) {
         // 0~iのランダムな数値を取得
         const rand = Math.floor(Math.random() * (i + 1));
@@ -367,7 +373,7 @@ export default {
       const index = payload.index;
       // const cardKey = payload.key
 
-      const cardList = rootState.public.deck.cards.list;
+      const cardList = rootGetters.deckCardList;
       const card = cardList[index];
       cardList.splice(index, 1);
 
@@ -514,28 +520,17 @@ export default {
       return -1;
     },
     chatOptionPageMaxNum: (state: any, getters: any, rootState: any) => {
-      if (getters.chatOptionSelectMode === "from") {
-        return (
-          Math.floor(
-            getters.getPeerActors.length / getters.chatOptionPagingSize
-          ) + 1
-        );
-      }
-      if (getters.chatOptionSelectMode === "target") {
-        return (
-          Math.floor(
-            getters.chatTargetList.length / getters.chatOptionPagingSize
-          ) + 1
-        );
-      }
-      if (getters.chatOptionSelectMode === "tab") {
-        return (
-          Math.floor(
-            rootState.public.chat.tabs.length / getters.chatOptionPagingSize
-          ) + 1
-        );
-      }
-      return 0;
+      let length: number = 0;
+      if (getters.chatOptionSelectMode === "from")
+        length = getters.getPeerActors.length;
+      if (getters.chatOptionSelectMode === "target")
+        length = getters.chatTargetList.length;
+      if (getters.chatOptionSelectMode === "tab")
+        length = rootState.public.chat.tabs.length;
+      const result = Math.floor(length / getters.chatOptionPagingSize) + 1;
+      window.console.log(`pattern: ${getters.chatOptionSelectMode}`);
+      window.console.log(`result: ${result}`);
+      return result;
     },
     chatOptionPagingList: (state: any, getters: any, rootState: any) => {
       const pageNum = getters.chatOptionPageNum;

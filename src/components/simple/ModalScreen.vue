@@ -1,5 +1,5 @@
 <template>
-  <div @mousemove.stop class="mordalScreen" v-if="isModal"></div>
+  <div class="mordalScreen" v-if="isModal"></div>
 </template>
 
 <script lang="ts">

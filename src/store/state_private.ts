@@ -18,10 +18,6 @@ export default {
       playerKey: null,
       currentChatKey: "",
 
-      playerName: "",
-      playerType: "",
-      password: "",
-      color: "black",
       cards: []
     },
 
@@ -193,7 +189,9 @@ export default {
         zIndex: 1,
         playerName: "",
         playerPassword: "",
-        playerType: ""
+        playerType: "",
+        fontColor: "",
+        resolve: null
       }
     }
   } /* end of state */,
@@ -330,9 +328,6 @@ export default {
     masterVolume: (state: any) => state.display.jukeboxWindow.masterVolume,
     fontColor: (state: any) => state.self.color,
     playerKey: (state: any) => state.self.playerKey,
-    playerName: (state: any) => state.self.playerName,
-    playerPassword: (state: any) => state.self.password,
-    playerType: (state: any) => state.self.playerType,
     currentChatKey: (state: any) => state.self.currentChatKey,
     peerId: (state: any) => state.self.peerId,
     angle: (state: any) => state.map.angle,

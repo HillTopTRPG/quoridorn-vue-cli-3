@@ -10,7 +10,6 @@ export default class WindowMixin extends Vue {
   windowParam(instance: any): any {
     const className = instance.constructor.name;
     const propName = className.charAt(0).toLowerCase() + className.substring(1);
-    window.console.log(className, propName, this.getWindowParam(propName));
     return this.getWindowParam(propName);
   }
 }

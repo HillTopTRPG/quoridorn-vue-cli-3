@@ -69,6 +69,7 @@ export default {
   } /* end of actions */,
   getters: {
     roles: (state: any) => state.roles,
-    systemLog: (state: any) => state.systemLog
+    systemLog: (state: any) => state.systemLog,
+    chatOptionPagingSize: (state: any) => 8
   }
 };

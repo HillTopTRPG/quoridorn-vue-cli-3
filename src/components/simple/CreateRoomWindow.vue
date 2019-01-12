@@ -82,7 +82,7 @@ export default class CreateRoomWindow extends Vue {
   };
 
   /*
-   * lifecycle hook
+   * ライフサイクルメソッド
    */
   created(): void {
     this.diceBotSystems.push({

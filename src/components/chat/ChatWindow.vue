@@ -158,7 +158,7 @@
 
 <script lang="ts">
 // import 'bcdice-js/lib/preload-dicebots'
-import DiceBotSelect from "../dice/DiceBotSelect.vue";
+import DiceBotSelect from "../parts/DiceBotSelect.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
@@ -207,7 +207,6 @@ export default class ChatWindow extends Vue {
   private addBrackets: boolean = false;
   /** チャットオプション入力モード('tab':# or 'target':@ or '') */
   private chatOptionSelectMode: string = "";
-  private chatOptionPagingSize: number = 8;
   /** 発言先 */
   private chatTarget: string = "groupTargetTab-0";
   /** 出力先のタブ */

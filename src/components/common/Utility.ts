@@ -87,7 +87,10 @@ export function qLog(...a: any): void {
     } else if (toString.call(arg) === "[object Array]") {
       format += "%c%s";
       logs.push("color: blue;");
-      logs.push(arg.join(", "));
+      logs.push(`[ ${arg.join(", ")} ]`);
+    } else if (toString.call(arg) === "[object Undefined]") {
+      format += "%s";
+      logs.push(arg);
     } else {
       const jsonStr = JSON.stringify(arg, undefined, 2)
         .split("\n")

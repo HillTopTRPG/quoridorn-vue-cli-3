@@ -11,12 +11,7 @@
       <div class="welcomeMessage">部屋「{{useRoomName}}」へようこそ！<br>ユーザ情報を入力してください。</div>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
-        <label>
-          権限：<select v-model="inputPlayerType">
-            <option :key="role.value" :value="role.value" v-for="role in roles">{{role.label}}</option>
-          </select>
-          <input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="inputPlayerName"/>
-        </label>
+        <label><PlayerTypeSelect v-model="inputPlayerType"/><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="inputPlayerName"/></label>
         <label class="playerPassword">パスワード：<input type="password" v-model="inputPlayerPassword"/></label>
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
         <div class="description">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
@@ -31,6 +26,7 @@
 <script lang="ts">
 import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
+import PlayerTypeSelect from "@/components/parts/PlayerTypeSelect.vue";
 
 import { Action, Getter } from "vuex-class";
 
@@ -40,13 +36,15 @@ import { Component, Vue } from "vue-property-decorator";
   name: "inputPlayerInfoWindow",
   mixins: [WindowMixin],
   components: {
-    WindowFrame
+    WindowFrame,
+    PlayerTypeSelect: PlayerTypeSelect
   }
 })
 export default class InputPlayerInfoWindow extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("windowClose") windowClose: any;
   @Action("joinPlayer") joinPlayer: any;
+  @Action("sendRoomData") sendRoomData: any;
   @Getter("getObj") getObj: any;
   @Getter("playerList") playerList: any;
   @Getter("roles") roles: any;
@@ -60,7 +58,7 @@ export default class InputPlayerInfoWindow extends Vue {
     this.useRoomName = this.roomName;
     this.inputPlayerName = this.playerName;
     this.inputPlayerPassword = this.playerPassword;
-    this.inputPlayerType = this.playerType;
+    this.inputPlayerType = this.playerType || "PL";
   }
 
   commit() {
@@ -76,7 +74,6 @@ export default class InputPlayerInfoWindow extends Vue {
     const player = this.playerList.filter(
       (p: any) => p.name === this.inputPlayerName
     )[0];
-    window.console.log(player, this.inputPlayerPassword, this.playerList);
     if (player && player.password !== this.inputPlayerPassword) {
       alert(
         "パスワードが違います。\nパスワードを入力し直すか、別人で参加してください。"
@@ -90,11 +87,12 @@ export default class InputPlayerInfoWindow extends Vue {
       logOff: true
     });
     this.windowClose("private.display.inputPlayerInfoWindow");
-    this.joinPlayer({
-      roomName: this.roomName,
+
+    this.resolve({
       playerName: this.inputPlayerName,
       playerPassword: this.inputPlayerPassword,
-      playerType: this.inputPlayerType
+      playerType: this.inputPlayerType,
+      fontColor: this.fontColor
     });
   }
 
@@ -109,6 +107,12 @@ export default class InputPlayerInfoWindow extends Vue {
   }
   get playerType(this: any): string {
     return this.windowParam(this).playerType;
+  }
+  get fontColor(this: any): string {
+    return this.windowParam(this).fontColor;
+  }
+  get resolve(this: any): Function {
+    return this.windowParam(this).resolve;
   }
 
   /**

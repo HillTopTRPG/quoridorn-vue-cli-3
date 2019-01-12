@@ -315,31 +315,61 @@ export default {
   actions: {
     /**
      * プレイヤーを追加する
+     * @param dispatch
      * @param commit
+     * @param rootGetters
      * @param peerId
      * @param name
      * @param password
-     * @param color
+     * @param fontColor
      * @param type
      * @returns {*}
      */
     addPlayer: (
-      { commit }: { commit: Function },
+      {
+        dispatch,
+        commit,
+        rootGetters
+      }: { dispatch: Function; commit: Function; rootGetters: any },
       {
         peerId,
         name,
-        password,
+        password = "",
         type,
-        color
+        fontColor
       }: {
         peerId: string;
         name: string;
         password: string;
         type: string;
-        color: string;
+        fontColor: string;
       }
     ) => {
-      commit("addPlayer", { peerId, name, password, type, color });
+      const player: any = rootGetters.playerList.filter((p: any) => {
+        return p.name === name;
+      })[0];
+      const playerKey: string = player ? player.key : `player-${name}`;
+      rootGetters.members.push({
+        peerId: peerId,
+        playerKey: playerKey
+      });
+      if (!player) {
+        rootGetters.playerList.push({
+          key: playerKey,
+          name: name,
+          password: password,
+          fontColor: fontColor,
+          type: type
+        });
+      }
+      if (peerId === rootGetters.peerId) {
+        dispatch("setProperty", {
+          property: "private.self",
+          value: { playerKey: playerKey, currentChatKey: playerKey },
+          isNotice: false,
+          logOff: true
+        });
+      }
       // commit('addPlayerWidth')
     },
 
@@ -413,51 +443,6 @@ export default {
   } /* end of actions */,
 
   mutations: {
-    /**
-     * プレイヤーを追加する
-     * @param state
-     * @param peerId
-     * @param name
-     * @param password
-     * @param color
-     * @param type
-     * @returns { *[] }
-     */
-    addPlayer: (
-      state: any,
-      {
-        peerId,
-        name,
-        type,
-        password,
-        color
-      }: {
-        peerId: string;
-        name: string;
-        password: string;
-        color: string;
-        type: string;
-      }
-    ) => {
-      const player: any = state.player.list.filter((p: any) => {
-        return p.name === name;
-      })[0];
-      const playerKey: string = player ? player.key : `player-${name}`;
-      state.room.members.push({
-        peerId: peerId,
-        playerKey: playerKey
-      });
-      if (!player) {
-        state.player.list.push({
-          key: playerKey,
-          name: name,
-          password: password,
-          fontColor: color,
-          type: type
-        });
-      }
-    },
-
     /**
      * ルームメンバを空にする
      * @param state
@@ -698,9 +683,8 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
-      const playerName = rootGetters.playerName;
       const player = state.player.list.filter(
-        (p: any) => p.name === playerName
+        (p: any) => p.key === rootGetters.playerKey
       )[0];
       if (player) {
         return [

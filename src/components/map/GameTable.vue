@@ -67,7 +67,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("marginMaskAlpha") marginMaskAlpha: any;
   @Getter("isUseGridColor") isUseGridColor: any;
   @Getter("isUseImage") isUseImage: any;
-  @Getter("playerName") playerName: any;
+  @Getter("playerKey") playerKey: any;
   @Getter("angle") angle: any;
   @Getter("rollObj") rollObj: any;
   @Getter("isDraggingLeft") isDraggingLeft: any;
@@ -340,7 +340,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       left: locateOnTable.x,
       top: locateOnTable.y,
       isNotice: true,
-      owner: `player-${this.playerName}`,
+      owner: this.playerKey,
       place: "field"
     };
 

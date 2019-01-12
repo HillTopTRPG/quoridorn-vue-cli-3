@@ -66,7 +66,7 @@
         <!-----------------
          ! キャラクター待合室
          !---------------->
-        <fieldset v-if="playerType === 'GM' || currentPlayerKey === playerKey">
+        <fieldset v-if="currentPlayerKey === playerKey">
           <legend>キャラクター待合室</legend>
           <ul class="objList">
             <li v-for="character in getMapObjectList({ kind: 'character', place: 'waiting', playerKey: currentPlayerKey })" :key="character.key">
@@ -78,7 +78,7 @@
         <!-----------------
          ! 墓場
          !---------------->
-        <fieldset v-if="playerType === 'GM' || currentPlayerKey === playerKey">
+        <fieldset v-if="currentPlayerKey === playerKey">
           <legend>墓場</legend>
           <ul class="objList">
             <li v-for="character in getMapObjectList({ kind: 'character', place: 'graveyard', playerKey: currentPlayerKey })" :key="character.key">
@@ -129,7 +129,6 @@ export default class PlayerBoxWindow extends Vue {
   @Getter("members") members: any;
   @Getter("playerList") playerList: any;
   @Getter("peerId") peerId: any;
-  @Getter("playerType") playerType: any;
   @Getter("playerKey") playerKey: any;
   @Getter("getMapObjectList") getMapObjectList: any;
   @Getter("getMembers") getMembers: any;

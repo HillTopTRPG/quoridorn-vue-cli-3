@@ -31,11 +31,11 @@ export default new Vuex.Store({
     mouse: { x: 0, y: 0, drag: { from: { x: 0, y: 0 }, move: { x: 0, y: 0 } } },
     self: { webRtcPeer: null },
     param: {
-      roomName: "",
-      roomPassword: "",
-      playerName: "",
-      playerPassword: "",
-      playerType: ""
+      roomName: null,
+      roomPassword: null,
+      playerName: null,
+      playerPassword: null,
+      playerType: null
     },
     room: {
       webRtcRoom: null,
@@ -91,14 +91,14 @@ export default new Vuex.Store({
      * @param dispatch
      * @param state
      * @param rootState
+     * @param rootGetters
      */
-    onMount({ dispatch, state, rootState }) {
+    onMount({ dispatch, state, rootState, rootGetters }) {
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
       const roomName = getUrlParam("roomName");
       const roomPassword = getUrlParam("roomPassword");
-      const peerId = getUrlParam("peerId");
       const playerName = getUrlParam("playerName");
       const playerPassword = getUrlParam("playerPassword");
       const playerType = getUrlParam("playerType");
@@ -107,7 +107,10 @@ export default new Vuex.Store({
       state.param.roomPassword = roomPassword;
       state.param.playerName = playerName;
       state.param.playerPassword = playerPassword;
-      state.param.playerType = playerType;
+      // 選択肢と一致していれば、権限をセットする
+      if (rootGetters.roles.findIndex(role => role.value === playerType) >= 0) {
+        state.param.playerType = playerType;
+      }
 
       if (roomName) {
         /* ------------------------------
@@ -340,14 +343,22 @@ export default new Vuex.Store({
           propProc(target[prop], props, value);
         } else {
           // 値の適用
-          if (!(value instanceof Object) || value instanceof Array) {
+          if (
+            !(value instanceof Object) ||
+            value instanceof Array ||
+            typeof value === "function"
+          ) {
             target[prop] = value;
           } else {
             const propProc2 = (target, props) => {
               for (const prop in props) {
                 if (!props.hasOwnProperty(prop)) continue;
                 const val = props[prop];
-                if (!(val instanceof Object) || val instanceof Array) {
+                if (
+                  !(val instanceof Object) ||
+                  val instanceof Array ||
+                  typeof val === "function"
+                ) {
                   target[prop] = val;
                 } else {
                   if (!target[prop]) {
