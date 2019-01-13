@@ -263,7 +263,10 @@ export default {
       let isError = false;
       // 部屋パスワードチェック
       if (value.room.password !== (roomPassword || "")) {
-        if (useAlert) alert(`部屋${roomName}は存在しましたが、\nご指定の部屋パスワードでは入室できませんでした。`);
+        if (useAlert)
+          alert(
+            `部屋${roomName}は存在しましたが、\nご指定の部屋パスワードでは入室できませんでした。`
+          );
         window.console.log("部屋パスワードエラー");
         reject.call(null);
         return;
@@ -278,7 +281,10 @@ export default {
 
         // プレイヤーパスワードチェック
         if (myPlayer.password !== (playerPassword || "")) {
-          if (useAlert) alert(`部屋${roomName}が存在し、\nプレイヤー${playerName}も存在しましたが、\nご指定のプレイヤーパスワードでは入室できませんでした。`);
+          if (useAlert)
+            alert(
+              `部屋${roomName}が存在し、\nプレイヤー${playerName}も存在しましたが、\nご指定のプレイヤーパスワードでは入室できませんでした。`
+            );
           window.console.log("プレイヤーパスワードエラー");
           isShowWindow = true;
           isError = true;
@@ -865,7 +871,8 @@ export default {
           value: {
             system: system,
             password: roomPassword
-          }
+          },
+          logOff: true
         });
 
         dispatch("afterRoomJoin", {
@@ -928,25 +935,29 @@ export default {
           useWindow: useWindow,
           useAlert: useAlert
         })
-          .then((
-            {playerName, playerPassword, playerType, fontColor}:
-              {
-                playerName: string;
-                playerPassword: string;
-                playerType: string;
-                fontColor: string;
-              }
-          ) => {
-            dispatch("afterRoomJoin", {
-              roomName: roomName,
-              roomPassword: roomPassword,
-              playerName: playerName,
-              playerPassword: playerPassword,
-              playerType: playerType,
-              fontColor: fontColor
-            });
-            resolve();
-          })
+          .then(
+            ({
+              playerName,
+              playerPassword,
+              playerType,
+              fontColor
+            }: {
+              playerName: string;
+              playerPassword: string;
+              playerType: string;
+              fontColor: string;
+            }) => {
+              dispatch("afterRoomJoin", {
+                roomName: roomName,
+                roomPassword: roomPassword,
+                playerName: playerName,
+                playerPassword: playerPassword,
+                playerType: playerType,
+                fontColor: fontColor
+              });
+              resolve();
+            }
+          )
           .catch((err: any) => {
             if (err) window.console.error(err);
             reject();

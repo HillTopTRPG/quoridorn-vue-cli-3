@@ -456,7 +456,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     if (imageFiles.length > 0) {
       // どこに使う画像ファイルなのかを選んでもらう
       const thumbnailSize = { w: 96, h: 96 };
-      const promiseList: [PromiseLike] = [];
+      const promiseList: PromiseLike<any>[] = [];
       for (const file of imageFiles) {
         promiseList.push(this.createBase64DataSet(file, thumbnailSize));
       }

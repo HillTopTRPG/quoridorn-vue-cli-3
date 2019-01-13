@@ -188,7 +188,7 @@ export default class PlayerBoxWindow extends Vue {
   }
 
   @Watch("playerKey")
-  onChangePlayerKey(playerKey) {
+  onChangePlayerKey(playerKey: string) {
     this.currentPlayerKey = playerKey;
   }
 

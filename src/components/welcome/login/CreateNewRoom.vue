@@ -121,10 +121,10 @@ export default class CreateNewRoom extends Vue {
    */
   static ENTRANCE_ROOM_NAME = "待機部屋";
   private roomName: string = "";
-  private roomPassword: string = null;
-  private playerName: string = null;
-  private playerPassword: string = null;
-  private playerType: string = null;
+  private roomPassword: string = "";
+  private playerName: string = "";
+  private playerPassword: string = "";
+  private playerType: string = "";
   private currentSystem: string = "DiceBot";
   private isViewWait: boolean = false;
   private isViewNewRoom: boolean = false;

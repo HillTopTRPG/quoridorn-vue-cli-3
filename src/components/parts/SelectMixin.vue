@@ -8,7 +8,7 @@ export default class SelectMixin extends Vue {
   @Prop() public value!: string;
   @Prop() public defaultLabel!: string;
 
-  private fontColor: string;
+  private fontColor: string = "";
 
   @Emit("input")
   public input(value: string) {}
