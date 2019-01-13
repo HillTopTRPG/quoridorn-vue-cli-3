@@ -55,6 +55,12 @@ export default class InputPlayerInfoWindow extends Vue {
   @Getter("getObj") getObj: any;
   @Getter("playerList") playerList: any;
   @Getter("roles") roles: any;
+  @Getter("volatileRoomName") volatileRoomName: any;
+  @Getter("volatilePlayerName") volatilePlayerName: any;
+  @Getter("volatilePlayerPassword") volatilePlayerPassword: any;
+  @Getter("volatilePlayerType") volatilePlayerType: any;
+  @Getter("volatileFontColor") volatileFontColor: any;
+  @Getter("volatileResolve") volatileResolve: any;
 
   private inputPlayerName: string = "";
   private inputPlayerPassword: string = "";
@@ -65,10 +71,10 @@ export default class InputPlayerInfoWindow extends Vue {
   private isPlayerExist: boolean = false;
 
   initWindow(): void {
-    this.useRoomName = this.roomName;
-    this.inputPlayerName = this.playerName;
-    this.inputPlayerPassword = this.playerPassword;
-    this.inputPlayerType = this.playerType;
+    this.useRoomName = this.volatileRoomName;
+    this.inputPlayerName = this.volatilePlayerName;
+    this.inputPlayerPassword = this.volatilePlayerPassword;
+    this.inputPlayerType = this.volatilePlayerType;
     this.loading(false);
   }
 
@@ -109,31 +115,12 @@ export default class InputPlayerInfoWindow extends Vue {
     this.windowClose("private.display.inputPlayerInfoWindow");
 
     this.loading(true);
-    this.resolve({
+    this.volatileResolve({
       playerName: this.inputPlayerName,
       playerPassword: this.inputPlayerPassword,
       playerType: this.inputPlayerType,
-      fontColor: this.fontColor
+      fontColor: this.volatileFontColor
     });
-  }
-
-  get roomName(this: any): string {
-    return this.windowParam(this).roomName;
-  }
-  get playerName(this: any): string {
-    return this.windowParam(this).playerName;
-  }
-  get playerPassword(this: any): string {
-    return this.windowParam(this).playerPassword;
-  }
-  get playerType(this: any): string {
-    return this.windowParam(this).playerType;
-  }
-  get fontColor(this: any): string {
-    return this.windowParam(this).fontColor;
-  }
-  get resolve(this: any): Function {
-    return this.windowParam(this).resolve;
   }
 
   /**
@@ -142,8 +129,9 @@ export default class InputPlayerInfoWindow extends Vue {
    */
   onClickDescription(): void {
     alert(
-      this.roles.filter((role: any) => role.value === this.playerType)[0]
-        .description
+      this.roles.filter(
+        (role: any) => role.value === this.volatilePlayerType
+      )[0].description
     );
   }
 }

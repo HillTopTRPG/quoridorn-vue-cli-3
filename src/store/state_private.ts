@@ -332,7 +332,14 @@ export default {
     peerId: (state: any) => state.self.peerId,
     angle: (state: any) => state.map.angle,
     wheel: (state: any) => state.map.wheel,
-    getWindowParam: (state: any) => (windowName: any): any =>
-      state.display[windowName]
+    // TODO デプロイするとこれ動かない！なんでぇ！！！
+    getWindowParam: (state: any) => (windowName: string): any =>
+      state.display[windowName],
+    volatileRoomName: (state: any) => state.display.inputPlayerInfoWindow.roomName,
+    volatilePlayerName: (state: any) => state.display.inputPlayerInfoWindow.playerName,
+    volatilePlayerPassword: (state: any) => state.display.inputPlayerInfoWindow.playerPassword,
+    volatilePlayerType: (state: any) => state.display.inputPlayerInfoWindow.playerType,
+    volatileFontColor: (state: any) => state.display.inputPlayerInfoWindow.fontColor,
+    volatileResolve: (state: any) => state.display.inputPlayerInfoWindow.resolve,
   }
 };

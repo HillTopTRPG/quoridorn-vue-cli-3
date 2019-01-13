@@ -295,14 +295,14 @@ export default {
       } else {
         if (!playerName || playerPassword === null) {
           window.console.log(
-            "パラメータエラー",
+            "パラメータ",
             `playerName: ${playerName}`,
             `playerPassword: ${playerPassword}`
           );
           isError = true;
         }
         if (playerType === null) {
-          window.console.log("パラメータ警告", playerType);
+          window.console.log("パラメータ playerType:", playerType);
           isShowWindow = true;
         }
       }
