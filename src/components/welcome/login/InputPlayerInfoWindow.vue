@@ -11,10 +11,17 @@
       <div class="welcomeMessage">部屋「{{useRoomName}}」へようこそ！<br>ユーザ情報を入力してください。</div>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
-        <label><PlayerTypeSelect v-model="inputPlayerType"/><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="inputPlayerName"/></label>
+        <label>
+          <PlayerTypeSelect v-model="inputPlayerType" v-if="!isPlayerExist"/>
+          <input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="inputPlayerName" list="input-player-info-window-players"/>
+          <datalist id="input-player-info-window-players">
+            <option v-for="player in playerList" :key="player.key" :value="player.name">{{player.name}}</option>
+          </datalist>
+        </label>
         <label class="playerPassword">パスワード：<input type="password" v-model="inputPlayerPassword"/></label>
-        <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
-        <div class="description">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
+        <div class="description" v-if="!isPlayerExist">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
+        <div class="description" v-if="!isPlayerExist">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
+        <div class="description" v-if="isPlayerExist">おかえりなさい。<br>照合するパスワードを指定してください。</div>
       </fieldset>
       <div class="buttonArea">
         <button @click="commit" type="button"><i class="icon-home3"></i> 参加</button>
@@ -30,7 +37,7 @@ import PlayerTypeSelect from "@/components/parts/PlayerTypeSelect.vue";
 
 import { Action, Getter } from "vuex-class";
 
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 
 @Component<InputPlayerInfoWindow>({
   name: "inputPlayerInfoWindow",
@@ -43,8 +50,8 @@ import { Component, Vue } from "vue-property-decorator";
 export default class InputPlayerInfoWindow extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("windowClose") windowClose: any;
-  @Action("joinPlayer") joinPlayer: any;
   @Action("sendRoomData") sendRoomData: any;
+  @Action("loading") loading: any;
   @Getter("getObj") getObj: any;
   @Getter("playerList") playerList: any;
   @Getter("roles") roles: any;
@@ -52,18 +59,37 @@ export default class InputPlayerInfoWindow extends Vue {
   private inputPlayerName: string = "";
   private inputPlayerPassword: string = "";
   private inputPlayerType: string = "";
+  private inputPlayerTypeSave: string = "";
   private useRoomName: string = "";
+
+  private isPlayerExist: boolean = false;
 
   initWindow(): void {
     this.useRoomName = this.roomName;
     this.inputPlayerName = this.playerName;
     this.inputPlayerPassword = this.playerPassword;
-    this.inputPlayerType = this.playerType || "PL";
+    this.inputPlayerType = this.playerType;
+    this.loading(false);
+  }
+
+  @Watch("inputPlayerType")
+  onChangeInputPlayerType(value: string) {
+    if (!this.isPlayerExist) this.inputPlayerTypeSave = value;
+  }
+
+  @Watch("inputPlayerName")
+  onChangeInputPlayerName(value: string) {
+    const player: any = this.playerList.filter(
+      (player: any) => player.name === value
+    )[0];
+    this.isPlayerExist = !!player;
+    this.inputPlayerType = player ? player.type : this.inputPlayerTypeSave;
   }
 
   commit() {
     // 入力チェック
     const errorMsg = [];
+    this.inputPlayerName = this.inputPlayerName.trim();
     if (!this.inputPlayerName) errorMsg.push("・ユーザ名");
     if (errorMsg.length > 0) {
       alert(
@@ -80,14 +106,9 @@ export default class InputPlayerInfoWindow extends Vue {
       );
       return;
     }
-    // モーダル状態の解除
-    this.setProperty({
-      property: "isModal",
-      value: false,
-      logOff: true
-    });
     this.windowClose("private.display.inputPlayerInfoWindow");
 
+    this.loading(true);
     this.resolve({
       playerName: this.inputPlayerName,
       playerPassword: this.inputPlayerPassword,

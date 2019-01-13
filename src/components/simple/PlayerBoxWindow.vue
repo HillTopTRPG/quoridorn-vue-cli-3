@@ -1,11 +1,7 @@
 <template>
   <WindowFrame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
     <div class="contents">
-      <label class="playerSelect">
-        <select v-model="currentPlayerKey">
-          <option v-for="player in playerList" :key="player.key" :value="player.key">{{player.name}}</option>
-        </select>
-      </label>
+      <label class="playerSelect"><PlayerSelect v-model="currentPlayerKey"/></label>
       <fieldset v-if="currentPlayerKey">
         <legend>{{getPlayerName(currentPlayerKey)}}（{{getPlayer ? getPlayer.type : ""}}）</legend>
         <label>
@@ -107,12 +103,14 @@ import CharacterChip from "../map/character/CharacterChip.vue";
 
 import { Action, Getter } from "vuex-class";
 
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import PlayerSelect from "@/components/parts/PlayerSelect.vue";
 
 @Component<PlayerBoxWindow>({
   name: "playerBoxWindow",
   mixins: [WindowMixin],
   components: {
+    PlayerSelect,
     WindowFrame,
     CharacterChip
   }
@@ -187,6 +185,11 @@ export default class PlayerBoxWindow extends Vue {
       place: "field",
       isNotice: true
     });
+  }
+
+  @Watch("playerKey")
+  onChangePlayerKey(playerKey) {
+    this.currentPlayerKey = playerKey;
   }
 
   get getPlayer(): any {

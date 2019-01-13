@@ -39,12 +39,12 @@ export default {
       },
       {
         label: "サブGM",
-        value: "SubGM",
+        value: "サブGM",
         description: "見た目が異なるだけで、ゲームマスターと同等の権限です。"
       },
       {
         label: "見学者",
-        value: "見学",
+        value: "見学者",
         description: "部屋の設定、プレイヤーたちの設定は一切変更できません。"
       }
     ],

@@ -39,7 +39,8 @@ export default new Vuex.Store({
     },
     room: {
       webRtcRoom: null,
-      isExist: false
+      isExist: false,
+      isJoined: false
     },
     chat: {
       activeTab: "メイン"
@@ -117,30 +118,31 @@ export default new Vuex.Store({
          * 部屋存在チェック
          */
         dispatch("loading", true);
-        Promise.resolve()
+        const promise = Promise.resolve()
           .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
           .then(() => dispatch("checkRoomName", { roomName: roomName }))
+          .then(isExist => {
+            if (!playerName) return null;
+            const baseArg = {
+              roomName: roomName,
+              roomPassword: roomPassword,
+              playerName: playerName,
+              playerPassword: playerPassword,
+              playerType: playerType,
+              fontColor: "#000000"
+            };
+            if (!isExist && roomPassword !== null) {
+              baseArg.system = undefined;
+              return dispatch("doNewRoom", baseArg);
+            }
+            if (isExist) {
+              baseArg.useWindow = true;
+              baseArg.useAlert = true;
+              return dispatch("doJoinRoom", baseArg);
+            }
+          })
           .then(() => dispatch("loading", false))
           .catch(() => dispatch("loading", false));
-        //
-        // dispatch("checkRoomName", {
-        //   roomName: roomName,
-        //   roomFindFunc: message => {
-        //     state.room.isExist = true;
-        //   },
-        //   roomNonFindFunc: () => {
-        //     state.room.isExist = false;
-        //   }
-        // });
-      }
-
-      if (!roomName) {
-        // let newUrl = location.href.replace(/\?.+$/, "");
-        // newUrl += `?roomName=エントランス`;
-        // if (peerId) newUrl += `&peerId=${peerId}`;
-        // if (playerName) newUrl += `&playerName=${playerName}`;
-        // if (playerType) newUrl += `&playerType=${playerType}`;
-        // location.href = newUrl;
       }
 
       /* ----------------------------------------------------------------------
@@ -211,6 +213,7 @@ export default new Vuex.Store({
      * @param isStart
      */
     loading({ state }, isStart) {
+      // window.console.log(`loading ${state.isLoading} ${isStart ? "+1" : "-1"}`);
       state.isLoading += isStart ? 1 : -1;
     },
 
@@ -498,6 +501,7 @@ export default new Vuex.Store({
     paramPlayerPassword: state => state.param.playerPassword,
     paramPlayerType: state => state.param.playerType,
     isRoomExist: state => state.room.isExist,
+    isRoomJoined: state => state.room.isJoined,
     isModal: state => state.isModal,
     isLoading: state => state.isLoading,
     activeTab: state => state.chat.activeTab,

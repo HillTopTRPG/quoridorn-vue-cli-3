@@ -1,6 +1,6 @@
 <template>
-  <SelectBase defaultLabel="権限" v-model="localValue">
-    <option :key="role.value" :value="role.value" v-for="role in roles">{{role.label}}</option>
+  <SelectBase defaultLabel="プレイヤー" v-model="localValue">
+    <option v-for="player in playerList" :key="player.key" :value="player.key">{{player.name}}</option>
   </SelectBase>
 </template>
 
@@ -10,12 +10,12 @@ import { Getter } from "vuex-class";
 import SelectMixin from "./SelectMixin.vue";
 import SelectBase from "./SelectBase.vue";
 
-@Component<PlayerTypeSelect>({
-  name: "playerTypeSelect",
+@Component<PlayerSelect>({
+  name: "playerSelect",
   mixins: [SelectMixin],
   components: { SelectBase }
 })
-export default class PlayerTypeSelect extends Vue {
-  @Getter("roles") roles: any;
+export default class PlayerSelect extends Vue {
+  @Getter("playerList") playerList: any;
 }
 </script>

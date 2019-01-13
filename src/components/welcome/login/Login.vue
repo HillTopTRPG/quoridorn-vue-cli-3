@@ -1,9 +1,10 @@
 <template>
   <div class="loginContainer">
-    <CreateRoomFromRoomData v-if="!isRoomExist"/>
-    <CreateNewRoom/>
-    <NonUseRoom/>
-    <RoomInfo/>
+    <CreateRoomFromRoomData v-if="!isRoomExist && !isRoomJoined"/>
+    <CreateNewRoom v-if="!isRoomJoined"/>
+    <NonUseRoom v-if="!isRoomJoined"/>
+    <RoomInfo v-if="isRoomJoined"/>
+    <PlayerInfo v-if="isRoomJoined"/>
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import CreateRoomFromRoomData from "./CreateRoomFromRoomData.vue";
 import CreateNewRoom from "./CreateNewRoom.vue";
 import NonUseRoom from "./NonUseRoom.vue";
 import RoomInfo from "./RoomInfo.vue";
+import PlayerInfo from "./PlayerInfo.vue";
 
 import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
@@ -22,11 +24,13 @@ import { Getter } from "vuex-class";
     CreateRoomFromRoomData,
     CreateNewRoom,
     NonUseRoom,
-    RoomInfo
+    RoomInfo,
+    PlayerInfo
   }
 })
 export default class Login extends Vue {
   @Getter("isRoomExist") isRoomExist: any;
+  @Getter("isRoomJoined") isRoomJoined: any;
 }
 </script>
 
