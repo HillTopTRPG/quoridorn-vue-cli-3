@@ -15,6 +15,7 @@ export default {
     /** 接続情報 */
     self: {
       peerId: null,
+      peerIdWait: null,
       playerKey: null,
       currentChatKey: "",
 
@@ -289,39 +290,13 @@ export default {
     }
   } /* end of actions */,
   mutations: {
-    // /**
-    //  * プレイヤーを追加する
-    //  * @param state
-    //  * @returns { *[] }
-    //  */
-    // addPlayerWidth: (state) => {
-    //   const widthList = state.display.settingChatTargetTabWindow.widthList
-    //   const maxWidth = state.display.settingChatTargetTabWindow.windowSize.w - 54
-    //   const fixWidth = widthList[0] + widthList[1] + widthList[2] + widthList[3] + 4
-    //   let itemWidth = 50
-    //   const itemNum = widthList.length - 4
-    //   const itemTotalWidth = (itemWidth + 1) * itemNum
-    //   const contentsWidth = fixWidth + itemTotalWidth
-    //   let marginWidth = 0
-    //   if (contentsWidth <= maxWidth) {
-    //     marginWidth = maxWidth - contentsWidth
-    //   } else {
-    //     marginWidth = 0
-    //     itemWidth = (maxWidth - fixWidth) / itemNum - 1
-    //   }
-    //   const newArr = [
-    //     widthList[0],
-    //     widthList[1],
-    //     widthList[2],
-    //     widthList[3]
-    //   ]
-    //   for (let i = 0; i < itemNum; i++) {
-    //     newArr.push(itemWidth)
-    //   }
-    //   newArr.push(marginWidth)
-    //   window.console.log('#=#=#=#=#', newArr.join(','))
-    //   state.display.settingChatTargetTabWindow.widthList = newArr
-    // }
+    updatePeerId: (
+      state: any,
+      { peerId, isWait }: { peerId: string; isWait: boolean }
+    ) => {
+      if (!isWait) state.self.peerId = peerId;
+      else state.self.peerIdWait = peerId;
+    }
   },
   getters: {
     masterMute: (state: any) => state.display.jukeboxWindow.masterMute,
@@ -329,17 +304,23 @@ export default {
     fontColor: (state: any) => state.self.color,
     playerKey: (state: any) => state.self.playerKey,
     currentChatKey: (state: any) => state.self.currentChatKey,
-    peerId: (state: any) => state.self.peerId,
+    peerId: (state: any) => (isWait: boolean) =>
+      !isWait ? state.self.peerId : state.self.peerIdWait,
     angle: (state: any) => state.map.angle,
     wheel: (state: any) => state.map.wheel,
     // TODO デプロイするとこれ動かない！なんでぇ！！！
     getWindowParam: (state: any) => (windowName: string): any =>
       state.display[windowName],
-    volatileRoomName: (state: any) => state.display.inputPlayerInfoWindow.roomName,
-    volatilePlayerName: (state: any) => state.display.inputPlayerInfoWindow.playerName,
-    volatilePlayerPassword: (state: any) => state.display.inputPlayerInfoWindow.playerPassword,
-    volatilePlayerType: (state: any) => state.display.inputPlayerInfoWindow.playerType,
-    volatileFontColor: (state: any) => state.display.inputPlayerInfoWindow.fontColor,
-    volatileResolve: (state: any) => state.display.inputPlayerInfoWindow.resolve,
+    volatileRoomName: (state: any) =>
+      state.display.inputPlayerInfoWindow.roomName,
+    volatilePlayerName: (state: any) =>
+      state.display.inputPlayerInfoWindow.playerName,
+    volatilePlayerPassword: (state: any) =>
+      state.display.inputPlayerInfoWindow.playerPassword,
+    volatilePlayerType: (state: any) =>
+      state.display.inputPlayerInfoWindow.playerType,
+    volatileFontColor: (state: any) =>
+      state.display.inputPlayerInfoWindow.fontColor,
+    volatileResolve: (state: any) => state.display.inputPlayerInfoWindow.resolve
   }
 };

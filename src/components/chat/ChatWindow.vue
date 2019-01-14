@@ -178,6 +178,7 @@ export default class ChatWindow extends Vue {
   @Action("windowOpen") windowOpen: any;
   @Action("setProperty") setProperty: any;
   @Action("sendRoomData") sendRoomData: any;
+  @Mutation("updateActorKey") updateActorKey: any;
   @Getter("getPeerActors") getPeerActors: any;
   @Getter("getViewName") getViewName: any;
   @Getter("getObj") getObj: any;
@@ -195,6 +196,8 @@ export default class ChatWindow extends Vue {
   @Getter("hoverTab") hoverTab: any;
   @Getter("playerKey") playerKey: any;
   @Getter("chatOptionPagingSize") chatOptionPagingSize: any;
+  @Getter("isWait") isWait: any;
+  @Getter("chatActorKey") chatActorKey: any;
 
   private enterPressing: boolean = false;
   /** 入力されたチャット文字 */
@@ -284,7 +287,8 @@ export default class ChatWindow extends Vue {
       this.chatOptionSelectMode = "";
       this.sendRoomData({
         type: "NOTICE_INPUT",
-        value: { name: this.currentChatKey, target: this.chatTarget }
+        value: { key: this.currentChatKey, target: this.chatTarget },
+        isWait: this.isWait
       });
     }
   }
@@ -415,7 +419,7 @@ export default class ChatWindow extends Vue {
     }
   }
   inputName(key: string): void {
-    this.currentActorKey = key;
+    this.updateActorKey(key);
     this.setProperty({
       property: "private.self.currentChatKey",
       value: key,
@@ -567,7 +571,7 @@ export default class ChatWindow extends Vue {
   }
   nameToKeyView(name: string): string {
     const key = this.nameToKey(name);
-    this.currentActorKey = key;
+    this.updateActorKey(key);
     return key;
   }
   nameToKey(name: string): string {

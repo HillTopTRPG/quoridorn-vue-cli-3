@@ -20,7 +20,7 @@
           <legend>接続(peerId)</legend>
           <ul>
             <li v-for="member in getMembers(currentPlayerKey)" :key="member.peerId">{{member.peerId}}
-              <span v-if="member.peerId === peerId">(この画面)</span>
+              <span v-if="member.peerId === peerId(isWait)">(この画面)</span>
             </li>
           </ul>
         </fieldset>
@@ -130,6 +130,7 @@ export default class PlayerBoxWindow extends Vue {
   @Getter("playerKey") playerKey: any;
   @Getter("getMapObjectList") getMapObjectList: any;
   @Getter("getMembers") getMembers: any;
+  @Getter("isWait") isWait: any;
 
   private currentPlayerKey: string = "";
 

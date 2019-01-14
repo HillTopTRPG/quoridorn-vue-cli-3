@@ -3,7 +3,6 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-// import { qLog } from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -323,6 +322,7 @@ export default {
      * @param password
      * @param fontColor
      * @param type
+     * @param isWait
      * @returns {*}
      */
     addPlayer: (
@@ -336,24 +336,29 @@ export default {
         name,
         password = "",
         type,
-        fontColor
+        fontColor,
+        isWait
       }: {
         peerId: string;
         name: string;
         password: string;
         type: string;
         fontColor: string;
+        isWait: boolean;
       }
     ) => {
-      const player: any = rootGetters.playerList.filter((p: any) => {
+      const playerIndex: number = rootGetters.playerList.findIndex((p: any) => {
         return p.name === name;
-      })[0];
+      });
+      const player =
+        playerIndex > -1 ? rootGetters.playerList[playerIndex] : null;
       const playerKey: string = player ? player.key : `player-${name}`;
       rootGetters.members.push({
         peerId: peerId,
         playerKey: playerKey
       });
       if (!player) {
+        window.console.log(`Add player key:${playerKey} name:${name}`);
         rootGetters.playerList.push({
           key: playerKey,
           name: name,
@@ -361,8 +366,11 @@ export default {
           fontColor: fontColor,
           type: type
         });
+      } else {
+        player.type = type;
+        rootGetters.playerList.splice(playerIndex, 1, player);
       }
-      if (peerId === rootGetters.peerId) {
+      if (peerId === rootGetters.peerId(isWait)) {
         dispatch("setProperty", {
           property: "private.self",
           value: { playerKey: playerKey, currentChatKey: playerKey },
@@ -424,20 +432,23 @@ export default {
       }),
 
     /**
+     * NOTICE_INPUT
      * ルームメンバの入力中状態の通知
      * @param commit
      * @param state
-     * @param name
+     * @param key
+     * @param target
      */
     noticeInput: (
       { commit, state }: { commit: Function; state: any },
-      { name }: { name: string }
+      { key, target }: { key: string; target: any }
     ) => {
+      window.console.log("【noticeInput】target:", target);
       // 即時入力カウントアップ
-      commit("inputPeerId", { name: name, add: 1 });
+      commit("inputPeerId", { key: key, add: 1 });
       // 少し経ったらカウントダウン
       setTimeout(() => {
-        commit("inputPeerId", { name: name, add: -1 });
+        commit("inputPeerId", { key: key, add: -1 });
       }, 400);
     }
   } /* end of actions */,
@@ -480,19 +491,20 @@ export default {
     /**
      * ルームメンバの入力中状態の変化
      * @param state
-     * @param payload
+     * @param key
+     * @param add
      */
     inputPeerId(
       this: any,
       state: any,
-      { name, add }: { name: string; add: number }
+      { key, add }: { key: string; add: number }
     ) {
       // プロパティが無ければ、リアクティブになる形式で登録をする
-      if (!state.chat.inputting[name]) {
-        this._vm.$set(state.chat.inputting, name, 0);
+      if (!state.chat.inputting[key]) {
+        this._vm.$set(state.chat.inputting, key, 0);
       }
       // 値の足し込み
-      state.chat.inputting[name] += add;
+      state.chat.inputting[key] += add;
     },
 
     /**
@@ -508,7 +520,7 @@ export default {
       const useTexts: any[] = [];
       /* eslint no-control-regex: 0 */
       const regExp = new RegExp("[　\t \r\n,]+", "g");
-      // qLog(imageList)
+      // window.console.log(imageList)
       imageList.forEach((imageObj: any) => {
         Array.prototype.push.apply(
           useTexts,
@@ -762,6 +774,7 @@ export default {
     },
     getMembers: (state: any, getters: any) => (playerKey: string): any[] => {
       const player = getters.getObj(playerKey);
+      if (!player) return [];
       return getters.members.filter(
         (member: any) => member.playerKey === player.key
       );

@@ -445,20 +445,20 @@ export default {
       return rootGetters.groupTargetTab.list.filter((tab: any) => {
         if (tab.isAll) return true;
         const filterObj = tab.group.filter((targetKey: string) => {
-          if (targetKey === getters.currentActorKey) return true;
+          if (targetKey === getters.chatActorKey) return true;
           const characterList = rootGetters.getMapObjectList({
             kind: "character"
           });
-          if (getters.currentActorKey.split("-")[0] === "player") {
+          if (getters.chatActorKey.split("-")[0] === "player") {
             const targetCharacter = characterList
               .filter(
-                (character: any) => character.owner === getters.currentActorKey
+                (character: any) => character.owner === getters.chatActorKey
               )
               .filter((character: any) => character.key === targetKey)[0];
             if (targetCharacter) return true;
-          } else if (getters.currentActorKey.split("-")[0] === "character") {
+          } else if (getters.chatActorKey.split("-")[0] === "character") {
             const targetCharacter = characterList.filter(
-              (character: any) => character.key === getters.currentActorKey
+              (character: any) => character.key === getters.chatActorKey
             )[0];
             if (targetCharacter) return true;
           }

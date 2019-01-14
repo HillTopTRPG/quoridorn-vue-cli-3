@@ -70,8 +70,8 @@ export default {
       this.windowClose("private.display.editMapMaskWindow");
     },
     initWindow() {
-      // qLog(`initWindow`)
-      let mapMaskObj = this.getObj("mapMask", this.key);
+      // window.console.log(`initWindow`)
+      let mapMaskObj = this.getObj(this.key);
       this.name = mapMaskObj.name;
       this.width = mapMaskObj.columns;
       this.height = mapMaskObj.rows;

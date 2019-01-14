@@ -13,7 +13,7 @@
         <legend>あなたの情報</legend>
         <label>
           <PlayerTypeSelect v-model="inputPlayerType" v-if="!isPlayerExist"/>
-          <input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="inputPlayerName" list="input-player-info-window-players"/>
+          <input ref="playerInput" placeholder="ユーザ名を入力（必須項目）" type="text" v-model="inputPlayerName" list="input-player-info-window-players"/>
           <datalist id="input-player-info-window-players">
             <option v-for="player in playerList" :key="player.key" :value="player.name">{{player.name}}</option>
           </datalist>
@@ -35,7 +35,7 @@ import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
 import PlayerTypeSelect from "@/components/parts/PlayerTypeSelect.vue";
 
-import { Action, Getter } from "vuex-class";
+import { Action, Getter, Mutation } from "vuex-class";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 
@@ -50,8 +50,8 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 export default class InputPlayerInfoWindow extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("windowClose") windowClose: any;
-  @Action("sendRoomData") sendRoomData: any;
   @Action("loading") loading: any;
+  @Mutation("updateIsModal") updateIsModal: any;
   @Getter("getObj") getObj: any;
   @Getter("playerList") playerList: any;
   @Getter("roles") roles: any;
@@ -76,6 +76,9 @@ export default class InputPlayerInfoWindow extends Vue {
     this.inputPlayerPassword = this.volatilePlayerPassword;
     this.inputPlayerType = this.volatilePlayerType;
     this.loading(false);
+    this.updateIsModal(true);
+    console.log(this.$refs.playerInput);
+    this.$refs.playerInput["focus"]();
   }
 
   @Watch("inputPlayerType")

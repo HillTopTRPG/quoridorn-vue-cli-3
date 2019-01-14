@@ -10,6 +10,7 @@ import actionFile from "./action_file";
 import actionPeer from "./action_peer.ts";
 import actionOperation from "./action_operation.ts";
 import { getUrlParam } from "../components/common/Utility";
+import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
 
 Vue.use(Vuex);
 
@@ -29,7 +30,7 @@ export default new Vuex.Store({
   state: {
     // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）
     mouse: { x: 0, y: 0, drag: { from: { x: 0, y: 0 }, move: { x: 0, y: 0 } } },
-    self: { webRtcPeer: null },
+    self: { webRtcPeer: null, webRtcPeerWait: null },
     param: {
       roomName: null,
       roomPassword: null,
@@ -39,11 +40,13 @@ export default new Vuex.Store({
     },
     room: {
       webRtcRoom: null,
+      webRtcRoomWait: null,
       isExist: false,
       isJoined: false
     },
     chat: {
-      activeTab: "メイン"
+      activeTab: "メイン",
+      actorKey: ""
     },
     map: {
       grid: { c: 0, r: 0 },
@@ -82,8 +85,11 @@ export default new Vuex.Store({
     volatileSaveData: {
       members: []
     },
-    isModal: true,
-    isLoading: 0
+    mode: {
+      isModal: true,
+      isLoading: 0,
+      isWait: false
+    }
   },
   actions: {
     /**
@@ -98,11 +104,30 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
-      const roomName = getUrlParam("roomName");
+      let roomName = getUrlParam("roomName");
       const roomPassword = getUrlParam("roomPassword");
       const playerName = getUrlParam("playerName");
       const playerPassword = getUrlParam("playerPassword");
-      const playerType = getUrlParam("playerType");
+      let playerType = getUrlParam("playerType");
+
+      if (!!roomName && roomName.endsWith(CreateNewRoom.ENTRANCE_ROOM_NAME)) {
+        alert(
+          `「${CreateNewRoom.ENTRANCE_ROOM_NAME}」で終わる部屋名は使えません。`
+        );
+        roomName = null;
+        /* ------------------------------
+         * URLを書き換える（リロードなし）
+         */
+        const paramList = [];
+        if (roomPassword !== null)
+          paramList.push(`roomPassword=${roomPassword}`);
+        if (playerName !== null) paramList.push(`playerName=${playerName}`);
+        if (playerPassword !== null)
+          paramList.push(`playerPassword=${playerPassword}`);
+        if (playerType !== null) paramList.push(`playerType=${playerType}`);
+        const newUrl = `?${paramList.join("&")}`;
+        window.history.replaceState("", "", newUrl);
+      }
 
       state.param.roomName = roomName;
       state.param.roomPassword = roomPassword;
@@ -111,38 +136,8 @@ export default new Vuex.Store({
       // 選択肢と一致していれば、権限をセットする
       if (rootGetters.roles.findIndex(role => role.value === playerType) >= 0) {
         state.param.playerType = playerType;
-      }
-
-      if (roomName) {
-        /* ------------------------------
-         * 部屋存在チェック
-         */
-        dispatch("loading", true);
-        const promise = Promise.resolve()
-          .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
-          .then(() => dispatch("checkRoomName", { roomName: roomName }))
-          .then(isExist => {
-            if (!playerName) return null;
-            const baseArg = {
-              roomName: roomName,
-              roomPassword: roomPassword,
-              playerName: playerName,
-              playerPassword: playerPassword,
-              playerType: playerType,
-              fontColor: "#000000"
-            };
-            if (!isExist && roomPassword !== null) {
-              baseArg.system = undefined;
-              return dispatch("doNewRoom", baseArg);
-            }
-            if (isExist) {
-              baseArg.useWindow = true;
-              baseArg.useAlert = true;
-              return dispatch("doJoinRoom", baseArg);
-            }
-          })
-          .then(() => dispatch("loading", false))
-          .catch(() => dispatch("loading", false));
+      } else {
+        playerType = null;
       }
 
       /* ----------------------------------------------------------------------
@@ -204,6 +199,54 @@ export default new Vuex.Store({
        * チャットタブの設定
        */
       dispatch("changeChatTab", "雑談");
+
+      if (roomName) {
+        /* ------------------------------
+         * 部屋存在チェック
+         */
+        dispatch("loading", true);
+        Promise.resolve()
+          .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
+          .then(peerId => {
+            const logTexts = [];
+            logTexts.push(`create room by peer:"${peerId}"`);
+            logTexts.push(`本番: ${rootGetters.peerId(false)}`);
+            logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
+            window.console.log(logTexts.join(", "));
+            return dispatch("checkRoomName", { roomName: roomName });
+          })
+          .then(isExist => {
+            const baseArg = {
+              roomName: roomName,
+              roomPassword: roomPassword,
+              playerName: playerName,
+              playerPassword: playerPassword,
+              playerType: playerType,
+              fontColor: "#000000"
+            };
+            // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
+            if (
+              !isExist &&
+              roomPassword !== null &&
+              !playerName &&
+              playerPassword !== null &&
+              playerType !== null
+            ) {
+              baseArg.system = undefined;
+              baseArg.playerPassword = baseArg.playerPassword || "";
+              baseArg.playerType = baseArg.playerType || "PL";
+              return dispatch("doNewRoom", baseArg);
+            }
+            // 「この部屋に入る」画面で入力される項目が指定されていれば既存部屋への入室を試みる
+            if (isExist && roomPassword !== null) {
+              baseArg.useWindow = true;
+              baseArg.useAlert = true;
+              return dispatch("doJoinRoom", baseArg);
+            }
+          })
+          .then(() => dispatch("loading", false))
+          .catch(() => dispatch("loading", false));
+      }
     },
 
     /**
@@ -213,8 +256,8 @@ export default new Vuex.Store({
      * @param isStart
      */
     loading({ state }, isStart) {
-      // window.console.log(`loading ${state.isLoading} ${isStart ? "+1" : "-1"}`);
-      state.isLoading += isStart ? 1 : -1;
+      // window.console.log(`loading ${state.mode.isLoading} ${isStart ? "+1" : "-1"}`);
+      state.mode.isLoading += isStart ? 1 : -1;
     },
 
     /**
@@ -222,20 +265,29 @@ export default new Vuex.Store({
      * ルームメンバがいる場合は部屋主に対して処理の通知を出し、そうでない場合はこの場で処理を実行する
      * @param dispatch
      * @param state
+     * @param rootGetters
      * @param method
      * @param value
      */
-    sendNoticeOperation({ dispatch, state }, { method, value }) {
+    sendNoticeOperation({ dispatch, state, rootGetters }, { method, value }) {
+      const isWait = rootGetters.isWait;
       let type = null;
       if (state.public.room.members[0]) {
-        value.ownerPeerId = state.private.self.peerId;
-        if (state.public.room.members[0].peerId === state.private.self.peerId) {
+        value.ownerPeerId = rootGetters.peerId(isWait);
+        if (
+          state.public.room.members[0].peerId === rootGetters.peerId(isWait)
+        ) {
           type = "DO_METHOD";
           dispatch(method, value);
         } else {
           type = "NOTICE_OPERATION";
         }
-        dispatch("sendRoomData", { type: type, value: value, method: method });
+        dispatch("sendRoomData", {
+          type: type,
+          value: value,
+          method: method,
+          isWait: isWait
+        });
       } else {
         value.ownerPeerId = null;
         dispatch(method, value);
@@ -389,6 +441,26 @@ export default new Vuex.Store({
         }
       };
       propProc(state, property.split("."), value);
+    },
+    updateWebRtcPeer: (state, { peer, isWait }) => {
+      if (!isWait) state.self.webRtcPeer = peer;
+      else state.self.webRtcPeerWait = peer;
+    },
+    updateWebRtcRoom: (state, { room, isWait }) => {
+      if (!isWait) state.room.webRtcRoom = room;
+      else state.room.webRtcRoomWait = room;
+    },
+    updateIsWait: (state, isWait) => {
+      state.mode.isWait = isWait;
+    },
+    updateIsModal: (state, isModal) => {
+      state.mode.isModal = isModal;
+    },
+    updateIsJoined: (state, isJoined) => {
+      state.room.isJoined = isJoined;
+    },
+    updateActorKey: (state, actorKey) => {
+      state.chat.actorKey = actorKey;
     }
   },
   getters: {
@@ -427,11 +499,11 @@ export default new Vuex.Store({
       (list, key) => {
         const filteredList = list.filter(obj => obj.key === key);
         if (filteredList.length === 0) {
-          window.console.log(`key:"${key}" is not find.`);
+          // window.console.log(`key:"${key}" is not find.`);
           return null;
         }
         if (filteredList.length > 1) {
-          window.console.log(`key:"(${key})" is duplicate.`);
+          // window.console.log(`key:"(${key})" is duplicate.`);
           return null;
         }
         return filteredList[0];
@@ -502,8 +574,9 @@ export default new Vuex.Store({
     paramPlayerType: state => state.param.playerType,
     isRoomExist: state => state.room.isExist,
     isRoomJoined: state => state.room.isJoined,
-    isModal: state => state.isModal,
-    isLoading: state => state.isLoading,
+    isModal: state => state.mode.isModal,
+    isLoading: state => state.mode.isLoading,
+    isWait: state => state.mode.isWait,
     activeTab: state => state.chat.activeTab,
     hoverTab: state => state.chat.hoverTab,
     rollObj: state => state.map.rollObj,
@@ -521,7 +594,10 @@ export default new Vuex.Store({
     deckCommand: state => state.deck.command,
     deckHoverIndex: state => state.deck.hoverIndex,
     deckHoverKey: state => state.deck.hoverKey,
-    webRtcPeer: state => state.self.webRtcPeer,
-    webRtcRoom: state => state.room.webRtcRoom
+    webRtcPeer: state => isWait =>
+      !isWait ? state.self.webRtcPeer : state.self.webRtcPeerWait,
+    webRtcRoom: state => isWait =>
+      !isWait ? state.room.webRtcRoom : state.room.webRtcRoomWait,
+    chatActorKey: state => state.chat.actorKey
   }
 });

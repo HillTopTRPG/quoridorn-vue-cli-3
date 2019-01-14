@@ -7,7 +7,7 @@
       "はまだ作られていません"}}
     </div>
 
-    <label class="roomName">部屋名：<input type="text" v-model="roomName" placeholder="必須項目" @keypress.enter="commitRoomName"/>
+    <label class="roomName">部屋名：<input ref="roomNameInput" type="text" v-model="roomName" placeholder="必須項目" @keypress.enter="commitRoomName"/>
       <button @click="commitRoomName" type="button">チェック</button>
     </label>
 
@@ -21,7 +21,7 @@
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
-          <label>プレイヤー名：<input placeholder="必須項目" type="text" v-model="playerName"/></label>
+          <label><PlayerTypeSelect v-model="inputPlayerType"/><input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/></label>
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！</div>
@@ -39,7 +39,7 @@
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
-          <label>権限：<PlayerTypeSelect v-model="playerType"/><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="playerName"/></label>
+          <label>権限：<PlayerTypeSelect v-model="inputPlayerType"/><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="playerName"/></label>
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
@@ -64,7 +64,7 @@
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
-          <label><PlayerTypeSelect v-model="playerType"/><input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/></label>
+          <label><PlayerTypeSelect v-model="inputPlayerType"/><input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/></label>
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！</div>
@@ -76,13 +76,13 @@
 </template>
 
 <script lang="ts">
-import { Action, Getter } from "vuex-class";
 import SubBlockTitle from "./SubBlockTitle.vue";
+import { Component, Vue, Watch } from "vue-property-decorator";
 
-import { Component, Vue } from "vue-property-decorator";
 import DiceBotSelect from "@/components/parts/DiceBotSelect.vue";
 import PlayerTypeSelect from "@/components/parts/PlayerTypeSelect.vue";
-import { qLog } from "@/components/common/Utility";
+
+import { Action, Getter, Mutation } from "vuex-class";
 
 @Component<CreateNewRoom>({
   name: "createNewRoom",
@@ -96,16 +96,15 @@ export default class CreateNewRoom extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("checkRoomName") checkRoomName: any;
   @Action("emptyMember") emptyMember: any;
-  @Action("joinPlayer") joinPlayer: any;
   @Action("windowClose") windowClose: any;
   @Action("windowOpen") windowOpen: any;
   @Action("loading") loading: any;
   @Action("simpleJoinRoom") simpleJoinRoom: any;
-  @Action("addPlayer") addPlayer: any;
-  @Action("sendRoomData") sendRoomData: any;
   @Action("addChatLog") addChatLog: any;
   @Action("doNewRoom") doNewRoom: any;
   @Action("doJoinRoom") doJoinRoom: any;
+  @Mutation("updateIsWait") updateIsWait: any;
+  @Mutation("updateIsModal") updateIsModal: any;
   @Getter("paramRoomName") paramRoomName: any;
   @Getter("paramRoomPassword") paramRoomPassword: any;
   @Getter("paramPlayerName") paramPlayerName: any;
@@ -119,18 +118,18 @@ export default class CreateNewRoom extends Vue {
   /*
    * data
    */
-  static ENTRANCE_ROOM_NAME = "待機部屋";
+  static ENTRANCE_ROOM_NAME = "の待機部屋";
   private roomName: string = "";
   private roomPassword: string = "";
   private playerName: string = "";
   private playerPassword: string = "";
   private playerType: string = "";
+  private inputPlayerType: string = "";
   private currentSystem: string = "DiceBot";
   private isViewWait: boolean = false;
   private isViewNewRoom: boolean = false;
 
-  /*
-   * ====================================================================================================
+  /** ====================================================================================================
    * ライフサイクルメソッド
    */
   created() {
@@ -138,7 +137,21 @@ export default class CreateNewRoom extends Vue {
     this.roomPassword = this.paramRoomPassword;
     this.playerName = this.paramPlayerName;
     this.playerPassword = this.paramPlayerPassword;
+    this.inputPlayerType = this.paramPlayerType || "PL";
     this.playerType = this.paramPlayerType;
+  }
+
+  /** ====================================================================================================
+   * ライフサイクルメソッド
+   */
+  mounted() {
+    // TODO 本質的にはここじゃダメ
+    this.$refs.roomNameInput["focus"]();
+  }
+
+  @Watch("inputPlayerType")
+  onChangeInputPlayerType(inputPlayerType: string) {
+    this.playerType = inputPlayerType;
   }
 
   openWaitRoom() {
@@ -171,14 +184,14 @@ export default class CreateNewRoom extends Vue {
      */
     const paramList: string[] = [];
     paramList.push(`roomName=${this.roomName}`);
-    if (this.paramRoomPassword !== null)
-      paramList.push(`roomPassword=${this.paramRoomPassword}`);
-    if (this.paramPlayerName !== null)
-      paramList.push(`playerName=${this.paramPlayerName}`);
-    if (this.paramPlayerPassword !== null)
-      paramList.push(`playerPassword=${this.paramPlayerPassword}`);
-    if (this.paramPlayerType !== null)
-      paramList.push(`playerType=${this.paramPlayerType}`);
+    if (this.roomPassword !== null)
+      paramList.push(`roomPassword=${this.roomPassword}`);
+    if (this.playerName !== null)
+      paramList.push(`playerName=${this.playerName}`);
+    if (this.playerPassword !== null)
+      paramList.push(`playerPassword=${this.playerPassword}`);
+    if (this.playerType !== null)
+      paramList.push(`playerType=${this.playerType}`);
     const newUrl = `?${paramList.join("&")}`;
     window.history.replaceState("", "", newUrl);
 
@@ -195,7 +208,14 @@ export default class CreateNewRoom extends Vue {
     this.loading(true);
     Promise.resolve()
       .then(() => this.simpleJoinRoom({ roomName: this.roomName }))
-      .then(() => this.checkRoomName({ roomName: this.roomName }))
+      .then((peerId: string) => {
+        const logTexts = [];
+        logTexts.push(`create room by peer:"${peerId}"`);
+        logTexts.push(`本番: ${this.peerId(false)}`);
+        logTexts.push(`待ち: ${this.peerId(true)}`);
+        window.console.log(logTexts.join(", "));
+        return this.checkRoomName({ roomName: this.roomName });
+      })
       .then(isExist => {
         if (!this.playerName) return null;
         const baseArg: any = {
@@ -238,22 +258,10 @@ export default class CreateNewRoom extends Vue {
       return;
     }
 
-    // 利用者情報の設定
-    // this.setProperty({
-    //   property: "private.self",
-    //   value: {
-    //     password: this.roomPassword,
-    //     playerPassword: this.playerPassword,
-    //     playerName: this.playerName,
-    //     playerType: this.playerType,
-    //     currentChatKey: `player-${this.playerName}`
-    //   },
-    //   logOff: true
-    // });
-
     // 存在チェックしてから決める
     this.loading(true);
-    this.checkRoomName({ roomName: this.roomName })
+    Promise.resolve()
+      .then(() => this.checkRoomName({ roomName: this.roomName }))
       .then((isExist: boolean) => {
         const baseArg: any = {
           roomName: this.roomName,
@@ -263,9 +271,10 @@ export default class CreateNewRoom extends Vue {
           playerType: this.playerType,
           fontColor: "#000000"
         };
-        const loadingEnd = this.loading.bind(this, false);
         if (!isExist && isNewRoom) {
           baseArg.system = this.currentSystem;
+          baseArg.playerPassword = baseArg.playerPassword || "";
+          baseArg.playerType = baseArg.playerType || "PL";
           return this.doNewRoom(baseArg);
         }
         if (isExist && !isNewRoom) {
@@ -294,35 +303,110 @@ export default class CreateNewRoom extends Vue {
       return;
     }
 
-    // 再帰呼び出しでチェックし続け、部屋ができたら入室する
-    // const checkFunc = () => {
-    //   this.checkRoomName({
-    //     roomName: this.roomName,
-    //     roomFindFunc: this.doJoinRoom,
-    //     roomNonFindFunc: checkFunc,
-    //     loadingFlg: false
-    //   });
-    // };
-    // checkFunc.call(this);
+    // まず目的の部屋の存在チェックする
+    Promise.resolve()
+      .then(() => this.checkRoomName({ roomName: this.roomName }))
+      .then((isExist: boolean) => {
+        window.console.log(`部屋${this.roomName}の存在チェック完了。`);
+        const joinArg = {
+          roomName: this.roomName,
+          roomPassword: this.roomPassword,
+          playerName: this.playerName,
+          playerPassword: this.playerPassword || "",
+          playerType: this.playerType,
+          fontColor: "#000000",
+          useWindow: true,
+          useAlert: true
+        };
+        if (isExist) {
+          // 存在したら普通に入室する
+          alert(
+            `部屋${
+              this.roomName
+            }は今しがた作成されたところです。\nご入室ください。`
+          );
+          this.loading(true);
+          return this.doJoinRoom(joinArg);
+        } else {
+          // 存在しなかったら待合室に入りつつ、目的の部屋ができるのをチェックしながら待つ
 
-    // モーダル状態の解除
-    this.setProperty({
-      property: "isModal",
-      value: false,
-      logOff: true
-    });
+          // 再帰呼び出しでチェックし続け、部屋ができたら入室する
+          const checkFunc = () => {
+            Promise.resolve()
+              .then(() => this.checkRoomName({ roomName: this.roomName }))
+              .then((isExist: boolean) => {
+                if (isExist) {
+                  alert(
+                    `部屋${this.roomName}が作成されました。\nご入室ください。`
+                  );
 
-    // エントランス部屋に接続する
-    this.joinPlayer({
-      roomName: CreateNewRoom.ENTRANCE_ROOM_NAME,
-      roomPassword: "",
-      playerName: this.playerName,
-      playerPassword: this.playerPassword,
-      playerType: this.playerType,
-      fontColor: "#000000",
-      resolved: () => {},
-      rejected: () => {}
-    });
+                  const endFunc = () => {
+                    this.loading(false);
+                    this.updateIsWait(false);
+                  };
+
+                  this.loading(true);
+                  this.doJoinRoom(joinArg)
+                    .then(endFunc)
+                    .catch(endFunc);
+                  return;
+                }
+                return new Promise((resolve: Function, reject: Function) => {
+                  setTimeout(() => {
+                    checkFunc();
+                  }, 5000);
+                });
+              });
+          };
+          checkFunc();
+
+          // モーダル状態の解除
+          this.updateIsModal(false);
+
+          // エントランス部屋に接続する
+          this.loading(true);
+          const entranceRoomName =
+            this.roomName + CreateNewRoom.ENTRANCE_ROOM_NAME;
+          Promise.resolve()
+            .then(() =>
+              this.simpleJoinRoom({ roomName: entranceRoomName, isWait: true })
+            )
+            .then((peerId: string) => {
+              const logTexts = [];
+              logTexts.push(`create room by peer:"${peerId}"`);
+              logTexts.push(`本番: ${this.peerId(false)}`);
+              logTexts.push(`待ち: ${this.peerId(true)}`);
+              window.console.log(logTexts.join(", "));
+              return this.checkRoomName({
+                roomName: entranceRoomName,
+                isWait: true
+              });
+            })
+            .then((isExist: boolean) => {
+              const baseArg: any = {
+                roomName: entranceRoomName,
+                roomPassword: "",
+                playerName: this.playerName,
+                playerPassword: this.playerPassword,
+                playerType: this.playerType,
+                fontColor: "#000000",
+                isWait: true
+              };
+              const loadingEnd = this.loading.bind(this, false);
+              this.updateIsWait(true);
+              if (!isExist) {
+                baseArg.system = this.currentSystem;
+                return this.doNewRoom(baseArg);
+              } else {
+                baseArg.useWindow = true;
+                baseArg.useAlert = true;
+                return this.doJoinRoom(baseArg);
+              }
+            })
+            .then(() => this.loading(false))
+            .catch(() => this.loading(false));
+        }
+      });
   }
 
   /**

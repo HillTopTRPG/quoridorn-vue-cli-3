@@ -98,13 +98,14 @@ export default {
   methods: {
     ...mapActions(["setProperty", "windowOpen", "windowClose"]),
     initWindow() {
-      window.console.log(this.storeMapObj.isEditting, this.peerId);
+      const peerId = this.peerId(this.isWait);
+      window.console.log(this.storeMapObj.isEditting, peerId);
       if (
         this.storeMapObj.isEditting &&
-        this.storeMapObj.isEditting !== this.peerId
+        this.storeMapObj.isEditting !== peerId
       ) {
         alert(
-          "ルームメイトとマップ変更操作が競合しますので、この操作はキャンセルします。"
+          "他の画面とマップ変更操作が競合しますので、この操作はキャンセルします。"
         );
         this.windowClose("private.display.editMapWindow");
         return;
@@ -141,12 +142,12 @@ export default {
       this.setProperty({
         property: "public.map.isEditting",
         isNotice: true,
-        value: this.peerId,
+        value: peerId,
         logOff: true
       });
     },
     commit() {
-      if (this.storeMapObj.isEditting === this.peerId) {
+      if (this.storeMapObj.isEditting === peerId) {
         this.setProperty({
           property: "public.map",
           isNotice: true,
@@ -187,7 +188,7 @@ export default {
       this.windowClose("private.display.editMapWindow");
     },
     cancel() {
-      if (this.storeMapObj.isEditting === this.peerId) {
+      if (this.storeMapObj.isEditting === this.peerId(this.isWait)) {
         this.setProperty({
           property: "public.map",
           isNotice: true,
@@ -345,7 +346,7 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters(["peerId"]),
+    ...mapGetters(["peerId", "isWait"]),
     selectedTagIndexText() {
       const imageList = this.imageList;
       const keyObj = this.getKeyObj(imageList, this.edit.imageKey);

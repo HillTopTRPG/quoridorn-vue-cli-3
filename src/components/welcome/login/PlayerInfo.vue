@@ -5,14 +5,13 @@
       <template v-for="player in playerList">
         <dt :key="'dt-' + player.key" :class="{ isNotExits: !getMembers(player.key).length, isMe: player.key === playerKey }">{{player.name}}{{player.type ? `（${player.type}）` : ""}}</dt>
         <dd :key="'dd-' + player.key" :class="{ isNotExits: !getMembers(player.key).length, isMe: player.key === playerKey }">
-          <label class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createUrl(player)"/>
+          <label class="returnUrlArea" v-if="!isWait">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createUrl(player)"/>
             <button class="copy" @click="event => doCopy(event)">コピー</button>
           </label>
           <ul>
-            <template v-for="(member, index) in members">
+            <template v-for="member in members">
               <li :key="member.peerId" v-if="member.playerKey === player.key">
-                <b v-if="index === 0">[親]</b>
-                <b v-if="member.peerId === peerId">[この画面]</b>
+                <b v-if="member.peerId === peerId(isWait)">[この画面]</b>
                 <span>{{member.peerId}}</span>
               </li>
             </template>
@@ -39,6 +38,7 @@ export default class RoomInfo extends Vue {
   @Getter("inviteUrl") inviteUrl: any;
   @Getter("getMembers") getMembers: any;
   @Getter("playerKey") playerKey: any;
+  @Getter("isWait") isWait: any;
 
   createUrl(player: any): string {
     return `${this.inviteUrl}&playerName=${player.name}`;
