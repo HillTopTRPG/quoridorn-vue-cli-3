@@ -235,10 +235,8 @@ export default {
           });
           const func = hisObj => {
             let key = hisObj.key;
-            window.console.log(key);
             if (key.split("-")[0] === "image") {
               const matchObj = key.match(/\$([0-9]+)/);
-              window.console.log(matchObj[1]);
               const index = parseInt(matchObj[1], 10);
               hisObj.key = addImageKeyList[index];
             }

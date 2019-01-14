@@ -157,14 +157,12 @@
 </template>
 
 <script lang="ts">
-// import 'bcdice-js/lib/preload-dicebots'
 import DiceBotSelect from "../parts/DiceBotSelect.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
+import { Action, Getter, Mutation } from "vuex-class";
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
-import { qLog } from "../common/Utility";
 
 @Component<ChatWindow>({
   name: "chatWindow",
@@ -211,8 +209,6 @@ export default class ChatWindow extends Vue {
   private outputTab: string = "[選択中]";
   /** 選択されているシステム */
   private currentDiceBotSystem: string = "DiceBot";
-  /** 現在発言中のアクターのkey */
-  private currentActorKey: string = "";
   /** 秘匿チャットの相手 */
   private secretTarget: string = "";
   /** 入力中のルームメンバーのpeerIdの配列 */
@@ -235,7 +231,6 @@ export default class ChatWindow extends Vue {
       this.getPeerActors.forEach((target: any) => {
         if (selectFrom) return;
         if (this.getViewName(target.key).startsWith(useText)) {
-          window.console.log(target);
           selectFrom = target.key;
         }
       });
@@ -250,7 +245,6 @@ export default class ChatWindow extends Vue {
       this.chatTargetList.forEach((target: any) => {
         if (selectTarget) return;
         if (target.name.startsWith(useText)) {
-          window.console.log(target);
           selectTarget = target.key;
         }
       });
@@ -429,7 +423,6 @@ export default class ChatWindow extends Vue {
     });
   }
   clickChatOption(): void {
-    window.console.log("clickChatOption");
     document.getElementById("chatTextArea")!.focus();
   }
   addTab(): void {
@@ -480,7 +473,7 @@ export default class ChatWindow extends Vue {
 
     // 文字色決定
     const actor = this.getPeerActors.filter(
-      (actor: any) => actor.key === this.currentActorKey
+      (actor: any) => actor.key === this.chatActorKey
     )[0];
     let color = "black";
     if (actor) {
@@ -523,7 +516,7 @@ export default class ChatWindow extends Vue {
     }
 
     const currentActor = this.getPeerActors.filter(
-      (actor: any) => actor.key === this.currentActorKey
+      (actor: any) => actor.key === this.chatActorKey
     )[0];
 
     const messageObj = {
@@ -544,7 +537,6 @@ export default class ChatWindow extends Vue {
     // -------------------
     // ダイスBot処理
     // -------------------
-    window.console.log(this.$refs.diceBot);
     const bcDice: any = this.$refs.diceBot.bcDice;
     if (bcDice) {
       bcDice.setMessage(this.currentMessage);
@@ -607,7 +599,7 @@ export default class ChatWindow extends Vue {
 
   @Watch("currentDiceBotSystem")
   onChangeCurrentDiceBotSystem(currentDiceBotSystem: any) {
-    qLog(`ダイスボットシステムを${currentDiceBotSystem}に変更`);
+    window.console.log(`ダイスボットシステムを${currentDiceBotSystem}に変更`);
   }
 
   @Watch("chatLogList")
@@ -634,7 +626,7 @@ export default class ChatWindow extends Vue {
   @Watch("secretTarget")
   onChangeSecretTarget(this: any, secretTarget: any) {
     if (!secretTarget) return;
-    qLog("selectSecretTalk", secretTarget);
+    window.console.log("selectSecretTalk", secretTarget);
     this.secretTarget = "";
   }
   get chatOptionPageNum() {
@@ -669,8 +661,6 @@ export default class ChatWindow extends Vue {
       length = this.chatTargetList.length;
     if (this.chatOptionSelectMode === "tab") length = this.chatTabList.length;
     const result = Math.floor(length / this.chatOptionPagingSize) + 1;
-    window.console.log(`pattern: ${this.chatOptionSelectMode}`);
-    window.console.log(`result: ${result}`);
     return result;
   }
   get chatOptionPagingList() {

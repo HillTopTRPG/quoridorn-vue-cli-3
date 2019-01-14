@@ -113,12 +113,12 @@ export default {
       this.windowOpen("private.display.editBGMWindow");
     },
     doDelete() {
-      qLog(`doDelete: ${this.selectLineKey}`);
+      window.console.log(`doDelete: ${this.selectLineKey}`);
       alert("未実装の機能です。");
     },
     changeSortMode(event) {
       const val = event.target.checked;
-      qLog(`changeSortMode: ${val}`);
+      window.console.log(`changeSortMode: ${val}`);
       if (val) {
         setTimeout(() => {
           alert("未実装の機能です。");

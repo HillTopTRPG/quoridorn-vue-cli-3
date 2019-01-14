@@ -49,13 +49,13 @@ export default {
       this.$refs.core.play();
     },
     onError(event) {
-      qLog(event);
+      window.console.log(event);
     },
     onPaused() {
       this.$refs.core.pause();
     },
     onReject() {
-      qLog("youtube - onReject => reload");
+      window.console.log("youtube - onReject => reload");
       this.setProperty({
         property: "private.display.jukeboxWindow.command",
         logOff: true,

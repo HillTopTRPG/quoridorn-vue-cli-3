@@ -44,7 +44,7 @@ export default {
       event.dataTransfer.setData("description", this.text);
       event.dataTransfer.setData("useImageIndex", this.useImageIndex);
       event.dataTransfer.setData("currentImageTag", this.currentImageTag);
-      // qLog(`  [methods] drag start character => {` +
+      // window.console.log(`  [methods] drag start character => {` +
       //   `name:"${this.name}", ` +
       //   `size:${this.size}, ` +
       //   `useImageList:${this.useImageList}, ` +
@@ -57,11 +57,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        qLog(`key:"${key}" is not find.`);
+        window.console.log(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        qLog(`key:"(${key})" is duplicate.`);
+        window.console.log(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];

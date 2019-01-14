@@ -165,7 +165,6 @@ export default class PlayerBoxWindow extends Vue {
     historyChange: boolean
   ): void {
     const targetPlayer = this.getPlayer;
-    window.console.log(targetPlayer.name, targetPlayer.key);
     this.changeChatFontColor({
       key: targetPlayer.key,
       color: value,

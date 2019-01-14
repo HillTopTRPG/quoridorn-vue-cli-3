@@ -31,13 +31,13 @@ export default {
   methods: {
     ...mapActions(["windowClose", "setProperty", "createPeer", "windowOpen"]),
     commit() {
-      qLog(this.currentPeerId);
+      window.console.log(this.currentPeerId);
       const currentMemberObj = this.currentMemberObj;
       if (!currentMemberObj) {
         alert("ルームメンバーからあなたを選んでください。");
         return;
       }
-      qLog(currentMemberObj);
+      window.console.log(currentMemberObj);
       const privateData = currentMemberObj.private;
       if (!privateData) {
         this.windowClose("private.display.selectPeerWindow");

@@ -23,7 +23,6 @@ import Card from "./Card.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
-// import { qLog } from "../../common/Utility";
 
 @Component<Deck>({
   name: "deck",
@@ -74,14 +73,12 @@ export default class Deck extends Vue {
       let cards = Array.prototype.slice.call(
         this.$refs.deck.getElementsByClassName(this.deckHoverKey)
       );
-      window.console.log(this.deckHoverKey, cards);
       let cardElm = cards[0];
       if (!cardElm) {
         const key = this.deckCardList[this.deckCardList.length - 1].key;
         cards = Array.prototype.slice.call(
           this.$refs.deck.getElementsByClassName(key)
         );
-        window.console.log(key, cards);
         cardElm = cards[0];
       }
       if (cardElm.classList.contains("turn-animation")) {

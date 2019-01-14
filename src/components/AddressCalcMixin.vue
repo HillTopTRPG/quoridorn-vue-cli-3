@@ -2,7 +2,6 @@
 import Vue from "vue";
 import { Mixin } from "vue-mixin-decorator";
 import { Getter } from "vuex-class";
-// import { qLog } from "../components/common/Utility";
 
 @Mixin
 export default class AddressCalcMixin extends Vue {
@@ -74,7 +73,7 @@ export default class AddressCalcMixin extends Vue {
       const planeLocateFromCenter = { x: planeLocate.x - center.x, y: planeLocate.y - center.y }
       const planeCanvas = { x: center.x - this.columns / 2 * this.gridSize, y: center.y - this.rows / 2 * this.gridSize }
       const canvas = { x: center.x - this.columns / 2 * this.gridSize / zoom, y: center.y - this.rows / 2 * this.gridSize / zoom }
-      qLog(
+      window.console.log(
         `zm:${zoom} ` +
         `canvas(${f(canvas.x)}, ${f(canvas.y)}) ` +
         `pCanvas(${f(planeCanvas.x)}, ${f(planeCanvas.y)}) ` +
@@ -87,7 +86,7 @@ export default class AddressCalcMixin extends Vue {
         `planeLocate(${f(planeLocate.x)}, ${f(planeLocate.y)}) ` +
         `planeLocateC(${f(planeLocateFromCenter.x)}, ${f(planeLocateFromCenter.y)}) `)
       */
-    // qLog(`screen(${this.f(screenX)}, ${this.f(screenY)}), angle:${this.f(angle)}, distance:${this.f(distance)} plane(${this.f(planeLocate.x)}, ${this.f(planeLocate.y)})`)
+    // window.console.log(`screen(${this.f(screenX)}, ${this.f(screenY)}), angle:${this.f(angle)}, distance:${this.f(distance)} plane(${this.f(planeLocate.x)}, ${this.f(planeLocate.y)})`)
     return {
       angle: angle, // 角度
       planeLocateScreen: planeLocateScreen, // マップ回転前のスクリーンベースの座標

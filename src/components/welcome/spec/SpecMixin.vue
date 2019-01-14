@@ -13,7 +13,6 @@ export default {
         window.console.error(`Not found => #${id}`);
         return;
       }
-      window.console.log(elm);
       if (!elm.checked) elm.click();
     }
   }

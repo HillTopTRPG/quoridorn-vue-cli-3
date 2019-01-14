@@ -1,7 +1,6 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
 import AddressCalcMixin from "./AddressCalcMixin";
-import { qLog } from "../components/common/Utility";
 
 export default {
   mixins: [AddressCalcMixin],
@@ -22,7 +21,7 @@ export default {
         this.$emit("leftDown");
         return;
       }
-      // qLog(`  [methods] mousedown left on ${this.type}`)
+      // window.console.log(`  [methods] mousedown left on ${this.type}`)
       const offset = {
         w: this.mouseOnTable.x - this.rect.left,
         h: this.mouseOnTable.y - this.rect.top
@@ -51,7 +50,7 @@ export default {
         this.$emit("leftUp");
         return;
       }
-      // qLog(`  [methods] mouseup left on ${this.type}`)
+      // window.console.log(`  [methods] mouseup left on ${this.type}`)
       const locate = {
         x:
           this.mouseOnTable.x - this.storeObj.move.gridOffset.x * this.gridSize,
@@ -103,7 +102,9 @@ export default {
       };
       this.setProperty({ property: contextProperty, value: obj, logOff: true });
       this.windowOpen(contextProperty);
-      qLog(`  [methods] open context => ${contextProperty}(${this.objKey})`);
+      window.console.log(
+        `  [methods] open context => ${contextProperty}(${this.objKey})`
+      );
     },
     mouseover() {
       this.isHover = true;
@@ -141,10 +142,12 @@ export default {
         value: true,
         logOff: true
       });
-      qLog(`  [methods] rolling start on ${this.type}(${this.objKey})`);
+      window.console.log(
+        `  [methods] rolling start on ${this.type}(${this.objKey})`
+      );
       const angle = this.getAngle(this.mouseOnTable);
       const planeAngle = this.arrangeAngle(angle - this.angle.total);
-      // qLog(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
+      // window.console.log(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
       this.setProperty({
         property: `public.${this.type}.list.${this.storeIndex}.angle.dragStart`,
         value: planeAngle,
@@ -157,7 +160,7 @@ export default {
       this.setProperty({ property: `map.rollObj`, value: obj, logOff: true });
     },
     rollEnd(event) {
-      // qLog(`rollEnd`, event.pageX, event.pageY)
+      // window.console.log(`rollEnd`, event.pageX, event.pageY)
       const mapObj = {
         rollObj: {
           isRolling: false
@@ -171,7 +174,7 @@ export default {
         this.angle.dragging + this.angle.total
       );
       const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30);
-      // qLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
+      // window.console.log(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
       const obj = {
         total: total,
         dragging: 0
@@ -187,7 +190,7 @@ export default {
   watch: {
     mouseOnTable: {
       handler(mouseOnTable) {
-        // qLog(`piece:${this.storeObj.name}, isDraggingLeft:${this.storeObj.isDraggingLeft}, isRolling:${this.isRolling}`)
+        // window.console.log(`piece:${this.storeObj.name}, isDraggingLeft:${this.storeObj.isDraggingLeft}, isRolling:${this.isRolling}`)
         if (this.isRolling) {
           if (!this.isThisRolling) {
             return;
@@ -225,7 +228,7 @@ export default {
   computed: mapState({
     ...mapGetters(["isFitGrid", "getObj"]),
     storeObj() {
-      return this.getObj(this.type, this.objKey);
+      return this.getObj(this.objKey);
     },
     storeIndex(state) {
       return state.public[this.type].list.indexOf(this.storeObj);

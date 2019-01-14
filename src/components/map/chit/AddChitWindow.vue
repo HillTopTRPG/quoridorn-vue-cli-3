@@ -51,7 +51,7 @@ export default {
       event.dataTransfer.setData("rows", this.rows);
       event.dataTransfer.setData("columns", this.columns);
       event.dataTransfer.setData("description", this.description);
-      qLog(
+      window.console.log(
         `  [methods] drag start chit => {` +
           `currentImageTag:${this.currentImageTag}, ` +
           `imageKey:${this.imageKey}, ` +
@@ -74,11 +74,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        qLog(`key:"${key}" is not find.`);
+        window.console.log(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        qLog(`key:"(${key})" is duplicate.`);
+        window.console.log(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];

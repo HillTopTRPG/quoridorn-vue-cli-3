@@ -123,7 +123,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   leftDown(this: any): void {
-    // qLog(`  [methods] mousedown left on GameTable`)
+    // window.console.log(`  [methods] mousedown left on GameTable`)
     const obj = {
       move: {
         from: {
@@ -137,7 +137,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   leftUp(): void {
-    // qLog(`  [methods] mouseup left on GameTable`)
+    // window.console.log(`  [methods] mouseup left on GameTable`)
     if (this.rollObj.isRolling) {
       // マップ上のオブジェクトを回転中の場合
       const pieceObj = this.$store.state.public[
@@ -155,7 +155,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         pieceObj.angle.dragging + pieceObj.angle.total
       );
       const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30);
-      // qLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
+      // window.console.log(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
       const obj = {
         total: total,
         dragging: 0

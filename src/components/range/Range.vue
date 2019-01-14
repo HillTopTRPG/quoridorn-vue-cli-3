@@ -47,7 +47,7 @@ export default {
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2
       };
-      // qLog(`center:(${center.x}, ${center.y})`)
+      // window.console.log(`center:(${center.x}, ${center.y})`)
 
       const obstacleList = this.getAllObstacle;
 
@@ -125,7 +125,7 @@ export default {
         const right = obstacle.left + width;
         const top = obstacle.top;
         const bottom = obstacle.top + height;
-        // qLog(`rect:${left},${right},${top},${bottom}`)
+        // window.console.log(`rect:${left},${right},${top},${bottom}`)
 
         const obsCenter = createCornerFunc(left + width / 2, top + height / 2);
         const centerAngle = this.calcAngle(obsCenter);
@@ -202,7 +202,7 @@ export default {
         const sinMax = Math.sin(maxPI);
         /* ========== */
 
-        // qLog(`range:(${info.angle.min.index})${info.angle.min.angle}~(${info.angle.max.index})${info.angle.max.angle}`)
+        // window.console.log(`range:(${info.angle.min.index})${info.angle.min.angle}~(${info.angle.max.index})${info.angle.max.angle}`)
         info.angle.min.arc.x = this.centerX + arcDistance * cosMin;
         info.angle.min.arc.y = this.centerY + arcDistance * sinMin;
         info.angle.max.arc.x = this.centerX + arcDistance * cosMax;
@@ -218,16 +218,16 @@ export default {
         const RB = { x: this.width, y: this.height };
         const LB = { x: 0, y: this.height };
 
-        // qLog('LT:', LT.x, LT.y)
-        // qLog('RT:', RT.x, RT.y)
-        // qLog('RB:', RB.x, RB.y)
-        // qLog('LB:', LB.x, LB.y)
+        // window.console.log('LT:', LT.x, LT.y)
+        // window.console.log('RT:', RT.x, RT.y)
+        // window.console.log('RB:', RB.x, RB.y)
+        // window.console.log('LB:', LB.x, LB.y)
 
         /* ==========
          * ブロックの算出
          */
         aList.forEach((a, i) => {
-          // qLog('a:', a)
+          // window.console.log('a:', a)
           const c = (8 - i) * 2;
           if (info.angle.min.angle === a) {
             info.angle.min.block = c;

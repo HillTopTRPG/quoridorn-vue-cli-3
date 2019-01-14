@@ -97,14 +97,14 @@ export default {
       this.targetTab = this.storeObj.targetTab;
       this.isAll = this.storeObj.isAll;
       this.group = this.storeObj.group.concat();
-      window.console.log(
-        "!!!!initWindow",
-        this.isSecret,
-        this.name,
-        this.targetTab,
-        this.isAll,
-        this.group
-      );
+      // window.console.log(
+      //   "!!!!initWindow",
+      //   this.isSecret,
+      //   this.name,
+      //   this.targetTab,
+      //   this.isAll,
+      //   this.group
+      // );
     },
     commit() {
       const tab = this.groupTargetTabList.filter(
@@ -209,14 +209,12 @@ export default {
         : tab.group.map(g => this.getViewName(g)).join(", ");
     },
     changeTargetCheck(key, value) {
-      window.console.log(key, value, this.group);
       if (value) {
         this.group.push(key);
       } else {
         const index = this.group.indexOf(key);
         this.group.splice(index, 1);
       }
-      window.console.log(this.group);
     },
     isContain(key) {
       return !!this.group.filter(g => g === key)[0];

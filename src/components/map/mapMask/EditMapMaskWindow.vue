@@ -78,7 +78,7 @@ export default {
       const colorObj = this.parseColor(mapMaskObj.color);
       this.color = colorObj.getColorCode();
       this.transparency = 100 - Math.floor(colorObj.a * 100);
-      qLog(
+      window.console.log(
         `  [methods] init window => EditMapMask:{name:"${this.name}", color:${
           this.color
         }, size:(${this.width}, ${this.height}), transparency:${

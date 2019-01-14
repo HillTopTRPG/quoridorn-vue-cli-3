@@ -3,7 +3,6 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-import { qLog } from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -96,12 +95,10 @@ export default {
         historyChange
       }: { key: string; color: string; historyChange: boolean }
     ) => {
-      window.console.log("doChangeChatFontColor", key, color, historyChange);
       const kind = key.split("-")[0];
       const target = rootState.public[kind].list.filter(
         (obj: any) => obj.key === key
       )[0];
-      window.console.log(target, rootState.public[kind]);
       if (!target) return;
       target.fontColor = color;
       if (!historyChange) return;
@@ -120,7 +117,6 @@ export default {
             log.viewHtml
           );
           if (log.owner !== target.key) return;
-          window.console.log("push");
           changeTab[index] = {
             viewHtml: log.viewHtml.replace(
               /^(<span style="color: )([^;]+)(;">)/,
@@ -202,7 +198,7 @@ export default {
         data: data,
         key: key
       });
-      if (rootGetters.peerId === ownerPeerId) {
+      if (rootGetters.peerId(false) === ownerPeerId) {
         rootState.private.history.push({ type: "add", key: key });
       }
     },
@@ -258,7 +254,7 @@ export default {
       obj.key = key;
       rootState.public[payload.propName].maxKey = maxKey;
 
-      qLog(
+      window.console.log(
         `[mutations] doAddPieceInfo => { type: ${obj.type}, key:${
           obj.key
         }, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${
@@ -267,7 +263,7 @@ export default {
       );
 
       rootState.public[payload.propName].list.push(obj);
-      if (rootGetters.peerId === payload.ownerPeerId) {
+      if (rootGetters.peerId(false) === payload.ownerPeerId) {
         rootState.private.history.push({ type: "add", key: key });
       }
     },
@@ -294,7 +290,7 @@ export default {
           continue;
         }
         if (pieceObj[prop] !== payload[prop]) {
-          qLog(
+          window.console.log(
             `[mutations] update ${propName}(${key}) => ${prop}: ${
               pieceObj[prop]
             } -> ${payload[prop]}`
@@ -318,12 +314,12 @@ export default {
       { rootState, rootGetters }: { rootState: any; rootGetters: any },
       payload: any
     ) => {
-      // qLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
+      // window.console.log(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
       const obj = rootGetters.getObj(payload.key);
       const index = rootState.public[payload.propName].list.indexOf(obj);
       rootState.public[payload.propName].list.splice(index, 1);
 
-      if (rootGetters.peerId === payload.ownerPeerId) {
+      if (rootGetters.peerId(false) === payload.ownerPeerId) {
         rootState.private.history.splice(
           rootState.private.history.findIndex(
             (hisObj: any) => hisObj.key === payload.key
@@ -432,12 +428,6 @@ export default {
             });
             return findIndex > -1;
           } else if (kind === "player") {
-            window.console.log(
-              "-----player",
-              log.target,
-              rootGetters.playerKey,
-              log.target === rootGetters.playerKey
-            );
             return log.target === rootGetters.playerKey;
           } else {
             const target = getters.getObj(log.target);

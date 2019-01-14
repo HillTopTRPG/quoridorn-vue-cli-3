@@ -96,7 +96,7 @@ export default class WindowFrame extends Vue {
     this.addEventForIFrame();
   }
   closeWindow(this: any): void {
-    // qLog(`  [methods] closeWindow(click [x]button)`)
+    // window.console.log(`  [methods] closeWindow(click [x]button)`)
     this.windowClose(this.displayProperty);
     this.$emit("cancel");
   }
@@ -134,7 +134,7 @@ export default class WindowFrame extends Vue {
     } else {
       const moveMode = this.moveMode;
       const winFac = this.windowFactor;
-      // qLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
+      // window.console.log(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
       if (moveMode.indexOf("right") >= 0) {
         winFac.r -= winFac.draggingX;
         winFac.w += winFac.draggingX;
@@ -155,7 +155,7 @@ export default class WindowFrame extends Vue {
       winFac.draggingY = 0;
       this.mouseUp(event);
     }
-    // qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+    // window.console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     this.moveMode = flg ? direct : "";
   }
   reflesh(this: any): void {
@@ -183,7 +183,7 @@ export default class WindowFrame extends Vue {
       case "move":
         this.windowFactor.draggingX = moveX;
     }
-    // qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+    // window.console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
   }
   move(this: any, event: any, flg: boolean, isTouch: boolean): void {
     if (flg) {

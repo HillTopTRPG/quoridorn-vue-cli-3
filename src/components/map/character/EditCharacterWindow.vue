@@ -40,7 +40,6 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 import WindowFrame from "../../WindowFrame";
 import WindowMixin from "../../WindowMixin";
-import { qLog } from "../../common/Utility";
 
 export default {
   name: "editCharacterWindow",
@@ -94,7 +93,7 @@ export default {
         this.switchImageList,
         this.switchCurrentKey
       );
-      qLog(
+      window.console.log(
         `image(${this.switchCurrentKey}) isReverse: ${
           switchImageObj.isReverse
         } -> ${!switchImageObj.isReverse}`
@@ -109,11 +108,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        qLog(`key:"${key}" is not find.`);
+        window.console.log(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        qLog(`key:"(${key})" is duplicate.`);
+        window.console.log(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];

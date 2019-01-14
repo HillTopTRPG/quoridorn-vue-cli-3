@@ -56,12 +56,10 @@ export default {
   methods: {
     ...mapActions(["windowClose", "windowOpen"]),
     add(bgmKey) {
-      window.console.log(bgmKey, this.bgmList);
       if (!bgmKey) return;
       const addBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0];
       // 見つからなかったらタイミング悪く削除されたということなので、処理しない
       if (!addBgmObj) return;
-      window.console.log(addBgmObj, this.playList);
 
       // タグが同じものはプレイリストから削除する
       const delList = this.playList.filter(plObj => {
@@ -74,7 +72,6 @@ export default {
         }
         return addBgmObj.tag === bgmObj.tag;
       });
-      window.console.log("delList:", delList);
       delList.forEach(delObj => {
         const index = this.playList.indexOf(delObj);
         this.playList.splice(index, 1);
@@ -96,8 +93,6 @@ export default {
       const delBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0];
       // 見つからなかったらタイミング悪く削除されたということなので、処理しない
       if (!delBgmObj) return;
-
-      console.log("remove List;;:");
 
       const index = this.playList.indexOf(delBgmObj);
       this.playList.splice(index, 1);

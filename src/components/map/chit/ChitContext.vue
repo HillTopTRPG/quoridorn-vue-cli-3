@@ -25,7 +25,7 @@ export default {
       "windowClose"
     ]),
     viewEditChit() {
-      qLog(
+      window.console.log(
         `  [methods] select context => item: Chit(${this.objKey}).viewEditChit`
       );
       this.setProperty({
@@ -36,12 +36,14 @@ export default {
       this.windowClose("private.display.chitContext");
     },
     copyChit() {
-      qLog(`  [methods] select context => item: Chit(${this.objKey}).copyChit`);
+      window.console.log(
+        `  [methods] select context => item: Chit(${this.objKey}).copyChit`
+      );
       alert("未実装の機能です");
       this.windowClose("private.display.chitContext");
     },
     deleteChit() {
-      qLog(
+      window.console.log(
         `  [methods] select context => item: Chit(${this.objKey}).deleteChit`
       );
       this.deletePieceInfo({
@@ -57,7 +59,7 @@ export default {
     objKey: state => state.private.display["chitContext"].key,
     storeObj() {
       const key = this.objKey;
-      // qLog(`key:${key}`)
+      // window.console.log(`key:${key}`)
       return this.getObj(key);
     }
   })

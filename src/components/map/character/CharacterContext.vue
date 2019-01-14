@@ -31,7 +31,7 @@ export default {
       "changePieceInfo"
     ]),
     viewEditCharacter() {
-      qLog(
+      window.console.log(
         `  [methods] select context => item: Character(${
           this.objKey
         }).viewEditCharacter`
@@ -62,12 +62,12 @@ export default {
       this.windowClose("private.display.characterContext");
     },
     // deleteCharacter () {
-    //   qLog(`  [methods] select context => item: Character(${this.objKey}).deleteCharacter`)
+    //   window.console.log(`  [methods] select context => item: Character(${this.objKey}).deleteCharacter`)
     //   this.deletePieceInfo({ propName: 'character', key: this.objKey, isNotice: true })
     //   this.windowClose('private.display.characterContext')
     // },
     copyCharacter() {
-      qLog(
+      window.console.log(
         `  [methods] select context => item: Character(${
           this.objKey
         }).copyCharacter`
@@ -76,7 +76,7 @@ export default {
       alert("未実装の機能です。");
     },
     openRefURL() {
-      // qLog(this.storeObj.url)
+      // window.console.log(this.storeObj.url)
       window.open(this.storeObj.url, "_blank");
       this.windowClose("private.display.characterContext");
     }
@@ -89,7 +89,7 @@ export default {
     },
     storeObj() {
       const key = this.objKey;
-      // qLog(`key:${key}`)
+      // window.console.log(`key:${key}`)
       return this.getObj(key);
     }
   })
