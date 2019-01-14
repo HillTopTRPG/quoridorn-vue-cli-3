@@ -11,6 +11,8 @@
               <li><span class="unSelectable">ロゴ作成</span></li>
               <li><span class="unSelectable">Favicon作成</span></li>
               <li><span class="unSelectable">画面デザイン作成（ようこそ画面 - 仕様一覧タブ）</span></li>
+              <li><span class="unSelectable">ログインに関するユーザフローデザイン</span></li>
+              <li><span class="unSelectable">画面デザイン作成（ようこそ画面 - ログインタブ）</span></li>
             </ul>
           </li>
         </ul>

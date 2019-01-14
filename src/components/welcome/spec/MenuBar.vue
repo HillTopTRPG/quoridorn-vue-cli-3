@@ -1,5 +1,5 @@
 <template>
-  <SpecFrame property="menuBar" label-str="メインメニュー" lastVersion="1.0.0b1" :isSpecFixed="false">
+  <SpecFrame property="menuBar" label-str="メインメニュー" lastVersion="1.0.0b3" :isSpecFixed="false">
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -15,7 +15,6 @@
       <li>
         メニュー項目
         <ol>
-          <li><SpecLink property="connect" title-str="「接続機能」の項へ">「接続」ボタン</SpecLink></li>
           <li>
             展開型の選択肢
             <ol>

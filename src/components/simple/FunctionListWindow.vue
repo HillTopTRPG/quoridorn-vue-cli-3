@@ -1,6 +1,6 @@
 <template>
   <WindowFrame titleText="現時点の仕様" display-property="private.display.functionListWindow" align="center" fixSize="500, 400">
-    <iframe src="./static/機能一覧.html"></iframe>
+    <iframe src="./static/FunctionList.html"></iframe>
   </WindowFrame>
 </template>
 

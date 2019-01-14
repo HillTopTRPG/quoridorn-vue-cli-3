@@ -70,14 +70,13 @@ export default class InputPlayerInfoWindow extends Vue {
 
   private isPlayerExist: boolean = false;
 
-  initWindow(): void {
+  initWindow(this: any): void {
     this.useRoomName = this.volatileRoomName;
     this.inputPlayerName = this.volatilePlayerName;
     this.inputPlayerPassword = this.volatilePlayerPassword;
     this.inputPlayerType = this.volatilePlayerType;
     this.loading(false);
     this.updateIsModal(true);
-    console.log(this.$refs.playerInput);
     this.$refs.playerInput["focus"]();
   }
 

@@ -1,6 +1,6 @@
 <template>
   <WindowFrame titleText="開発履歴 on Twitter   「みんなありがとう！！！！！」" display-property="private.display.devLogWindow" align="left-top" fixSize="385, 660">
-    <iframe src="./static/開発履歴.html"></iframe>
+    <iframe src="./static/DevelopHistory.html"></iframe>
   </WindowFrame>
 </template>
 

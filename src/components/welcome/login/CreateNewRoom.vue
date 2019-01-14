@@ -144,7 +144,7 @@ export default class CreateNewRoom extends Vue {
   /** ====================================================================================================
    * ライフサイクルメソッド
    */
-  mounted() {
+  mounted(this: any) {
     // TODO 本質的にはここじゃダメ
     this.$refs.roomNameInput["focus"]();
   }
@@ -156,10 +156,12 @@ export default class CreateNewRoom extends Vue {
 
   openWaitRoom() {
     this.isViewWait = !this.isViewWait;
+    this.isViewNewRoom = false;
   }
 
   openNewRoom() {
     this.isViewNewRoom = !this.isViewNewRoom;
+    this.isViewWait = false;
   }
 
   /**
@@ -351,11 +353,9 @@ export default class CreateNewRoom extends Vue {
                     .catch(endFunc);
                   return;
                 }
-                return new Promise((resolve: Function, reject: Function) => {
-                  setTimeout(() => {
-                    checkFunc();
-                  }, 5000);
-                });
+                setTimeout(() => {
+                  checkFunc();
+                }, 5000);
               });
           };
           checkFunc();
