@@ -48,7 +48,7 @@
                   :class="{ active: tabObj.key === chatTarget }"
                   @mousedown.prevent="groupTargetTabSelect(tabObj.key)"
                   :tabindex="chatTabList.length + 12 + index"
-            >> {{tabObj.name}}{{otherMatcherObj(tabObj) ? `(${getViewName(otherMatcherObj(tabObj))})` : ''}}</span>
+            >> {{tabObj.name}}{{otherMatcherObj(tabObj) ? `(${getViewName(otherMatcherObj(tabObj).key)})` : ''}}</span>
             <span class="tab addButton"
                   @click="addTargetTab"
                   :tabindex="chatTabList.length + chatTabList.length + 12"

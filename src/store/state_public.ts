@@ -712,6 +712,7 @@ export default {
 
     getObj: (state: any) => (key: string): any => {
       if (!key) return null;
+      window.console.log("##### getObj", key);
       const kind = key.split("-")[0];
       const filterFunc: Function = (obj: any) => obj.key === key;
       if (kind === "groupTargetTab") {

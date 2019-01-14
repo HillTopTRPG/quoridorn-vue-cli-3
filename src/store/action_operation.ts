@@ -443,6 +443,7 @@ export default {
       rootGetters: any
     ) => {
       return rootGetters.groupTargetTab.list.filter((tab: any) => {
+        window.console.log("#########", getters.chatActorKey);
         if (tab.isAll) return true;
         const filterObj = tab.group.filter((targetKey: string) => {
           if (targetKey === getters.chatActorKey) return true;
