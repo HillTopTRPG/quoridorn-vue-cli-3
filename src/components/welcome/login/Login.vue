@@ -2,7 +2,6 @@
   <div class="loginContainer">
     <CreateRoomFromRoomData v-if="!isRoomExist && !isRoomJoined"/>
     <CreateNewRoom v-if="!isRoomJoined"/>
-    <NonUseRoom v-if="!isRoomJoined"/>
     <RoomInfo v-if="isRoomJoined"/>
     <PlayerInfo v-if="isRoomJoined"/>
   </div>
@@ -11,7 +10,6 @@
 <script lang="ts">
 import CreateRoomFromRoomData from "./CreateRoomFromRoomData.vue";
 import CreateNewRoom from "./CreateNewRoom.vue";
-import NonUseRoom from "./NonUseRoom.vue";
 import RoomInfo from "./RoomInfo.vue";
 import PlayerInfo from "./PlayerInfo.vue";
 
@@ -23,7 +21,6 @@ import { Getter } from "vuex-class";
   components: {
     CreateRoomFromRoomData,
     CreateNewRoom,
-    NonUseRoom,
     RoomInfo,
     PlayerInfo
   }
