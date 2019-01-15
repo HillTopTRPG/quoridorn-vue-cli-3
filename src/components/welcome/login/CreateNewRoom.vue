@@ -139,7 +139,9 @@ export default class CreateNewRoom extends Vue {
     this.playerName = this.paramPlayerName;
     this.playerPassword = this.paramPlayerPassword;
     this.inputPlayerType = this.paramPlayerType || "PL";
-    this.playerType = this.paramPlayerType;
+    setTimeout(() => {
+      this.playerType = this.paramPlayerType;
+    });
   }
 
   /** ====================================================================================================
