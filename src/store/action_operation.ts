@@ -493,35 +493,33 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
-      return rootState.public.chat.logs[rootGetters.activeTab].filter(
-        (log: any) => {
-          if (log.from === rootGetters.playerKey) return true;
-          if (!log.target) return true;
-          if (log.target === "groupTargetTab-0") return true;
-          const kind = log.target.split("-")[0];
-          if (kind === "groupTargetTab") {
-            const target = getters.getObj(log.target);
-            if (!target.isSecret) return true;
-            if (target.isAll) return true;
-            const findIndex = target.group.findIndex((g: string) => {
-              const kind = g.split("-")[0];
-              if (kind === "player") {
-                if (g === rootGetters.playerKey) return true;
-              } else if (kind === "character") {
-                if (getters.getObj(g).owner === rootGetters.playerKey)
-                  return true;
-              }
-              return false;
-            });
-            return findIndex > -1;
-          } else if (kind === "player") {
-            return log.target === rootGetters.playerKey;
-          } else {
-            const target = getters.getObj(log.target);
-            return target.owner === rootGetters.playerKey;
-          }
+      return rootGetters.chatLogs[rootGetters.activeTab].filter((log: any) => {
+        if (log.from === rootGetters.playerKey) return true;
+        if (!log.target) return true;
+        if (log.target === "groupTargetTab-0") return true;
+        const kind = log.target.split("-")[0];
+        if (kind === "groupTargetTab") {
+          const target = getters.getObj(log.target);
+          if (!target.isSecret) return true;
+          if (target.isAll) return true;
+          const findIndex = target.group.findIndex((g: string) => {
+            const kind = g.split("-")[0];
+            if (kind === "player") {
+              if (g === rootGetters.playerKey) return true;
+            } else if (kind === "character") {
+              if (getters.getObj(g).owner === rootGetters.playerKey)
+                return true;
+            }
+            return false;
+          });
+          return findIndex > -1;
+        } else if (kind === "player") {
+          return log.target === rootGetters.playerKey;
+        } else {
+          const target = getters.getObj(log.target);
+          return target.owner === rootGetters.playerKey;
         }
-      );
+      });
     },
     groupTargetTabList: (
       state: any,
