@@ -292,9 +292,7 @@ export default {
         // プレイヤーパスワードチェック
         if (myPlayer.password !== (playerPassword || "")) {
           if (useAlert)
-            alert(
-              `プレイヤーパスワードの入力をお願いします。`
-            );
+            alert(`プレイヤーパスワードの入力をお願いします。`);
           window.console.log("プレイヤーパスワードエラー");
           isShowWindow = true;
           isError = true;
