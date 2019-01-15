@@ -1,16 +1,5 @@
 <template>
   <div :style="menuStyle" id="menu">
-    <!-- 接続ボタン
-    <div class="holder connectBtn" v-if="!isConnected || isConnectHover">
-      <div class="first"></div>
-      <div class="second"></div>
-      <div class="third"></div>
-      <div class="menu-button" @click="clickConnect" :title="isConnectHover ? '新しいお部屋に移りますか？\n古い部屋への接続は自動で切断されます。' : 'さぁ！お部屋を立てましょう！！'" @mouseleave="hoverConnect(false)">接続</div>
-    </div>
-    <div class="connectBtn" v-if="isConnected && !isConnectHover">
-      <div class="menu-button" @click="clickConnect" @mouseenter="hoverConnect(true)">接続</div>
-    </div>
-    -->
     <!-- 操作ボタングループ -->
     <div class="span-group">
       <span @click="menuClick()" @mouseenter="menuHover('ファイル')" :class="{isHover : isShow('ファイル')}">ファイル</span>
@@ -171,11 +160,6 @@ export default class Menu extends Vue {
 
   hoverConnect(flg: boolean): void {
     this.isConnectHover = flg;
-  }
-
-  /** 接続ボタン押下 */
-  clickConnect(): void {
-    this.windowOpen("private.display.createRoomWindow");
   }
 
   /** 部屋情報ボタン押下 */

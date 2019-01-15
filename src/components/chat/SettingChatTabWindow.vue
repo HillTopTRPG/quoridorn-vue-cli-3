@@ -33,7 +33,7 @@ export default {
       this.tabsStr = this.storeTabs;
     },
     commit() {
-      this.changeChatTab(this.tabsStr);
+      this.changeChatTab({ tabsText: this.tabsStr });
       this.windowClose("private.display.settingChatTabWindow");
     },
     cancel() {

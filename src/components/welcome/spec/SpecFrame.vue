@@ -80,6 +80,7 @@ export default {
 }
 .menu-item .accordion > * {
   margin-top: 0.5em;
+  width: 100%;
 }
 .menu-item .accordion > *:last-child {
   margin-bottom: 1em;

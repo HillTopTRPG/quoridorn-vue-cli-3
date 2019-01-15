@@ -37,6 +37,7 @@ export default class Login extends Vue {
   border: 1px solid #777;
   background-color: white;
   padding: 0.5em;
+  flex: 1;
 }
 fieldset:not(:first-child) {
   margin-top: 1em;

@@ -6,7 +6,7 @@
         <span class="unSelectable">【特別協力】</span>
         <ul class="detail">
           <li>
-            <div>kanko<span class="unSelectable"> (<a target="_blank" href="https://twitter.com/kanko_oo">on <span class="icon-twitter"></span>Twitter</a>)</span></div>
+            <div>kanko<span class="unSelectable"> (<a target="_blank" href="https://twitter.com/kanko_oo">on <span class="icon-twitter"></span> Twitter</a>)</span></div>
             <ul>
               <li><span class="unSelectable">ロゴ作成</span></li>
               <li><span class="unSelectable">Favicon作成</span></li>

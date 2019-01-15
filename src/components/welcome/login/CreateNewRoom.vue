@@ -105,6 +105,7 @@ export default class CreateNewRoom extends Vue {
   @Action("doJoinRoom") doJoinRoom: any;
   @Mutation("updateIsWait") updateIsWait: any;
   @Mutation("updateIsModal") updateIsModal: any;
+  @Mutation("updateIsJoined") updateIsJoined: any;
   @Getter("paramRoomName") paramRoomName: any;
   @Getter("paramRoomPassword") paramRoomPassword: any;
   @Getter("paramPlayerName") paramPlayerName: any;
@@ -348,6 +349,7 @@ export default class CreateNewRoom extends Vue {
                   };
 
                   this.loading(true);
+                  this.updateIsJoined(false);
                   this.doJoinRoom(joinArg)
                     .then(endFunc)
                     .catch(endFunc);

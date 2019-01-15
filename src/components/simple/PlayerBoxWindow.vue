@@ -9,21 +9,10 @@
           <input
             type="color"
             :value="getPlayer ? getPlayer.fontColor : ''"
-            @change="event => changePlayerFontColor(event.target.value, event.target.nextElementSibling.firstElementChild.checked)"
+            @change="(event) => changePlayerFontColor(event.target.value, event.target.nextElementSibling.firstElementChild.checked)"
           />
           <label>過去ログ反映<input type="checkbox" checked /></label>
         </label>
-        <!-----------------
-         ! 接続(peerId)
-         !---------------->
-        <fieldset>
-          <legend>接続(peerId)</legend>
-          <ul>
-            <li v-for="member in getMembers(currentPlayerKey)" :key="member.peerId">{{member.peerId}}
-              <span v-if="member.peerId === peerId(isWait)">(この画面)</span>
-            </li>
-          </ul>
-        </fieldset>
         <!-----------------
          ! マップ
          !---------------->
@@ -37,7 +26,7 @@
                 <label>
                   <select
                     :value="character.fontColorType"
-                    @change="event => changeFontColorType(character.key, Number(event.target.value))"
+                    @change="(event) => changeFontColorType(character.key, event.target.value)"
                   >
                     <option value="0">主と同じ</option>
                     <option value="1">個別</option>
@@ -116,21 +105,12 @@ import PlayerSelect from "@/components/parts/PlayerSelect.vue";
   }
 })
 export default class PlayerBoxWindow extends Vue {
-  @Action("imageTagChange") imageTagChange: any;
-  @Action("addImage") addImage: any;
-  @Action("windowClose") windowClose: any;
-  @Action("emptyProperty") emptyProperty: any;
   @Action("setProperty") setProperty: any;
   @Action("changeChatFontColor") changeChatFontColor: any;
   @Action("changePieceInfo") changePieceInfo: any;
   @Getter("getObj") getObj: any;
-  @Getter("members") members: any;
-  @Getter("playerList") playerList: any;
-  @Getter("peerId") peerId: any;
   @Getter("playerKey") playerKey: any;
   @Getter("getMapObjectList") getMapObjectList: any;
-  @Getter("getMembers") getMembers: any;
-  @Getter("isWait") isWait: any;
 
   private currentPlayerKey: string = "";
 

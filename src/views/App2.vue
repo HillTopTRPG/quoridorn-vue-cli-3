@@ -29,7 +29,6 @@
     <DropZipWindow/>
     <SelectPeerWindow/>
     <InviteLinkWindow/>
-    <CreateRoomWindow/>
     <ConfirmLoadRoomWindow/>
     <AddChitWindow/>
     <EditChitWindow/>
@@ -77,7 +76,6 @@ import RoomInfoWindow from "../components/simple/RoomInfoWindow";
 import DropZipWindow from "../components/simple/DropZipWindow";
 import SelectPeerWindow from "../components/simple/SelectPeerWindow";
 import InviteLinkWindow from "../components/simple/InviteLinkWindow";
-import CreateRoomWindow from "../components/simple/CreateRoomWindow";
 import ConfirmLoadRoomWindow from "../components/simple/ConfirmLoadRoomWindow";
 import AddChitWindow from "../components/map/chit/AddChitWindow";
 import EditChitWindow from "../components/map/chit/EditChitWindow";
@@ -123,7 +121,6 @@ export default {
     DropZipWindow,
     SelectPeerWindow,
     InviteLinkWindow,
-    CreateRoomWindow,
     ConfirmLoadRoomWindow,
     AddChitWindow,
     EditChitWindow,

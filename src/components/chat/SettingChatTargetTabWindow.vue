@@ -97,13 +97,6 @@ export default {
     initWindow() {
       this.tabsStr = this.storeTabs;
     },
-    commit() {
-      this.changeChatTab(this.tabsStr);
-      this.windowClose("private.display.settingChatTargetTabWindow");
-    },
-    cancel() {
-      this.windowClose("private.display.settingChatTargetTabWindow");
-    },
     add() {
       this.addGroupTargetTab({ ownerKey: this.getChatFromKey() });
     },
@@ -205,8 +198,7 @@ export default {
       "getViewName",
       "getObj",
       "playerKey",
-      "currentChatKey",
-      "chatTabList"
+      "currentChatKey"
     ]),
     groupTargetTabList(state) {
       return state.public.chat.groupTargetTab.list.filter(tab => {

@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="ようこそ" display-property="private.display.welcomeWindow" align="center" fixSize="500, 500" :fontSizeBar="true">
+  <WindowFrame titleText="ようこそ" display-property="private.display.welcomeWindow" align="center" fixSize="500, 500" :fontSizeBar="true" :is-ban-close="!isRoomJoined">
     <div class="contents" id="welcomeWindowContents">
       <!----------------------------------------------------------------------------------
        ! ロゴ
@@ -87,47 +87,50 @@
   </WindowFrame>
 </template>
 
-<script>
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
+<script lang="ts">
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
 
 import Login from "./login/Login.vue";
-import Environment from "./spec/Environment";
-import MenuBar from "./spec/MenuBar";
-import Save from "./spec/Save";
-import Load from "./spec/Load";
-import ChatWindow from "./spec/ChatWindow";
-import DiceWindow from "./spec/DiceWindow";
-import PlayerBoxWindow from "./spec/PlayerBoxWindow";
-import ChangeFontSizeWindow from "./spec/ChangeFontSizeWindow";
-import ResetAllWindow from "./spec/ResetAllWindow";
-import AddCharacterWindow from "./spec/AddCharacterWindow";
-import AddRangeWindow from "./spec/AddRangeWindow";
-import AddChitWindow from "./spec/AddChitWindow";
-import GraveyardWindow from "./spec/GraveyardWindow";
-import WaitingRoomWindow from "./spec/WaitingRoomWindow";
-import EditMapWindow from "./spec/EditMapWindow";
-import EditFloorTileMode from "./spec/EditFloorTileMode";
-import AddMapMaskWindow from "./spec/AddMapMaskWindow";
-import CreateEasyMapWindow from "./spec/CreateEasyMapWindow";
-import SaveMapWindow from "./spec/SaveMapWindow";
-import LoadMapWindow from "./spec/LoadMapWindow";
-import FileUploaderWindow from "./spec/FileUploaderWindow";
-import EditImageTagWindow from "./spec/EditImageTagWindow";
-import DeleteImageWindow from "./spec/DeleteImageWindow";
-import WelcomeWindowSpec from "./spec/WelcomeWindowSpec";
-import VersionWindow from "./spec/VersionWindow";
-import ManualWindow from "./spec/ManualWindow";
-import OfficialSiteLink from "./spec/OfficialSiteLink";
-import RoomInfoWindow from "./spec/RoomInfoWindow";
-import AddPublicMemoWindow from "./spec/AddPublicMemoWindow";
-import Logout from "./spec/Logout";
+import Environment from "./spec/Environment.vue";
+import MenuBar from "./spec/MenuBar.vue";
+import Save from "./spec/Save.vue";
+import Load from "./spec/Load.vue";
+import ChatWindow from "./spec/ChatWindow.vue";
+import DiceWindow from "./spec/DiceWindow.vue";
+import PlayerBoxWindow from "./spec/PlayerBoxWindow.vue";
+import ChangeFontSizeWindow from "./spec/ChangeFontSizeWindow.vue";
+import ResetAllWindow from "./spec/ResetAllWindow.vue";
+import AddCharacterWindow from "./spec/AddCharacterWindow.vue";
+import AddRangeWindow from "./spec/AddRangeWindow.vue";
+import AddChitWindow from "./spec/AddChitWindow.vue";
+import GraveyardWindow from "./spec/GraveyardWindow.vue";
+import WaitingRoomWindow from "./spec/WaitingRoomWindow.vue";
+import EditMapWindow from "./spec/EditMapWindow.vue";
+import EditFloorTileMode from "./spec/EditFloorTileMode.vue";
+import AddMapMaskWindow from "./spec/AddMapMaskWindow.vue";
+import CreateEasyMapWindow from "./spec/CreateEasyMapWindow.vue";
+import SaveMapWindow from "./spec/SaveMapWindow.vue";
+import LoadMapWindow from "./spec/LoadMapWindow.vue";
+import FileUploaderWindow from "./spec/FileUploaderWindow.vue";
+import EditImageTagWindow from "./spec/EditImageTagWindow.vue";
+import DeleteImageWindow from "./spec/DeleteImageWindow.vue";
+import WelcomeWindowSpec from "./spec/WelcomeWindowSpec.vue";
+import VersionWindow from "./spec/VersionWindow.vue";
+import ManualWindow from "./spec/ManualWindow.vue";
+import OfficialSiteLink from "./spec/OfficialSiteLink.vue";
+import RoomInfoWindow from "./spec/RoomInfoWindow.vue";
+import AddPublicMemoWindow from "./spec/AddPublicMemoWindow.vue";
+import Logout from "./spec/Logout.vue";
 
-import Logo from "../simple/Logo";
-import Source from "./source/Source";
-import DevSupport from "./devSupport/DevSupport";
+import Logo from "../simple/Logo.vue";
+import Source from "./source/Source.vue";
+import DevSupport from "./devSupport/DevSupport.vue";
 
-export default {
+import { Component, Vue } from "vue-property-decorator";
+import { Getter } from "vuex-class";
+
+@Component<WelcomeWindow>({
   name: "welcomeWindow",
   mixins: [WindowMixin],
   components: {
@@ -166,19 +169,21 @@ export default {
     Logout,
     Source,
     DevSupport
-  },
-  methods: {
-    specAll(openFlg) {
-      const elms = document
-        .getElementById("welcomeWindowContents")
-        .querySelectorAll("input[type=checkbox]");
-      Array.prototype.slice
-        .call(elms)
-        .filter(elm => elm.checked !== openFlg)
-        .forEach(elm => elm.click());
-    }
   }
-};
+})
+export default class WelcomeWindow extends Vue {
+  @Getter("isRoomJoined") isRoomJoined: any;
+
+  specAll(openFlg: boolean) {
+    const elms = document
+      .getElementById("welcomeWindowContents")!
+      .querySelectorAll("input[type=checkbox]");
+    Array.prototype.slice
+      .call(elms)
+      .filter(elm => elm.checked !== openFlg)
+      .forEach(elm => elm.click());
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -190,6 +195,8 @@ export default {
   overflow-y: scroll;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
 }
 
 #logo-container {
@@ -207,7 +214,10 @@ export default {
 
 .tab_wrap {
   width: 100%;
+  flex: 1;
   margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 input[type="radio"] {
   display: none;
@@ -246,10 +256,14 @@ input[type="radio"] {
   /*border: 1px solid red;*/
   margin-top: -1px;
   /*padding: 0 0.5em 0.5em;*/
+  flex: 1;
+  display: flex;
 }
 .tab_panel {
   padding: 0;
   display: none;
+  flex: 1;
+  width: 100%;
 }
 .tab_panel p {
   font-size: 14px;
@@ -269,7 +283,8 @@ input[type="radio"] {
 #welcomeWindow-tab2:checked ~ .panel_area #panel2,
 #welcomeWindow-tab3:checked ~ .panel_area #panel3,
 #welcomeWindow-tab4:checked ~ .panel_area #panel4 {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
 .spec-header {
@@ -281,6 +296,7 @@ input[type="radio"] {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  min-height: 1.4em;
 }
 .spec-header button {
   background-color: transparent;

@@ -96,7 +96,6 @@ export default {
         zipList: null
       },
       inviteLinkWindow: { command: null, isDisplay: false, zIndex: 1 },
-      createRoomWindow: { command: null, isDisplay: false, zIndex: 1 },
       selectPeerWindow: { command: null, isDisplay: false, zIndex: 1 },
       confirmLoadRoomWindow: {
         command: null,
@@ -304,7 +303,7 @@ export default {
     fontColor: (state: any) => state.self.color,
     playerKey: (state: any) => state.self.playerKey,
     currentChatKey: (state: any) => state.self.currentChatKey,
-    peerId: (state: any) => (isWait: boolean) =>
+    peerId: (state: any): Function => (isWait: boolean) =>
       !isWait ? state.self.peerId : state.self.peerIdWait,
     angle: (state: any) => state.map.angle,
     wheel: (state: any) => state.map.wheel,

@@ -6,13 +6,13 @@
         招待用URL：<input class="inviteUrl" type="text" readonly="readonly" :value="inviteUrl" />
       </div>
       <ul v-if="playerList.length > 0">
-        <li v-for="(player, index) in playerList" :key="player.key">
-          <b v-if="index === 0">[親]</b>
+        <li v-for="player in playerList" :key="player.key">
           <b v-if="player.key === playerKey">[あなた]</b>
           <span>{{player.name}}</span>
           <div class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createURL(player)"/></div>
         </li>
       </ul>
+      <div>内容はもっと増やします！</div>
     </div>
   </WindowFrame>
 </template>
@@ -32,28 +32,6 @@ export default {
     createURL(player) {
       return `${this.inviteUrl}&playerName=${player.name}`;
     }
-    // open () {
-    //   setTimeout(function () {
-    //     const elms = document.querySelectorAll('.returnUrl')
-    //     elms.forEach((elm) => {
-    //       elm.focus()
-    //       elm.value += ''
-    //       window.console.log(elm.value)
-    //     })
-    //   }, 100)
-    // }
-  },
-  watch: {
-    // playerList () {
-    //   setTimeout(function () {
-    //     const elms = document.querySelectorAll('.returnUrl')
-    //     elms.forEach((elm) => {
-    //       elm.focus()
-    //       elm.value += ''
-    //       window.console.log(elm.value)
-    //     })
-    //   }, 0)
-    // }
   },
   computed: mapState({
     ...mapGetters(["roomName", "playerKey", "playerList", "inviteUrl"])
@@ -85,7 +63,6 @@ export default {
 ul {
   overflow-y: auto;
   padding-left: 20px;
-  height: 227px;
 }
 li:not(:first-child) {
   margin-top: 8px;

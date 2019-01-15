@@ -198,7 +198,7 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * チャットタブの設定
        */
-      dispatch("changeChatTab", "雑談");
+      dispatch("changeChatTab", { tabsText: "雑談" });
 
       if (roomName) {
         /* ------------------------------
@@ -228,12 +228,11 @@ export default new Vuex.Store({
             if (
               !isExist &&
               roomPassword !== null &&
-              !playerName &&
+              playerName &&
               playerPassword !== null &&
               playerType !== null
             ) {
               baseArg.system = undefined;
-              baseArg.playerPassword = baseArg.playerPassword || "";
               baseArg.playerType = baseArg.playerType || "PL";
               return dispatch("doNewRoom", baseArg);
             }

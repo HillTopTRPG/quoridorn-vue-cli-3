@@ -378,7 +378,6 @@ export default {
           logOff: true
         });
       }
-      // commit('addPlayerWidth')
     },
 
     /**
@@ -414,22 +413,6 @@ export default {
      */
     imageTagChange: ({ commit }: { commit: Function }, payload: any) =>
       commit("imageTagChange", payload),
-
-    /**
-     * チャットのタブの構成を変更する
-     * @param getters
-     * @param commit
-     * @param tabsText
-     * @returns {*}
-     */
-    changeChatTab: (
-      { getters, commit }: { getters: any; commit: Function },
-      tabsText: string
-    ) =>
-      commit("changeChatTab", {
-        tabsText: tabsText,
-        lastActiveTab: getters.activeChatTab
-      }),
 
     /**
      * NOTICE_INPUT
@@ -577,77 +560,6 @@ export default {
       imageObj.selectTag = tagTexts[tagTexts.length - 1];
       // リアクティブ発火
       imageList.splice(imageList.indexOf(imageObj), 1, imageObj);
-    },
-
-    /**
-     * チャットのタブの構成を変更する
-     * @param state
-     * @param tabsText
-     * @param lastActiveTab
-     */
-    changeChatTab(
-      state: any,
-      { tabsText, lastActiveTab }: { tabsText: string; lastActiveTab: any }
-    ) {
-      // 秘匿チャット以外を削除
-      state.chat.tabs
-        .map((tab: any, index: number) => {
-          if (!tab.secretInfo) return;
-          return index;
-        })
-        .reverse()
-        .forEach((index: number) => state.chat.tabs.splice(index, 1));
-
-      tabsText = "メイン " + tabsText;
-      const regExp = new RegExp("[ 　]+", "g");
-      let tabs = tabsText.replace(regExp, " ").split(" ");
-      for (let tab of tabs) {
-        let isActive = false;
-        if (lastActiveTab && lastActiveTab.name === tab) {
-          isActive = true;
-        }
-        let tabObj = {
-          name: tab,
-          isActive: isActive,
-          isHover: false,
-          unRead: 0,
-          secretInfo: null
-        };
-        state.chat.tabs.push(tabObj);
-      }
-      if (!lastActiveTab) {
-        state.chat.tabs[0].isActive = true;
-      }
-
-      // 削除されたタブの検知
-      let deleteLogTabList = [];
-      for (let tab in state.chat.logs) {
-        if (!state.chat.logs.hasOwnProperty(tab)) continue;
-        let findFlg = false;
-        for (const tabsTab of state.chat.tabs) {
-          if (tabsTab.name === tab) {
-            findFlg = true;
-            break;
-          }
-        }
-        if (!findFlg) {
-          deleteLogTabList.push(tab);
-        }
-      }
-      deleteLogTabList.forEach(
-        delTabName => delete state.chat.logs[delTabName]
-      );
-
-      // 追加されたタブの検知
-      state.chat.tabs.forEach((tabsTab: any) => {
-        if (!state.chat.logs[tabsTab.name]) {
-          // this.$set(state.chat.logs, tabsTab.name, [])
-          const newLogs = { ...state.chat.logs };
-          newLogs[tabsTab.name] = [];
-          state.chat.logs = newLogs;
-          // state.chat.logs[tabsTab.name] = []
-        }
-      });
     }
   } /* end of mutations */,
 
@@ -712,7 +624,6 @@ export default {
 
     getObj: (state: any) => (key: string): any => {
       if (!key) return null;
-      window.console.log("##### getObj", key);
       const kind = key.split("-")[0];
       const filterFunc: Function = (obj: any) => obj.key === key;
       if (kind === "groupTargetTab") {
@@ -736,7 +647,8 @@ export default {
         return obj.name;
       }
     },
-    chatTabList: (state: any): any[] => state.chat.tabs,
+    chatTabs: (state: any): any[] => state.chat.tabs,
+    chatLogs: (state: any): any[] => state.chat.logs,
     playerList: (state: any): any[] => state.player.list,
     inputting: (state: any): any => state.chat.inputting,
     marginGridColor: (state: any): string => state.map.margin.gridColor,
@@ -781,9 +693,10 @@ export default {
       );
     },
     getPlayer: (state: any, getters: any) => (peerId: string): any => {
+      window.console.log("getPlayer", peerId);
       const member = getters.members.filter(
         (member: any) => member.peerId === peerId
-      );
+      )[0];
       if (!member) return null;
       return getters.getObj(member.playerKey);
     },

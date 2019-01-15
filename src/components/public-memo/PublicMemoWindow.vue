@@ -55,7 +55,7 @@ export default {
     },
     tabSelect(tabObj) {
       this.currentTab = tabObj.text;
-      for (let chatTabObj of this.chatTabList) {
+      for (let chatTabObj of this.chatTabs) {
         chatTabObj.isActive = chatTabObj.text === tabObj.text;
       }
     },

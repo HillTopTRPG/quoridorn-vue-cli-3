@@ -35,7 +35,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["windowClose", "setProperty", "changeChatTab"]),
+    ...mapActions(["windowClose", "setProperty"]),
     initWindow() {
       this.historyChange = false;
     },

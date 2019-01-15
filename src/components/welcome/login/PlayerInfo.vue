@@ -8,14 +8,6 @@
           <label class="returnUrlArea" v-if="!isWait">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createUrl(player)"/>
             <button class="copy" @click="event => doCopy(event)">コピー</button>
           </label>
-          <ul>
-            <template v-for="member in members">
-              <li :key="member.peerId" v-if="member.playerKey === player.key">
-                <b v-if="member.peerId === peerId(isWait)">[この画面]</b>
-                <span>{{member.peerId}}</span>
-              </li>
-            </template>
-          </ul>
         </dd>
       </template>
     </dl>
@@ -33,8 +25,6 @@ import { execCopy } from "../../common/Utility";
 })
 export default class RoomInfo extends Vue {
   @Getter("playerList") playerList: any;
-  @Getter("members") members: any;
-  @Getter("peerId") peerId: any;
   @Getter("inviteUrl") inviteUrl: any;
   @Getter("getMembers") getMembers: any;
   @Getter("playerKey") playerKey: any;
@@ -71,6 +61,8 @@ fieldset.root > legend {
 }
 label {
   display: flex;
+  justify-content: center;
+  align-items: center;
   > input {
     flex: 1;
   }

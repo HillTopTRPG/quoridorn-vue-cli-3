@@ -397,6 +397,93 @@ export default {
         isAll: false,
         group: [payload.ownerKey]
       });
+    },
+    /** ========================================================================
+     * チャットタブの構成を変更する
+     */
+    changeChatTab: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doChangeChatTab"
+      });
+    },
+    /**
+     * チャットのタブの構成を変更する
+     * @param rootState
+     * @param rootGetters
+     * @param commit
+     * @param payload
+     * @returns {*}
+     */
+    doChangeChatTab: (
+      {
+        rootState,
+        rootGetters,
+        commit
+      }: { rootState: any; rootGetters: any; commit: Function },
+      payload: any
+    ) => {
+      const lastActiveTab = rootState.public.activeChatTab;
+      let tabsText = payload.tabsText;
+      // 秘匿チャット以外を削除
+      rootGetters.chatTabs
+        .map((tab: any, index: number) => {
+          if (!tab.secretInfo) return;
+          return index;
+        })
+        .reverse()
+        .forEach((index: number) => rootGetters.chatTabs.splice(index, 1));
+
+      tabsText = "メイン " + tabsText;
+      const regExp = new RegExp("[ 　]+", "g");
+      let tabs = tabsText.replace(regExp, " ").split(" ");
+      for (let tab of tabs) {
+        let isActive = false;
+        if (lastActiveTab && lastActiveTab.name === tab) {
+          isActive = true;
+        }
+        let tabObj = {
+          name: tab,
+          isActive: isActive,
+          isHover: false,
+          unRead: 0,
+          secretInfo: null
+        };
+        rootGetters.chatTabs.push(tabObj);
+      }
+      if (!lastActiveTab) {
+        rootGetters.chatTabs[0].isActive = true;
+      }
+
+      // 削除されたタブの検知
+      let deleteLogTabList = [];
+      for (let tab in rootGetters.chatLogs) {
+        if (!rootGetters.chatLogs.hasOwnProperty(tab)) continue;
+        let findFlg = false;
+        for (const tabsTab of rootGetters.chatTabs) {
+          if (tabsTab.name === tab) {
+            findFlg = true;
+            break;
+          }
+        }
+        if (!findFlg) {
+          deleteLogTabList.push(tab);
+        }
+      }
+      deleteLogTabList.forEach(
+        delTabName => delete rootGetters.chatLogs[delTabName]
+      );
+
+      // 追加されたタブの検知
+      rootGetters.chatTabs.forEach((tabsTab: any) => {
+        if (!rootGetters.chatLogs[tabsTab.name]) {
+          // this.$set(state.chat.logs, tabsTab.name, [])
+          const newLogs = { ...rootGetters.chatLogs };
+          newLogs[tabsTab.name] = [];
+          rootState.public.chat.logs = newLogs;
+          // state.chat.logs[tabsTab.name] = []
+        }
+      });
     }
   },
   getters: {
@@ -443,7 +530,6 @@ export default {
       rootGetters: any
     ) => {
       return rootGetters.groupTargetTab.list.filter((tab: any) => {
-        window.console.log("#########", getters.chatActorKey);
         if (tab.isAll) return true;
         const filterObj = tab.group.filter((targetKey: string) => {
           if (targetKey === getters.chatActorKey) return true;

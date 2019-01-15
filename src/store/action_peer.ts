@@ -173,7 +173,7 @@ export default {
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
         dispatch("addChatLog", {
           name: rootGetters.systemLog.name,
-          text: `${player.name}（${peerId}） が退室しました。`,
+          text: `${player.name} が退室しました。`,
           color: rootGetters.systemLog.color,
           tab: rootGetters.systemLog.tab,
           owner: rootGetters.systemLog.owner
@@ -511,13 +511,35 @@ export default {
       if (type === "NOTICE_SELF_INFO") {
         // Player追加
         dispatch("addPlayer", {
+          peerId: fromPeerId,
           name: value.playerName,
           password: value.playerPassword,
           type: value.playerType,
           fontColor: value.fontColor,
-          peerId: fromPeerId,
           isWait: isWait
         });
+        const player: any = rootGetters.getPlayer(fromPeerId);
+        const members: any[] = rootGetters.getMembers(player.key);
+        const isContainMe: boolean =
+          members.findIndex(
+            (member: any) =>
+              member.peerId === rootGetters.peerId(rootGetters.isWait)
+          ) > -1;
+        if (isContainMe && members.length > 1) {
+          const msg: string[] = [];
+          msg.push("あなたと同じプレイヤーとして入室した人が現れました。");
+          msg.push("これがもしあなた本人による入室なら良いのですが、");
+          msg.push("そうでない場合は成りすましの影響が出ます。");
+          msg.push("");
+          msg.push("対処するには以下の手順をとってください。");
+          msg.push(
+            "１. 速やかに部屋データを保存(Ctrl + S もしくは Command + S)する"
+          );
+          msg.push("２. ルームメンバーに成りすましの可能性を教える");
+          msg.push("３. 部屋を作り直す");
+          msg.push("４. （あなたは別のパスワードでログインする）");
+          setTimeout(() => alert(msg!.join("\n")), 0);
+        }
       }
       // privateデータの要求を受けたとき
       if (type === "REQUEST_PRIVATE_DATA")
@@ -1051,7 +1073,7 @@ export default {
       // チャット追加
       dispatch("addChatLog", {
         name: rootGetters.systemLog.name,
-        text: `${playerName}（${rootGetters.peerId(isWait)}）が入室しました。`,
+        text: `${playerName} が入室しました。`,
         color: rootGetters.systemLog.color,
         tab: rootGetters.systemLog.tab,
         owner: rootGetters.systemLog.owner

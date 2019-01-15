@@ -6,13 +6,13 @@
        !--------------->
       <div class="tabs dep">
         <span class="tab"
-              v-for="(tabObj, index) in chatTabList"
+              v-for="(tabObj, index) in chatTabs"
               :key="tabObj.name"
               :class="{ active: tabObj.name === activeTab, unRead: tabObj.unRead > 0 }"
               @mousedown.prevent="selectChatTab(tabObj.name)"
               :tabindex="index + 1"
         >#{{tabObj.name}}/{{tabObj.unRead}}</span>
-        <span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1"><span class="icon-cog"></span></span>
+        <span class="tab addButton" @click="addTab" :tabindex="chatTabs.length + 1"><span class="icon-cog"></span></span>
       </div>
       <!----------------
        ! チャットログ
@@ -25,13 +25,13 @@
        !--------------->
       <label class="oneLine dep">
         <span class="label">名前(！)</span>
-        <select :tabindex="chatTabList.length + 2" :value="currentChatKey" @change="event => inputName(event.target.value)" title="">
+        <select :tabindex="chatTabs.length + 2" :value="currentChatKey" @change="event => inputName(event.target.value)" title="">
           <option v-for="actor in getPeerActors" :key="actor.key" :value="actor.key">{{getViewName(actor.key)}}</option>
         </select>
-        <DiceBotSelect ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabList.length + 6" class="diceBotSystem"/>
-        <span class="icon"><i class="icon-dice" title="ダイスボットの設定" @click="settingDiceBot" :tabindex="chatTabList.length + 7"></i></span>
-        <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabList.length + 8"></i></span>-->
-        <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabList.length + 8"></i></span>
+        <DiceBotSelect ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabs.length + 6" class="diceBotSystem"/>
+        <span class="icon"><i class="icon-dice" title="ダイスボットの設定" @click="settingDiceBot" :tabindex="chatTabs.length + 7"></i></span>
+        <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabs.length + 8"></i></span>-->
+        <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabs.length + 8"></i></span>
       </label>
       <!----------------
        ! 発言
@@ -47,14 +47,14 @@
                   :key="tabObj.key"
                   :class="{ active: tabObj.key === chatTarget }"
                   @mousedown.prevent="groupTargetTabSelect(tabObj.key)"
-                  :tabindex="chatTabList.length + 12 + index"
+                  :tabindex="chatTabs.length + 12 + index"
             >> {{tabObj.name}}{{otherMatcherObj(tabObj) ? `(${getViewName(otherMatcherObj(tabObj).key)})` : ''}}</span>
             <span class="tab addButton"
                   @click="addTargetTab"
-                  :tabindex="chatTabList.length + chatTabList.length + 12"
+                  :tabindex="chatTabs.length + chatTabs.length + 12"
             ><span class="icon-cog"></span></span>
             <label class="bracketOption">
-              <input type="checkbox" v-model="addBrackets" :tabindex="chatTabList.length + chatTabList.length + 13" />
+              <input type="checkbox" v-model="addBrackets" :tabindex="chatTabs.length + chatTabs.length + 13" />
               発言時に「」を付与
             </label>
           </div>
@@ -66,7 +66,7 @@
             <ul>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
-              <li v-for="actor in getPeerActors"
+              <li v-for="actor in chatOptionPagingList"
                   :key="actor.key"
                   :class="{selected: currentChatKey === actor.key}"
                   tabindex="-1"
@@ -100,9 +100,8 @@
             <ul>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
-              <li :class="{selected: outputTab === '[選択中]'}">[選択中]</li>
               <li
-                v-for="tab in chatTabList"
+                v-for="tab in chatOptionPagingList"
                 :key="tab.key"
                 :class="{selected: outputTab === tab.name}"
                 tabindex="-1"
@@ -129,12 +128,12 @@
                       @keydown.esc.prevent="pressEsc"
                       @keypress.enter.prevent="event => sendMessage(event, true)"
                       @keyup.enter.prevent="event => sendMessage(event, false)"
-                      :tabindex="chatTabList.length + chatTabList.length + 14"
+                      :tabindex="chatTabs.length + chatTabs.length + 14"
                       :placeholder="'メッセージ（改行はShift + Enter）'"
             ></textarea>
           </label>
         </div>
-        <button :tabindex="chatTabList.length + chatTabList.length + 15">送信</button>
+        <button :tabindex="chatTabs.length + chatTabs.length + 15">送信</button>
       </div>
       <!----------------
        ! 入力者表示
@@ -183,7 +182,7 @@ export default class ChatWindow extends Vue {
   @Getter("getViewName") getViewName: any;
   @Getter("getObj") getObj: any;
   @Getter("chatLogList") chatLogList: any;
-  @Getter("chatTabList") chatTabList: any;
+  @Getter("chatTabs") chatTabs: any;
   @Getter("playerList") playerList: any;
   @Getter("groupTargetTabList") groupTargetTabList: any;
   @Getter("members") members: any;
@@ -261,7 +260,7 @@ export default class ChatWindow extends Vue {
       }
       const selection = [
         "[選択中]",
-        ...this.chatTabList.map((tab: any) => tab.name)
+        ...this.chatTabs.map((tab: any) => tab.name)
       ];
       selection.forEach((tabName: string) => {
         if (selectTab) return;
@@ -345,7 +344,7 @@ export default class ChatWindow extends Vue {
     if (this.chatOptionSelectMode === "tab") {
       const selection = [
         "[選択中]",
-        ...this.chatTabList.map((tab: any) => tab.name)
+        ...this.chatTabs.map((tab: any) => tab.name)
       ];
 
       event.preventDefault();
@@ -634,28 +633,24 @@ export default class ChatWindow extends Vue {
     this.secretTarget = "";
   }
   get chatOptionPageNum() {
+    let list: any[] = [];
+    let targetKey: string = "";
     if (this.chatOptionSelectMode === "from") {
-      const index = this.getPeerActors.findIndex(
-        (target: any) => target.key === this.chatTarget
-      );
-      if (index === -1) return -1;
-      return Math.floor(index / this.chatOptionPagingSize) + 1;
+      list = this.getPeerActors.concat();
+      targetKey = this.currentChatKey;
     }
     if (this.chatOptionSelectMode === "target") {
-      const index = this.chatTargetList.findIndex(
-        (target: any) => target.key === this.chatTarget
-      );
-      if (index === -1) return -1;
-      return Math.floor(index / this.chatOptionPagingSize) + 1;
+      list = this.chatTargetList.concat();
+      targetKey = this.chatTarget;
     }
     if (this.chatOptionSelectMode === "tab") {
-      const index = this.chatTabList.findIndex(
-        (target: any) => target.name === this.activeTab
-      );
-      if (index === -1) return -1;
-      return Math.floor(index / this.chatOptionPagingSize) + 1;
+      list = this.chatTabs.map((tab: any) => ({ key: tab.name }));
+      list.unshift({ key: null });
+      targetKey = this.activeTab;
     }
-    return -1;
+    const index = list.findIndex((target: any) => target.key === targetKey);
+    if (index === -1) return -1;
+    return Math.floor(index / this.chatOptionPagingSize) + 1;
   }
   get chatOptionPageMaxNum() {
     let length: number = 0;
@@ -663,38 +658,26 @@ export default class ChatWindow extends Vue {
       length = this.getPeerActors.length;
     if (this.chatOptionSelectMode === "target")
       length = this.chatTargetList.length;
-    if (this.chatOptionSelectMode === "tab") length = this.chatTabList.length;
-    const result = Math.floor(length / this.chatOptionPagingSize) + 1;
-    return result;
+    if (this.chatOptionSelectMode === "tab") length = this.chatTabs.length;
+    if (length === 0) return 1;
+    return Math.floor((length - 1) / this.chatOptionPagingSize) + 1;
   }
   get chatOptionPagingList() {
     const pageNum = this.chatOptionPageNum;
     const startIndex = (pageNum - 1) * this.chatOptionPagingSize;
+    let list: any[] = [];
     if (this.chatOptionSelectMode === "from") {
-      const endIndex = Math.min(
-        pageNum * this.chatOptionPagingSize,
-        this.getPeerActors.length
-      );
-      const result = this.getPeerActors.concat();
-      return result.splice(startIndex, endIndex - startIndex);
+      list = this.getPeerActors.concat();
     }
     if (this.chatOptionSelectMode === "target") {
-      const endIndex = Math.min(
-        pageNum * this.chatOptionPagingSize,
-        this.chatTargetList.length
-      );
-      const result = this.chatTargetList.concat();
-      return result.splice(startIndex, endIndex - startIndex);
+      list = this.chatTargetList.concat();
     }
     if (this.chatOptionSelectMode === "tab") {
-      const endIndex = Math.min(
-        pageNum * this.chatOptionPagingSize,
-        this.chatTabList.length
-      );
-      const result = this.chatTabList.concat();
-      return result.splice(startIndex, endIndex - startIndex);
+      list = this.chatTabs.concat();
+      list.unshift({ name: "[選択中]" });
     }
-    return 0;
+    const endIndex = Math.min(pageNum * this.chatOptionPagingSize, list.length);
+    return list.splice(startIndex, endIndex - startIndex);
   }
 }
 </script>
