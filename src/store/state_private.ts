@@ -17,7 +17,6 @@ export default {
       peerId: null,
       peerIdWait: null,
       playerKey: null,
-      currentChatKey: "",
 
       cards: []
     },
@@ -302,7 +301,6 @@ export default {
     masterVolume: (state: any) => state.display.jukeboxWindow.masterVolume,
     fontColor: (state: any) => state.self.color,
     playerKey: (state: any) => state.self.playerKey,
-    currentChatKey: (state: any) => state.self.currentChatKey,
     peerId: (state: any): Function => (isWait: boolean) =>
       !isWait ? state.self.peerId : state.self.peerIdWait,
     angle: (state: any) => state.map.angle,

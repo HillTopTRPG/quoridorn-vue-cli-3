@@ -164,8 +164,8 @@ export default {
       this.setProperty({
         property: `public.chat.groupTargetTab.list.${index}`,
         value: value,
-        logOff: false,
-        isNotice: true
+        isNotice: true,
+        logOff: true
       });
     },
     changeGroupTargetMember(groupTargetTab, player, flg) {
@@ -182,7 +182,7 @@ export default {
     },
     getChatFromKey() {
       const actor = this.getPeerActors.filter(
-        actor => actor.key === this.currentChatKey
+        actor => actor.key === this.chatActorKey
       )[0];
       return actor ? actor.key : "";
     },
@@ -198,7 +198,7 @@ export default {
       "getViewName",
       "getObj",
       "playerKey",
-      "currentChatKey"
+      "chatActorKey"
     ]),
     groupTargetTabList(state) {
       return state.public.chat.groupTargetTab.list.filter(tab => {

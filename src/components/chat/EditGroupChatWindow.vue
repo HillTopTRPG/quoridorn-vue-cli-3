@@ -120,7 +120,7 @@ export default {
           group: this.group
         },
         isNotice: true,
-        logOff: false
+        logOff: true
       });
       this.windowClose("private.display.editGroupChatWindow");
     },
@@ -186,8 +186,8 @@ export default {
       this.setProperty({
         property: `public.chat.groupTargetTab.list.${index}`,
         value: value,
-        logOff: false,
-        isNotice: true
+        isNotice: true,
+        logOff: true
       });
     },
     changeGroupTargetMember(groupTargetTab, player, flg) {
@@ -230,7 +230,6 @@ export default {
     ...mapGetters([
       "getPeerActors",
       "getViewName",
-      "currentChatKey",
       "chatTabs",
       "playerList",
       "getMapObjectList"

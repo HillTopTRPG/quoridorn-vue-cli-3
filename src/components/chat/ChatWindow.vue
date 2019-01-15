@@ -25,7 +25,7 @@
        !--------------->
       <label class="oneLine dep">
         <span class="label">名前(！)</span>
-        <select :tabindex="chatTabs.length + 2" :value="currentChatKey" @change="event => inputName(event.target.value)" title="">
+        <select :tabindex="chatTabs.length + 2" :value="chatActorKey" @change="event => inputName(event.target.value)" title="">
           <option v-for="actor in getPeerActors" :key="actor.key" :value="actor.key">{{getViewName(actor.key)}}</option>
         </select>
         <DiceBotSelect ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabs.length + 6" class="diceBotSystem"/>
@@ -68,7 +68,7 @@
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
               <li v-for="actor in chatOptionPagingList"
                   :key="actor.key"
-                  :class="{selected: currentChatKey === actor.key}"
+                  :class="{selected: chatActorKey === actor.key}"
                   tabindex="-1"
               >{{getViewName(actor.key)}}</li>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
@@ -112,7 +112,7 @@
           </div>
           <label class="chatInputArea">
             <span class="chatOption" @click="clickChatOption">
-              <span class="emphasis">! {{getViewName(currentChatKey)}}</span>
+              <span class="emphasis">! {{getViewName(chatActorKey)}}</span>
               <span :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{getGroupTargetName()}}</span>
               <span :class="{emphasis: outputTab !== '[選択中]'}"># {{outputTab}}</span>
             </span>
@@ -186,7 +186,6 @@ export default class ChatWindow extends Vue {
   @Getter("playerList") playerList: any;
   @Getter("groupTargetTabList") groupTargetTabList: any;
   @Getter("members") members: any;
-  @Getter("currentChatKey") currentChatKey: any;
   @Getter("inputting") inputting: any;
   @Getter("createInputtingMsg") createInputtingMsg: any;
   @Getter("fontColor") fontColor: any;
@@ -228,7 +227,7 @@ export default class ChatWindow extends Vue {
     if (text.startsWith("!") || text.startsWith("！")) {
       const useText = text.substring(1);
       if (useText.length === 0) {
-        selectFrom = this.currentChatKey;
+        selectFrom = this.chatActorKey;
       }
       this.getPeerActors.forEach((target: any) => {
         if (selectFrom) return;
@@ -270,12 +269,7 @@ export default class ChatWindow extends Vue {
 
     if (selectFrom) {
       this.chatOptionSelectMode = "from";
-      this.setProperty({
-        property: "private.self.currentChatKey",
-        value: selectFrom,
-        isNotice: false,
-        logOff: true
-      });
+      this.updateActorKey(selectFrom);
     } else if (selectTarget) {
       this.chatOptionSelectMode = "target";
       this.chatTarget = selectTarget;
@@ -286,7 +280,7 @@ export default class ChatWindow extends Vue {
       this.chatOptionSelectMode = "";
       this.sendRoomData({
         type: "NOTICE_INPUT",
-        value: { key: this.currentChatKey, target: this.chatTarget },
+        value: { key: this.chatActorKey, target: this.chatTarget },
         isWait: this.isWait
       });
     }
@@ -300,7 +294,7 @@ export default class ChatWindow extends Vue {
    */
   chatOptionSelectChange(direction: string, event: any): void {
     // 変化前の値を保存
-    if (!this.volatileFrom) this.volatileFrom = this.currentChatKey;
+    if (!this.volatileFrom) this.volatileFrom = this.chatActorKey;
     if (!this.volatileTarget) this.volatileTarget = this.chatTarget;
     if (!this.volatileActiveTab) this.volatileActiveTab = this.activeTab;
     if (!this.volatileTargetTab) this.volatileTargetTab = this.outputTab;
@@ -317,16 +311,11 @@ export default class ChatWindow extends Vue {
     if (this.chatOptionSelectMode === "from") {
       event.preventDefault();
       let index = this.getPeerActors.findIndex(
-        (s: any) => s.key === this.currentChatKey
+        (s: any) => s.key === this.chatActorKey
       );
       const newValue = arrangeIndex(this.getPeerActors, index);
 
-      this.setProperty({
-        property: "private.self.currentChatKey",
-        value: newValue.key,
-        isNotice: false,
-        logOff: true
-      });
+      this.updateActorKey(newValue.key);
     }
 
     // 発言先の選択の場合
@@ -375,13 +364,9 @@ export default class ChatWindow extends Vue {
   resetChatOption(): void {
     if (this.chatOptionSelectMode) {
       this.currentMessage = "";
-      if (this.volatileFrom)
-        this.setProperty({
-          property: "private.self.currentChatKey",
-          value: this.volatileFrom,
-          isNotice: false,
-          logOff: true
-        });
+      if (this.volatileFrom) {
+        this.updateActorKey(this.volatileFrom);
+      }
       if (this.volatileTarget) this.chatTarget = this.volatileTarget;
       if (this.volatileActiveTab) this.selectChatTab(this.volatileActiveTab);
       if (this.volatileTargetTab) this.outputTab = this.volatileTargetTab;
@@ -408,22 +393,12 @@ export default class ChatWindow extends Vue {
       if (tabObj.targetTab) this.outputTab = tabObj.targetTab;
       const otherObj: any = this.otherMatcherObj(tabObj);
       if (otherObj) {
-        this.setProperty({
-          property: "private.self.currentChatKey",
-          value: otherObj.key,
-          isNotice: false,
-          logOff: true
-        });
+        this.updateActorKey(otherObj.key);
       }
     }
   }
   inputName(key: string): void {
     this.updateActorKey(key);
-    this.setProperty({
-      property: "private.self.currentChatKey",
-      value: key,
-      logOff: false
-    });
   }
   clickChatOption(): void {
     document.getElementById("chatTextArea")!.focus();
@@ -505,12 +480,12 @@ export default class ChatWindow extends Vue {
     }
 
     let ownerKey = null;
-    if (this.currentChatKey) {
-      const kind = this.currentChatKey.split("-")[0];
+    if (this.chatActorKey) {
+      const kind = this.chatActorKey.split("-")[0];
       if (kind === "player") {
         ownerKey = this.playerKey;
       } else if (kind === "character") {
-        ownerKey = this.getObj(this.currentChatKey).owner;
+        ownerKey = this.getObj(this.chatActorKey).owner;
       } else {
         ownerKey = undefined;
       }
@@ -523,7 +498,7 @@ export default class ChatWindow extends Vue {
     )[0];
 
     const messageObj = {
-      name: this.getViewName(this.currentChatKey),
+      name: this.getViewName(this.chatActorKey),
       text: text,
       color: color,
       tab: outputTab,
@@ -585,7 +560,7 @@ export default class ChatWindow extends Vue {
   otherMatcherObj(tabObj: any): string {
     if (tabObj.isAll) return "";
     return this.tabMatchObj(tabObj).filter(
-      (obj: any) => obj.key !== this.currentChatKey
+      (obj: any) => obj.key !== this.chatActorKey
     )[0];
   }
   tabMatchObj(tabObj: any): any {
@@ -637,7 +612,7 @@ export default class ChatWindow extends Vue {
     let targetKey: string = "";
     if (this.chatOptionSelectMode === "from") {
       list = this.getPeerActors.concat();
-      targetKey = this.currentChatKey;
+      targetKey = this.chatActorKey;
     }
     if (this.chatOptionSelectMode === "target") {
       list = this.chatTargetList.concat();

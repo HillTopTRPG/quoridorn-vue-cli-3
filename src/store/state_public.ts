@@ -371,9 +371,10 @@ export default {
         rootGetters.playerList.splice(playerIndex, 1, player);
       }
       if (peerId === rootGetters.peerId(isWait)) {
+        commit("updateActorKey", playerKey);
         dispatch("setProperty", {
           property: "private.self",
-          value: { playerKey: playerKey, currentChatKey: playerKey },
+          value: { playerKey: playerKey },
           isNotice: false,
           logOff: true
         });
@@ -693,7 +694,6 @@ export default {
       );
     },
     getPlayer: (state: any, getters: any) => (peerId: string): any => {
-      window.console.log("getPlayer", peerId);
       const member = getters.members.filter(
         (member: any) => member.peerId === peerId
       )[0];
