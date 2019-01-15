@@ -11,15 +11,15 @@
       <span @click="menuClick()" @mouseenter="menuHover('デモ')" :class="{isHover : isShow('デモ')}">デモ</span>
     </div>
     <!-- 部屋情報 -->
-    <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isConnected}">
-      <span :class="{isDisconnect : !isConnected}">{{ `${roomName}` || "未接続" }}</span>
+    <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isRoomJoined}">
+      <span :class="{isDisconnect : !isRoomJoined}">{{ `${roomName}` || "未接続" }}</span>
       ：
       <span>{{ members.length }}</span>名
     </div>
     <!-- 共有メモ -->
     <div class="menu-button" @click="clickPublicMemo" :title="publicMemoTitle">共有メモ</div>
     <!-- ログアウト -->
-    <div class="menu-button" @click="clickLogOut" :class="{isDisconnect : !isConnected}" :title="logoutTitle">ログアウト</div>
+    <div class="menu-button" @click="clickLogOut" :class="{isDisconnect : !isRoomJoined}" :title="logoutTitle">ログアウト</div>
 
     <!--------------------------------------------------
      ! ファイル
@@ -139,6 +139,7 @@ export default class Menu extends Vue {
   @Getter("isModal") isModal: any;
   @Getter("peerId") peerId: any;
   @Getter("members") members: any;
+  @Getter("isRoomJoined") isRoomJoined: any;
 
   private isConnectHover: boolean = false;
   private isSelecting: boolean = false;
@@ -438,28 +439,20 @@ export default class Menu extends Vue {
     return result;
   }
 
-  get isConnected(): boolean {
-    if (!this.peerId) return false;
-    return (
-      this.members.findIndex((member: any) => member.peerId === this.peerId) >
-      -1
-    );
-  }
-
   get roomInfoTitle(): string {
-    return this.isConnected === true
+    return this.isRoomJoined === true
       ? "メンバーの一覧を見たり、部屋の設定を変えることができますよ。"
       : "お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！";
   }
 
   get publicMemoTitle(): string {
-    return this.isConnected === true
+    return this.isRoomJoined === true
       ? "メンバーに共有したいテキストはこちらにどうぞ"
       : "部屋に入る前から準備しておくのですね！？\nなんと準備の良いお方でしょう！";
   }
 
   get logoutTitle(): string {
-    return this.isConnected === true
+    return this.isRoomJoined === true
       ? "この部屋から退室するのですか？"
       : "お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！";
   }

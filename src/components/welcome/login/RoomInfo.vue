@@ -3,6 +3,8 @@
     <legend>部屋情報</legend>
     <label>部屋名：<span>{{roomName}}</span></label>
     <label>パスワード：<span>{{roomPassword || "設定なし"}}</span></label>
+    <label>システム：<span style="color: red;">この項目は未実装</span></label>
+    <div style="color: darkgreen;">※ ログイン情報の暗号化はまだしてないので、いずれ実装します。</div>
     <label v-if="!isWait">招待用URL：<input class="inviteUrl" type="text" readonly="readonly" :value="inviteUrl" />
       <button class="copy" @click="event => doCopy(event)">コピー</button>
     </label>

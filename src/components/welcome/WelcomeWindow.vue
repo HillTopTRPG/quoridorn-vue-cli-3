@@ -1,5 +1,12 @@
 <template>
-  <WindowFrame titleText="ようこそ" display-property="private.display.welcomeWindow" align="center" fixSize="500, 500" :fontSizeBar="true" :is-ban-close="!isRoomJoined">
+  <WindowFrame
+    titleText="ようこそ"
+    display-property="private.display.welcomeWindow"
+    align="center"
+    fixSize="500, 500"
+    :fontSizeBar="tabNum !== '1'"
+    :is-ban-close="!isRoomJoined"
+  >
     <div class="contents" id="welcomeWindowContents">
       <!----------------------------------------------------------------------------------
        ! ロゴ
@@ -12,10 +19,10 @@
        ! タブ
        !--------------------------------------------------------------------------------->
       <div class="tab_wrap">
-        <input id="welcomeWindow-tab1" type="radio" name="tab_btn" checked>
-        <input id="welcomeWindow-tab2" type="radio" name="tab_btn">
-        <input id="welcomeWindow-tab3" type="radio" name="tab_btn">
-        <input id="welcomeWindow-tab4" type="radio" name="tab_btn">
+        <input id="welcomeWindow-tab1" type="radio" name="tab_btn" value="1" v-model="tabNum">
+        <input id="welcomeWindow-tab2" type="radio" name="tab_btn" value="2" v-model="tabNum">
+        <input id="welcomeWindow-tab3" type="radio" name="tab_btn" value="3" v-model="tabNum">
+        <input id="welcomeWindow-tab4" type="radio" name="tab_btn" value="4" v-model="tabNum">
 
         <div class="tab_area">
           <label class="tab1_label" for="welcomeWindow-tab1">ログイン</label>
@@ -173,6 +180,8 @@ import { Getter } from "vuex-class";
 })
 export default class WelcomeWindow extends Vue {
   @Getter("isRoomJoined") isRoomJoined: any;
+
+  private tabNum: string = "1";
 
   specAll(openFlg: boolean) {
     const elms = document

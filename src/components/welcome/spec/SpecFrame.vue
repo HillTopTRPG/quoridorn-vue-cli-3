@@ -71,6 +71,7 @@ export default {
   overflow-y: hidden;
   padding: 0 0.5em;
   margin: 0;
+  white-space: normal;
   background-color: rgb(251, 247, 248);
   border-left: 1px solid rgb(220, 219, 215);
   border-right: 1px solid rgb(220, 219, 215);
@@ -81,6 +82,7 @@ export default {
 .menu-item .accordion > * {
   margin-top: 0.5em;
   width: 100%;
+  box-sizing: border-box;
 }
 .menu-item .accordion > *:last-child {
   margin-bottom: 1em;
