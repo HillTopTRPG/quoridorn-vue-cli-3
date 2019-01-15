@@ -3,7 +3,7 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 
 module.exports = {
   /* パターン３ */
-  baseUrl: "quoridorn/dev2",
+  baseUrl: "quoridorn/dev",
   devServer: {
     watchOptions: {
       poll: true

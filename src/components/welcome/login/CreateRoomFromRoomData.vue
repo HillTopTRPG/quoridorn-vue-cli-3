@@ -2,6 +2,7 @@
   <fieldset class="root">
     <legend>部屋データから部屋を作る</legend>
     <div class="input-room-data">部屋データ：<button @click="chooseFile">ファイルを選択</button><span class="description">fileName</span></div>
+    <div style="color: red; font-weight: bold;">この機能は未実装です。<br>入室後のセーブ機能も見直し中のため動きません。</div>
     <button type="button" @click="commit"><i class="icon-home3"></i> 作成</button>
   </fieldset>
 </template>

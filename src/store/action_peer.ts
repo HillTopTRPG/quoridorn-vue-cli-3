@@ -109,11 +109,13 @@ export default {
 
             // その他エラー
             reject.call(null);
-            alert(
-              `接続に失敗しました。\n原因は以下のメッセージを参考にしてください。\n${
-                err.message
-              }`
-            );
+            const msg: string[] = [];
+            msg.push("接続に失敗しました。");
+            msg.push("たまたま通信処理の調子が悪い可能性があるので、画面を再読み込みしてもらうと直るかもしれません。");
+            msg.push("原因は以下のメッセージを参考にしてください。");
+            msg.push("");
+            msg.push(err.message);
+            alert(msg.join("\n"));
           });
         };
 
@@ -273,7 +275,6 @@ export default {
           );
 
         if (rootGetters.isWait) {
-          alert(`この部屋からログアウトし、改めて入室してください。`);
           commit("updateIsJoined", false);
         }
         window.console.log("部屋パスワードエラー", rootGetters.isWait);
@@ -292,7 +293,7 @@ export default {
         if (myPlayer.password !== (playerPassword || "")) {
           if (useAlert)
             alert(
-              `部屋${roomName}が存在し、\nプレイヤー${playerName}も存在しましたが、\nご指定のプレイヤーパスワードでは入室できませんでした。`
+              `プレイヤーパスワードの入力をお願いします。`
             );
           window.console.log("プレイヤーパスワードエラー");
           isShowWindow = true;
