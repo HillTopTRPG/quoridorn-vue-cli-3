@@ -16,8 +16,8 @@ Vue.use(Vuex);
 export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
-    /** カードセット */
-    version: "1.0.0b3",
+    /** バージョン */
+    version: "1.0.0b4",
     /** BGM */
     bgm: {
       list: bgmList,

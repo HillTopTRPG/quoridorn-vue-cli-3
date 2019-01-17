@@ -13,7 +13,7 @@ Vue.use(Vuex);
  */
 export default {
   actions: {
-    exportStart({ dispatch, rootState }) {
+    exportStart({ dispatch, rootState }: { dispatch: Function, rootState: any }) {
       // 配列の中身を空にする
       rootState.volatileSaveData.members.splice(
         0,
@@ -26,7 +26,7 @@ export default {
         dispatch("sendRoomData", { type: "REQUEST_PRIVATE_DATA", value: null });
       }
     },
-    doExport({ dispatch, rootState }) {
+    doExport({ dispatch, rootState }: { dispatch: Function, rootState: any }) {
       // セーブデータのベース作成
       const saveData = JSON.parse(
         JSON.stringify({
@@ -42,18 +42,18 @@ export default {
           delete saveData.private.display[key];
         }
       }
-      const historyAddKeys = [];
-      const historyDelKeys = [];
+      const historyAddKeys: string[] = [];
+      const historyDelKeys: string[] = [];
       // 部屋情報のメンバーリストに、収集した各個人のデータを詰め込んでいく
-      rootState.volatileSaveData.members.forEach(memberData => {
+      rootState.volatileSaveData.members.forEach((memberData: any) => {
         const peerId = memberData.self.peerId;
         const saveMemObj = saveData.public.room.members.filter(
-          saveMemObj => saveMemObj.peerId === peerId
+          (saveMemObj: any) => saveMemObj.peerId === peerId
         )[0];
         if (saveMemObj) {
           saveMemObj.private = memberData;
         }
-        memberData.history.forEach(hisObj => {
+        memberData.history.forEach((hisObj: any) => {
           if (hisObj.type === "add") historyAddKeys.push(hisObj.key);
           if (hisObj.type === "del") historyDelKeys.push(hisObj.key);
         });
@@ -74,7 +74,7 @@ export default {
         rootState.public.chit.list
       );
       const filteredHasImgKeys = hasImgKeys.map(hiKey => {
-        let hiObj = hasImgObjList.filter(hiObj => hiObj.key === hiKey)[0];
+        let hiObj = hasImgObjList.filter((hiObj: any) => hiObj.key === hiKey)[0];
         if (!hiObj) {
           return null;
         }
@@ -83,8 +83,8 @@ export default {
         if (useImageList) {
           const useImageKeys = useImageList
             .split("|")
-            .map(str => str.replace(":R", ""));
-          useImageKeys.forEach(uiKey => {
+            .map((str: string) => str.replace(":R", ""));
+          useImageKeys.forEach((uiKey: string) => {
             const matchKey = imageKeys.filter(iKey => iKey === uiKey)[0];
             if (!matchKey) return;
             const afterKey = matchKey.replace(
@@ -110,7 +110,7 @@ export default {
         return hiObj;
       });
 
-      const func = hisObj => {
+      const func = (hisObj: any) => {
         const prefex = hisObj.key.split("-")[0];
         if (prefex === "image") {
           hisObj.key = hisObj.key.replace(
@@ -126,7 +126,7 @@ export default {
         }
       };
       saveData.private.history.forEach(func);
-      saveData.public.room.members.forEach(memberData => {
+      saveData.public.room.members.forEach((memberData: any) => {
         memberData.private.history.forEach(func);
       });
 
@@ -148,7 +148,7 @@ export default {
       saveData.public.image.list = imageKeys
         .map(iKey => {
           const imgObj = rootState.public.image.list.filter(
-            imgObj => imgObj.key === iKey
+            (imgObj: any) => imgObj.key === iKey
           )[0];
           return !imgObj ? null : imgObj;
         })
@@ -162,7 +162,7 @@ export default {
       saveData.public.image.tags.list = imgTagKeys
         .map(itKey => {
           const imgTagObj = rootState.public.image.tags.list.filter(
-            imgObj => imgObj.key === itKey
+            (imgObj: any) => imgObj.key === itKey
           )[0];
           return !imgTagObj ? null : imgTagObj;
         })
@@ -175,7 +175,7 @@ export default {
       // zipファイルの生成
       const zip = new JSZip();
       zip.file("save.json", JSON.stringify(saveData, undefined, 2));
-      zip.generateAsync({ type: "blob" }).then(blob => {
+      zip.generateAsync({ type: "blob" }).then((blob: any) => {
         const d = new Date();
         saveAs(
           blob,
@@ -184,19 +184,19 @@ export default {
         );
       });
     },
-    importStart({ dispatch, rootState }, zipFiles) {
-      const zip = new JSZip();
-      const zipList = [];
-      const promiseList = [];
+    importStart({ dispatch, rootState }: { dispatch: Function, rootState: any }, zipFiles: any[]) {
+      const zip: any = new JSZip();
+      const zipList: any[] = [];
+      const promiseList: PromiseLike<any>[] = [];
       for (const file of zipFiles) {
         promiseList.push(
           new Promise(resolve => {
-            zip.loadAsync(file).then(zip => {
+            zip.loadAsync(file).then((zip: any) => {
               // you now have every files contained in the loaded zip
               zip
                 .file("save.json")
                 .async("string")
-                .then(jsonStr => {
+                .then((jsonStr: string) => {
                   const saveData = JSON.parse(jsonStr);
                   zipList.push({
                     fileName: file.name,
@@ -213,7 +213,7 @@ export default {
         dispatch("windowOpen", "private.display.dropZipWindow");
       });
     },
-    doImport({ dispatch, rootState }, importData) {
+    doImport({ dispatch, rootState }: { dispatch: Function, rootState: any }, importData: any) {
       const publicData = importData.public;
       const privateData = importData.private;
       const importFunc = () => {
@@ -227,13 +227,13 @@ export default {
           rootState.public.chat = publicData.chat;
         }
         // TODO 追加された画像を元に、各プレイヤーの履歴情報を更新すること。
-        let addImageKeyList = null;
+        let addImageKeyList: string[];
         if (publicData.image) {
-          addImageKeyList = publicData.image.list.map(imgObj => {
+          addImageKeyList = publicData.image.list.map((imgObj: any) => {
             dispatch("doAddImage", imgObj);
             return `image-${rootState.public.image.maxKey}`;
           });
-          const func = hisObj => {
+          const func = (hisObj: any) => {
             let key = hisObj.key;
             if (key.split("-")[0] === "image") {
               const matchObj = key.match(/\$([0-9]+)/);
@@ -242,7 +242,7 @@ export default {
             }
           };
           privateData.history.forEach(func);
-          publicData.room.members.forEach(memberObj => {
+          publicData.room.members.forEach((memberObj: any) => {
             memberObj.private.history.forEach(func);
           });
         }
@@ -250,7 +250,7 @@ export default {
           rootState.public.map = publicData.map;
         }
         if (publicData.mapMask) {
-          publicData.mapMask.list.forEach(mapMaskObj => {
+          publicData.mapMask.list.forEach((mapMaskObj: any) => {
             dispatch("doAddPieceInfo", mapMaskObj);
           });
         }
@@ -258,7 +258,7 @@ export default {
         // let addCharacterKeyList = null
         if (publicData.character) {
           // addCharacterKeyList =
-          publicData.character.list.map(charObj => {
+          publicData.character.list.map((charObj: any) => {
             let useImageList = charObj.useImageList;
             addImageKeyList.forEach((key, index) => {
               useImageList = useImageList.replace(
@@ -275,7 +275,7 @@ export default {
         // let addChitKeyList = null
         if (publicData.chit) {
           // addChitKeyList =
-          publicData.chit.list.map(chitObj => {
+          publicData.chit.list.map((chitObj: any) => {
             let imageKey = chitObj.imageKey;
             addImageKeyList.forEach((key, index) => {
               imageKey = imageKey.replace(
