@@ -98,7 +98,8 @@ export default {
       this.switchImageList.splice(index, 1, switchImageObj);
     },
     getImage(key) {
-      return this.getKeyObj(this.storeImages, key).data;
+      const imageObj = this.getKeyObj(this.storeImages, key);
+      return imageObj ? imageObj.data : null;
     },
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);

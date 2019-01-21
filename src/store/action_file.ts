@@ -13,164 +13,183 @@ Vue.use(Vuex);
  */
 export default {
   actions: {
-    exportStart({ dispatch, rootState }: { dispatch: Function, rootState: any }) {
-      // 配列の中身を空にする
-      rootState.volatileSaveData.members.splice(
-        0,
-        rootState.volatileSaveData.members.length
-      );
-      rootState.volatileSaveData.members.push(rootState.private);
-      if (rootState.public.room.members.length <= 1) {
+    /**
+     * セーブデータ作成を開始する
+     * @param dispatch
+     * @param rootState
+     * @param rootGetters
+     */
+    exportStart({
+      dispatch,
+      rootState,
+      rootGetters
+    }: {
+      dispatch: Function;
+      rootState: any;
+      rootGetters: any;
+    }) {
+      if (rootGetters.members.length === 0) {
+        alert("現在「保存」機能はご利用いただけません。");
+        return;
+      }
+      // 連想配列の中身を空にする
+      for (const playerKey in rootGetters.volatilePrivateData) {
+        if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
+          continue;
+        delete rootGetters.volatilePrivateData.hasOwnProperty[playerKey];
+      }
+      const privateData = JSON.parse(JSON.stringify(rootState.private));
+      // 開いてないディスプレイ情報は送信データに含めない
+      for (const key in privateData.display) {
+        if (!privateData.display.hasOwnProperty(key)) continue;
+        if (key === "undefined" || !privateData.display[key].isDisplay) {
+          delete privateData.display[key];
+        } else {
+          delete privateData.display[key].command;
+          delete privateData.display[key].zIndex;
+        }
+      }
+      rootGetters.volatilePrivateData[rootGetters.playerKey] = privateData;
+      if (rootGetters.members.length === 1) {
         dispatch("doExport");
       } else {
         dispatch("sendRoomData", { type: "REQUEST_PRIVATE_DATA", value: null });
       }
     },
-    doExport({ dispatch, rootState }: { dispatch: Function, rootState: any }) {
+
+    /**
+     * セーブデータ作成を実行する
+     * @param dispatch
+     * @param rootState
+     * @param rootGetters
+     */
+    doExport({
+      dispatch,
+      rootState,
+      rootGetters
+    }: {
+      dispatch: Function;
+      rootState: any;
+      rootGetters: any;
+    }) {
       // セーブデータのベース作成
       const saveData = JSON.parse(
         JSON.stringify({
-          private: rootState.private,
           public: rootState.public,
           dataVersion: "1.0.0"
         })
       );
-      // 開いてないディスプレイ情報は保存データには含めない
-      for (const key in saveData.private.display) {
-        if (!saveData.private.display.hasOwnProperty(key)) continue;
-        if (!saveData.private.display[key].isDisplay) {
-          delete saveData.private.display[key];
-        }
-      }
-      const historyAddKeys: string[] = [];
-      const historyDelKeys: string[] = [];
-      // 部屋情報のメンバーリストに、収集した各個人のデータを詰め込んでいく
-      rootState.volatileSaveData.members.forEach((memberData: any) => {
-        const peerId = memberData.self.peerId;
-        const saveMemObj = saveData.public.room.members.filter(
-          (saveMemObj: any) => saveMemObj.peerId === peerId
-        )[0];
-        if (saveMemObj) {
-          saveMemObj.private = memberData;
-        }
-        memberData.history.forEach((hisObj: any) => {
-          if (hisObj.type === "add") historyAddKeys.push(hisObj.key);
-          if (hisObj.type === "del") historyDelKeys.push(hisObj.key);
+      saveData.public.room.members = [];
+
+      const addKeyList: string[] = [];
+      const delKeyList: string[] = [];
+      for (const playerKey in rootGetters.volatilePrivateData) {
+        if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
+          continue;
+
+        // セーブデータ内のplayerのリストに各プレイヤーのprivateデータを持たせる
+        const playerPrivateObj: any =
+          rootGetters.volatilePrivateData[playerKey];
+        saveData.public.player.list.forEach((player: any) => {
+          if (player.key !== playerPrivateObj.self.playerKey) return;
+          player.private = playerPrivateObj;
         });
+
+        // 各プレイヤーのデータの操作履歴をまとめる
+        const historyList = playerPrivateObj.historyList;
+        delete playerPrivateObj.historyList;
+
+        historyList.forEach((history: any) => {
+          if (history.type === "add") addKeyList.push(history.key);
+          if (history.type === "del") delKeyList.push(history.key);
+        });
+      }
+
+      // 削除したデータが追加したデータに含まれている場合は双方のリストから消す
+      const delKeyDelList: string[] = [];
+      delKeyList.forEach((delKey: string) => {
+        const index = addKeyList.findIndex(
+          (addKey: string) => addKey === delKey
+        );
+        if (index > -1) {
+          addKeyList.splice(index, 1);
+          delKeyDelList.push(delKey);
+        }
       });
-      const imageKeys = historyAddKeys.filter(
-        key => key.split("-")[0] === "image"
-      );
-      const imgTagKeys = historyAddKeys.filter(
+      delKeyDelList.forEach((delKeyDel: string) => {
+        const index = delKeyList.findIndex(
+          (delKey: string) => delKey === delKeyDel
+        );
+        delKeyList.splice(index, 1);
+      });
+
+      // この時点で削除リストはプリセットデータの削除のみとなっているはず
+      // → 対象のkeyのリストが保存データに含まれれば、ロード時に十分なデータとなる
+      saveData.delKeyList = delKeyList;
+
+      // ここからは追加データ間の関連データを調べ、差分データとして用意する
+      const imageKeys = addKeyList.filter(key => key.split("-")[0] === "image");
+      const getAfterKey = (beforeKey: string) => {
+        const matchKey = imageKeys.filter(
+          imageKey => imageKey === beforeKey
+        )[0];
+        if (!matchKey) return beforeKey;
+        return matchKey.replace(
+          /[0-9]+/,
+          () => `$${imageKeys.indexOf(matchKey)}`
+        );
+      };
+      const imgTagKeys = addKeyList.filter(
         key => key.split("-")[0] === "imgTag"
       );
-      const hasImgKeys = historyAddKeys.filter(key => {
-        const prefex = key.split("-")[0];
-        // 今のところ、画像を持つのはキャラクターだけだが、ここに or で接頭語判定を増やしていく
-        return prefex === "character" || prefex === "chit";
-      });
       // 画像を持つオブジェクトを全部まとめた配列にし、そこから参照される画像ファイルをすべて相対参照に変換する
-      const hasImgObjList = rootState.public.character.list.concat(
+      const hasImgObjList: any[] = rootState.public.character.list.concat(
         rootState.public.chit.list
       );
-      const filteredHasImgKeys = hasImgKeys.map(hiKey => {
-        let hiObj = hasImgObjList.filter((hiObj: any) => hiObj.key === hiKey)[0];
-        if (!hiObj) {
-          return null;
-        }
-        hiObj = JSON.parse(JSON.stringify(hiObj));
-        let useImageList = hiObj.useImageList;
+      const hasImgKeys = addKeyList.filter(key => {
+        const index = hasImgObjList.findIndex(obj => obj.key === key);
+        return index > -1;
+      });
+      const addObjList: any[] = addKeyList.map(key => {
+        const obj = JSON.parse(JSON.stringify(rootGetters.getObj(key)));
+        // 画像を持つオブジェクトなら "useImageList" があるはず
+        let useImageList = obj.useImageList;
         if (useImageList) {
           const useImageKeys = useImageList
             .split("|")
             .map((str: string) => str.replace(":R", ""));
           useImageKeys.forEach((uiKey: string) => {
-            const matchKey = imageKeys.filter(iKey => iKey === uiKey)[0];
-            if (!matchKey) return;
-            const afterKey = matchKey.replace(
-              /[0-9]+/,
-              () => `$${imageKeys.indexOf(matchKey)}`
-            );
-            useImageList = useImageList.replace(matchKey, afterKey);
+            const afterKey = getAfterKey(uiKey);
+            useImageList = useImageList.replace(uiKey, afterKey);
           });
-          hiObj.useImageList = useImageList;
+          obj.useImageList = useImageList;
         }
-        let imageKey = hiObj.imageKey;
+        const imageKey = obj.imageKey;
         if (imageKey) {
-          const matchKey = imageKeys.filter(iKey => iKey === imageKey)[0];
-          if (matchKey) {
-            const afterKey = matchKey.replace(
-              /[0-9]+/,
-              () => `$${imageKeys.indexOf(matchKey)}`
-            );
-            imageKey = imageKey.replace(matchKey, afterKey);
-            hiObj.imageKey = imageKey;
-          }
+          obj.imageKey = getAfterKey(imageKey);
         }
-        return hiObj;
+        return obj;
       });
-
-      const func = (hisObj: any) => {
-        const prefex = hisObj.key.split("-")[0];
-        if (prefex === "image") {
-          hisObj.key = hisObj.key.replace(
-            /[0-9]+/,
-            () => `$${imageKeys.indexOf(hisObj.key)}`
-          );
+      addObjList.forEach(addObj => {
+        const prefix = addObj.key.split("-")[0];
+        if (prefix === "image") {
+          addObj.key = getAfterKey(addObj.key);
+        } else {
+          addObj.key = addObj.key.replace(/[0-9]+/, "?");
         }
-        if (prefex === "character" || prefex === "chit") {
-          hisObj.key = hisObj.key.replace(
-            /[0-9]+/,
-            () => `$${hasImgKeys.indexOf(hisObj.key)}`
-          );
-        }
-      };
-      saveData.private.history.forEach(func);
-      saveData.public.room.members.forEach((memberData: any) => {
-        memberData.private.history.forEach(func);
       });
 
-      // キャラクター一覧
-      saveData.public.character.list = filteredHasImgKeys.filter(hiObj => {
-        if (!hiObj) return false;
-        return hiObj.key.split("-")[0] === "character";
-      });
-      delete saveData.public.character.maxKey;
+      // 追加データに記録されるものは二重管理となるため削除
+      delete saveData.public.character;
+      delete saveData.public.chit;
+      delete saveData.public.mapMask;
+      delete saveData.public.image;
+      delete saveData.public.bgm;
 
-      // チット一覧
-      saveData.public.chit.list = filteredHasImgKeys.filter(hiObj => {
-        if (!hiObj) return false;
-        return hiObj.key.split("-")[0] === "chit";
-      });
-      delete saveData.public.chit.maxKey;
+      // お試しデータのカードデッキはとりあえず削除
+      delete saveData.public.deck;
 
-      // 画像一覧
-      saveData.public.image.list = imageKeys
-        .map(iKey => {
-          const imgObj = rootState.public.image.list.filter(
-            (imgObj: any) => imgObj.key === iKey
-          )[0];
-          return !imgObj ? null : imgObj;
-        })
-        .filter(iObj => {
-          return iObj !== null;
-        });
-      saveData.public.image.deleteList = historyDelKeys;
-      delete saveData.public.image.maxKey;
-
-      // 画像タグ一覧
-      saveData.public.image.tags.list = imgTagKeys
-        .map(itKey => {
-          const imgTagObj = rootState.public.image.tags.list.filter(
-            (imgObj: any) => imgObj.key === itKey
-          )[0];
-          return !imgTagObj ? null : imgTagObj;
-        })
-        .filter(itObj => {
-          return itObj !== null;
-        });
-      saveData.public.image.tags.deleteList = historyDelKeys;
-      delete saveData.public.image.tags.maxKey;
+      saveData.addObjList = addObjList;
 
       // zipファイルの生成
       const zip = new JSZip();
@@ -184,7 +203,10 @@ export default {
         );
       });
     },
-    importStart({ dispatch, rootState }: { dispatch: Function, rootState: any }, zipFiles: any[]) {
+    importStart(
+      { dispatch, rootState }: { dispatch: Function; rootState: any },
+      zipFiles: any[]
+    ) {
       const zip: any = new JSZip();
       const zipList: any[] = [];
       const promiseList: PromiseLike<any>[] = [];
@@ -213,7 +235,10 @@ export default {
         dispatch("windowOpen", "private.display.dropZipWindow");
       });
     },
-    doImport({ dispatch, rootState }: { dispatch: Function, rootState: any }, importData: any) {
+    doImport(
+      { dispatch, rootState }: { dispatch: Function; rootState: any },
+      importData: any
+    ) {
       const publicData = importData.public;
       const privateData = importData.private;
       const importFunc = () => {

@@ -83,7 +83,7 @@ export default new Vuex.Store({
     },
     operationQueue: [],
     volatileSaveData: {
-      members: []
+      players: []
     },
     mode: {
       isModal: true,
@@ -198,8 +198,28 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * チャットタブの設定
        */
-      dispatch("changeChatTab", { tabsText: "雑談" });
+      // dispatch("changeChatTab", { tabsText: "雑談" });
 
+      /* ----------------------------------------------------------------------
+       * BGMの設定
+       */
+      rootState.public.bgm.list.forEach(
+        (bgm, index) => (bgm.key = `bgm-${index}`)
+      );
+      rootState.public.bgm.maxKey = rootState.public.bgm.list.length - 1;
+
+      /* ----------------------------------------------------------------------
+       * 画像の設定
+       */
+      rootState.public.image.list.forEach((image, index) => {
+        image.key = `image-${index}`;
+        rootState.public.image.list.splice(index, 1, image);
+      });
+      rootState.public.image.maxKey = rootState.public.image.list.length - 1;
+
+      /* ----------------------------------------------------------------------
+       * 初期入室の処理
+       */
       if (roomName) {
         /* ------------------------------
          * 部屋存在チェック
@@ -273,9 +293,7 @@ export default new Vuex.Store({
       let type = null;
       if (state.public.room.members[0]) {
         value.ownerPeerId = rootGetters.peerId(isWait);
-        if (
-          state.public.room.members[0].peerId === rootGetters.peerId(isWait)
-        ) {
+        if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
           type = "DO_METHOD";
           dispatch(method, value);
         } else {
@@ -376,6 +394,66 @@ export default new Vuex.Store({
       }
       const target = getters.getStateValue(property);
       target.splice(0, target.length);
+    },
+    addChatTab: (
+      { rootState },
+      {
+        name,
+        isActive = false,
+        isHover = false,
+        unRead = 0,
+        order = rootState.public.chat.tab.list.length
+      }
+    ) => {
+      const key = `chatTab-${++rootState.public.chat.tab.maxKey}`;
+      const publicTab = {
+        key: key,
+        name: name
+      };
+      const privateTab = {
+        key: key,
+        isActive: isActive,
+        isHover: isHover,
+        unRead: unRead,
+        order: order
+      };
+      rootState.public.chat.tab.list.push(publicTab);
+      rootState.private.chat.tab.push(privateTab);
+    },
+    updateChatTab: (
+      { rootState },
+      {
+        key,
+        name = undefined,
+        isActive = undefined,
+        isHover = undefined,
+        unRead = undefined
+      }
+    ) => {
+      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
+        tab => tab.key === key
+      );
+      const publicTab = rootState.public.chat.tab.list[publicTabIndex];
+      const privateTabIndex = rootState.private.chat.tab.findIndex(
+        tab => tab.key === key
+      );
+      const privateTab = rootState.private.chat.tab[publicTabIndex];
+      if (name !== undefined) publicTab.name = name;
+      if (isActive !== undefined) privateTab.isActive = isActive;
+      if (isHover !== undefined) privateTab.isHover = isHover;
+      if (unRead !== undefined) privateTab.isActive = unRead;
+      rootState.public.chat.tab.list.splice(publicTabIndex, 1, publicTab);
+      rootState.private.chat.tab.splice(privateTabIndex, 1, privateTab);
+    },
+    deleteChatTab: ({ rootState }, { key }) => {
+      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
+        tab => tab.key === key
+      );
+      const privateTabIndex = rootState.private.chat.tab.findIndex(
+        tab => tab.key === key
+      );
+      rootState.public.chat.tab.list.splice(publicTabIndex, 1);
+      rootState.private.chat.tab.splice(privateTabIndex, 1);
     }
   },
   mutations: {
@@ -584,12 +662,11 @@ export default new Vuex.Store({
     isOverEvent: state => state.map.isOverEvent,
     isDraggingRight: state => state.map.isDraggingRight,
     move: state => state.map.move,
-    anglevolatile: state => state.map.angle,
+    angleVolatile: state => state.map.angle,
     mouseOnScreen: state => state.map.mouse.onScreen,
     mouseOnTable: state => state.map.mouse.onTable,
     mouseOnCanvas: state => state.map.mouse.onCanvas,
     mouseLocate: state => state.mouse,
-    volatileSaveData: state => state.volatileSaveData,
     deckCommand: state => state.deck.command,
     deckHoverIndex: state => state.deck.hoverIndex,
     deckHoverKey: state => state.deck.hoverKey,
@@ -597,6 +674,31 @@ export default new Vuex.Store({
       !isWait ? state.self.webRtcPeer : state.self.webRtcPeerWait,
     webRtcRoom: state => isWait =>
       !isWait ? state.room.webRtcRoom : state.room.webRtcRoomWait,
-    chatActorKey: state => state.chat.actorKey
+    chatActorKey: state => state.chat.actorKey,
+    volatilePrivateData: state => state.volatileSaveData.players,
+    chatTabs: (state, getters, rootState) => {
+      const tabs = rootState.public.chat.tab.list.map(publicTab => {
+        const privateTab = rootState.private.chat.tab.filter(
+          privateTab => privateTab.key === publicTab.key
+        )[0];
+        return {
+          key: publicTab.key,
+          name: publicTab.name,
+          isActive: privateTab.isActive,
+          isHover: privateTab.isHover,
+          unRead: privateTab.unRead,
+          order: privateTab.order
+        };
+      });
+      return tabs;
+    },
+    /**
+     * 選択済みのチャットのタブのオブジェクト
+     * @param state
+     * @param getters
+     * @returns any
+     */
+    activeChatTab: (state, getters) =>
+      getters.chatTabs.filter(tab => tab.isActive)[0]
   }
 });

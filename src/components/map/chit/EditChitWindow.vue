@@ -110,7 +110,8 @@ export default {
     tagList: state => state.public.image.tags.list,
     storeImages: state => state.public.image.list,
     currentImage() {
-      return this.getKeyObj(this.storeImages, this.imageKey).data;
+      const imageObj = this.getKeyObj(this.storeImages, this.imageKey);
+      return imageObj ? imageObj.data : null;
     },
     imageList() {
       return this.$store.state.public.image.list.filter(obj => {

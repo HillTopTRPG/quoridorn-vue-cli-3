@@ -75,7 +75,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("isOverEvent") isOverEvent: any;
   @Getter("isDraggingRight") isDraggingRight: any;
   @Getter("move") move: any;
-  @Getter("anglevolatile") anglevolatile: any;
+  @Getter("angleVolatile") angleVolatile: any;
   @Getter("isModal") isModal: any;
   @Getter("getMapObjectList") getMapObjectList: any;
 
@@ -212,7 +212,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     let isRoll = false;
     if (isDraggingRight) {
       const nextAngle = this.arrangeAngle(
-        this.angle.total + Math.round(this.anglevolatile.dragging / 15) * 15
+        this.angle.total + Math.round(this.angleVolatile.dragging / 15) * 15
       );
       if (this.angle.total !== nextAngle) {
         isRoll = true;
@@ -554,7 +554,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   get currentAngle(): number {
-    return this.arrangeAngle(this.angle.total + this.anglevolatile.dragging);
+    return this.arrangeAngle(this.angle.total + this.angleVolatile.dragging);
   }
 
   get sizeW(): number {
@@ -651,7 +651,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         mouseLocate.y,
         this.currentAngle
       ).angle;
-      let angleDiff = this.arrangeAngle(angle - this.anglevolatile.dragStart);
+      let angleDiff = this.arrangeAngle(angle - this.angleVolatile.dragStart);
       this.setProperty({
         property: "map.angle.dragging",
         value: angleDiff,

@@ -179,7 +179,7 @@ export default {
       if (end) return `〜${end}`;
       return "All";
     },
-    bgmList: state => state.setting.bgm.list,
+    bgmList: state => state.public.bgm.list,
     /* Start 列幅可変テーブルのプロパティ */
     selectLineKey: state =>
       state.private.display.settingBGMWindow.selectLineKey,

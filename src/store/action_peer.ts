@@ -78,7 +78,7 @@ export default {
             // マップ編集中のロックを解除
             if (rootGetters.isMapEditing === rootGetters.peerId(isWait)) {
               dispatch("setProperty", {
-                property: "public.map.isEditting",
+                property: "public.map.isEditing",
                 value: null,
                 isNotice: true,
                 logOff: true
@@ -111,7 +111,9 @@ export default {
             reject.call(null);
             const msg: string[] = [];
             msg.push("接続に失敗しました。");
-            msg.push("たまたま通信処理の調子が悪い可能性があるので、画面を再読み込みしてもらうと直るかもしれません。");
+            msg.push(
+              "たまたま通信処理の調子が悪い可能性があるので、画面を再読み込みしてもらうと直るかもしれません。"
+            );
             msg.push("原因は以下のメッセージを参考にしてください。");
             msg.push("");
             msg.push(err.message);
@@ -291,8 +293,7 @@ export default {
 
         // プレイヤーパスワードチェック
         if (myPlayer.password !== (playerPassword || "")) {
-          if (useAlert)
-            alert(`プレイヤーパスワードの入力をお願いします。`);
+          if (useAlert) alert(`プレイヤーパスワードの入力をお願いします。`);
           window.console.log("プレイヤーパスワードエラー");
           isShowWindow = true;
           isError = true;
@@ -359,19 +360,17 @@ export default {
      * @param dispatch
      * @param rootGetters
      * @param value
+     * @param peerId
      */
     onSendPrivateData(
-      {
-        rootState,
-        dispatch,
-        rootGetters
-      }: { rootState: any; dispatch: any; rootGetters: any },
-      { value }: { value: any }
+      { dispatch, rootGetters }: { dispatch: any; rootGetters: any },
+      { value, peerId }: { value: any; peerId: string }
     ) {
-      rootState.volatileSaveData.members.push(value);
-      if (
-        rootState.volatileSaveData.members.length === rootGetters.members.length
-      ) {
+      const player = rootGetters.getPlayer(peerId);
+      rootGetters.volatilePrivateData[player.key] = value;
+
+      const saveNum = Object.keys(rootGetters.volatilePrivateData).length;
+      if (saveNum === rootGetters.members.length) {
         dispatch("doExport");
       }
     },
@@ -541,16 +540,34 @@ export default {
         }
       }
       // privateデータの要求を受けたとき
-      if (type === "REQUEST_PRIVATE_DATA")
-        dispatch("sendRoomData", {
-          type: "SEND_PRIVATE_DATA",
-          value: rootState.private,
-          targets: [fromPeerId],
-          isWait: isWait
-        });
+      if (type === "REQUEST_PRIVATE_DATA") {
+        // 同じプレイヤーの中で一番最初に入室した画面のみ、privateデータを送信する
+        const player = rootGetters.getPlayer(rootGetters.peerId);
+        const members = rootGetters.getMembers(player.key);
+        if (members[0] === rootGetters.peerId) {
+          const privateData = JSON.parse(JSON.stringify(rootState.private));
+          // 開いてないディスプレイ情報は送信データに含めない
+          for (const key in privateData.display) {
+            if (!privateData.display.hasOwnProperty(key)) continue;
+            if (!privateData.display[key].isDisplay) {
+              delete privateData.display[key];
+            } else {
+              delete privateData.display[key].command;
+              delete privateData.display[key].zIndex;
+            }
+          }
+
+          dispatch("sendRoomData", {
+            type: "SEND_PRIVATE_DATA",
+            value: privateData,
+            targets: [fromPeerId],
+            isWait: isWait
+          });
+        }
+      }
       // privateデータを受けたとき
       if (type === "SEND_PRIVATE_DATA")
-        dispatch("onSendPrivateData", { value: value });
+        dispatch("onSendPrivateData", { value: value, peerId: fromPeerId });
       // 親によるDO_METHODの発令要請を受けた時
       if (type === "NOTICE_OPERATION")
         dispatch("onNoticeOperation", {
@@ -1069,14 +1086,18 @@ export default {
 
       qLog(`Room: ${roomName} のルームメンバーとして認識されました。`);
 
-      // チャット追加
-      dispatch("addChatLog", {
-        name: rootGetters.systemLog.name,
-        text: `${playerName} が入室しました。`,
-        color: rootGetters.systemLog.color,
-        tab: rootGetters.systemLog.tab,
-        owner: rootGetters.systemLog.owner
-      });
+      try {
+        // チャット追加
+        dispatch("addChatLog", {
+          name: rootGetters.systemLog.name,
+          text: `${playerName} が入室しました。`,
+          color: rootGetters.systemLog.color,
+          tab: rootGetters.systemLog.tab,
+          owner: rootGetters.systemLog.owner
+        });
+      } catch(err) {
+        console.error(err);
+      }
 
       dispatch("windowOpen", "private.display.playerBoxWindow");
 

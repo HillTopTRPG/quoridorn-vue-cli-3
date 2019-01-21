@@ -4,8 +4,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
 // @ts-ignore
-import bgmList from "../assets/bgm.yaml";
-// @ts-ignore
 import deckList from "../assets/deck.yaml";
 
 Vue.use(Vuex);
@@ -18,11 +16,6 @@ export default {
   state: {
     /** バージョン */
     version: "1.0.0b4",
-    /** BGM */
-    bgm: {
-      list: bgmList,
-      maxKey: 0
-    },
     /** カードセット */
     cardSet: deckList,
     /** 権限 */
@@ -55,18 +48,6 @@ export default {
       owner: "SYSTEM"
     }
   } /* end of state */,
-  actions: {
-    /**
-     * 指定されたプロパティパスの子画面を開く
-     * @param payload
-     */
-    onSettingMount({ state }: { state: any }): void {
-      state.bgm.list.forEach(
-        (bgm: any, index: number) => (bgm.key = `bgm-${index}`)
-      );
-      state.bgm.maxKey = state.bgm.list.length - 1;
-    }
-  } /* end of actions */,
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,

@@ -146,7 +146,6 @@ export default {
     InputPlayerInfoWindow
   },
   mounted() {
-    this.onSettingMount();
     this.onMount();
     window.youtube.init();
 
@@ -189,7 +188,7 @@ export default {
     }
   }),
   methods: {
-    ...mapActions(["onSettingMount", "onMount", "exportStart"]),
+    ...mapActions(["onMount", "exportStart"]),
     onWheel(e) {
       this.$refs["gameTable"].onWheel(e.wheelDelta);
     }

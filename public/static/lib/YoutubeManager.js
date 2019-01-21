@@ -310,6 +310,7 @@ const YoutubeControlManager = () => {
               onApiChange: event => eventHandler.onApiChange(i, event)
             },
             playerVars: {
+              origin: location.protocol + "//" + location.hostname + "/",
               autoplay: 0, // 0:自動再生しない or 1:自動再生
               controls: 0, // 再生ボタンとか出さない
               disablekb: 1, // ショートカットキー無効
