@@ -11,6 +11,7 @@ import actionPeer from "./action_peer.ts";
 import actionOperation from "./action_operation.ts";
 import { getUrlParam } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
+import yaml from "js-yaml";
 
 Vue.use(Vuex);
 
@@ -155,67 +156,65 @@ export default new Vuex.Store({
       }, 0);
 
       /* ----------------------------------------------------------------------
+       * チャットタブの設定
+       */
+      // dispatch("changeChatTab", { tabsText: "雑談" });
+
+      const loadYaml = confFilePath => {
+        return window
+          .fetch(confFilePath)
+          .then(responce => responce.text())
+          .then(text => yaml.safeLoad(text));
+      };
+
+      /* ----------------------------------------------------------------------
        * カード情報の設定
        */
       const cardSetName = "花札";
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
-      const cardSet = rootState.setting.cardSet.filter(
-        cs => cs.name === cardSetName
-      )[0];
+      loadYaml("/static/conf/deck.yaml").then(deckList => {
+        const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
 
-      const basePath = cardSet.basePath;
-      rootState.public.deck.name = cardSet.name;
-      rootState.public.deck.back = basePath + cardSet.back;
-      rootState.public.deck.width = !cardSet.width
-        ? 128
-        : parseInt(("" + cardSet.width).replace(/px/, ""));
-      rootState.public.deck.height = !cardSet.height
-        ? 192
-        : parseInt(("" + cardSet.height).replace(/px/, ""));
-      if (!cardSet.source) {
-        cardSet.source = {};
-      }
-      rootState.public.deck.author = !cardSet.source.author
-        ? ""
-        : cardSet.source.author;
-      rootState.public.deck.title = cardSet.source.title;
-      if (!cardSet.source.refs) {
-        cardSet.source.refs = [];
-      }
-      rootState.public.deck.refs = cardSet.source.refs;
-      cardSet.cards.forEach((card, i) => {
-        const path = basePath + card.file;
-        rootState.public.deck.cards.list.push({
+        cardSet.width = cardSet.width || 128;
+        cardSet.height = cardSet.height || 192;
+        cardSet.source = cardSet.source || {};
+
+        const basePath = cardSet.basePath || "";
+        const storeDeck = rootState.public.deck;
+        storeDeck.name = cardSet.name;
+        storeDeck.back = basePath + cardSet.back;
+        storeDeck.width = cardSet.width;
+        storeDeck.height = cardSet.height;
+        storeDeck.author = cardSet.source.author || "";
+        storeDeck.title = cardSet.source.title || "";
+        storeDeck.refs = cardSet.source.refs || [];
+        storeDeck.cards.list = cardSet.cards.map((card, i) => ({
           key: `card-${i}`,
           front: { text: `` },
-          back: { text: ``, img: path }
-        });
-        rootState.public.deck.cards.maxKey = i;
+          back: { text: ``, img: basePath + card.file }
+        }));
+        storeDeck.cards.maxKey = cardSet.cards.length - 1;
       });
-
-      /* ----------------------------------------------------------------------
-       * チャットタブの設定
-       */
-      // dispatch("changeChatTab", { tabsText: "雑談" });
 
       /* ----------------------------------------------------------------------
        * BGMの設定
        */
-      rootState.public.bgm.list.forEach(
-        (bgm, index) => (bgm.key = `bgm-${index}`)
-      );
-      rootState.public.bgm.maxKey = rootState.public.bgm.list.length - 1;
+      loadYaml("/static/conf/bgm.yaml").then(bgmList => {
+        bgmList.forEach((bgm, index) => (bgm.key = `bgm-${index}`));
+        rootState.public.bgm.list = bgmList;
+        rootState.public.bgm.maxKey = bgmList.length - 1;
+      });
 
       /* ----------------------------------------------------------------------
        * 画像の設定
        */
-      rootState.public.image.list.forEach((image, index) => {
-        image.key = `image-${index}`;
-        rootState.public.image.list.splice(index, 1, image);
+      loadYaml("/static/conf/image.yaml").then(imageList => {
+        imageList.forEach((image, index) => (image.key = `image-${index}`));
+        rootState.public.image.list = imageList;
+        rootState.public.image.maxKey = imageList.length - 1;
       });
-      rootState.public.image.maxKey = rootState.public.image.list.length - 1;
 
       /* ----------------------------------------------------------------------
        * 初期入室の処理

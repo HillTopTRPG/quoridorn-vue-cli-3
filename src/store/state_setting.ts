@@ -3,8 +3,8 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-// @ts-ignore
-import deckList from "../assets/deck.yaml";
+// // @ts-ignore
+// import deckList from "../../public/static/conf/deck.yaml";
 
 Vue.use(Vuex);
 
@@ -16,8 +16,6 @@ export default {
   state: {
     /** バージョン */
     version: "1.0.0b4",
-    /** カードセット */
-    cardSet: deckList,
     /** 権限 */
     roles: [
       {
@@ -51,6 +49,6 @@ export default {
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,
-    chatOptionPagingSize: (state: any) => 8
+    chatOptionPagingSize: () => 8
   }
 };

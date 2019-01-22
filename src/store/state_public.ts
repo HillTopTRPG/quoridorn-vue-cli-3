@@ -3,10 +3,8 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-// @ts-ignore
-import bgmList from "@/assets/bgm.yaml";
-// @ts-ignore
-import imageList from "@/assets/image.yaml";
+// // @ts-ignore
+// import imageList from "@/assets/conf/image.yaml";
 
 Vue.use(Vuex);
 
@@ -30,8 +28,8 @@ export default {
 
     /** BGM */
     bgm: {
-      list: bgmList,
-      maxKey: 0
+      list: [],
+      maxKey: -1
     },
 
     /** 画像 */
@@ -49,8 +47,8 @@ export default {
       },
 
       /** 画像のプリセットデータ */
-      list: imageList,
-      maxKey: 24
+      list: [],
+      maxKey: -1
     },
 
     /** デッキ */
