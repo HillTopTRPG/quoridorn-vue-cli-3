@@ -303,11 +303,11 @@ export default {
     /**
      * チャットのタブを選択したことをデータに反映する
      * @param commit
-     * @param tab
+     * @param key
      * @returns {*}
      */
-    chatTabSelect: ({ commit }: { commit: Function }, tab: string) =>
-      commit("chatTabSelect", tab)
+    chatTabSelect: ({ commit }: { commit: Function }, key: string) =>
+      commit("chatTabSelect", key)
   } /* end of actions */,
   mutations: {
     updatePeerId: (
@@ -321,14 +321,22 @@ export default {
     /**
      * チャットのタブを選択したことをデータに反映する
      * @param state
-     * @param tab
+     * @param key
      */
-    chatTabSelect(state: any, tab: string) {
-      for (let tabObj of state.chat.tabs) {
-        tabObj.isActive = tab === tabObj.name;
-        // 未読数をリセット
-        if (tabObj.isActive) tabObj.unRead = 0;
-      }
+    chatTabSelect(state: any, key: string) {
+      const tabList = state.chat.tab;
+      tabList.forEach((tab: any, index: number) => {
+        if (tab.key === key) {
+          tab.isActive = true;
+          tab.unRead = 0;
+          tabList.splice(index, 1, tab);
+        } else {
+          if (tab.isActive) {
+            tab.isActive = false;
+            tabList.splice(index, 1, tab);
+          }
+        }
+      });
     }
   },
   getters: {
@@ -356,6 +364,6 @@ export default {
     volatileResolve: (state: any) =>
       state.display.inputPlayerInfoWindow.resolve,
     historyList: (state: any) => state.historyList,
-    chatTabsOption: (state: any): any[] => state.chat.tabs
+    chatTabsOption: (state: any): any[] => state.chat.tab
   }
 };

@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="チャットタブ設定画面" display-property="private.display.settingChatTabWindow" align="center" fixSize="320, 132" @open="initWindow" @reset="initWindow">
+  <WindowFrame titleText="チャットタブ設定画面" display-property="private.display.settingChatTabWindow" align="center" fixSize="320, 432" @open="initWindow" @reset="initWindow">
     <div class="contents">
       <div>半角・全角スペースでタブ名を区切ってください。<br>（例：「雑談 打ち合わせ メモ用」）</div>
       <draggable v-model="tabs">
@@ -9,9 +9,9 @@
             <input v-if="tab.key !== 'chatTab-0'" type="text" v-model="tab.name">
             <button v-if="tab.key !== 'chatTab-0'" type="button" @click="delTab(tab.key, index)">削除</button>
           </label>
-          <button :key="tab.key" type="button" @click="addTab">追加</button>
         </template>
       </draggable>
+      <button type="button" @click="addTab">追加</button>
       <div class="operateArea">
         <button type="button" @click="commit">変更</button>
         <button type="button" @click="cancel">キャンセル</button>
@@ -68,7 +68,8 @@ export default class SettingChatTabWindow extends Vue {
   public commit() {
     this.delTabs.forEach((key: string) => this.deleteChatTab(key));
     this.tabs.forEach((tab: any, index: number) => {
-      if (tab.name.startsWith("chatTabAdd")) {
+      window.console.log(index, tab);
+      if (tab.key.startsWith("chatTabAdd")) {
         this.addChatTab({
           name: tab.name,
           order: index

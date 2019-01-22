@@ -42,7 +42,7 @@ export default {
     systemLog: {
       name: "SYSTEM",
       color: "red",
-      tab: "メイン",
+      tab: "chatTab-0",
       owner: "SYSTEM"
     }
   } /* end of state */,

@@ -34,7 +34,7 @@ export default {
         const activeChatTab = rootGetters.activeChatTab;
         const name = payload.name;
         const color = payload.color;
-        const tab = payload.tab ? payload.tab : activeChatTab.name;
+        const tab = payload.tab || activeChatTab.key;
         const from = payload.from;
         const target = payload.target;
         let viewHtml;
@@ -58,11 +58,11 @@ export default {
         };
         // 未読カウントアップ
         if (tab !== activeChatTab.name) {
-          const tabObj = rootGetters.chatTabsOption.filter(
-            (tabObj: any) => tabObj.name === tab
-          )[0];
+          const index = rootGetters.chatTabsOption.findIndex(
+            (tabObj: any) => tabObj.key === tab
+          );
+          const tabObj = rootGetters.chatTabsOption[index];
           tabObj.unRead++;
-          const index = rootGetters.chatTabsOption.indexOf(tabObj);
           rootGetters.chatTabsOption.splice(index, 1, tabObj);
         }
         rootState.public.chat.logs[tab].push(logObj);
@@ -499,6 +499,7 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
+      window.console.log(rootGetters.activeTab, rootGetters.chatLogs);
       return rootGetters.chatLogs[rootGetters.activeTab].filter((log: any) => {
         if (log.from === rootGetters.playerKey) return true;
         if (!log.target) return true;

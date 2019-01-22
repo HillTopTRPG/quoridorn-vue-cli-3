@@ -120,7 +120,7 @@ export default {
 
       /** チャットのリスト */
       logs: {
-        メイン: [
+        "chatTab-0": [
           {
             owner: "SYSTEM",
             viewHtml:
