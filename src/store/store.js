@@ -46,7 +46,7 @@ export default new Vuex.Store({
       isJoined: false
     },
     chat: {
-      activeTab: "メイン",
+      activeTab: "chatTab-0",
       actorKey: ""
     },
     map: {
@@ -317,10 +317,10 @@ export default new Vuex.Store({
      * @param payload
      * @returns {*}
      */
-    changeDisplay: ({ dispatch }, payload) =>
+    reverseProperty: ({ dispatch }, payload) =>
       dispatch("sendNoticeOperation", {
         value: payload,
-        method: "doChangeDisplay"
+        method: "doReverseProperty"
       }),
     /**
      * 指定されたプロパティパスの値を反転させる
@@ -328,7 +328,7 @@ export default new Vuex.Store({
      * @param commit
      * @param property
      */
-    doChangeDisplay: ({ getters, commit }, { property }) => {
+    doReverseProperty: ({ getters, commit }, { property }) => {
       const target = getters.getStateValue(property);
       const payload = {};
       if (typeof target === "boolean") {
@@ -418,6 +418,7 @@ export default new Vuex.Store({
       };
       rootState.public.chat.tab.list.push(publicTab);
       rootState.private.chat.tab.push(privateTab);
+      Vue.set(rootState.public.chat.tab.logs, key, []);
     },
     updateChatTab: (
       { rootState },
