@@ -133,9 +133,7 @@ export default class Menu extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("doResetWindowLocate") doResetWindowLocate: any;
   @Action("exportStart") exportStart: any;
-  @Action("doExport") doExport: any;
   @Getter("roomName") roomName: any;
-  @Getter("volatileSaveData") volatileSaveData: any;
   @Getter("isModal") isModal: any;
   @Getter("peerId") peerId: any;
   @Getter("members") members: any;
@@ -422,13 +420,6 @@ export default class Menu extends Vue {
   clickBufForm(): void {
     window.open("https://9224.teacup.com/quoridorn_bug/bbs", "_blank");
     this.menuClick();
-  }
-
-  @Watch("volatileSaveData")
-  onChangeVolatileSaveData(volatileSaveData: any[]) {
-    if (volatileSaveData.length === this.members.length) {
-      this.doExport();
-    }
   }
 
   get menuStyle(): any {

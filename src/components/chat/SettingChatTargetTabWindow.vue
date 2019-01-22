@@ -90,7 +90,6 @@ export default {
     ...mapActions([
       "windowClose",
       "windowOpen",
-      "changeChatTab",
       "setProperty",
       "addGroupTargetTab"
     ]),

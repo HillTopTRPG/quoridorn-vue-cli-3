@@ -103,7 +103,7 @@ export default {
     }
   },
   computed: mapState({
-    bgmList: state => state.setting.bgm.list
+    bgmList: state => state.public.bgm.list
   })
 };
 </script>

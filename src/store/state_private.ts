@@ -29,6 +29,19 @@ export default {
       standImageAutoResize: true // 立ち絵のサイズを自動調節する
     },
 
+    /** チャット */
+    chat: {
+      tab: [
+        {
+          key: "chatTab-0",
+          isActive: true,
+          isHover: false,
+          unRead: 0,
+          order: 0
+        }
+      ]
+    },
+
     /** マップ */
     map: {
       angle: {
@@ -38,7 +51,7 @@ export default {
     },
 
     /** 操作履歴 */
-    history: [],
+    historyList: [],
 
     /** 子画面 */
     display: {
@@ -285,7 +298,16 @@ export default {
 
       // 指定された画面のz-indexを最大に設定（モーダルスクリーンより手前にする）
       if (!isClose) state.display[dispName].zIndex = propList.length + 100001;
-    }
+    },
+
+    /**
+     * チャットのタブを選択したことをデータに反映する
+     * @param commit
+     * @param key
+     * @returns {*}
+     */
+    chatTabSelect: ({ commit }: { commit: Function }, key: string) =>
+      commit("chatTabSelect", key)
   } /* end of actions */,
   mutations: {
     updatePeerId: (
@@ -294,6 +316,27 @@ export default {
     ) => {
       if (!isWait) state.self.peerId = peerId;
       else state.self.peerIdWait = peerId;
+    },
+
+    /**
+     * チャットのタブを選択したことをデータに反映する
+     * @param state
+     * @param key
+     */
+    chatTabSelect(state: any, key: string) {
+      const tabList = state.chat.tab;
+      tabList.forEach((tab: any, index: number) => {
+        if (tab.key === key) {
+          tab.isActive = true;
+          tab.unRead = 0;
+          tabList.splice(index, 1, tab);
+        } else {
+          if (tab.isActive) {
+            tab.isActive = false;
+            tabList.splice(index, 1, tab);
+          }
+        }
+      });
     }
   },
   getters: {
@@ -318,6 +361,9 @@ export default {
       state.display.inputPlayerInfoWindow.playerType,
     volatileFontColor: (state: any) =>
       state.display.inputPlayerInfoWindow.fontColor,
-    volatileResolve: (state: any) => state.display.inputPlayerInfoWindow.resolve
+    volatileResolve: (state: any) =>
+      state.display.inputPlayerInfoWindow.resolve,
+    historyList: (state: any) => state.historyList,
+    chatTabsOption: (state: any): any[] => state.chat.tab
   }
 };

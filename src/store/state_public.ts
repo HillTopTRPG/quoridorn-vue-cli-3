@@ -3,6 +3,8 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
+// // @ts-ignore
+// import imageList from "@/assets/conf/image.yaml";
 
 Vue.use(Vuex);
 
@@ -24,6 +26,12 @@ export default {
       isFitGrid: true
     },
 
+    /** BGM */
+    bgm: {
+      list: [],
+      maxKey: -1
+    },
+
     /** 画像 */
     image: {
       /** 画像のタグ */
@@ -39,168 +47,8 @@ export default {
       },
 
       /** 画像のプリセットデータ */
-      list: [
-        {
-          key: "image-0",
-          tag: "マップ",
-          data: require("../assets/background-default.jpg"),
-          password: ""
-        },
-        {
-          key: "image-1",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnBlack.png"),
-          password: ""
-        },
-        {
-          key: "image-2",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnBlue.png"),
-          password: ""
-        },
-        {
-          key: "image-3",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnGreen.png"),
-          password: ""
-        },
-        {
-          key: "image-4",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnLightBlue.png"),
-          password: ""
-        },
-        {
-          key: "image-5",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnOrange.png"),
-          password: ""
-        },
-        {
-          key: "image-6",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnPink.png"),
-          password: ""
-        },
-        {
-          key: "image-7",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnPurple.png"),
-          password: ""
-        },
-        {
-          key: "image-8",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnRed.png"),
-          password: ""
-        },
-        {
-          key: "image-9",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnWhite.png"),
-          password: ""
-        },
-        {
-          key: "image-10",
-          tag: "キャラクター",
-          data: require("../assets/charactor/pawnYellow.png"),
-          password: ""
-        },
-        {
-          key: "image-11",
-          tag: "フロアタイル",
-          data: require("../assets/floorTiles/floorTile_001.jpg"),
-          password: ""
-        },
-        {
-          key: "image-12",
-          tag: "フロアタイル",
-          data: require("../assets/floorTiles/floorTile_008.jpg"),
-          password: ""
-        },
-        {
-          key: "image-13",
-          tag: "フロアタイル",
-          data: require("../assets/floorTiles/floorTile_011.jpg"),
-          password: ""
-        },
-        {
-          key: "image-14",
-          tag: "フロアタイル",
-          data: require("../assets/floorTiles/floorTile_012.jpg"),
-          password: ""
-        },
-        {
-          key: "image-15",
-          tag: "フロアタイル",
-          data: require("../assets/floorTiles/floorTile_027.jpg"),
-          password: ""
-        },
-        {
-          key: "image-16",
-          tag: "フロアタイル",
-          data: require("../assets/floorTiles/floorTile_038.jpg"),
-          password: ""
-        },
-        {
-          key: "image-17",
-          tag: "フロアタイル",
-          data: require("../assets/floorTiles/floorTile_047.jpg"),
-          password: ""
-        },
-        {
-          key: "image-18",
-          tag: "フロアタイル",
-          data: require("../assets/floorTiles/floorTile_059.jpg"),
-          password: ""
-        },
-        {
-          key: "image-19",
-          tag: "立ち絵",
-          data: require("../assets/stand/glass_angry.png"),
-          password: ""
-        },
-        {
-          key: "image-20",
-          tag: "立ち絵",
-          data: require("../assets/stand/glass_normal.png"),
-          password: ""
-        },
-        {
-          key: "image-21",
-          tag: "立ち絵",
-          data: require("../assets/stand/glass_smile.png"),
-          password: ""
-        },
-        {
-          key: "image-22",
-          tag: "立ち絵",
-          data: require("../assets/stand/sports_angry.png"),
-          password: ""
-        },
-        {
-          key: "image-23",
-          tag: "立ち絵",
-          data: require("../assets/stand/sports_normal.png"),
-          password: ""
-        },
-        {
-          key: "image-24",
-          tag: "立ち絵",
-          data: require("../assets/stand/sports_smile.png"),
-          password: ""
-        }
-      ],
-      maxKey: 24
-    },
-
-    /** BGM */
-    bgm: {
-      /** 再生リスト */
-      playList: {
-        list: [],
-        maxKey: -1
-      }
+      list: [],
+      maxKey: -1
     },
 
     /** デッキ */
@@ -230,7 +78,7 @@ export default {
       },
       grid: { totalColumn: 20, totalRow: 15, size: 48, color: "#000000" },
       background: "#92A8B3",
-      isEditting: null
+      isEditing: null
     },
 
     /** 部屋情報 */
@@ -251,7 +99,10 @@ export default {
     /** チャット */
     chat: {
       /** チャットのタブ */
-      tabs: [{ name: "メイン", isHover: false, unRead: 0, secretInfo: null }],
+      tab: {
+        list: [{ key: "chatTab-0", name: "メイン" }],
+        maxKey: 0
+      },
       /** グループチャットのタブ */
       groupTargetTab: {
         list: [
@@ -269,27 +120,11 @@ export default {
 
       /** チャットのリスト */
       logs: {
-        メイン: [
-          { owner: "SYSTEM", viewHtml: "<b>HillTop</b>：Hello World!!" },
+        "chatTab-0": [
           {
             owner: "SYSTEM",
             viewHtml:
               '<span style="color: red;"><b>SYSTEM</b>：こちらデモ版です。</span>'
-          },
-          {
-            owner: "SYSTEM",
-            viewHtml:
-              '<span style="color: black;"><b>HillTop</b>：どどんとふの仕様にできるだけ近づけるように努力しています。</span>'
-          },
-          {
-            owner: "SYSTEM",
-            viewHtml:
-              '<span style="color: black;"><b>HillTop</b>：Twitterで私が困ってたらいろいろ教えていただけると嬉しいです。</span>'
-          },
-          {
-            owner: "SYSTEM",
-            viewHtml:
-              '<span style="color: black;"><b>HillTop</b>：9月末までは休みを利用して開発できますが、10月からは新しい仕事が始まるので、開発スピードが落ちます。</span>'
           }
         ]
       },
@@ -389,24 +224,6 @@ export default {
     emptyMember: ({ commit }: { commit: Function }) => commit("emptyMember"),
 
     /**
-     * チャットのタブを選択したことをデータに反映する
-     * @param commit
-     * @param tab
-     * @returns {*}
-     */
-    chatTabSelect: ({ commit }: { commit: Function }, tab: string) =>
-      commit("chatTabSelect", tab),
-
-    /**
-     * チャット対象のタブを選択したことをデータに反映する
-     * @param commit
-     * @param tab
-     * @returns {*}
-     */
-    groupTargetTabSelect: ({ commit }: { commit: Function }, tab: string) =>
-      commit("groupTargetTabSelect", tab),
-
-    /**
      * 画像のタブの構成を変更する
      * @param commit
      * @param payload
@@ -445,32 +262,6 @@ export default {
      */
     emptyMember: (state: any) =>
       state.room.members.splice(0, state.room.members.length),
-
-    /**
-     * チャットのタブを選択したことをデータに反映する
-     * @param state
-     * @param tab
-     */
-    chatTabSelect(state: any, tab: string) {
-      for (let tabObj of state.chat.tabs) {
-        tabObj.isActive = tab === tabObj.name;
-        // 未読数をリセット
-        if (tabObj.isActive) tabObj.unRead = 0;
-      }
-    },
-
-    /**
-     * チャット対象のタブを選択したことをデータに反映する
-     * @param state
-     * @param tab
-     */
-    groupTargetTabSelect(state: any, tab: string) {
-      for (let tabObj of state.chat.tabs) {
-        tabObj.isActive = tab === tabObj.name;
-        // 未読数をリセット
-        if (tabObj.isActive) tabObj.unRead = 0;
-      }
-    },
 
     /**
      * ルームメンバの入力中状態の変化
@@ -566,14 +357,6 @@ export default {
 
   getters: {
     /**
-     * 選択済みのチャットのタブのオブジェクト
-     * @param state
-     * @returns any
-     */
-    activeChatTab: (state: any) =>
-      state.chat.tabs.filter((tabObj: any) => tabObj.isActive)[0],
-
-    /**
      * すべての障害物を取得
      * @param state
      */
@@ -597,10 +380,12 @@ export default {
      * @param state
      * @returns {*}
      */
-    getBackgroundImage: (state: any) =>
-      state.image.list.filter(
+    getBackgroundImage: (state: any) => {
+      const imageObj = state.image.list.filter(
         (image: any) => image.key === state.map.imageKey
-      )[0].data,
+      )[0];
+      return imageObj ? imageObj.data : null;
+    },
 
     getPeerActors: (
       state: any,
@@ -648,7 +433,6 @@ export default {
         return obj.name;
       }
     },
-    chatTabs: (state: any): any[] => state.chat.tabs,
     chatLogs: (state: any): any[] => state.chat.logs,
     playerList: (state: any): any[] => state.player.list,
     inputting: (state: any): any => state.chat.inputting,
@@ -707,7 +491,7 @@ export default {
       params.push(`roomPassword=${getters.roomPassword}`);
       return `${baseUrl}?${params.join("&")}`;
     },
-    isMapEditing: (state: any): boolean => state.map.isEditting,
+    isMapEditing: (state: any): boolean => state.map.isEditing,
     groupTargetTab: (state: any): any => state.chat.groupTargetTab
   } /* end of getters */
 };

@@ -99,11 +99,8 @@ export default {
     ...mapActions(["setProperty", "windowOpen", "windowClose"]),
     initWindow() {
       const peerId = this.peerId(this.isWait);
-      window.console.log(this.storeMapObj.isEditting, peerId);
-      if (
-        this.storeMapObj.isEditting &&
-        this.storeMapObj.isEditting !== peerId
-      ) {
+      window.console.log(this.storeMapObj.isEditing, peerId);
+      if (this.storeMapObj.isEditing && this.storeMapObj.isEditing !== peerId) {
         alert(
           "他の画面とマップ変更操作が競合しますので、この操作はキャンセルします。"
         );
@@ -140,14 +137,14 @@ export default {
       this.original.gridColor = this.storeMapObj.grid.color;
       this.original.backgroundColor = this.storeMapObj.background;
       this.setProperty({
-        property: "public.map.isEditting",
+        property: "public.map.isEditing",
         isNotice: true,
         value: peerId,
         logOff: true
       });
     },
     commit() {
-      if (this.storeMapObj.isEditting === peerId) {
+      if (this.storeMapObj.isEditing === peerId) {
         this.setProperty({
           property: "public.map",
           isNotice: true,
@@ -170,7 +167,7 @@ export default {
               color: this.edit.gridColor
             },
             background: this.edit.backgroundColor,
-            isEditting: false
+            isEditing: false
           },
           logOff: true
         });
@@ -180,7 +177,7 @@ export default {
         );
       }
       this.setProperty({
-        property: "public.map.isEditting",
+        property: "public.map.isEditing",
         isNotice: true,
         value: null,
         logOff: true
@@ -188,7 +185,7 @@ export default {
       this.windowClose("private.display.editMapWindow");
     },
     cancel() {
-      if (this.storeMapObj.isEditting === this.peerId(this.isWait)) {
+      if (this.storeMapObj.isEditing === this.peerId(this.isWait)) {
         this.setProperty({
           property: "public.map",
           isNotice: true,
@@ -211,7 +208,7 @@ export default {
               color: this.original.gridColor
             },
             background: this.original.backgroundColor,
-            isEditting: false
+            isEditing: false
           },
           logOff: true
         });
@@ -220,7 +217,7 @@ export default {
     },
     close() {
       this.setProperty({
-        property: "public.map.isEditting",
+        property: "public.map.isEditing",
         isNotice: true,
         value: null,
         logOff: true

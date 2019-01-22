@@ -3,10 +3,8 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-// @ts-ignore
-import bgmList from "../assets/bgm.yaml";
-// @ts-ignore
-import deckList from "../assets/deck.yaml";
+// // @ts-ignore
+// import deckList from "../../public/static/conf/deck.yaml";
 
 Vue.use(Vuex);
 
@@ -16,15 +14,8 @@ Vue.use(Vuex);
 export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
-    /** カードセット */
-    version: "1.0.0b3",
-    /** BGM */
-    bgm: {
-      list: bgmList,
-      maxKey: 0
-    },
-    /** カードセット */
-    cardSet: deckList,
+    /** バージョン */
+    version: "1.0.0b4",
     /** 権限 */
     roles: [
       {
@@ -51,25 +42,13 @@ export default {
     systemLog: {
       name: "SYSTEM",
       color: "red",
-      tab: "メイン",
+      tab: "chatTab-0",
       owner: "SYSTEM"
     }
   } /* end of state */,
-  actions: {
-    /**
-     * 指定されたプロパティパスの子画面を開く
-     * @param payload
-     */
-    onSettingMount({ state }: { state: any }): void {
-      state.bgm.list.forEach(
-        (bgm: any, index: number) => (bgm.key = `bgm-${index}`)
-      );
-      state.bgm.maxKey = state.bgm.list.length - 1;
-    }
-  } /* end of actions */,
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,
-    chatOptionPagingSize: (state: any) => 8
+    chatOptionPagingSize: () => 8
   }
 };

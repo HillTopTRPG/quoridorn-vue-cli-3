@@ -11,6 +11,7 @@ import actionPeer from "./action_peer.ts";
 import actionOperation from "./action_operation.ts";
 import { getUrlParam } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
+import yaml from "js-yaml";
 
 Vue.use(Vuex);
 
@@ -45,7 +46,7 @@ export default new Vuex.Store({
       isJoined: false
     },
     chat: {
-      activeTab: "メイン",
+      activeTab: "chatTab-0",
       actorKey: ""
     },
     map: {
@@ -83,7 +84,7 @@ export default new Vuex.Store({
     },
     operationQueue: [],
     volatileSaveData: {
-      members: []
+      players: []
     },
     mode: {
       isModal: true,
@@ -155,51 +156,69 @@ export default new Vuex.Store({
       }, 0);
 
       /* ----------------------------------------------------------------------
+       * チャットタブの設定
+       */
+      // dispatch("changeChatTab", { tabsText: "雑談" });
+
+      const loadYaml = confFilePath => {
+        return window
+          .fetch(confFilePath)
+          .then(responce => responce.text())
+          .then(text => yaml.safeLoad(text));
+      };
+
+      /* ----------------------------------------------------------------------
        * カード情報の設定
        */
       const cardSetName = "花札";
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
-      const cardSet = rootState.setting.cardSet.filter(
-        cs => cs.name === cardSetName
-      )[0];
+      loadYaml("/static/conf/deck.yaml").then(deckList => {
+        const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
 
-      const basePath = cardSet.basePath;
-      rootState.public.deck.name = cardSet.name;
-      rootState.public.deck.back = basePath + cardSet.back;
-      rootState.public.deck.width = !cardSet.width
-        ? 128
-        : parseInt(("" + cardSet.width).replace(/px/, ""));
-      rootState.public.deck.height = !cardSet.height
-        ? 192
-        : parseInt(("" + cardSet.height).replace(/px/, ""));
-      if (!cardSet.source) {
-        cardSet.source = {};
-      }
-      rootState.public.deck.author = !cardSet.source.author
-        ? ""
-        : cardSet.source.author;
-      rootState.public.deck.title = cardSet.source.title;
-      if (!cardSet.source.refs) {
-        cardSet.source.refs = [];
-      }
-      rootState.public.deck.refs = cardSet.source.refs;
-      cardSet.cards.forEach((card, i) => {
-        const path = basePath + card.file;
-        rootState.public.deck.cards.list.push({
+        cardSet.width = cardSet.width || 128;
+        cardSet.height = cardSet.height || 192;
+        cardSet.source = cardSet.source || {};
+
+        const basePath = cardSet.basePath || "";
+        const storeDeck = rootState.public.deck;
+        storeDeck.name = cardSet.name;
+        storeDeck.back = basePath + cardSet.back;
+        storeDeck.width = cardSet.width;
+        storeDeck.height = cardSet.height;
+        storeDeck.author = cardSet.source.author || "";
+        storeDeck.title = cardSet.source.title || "";
+        storeDeck.refs = cardSet.source.refs || [];
+        storeDeck.cards.list = cardSet.cards.map((card, i) => ({
           key: `card-${i}`,
           front: { text: `` },
-          back: { text: ``, img: path }
-        });
-        rootState.public.deck.cards.maxKey = i;
+          back: { text: ``, img: basePath + card.file }
+        }));
+        storeDeck.cards.maxKey = cardSet.cards.length - 1;
       });
 
       /* ----------------------------------------------------------------------
-       * チャットタブの設定
+       * BGMの設定
        */
-      dispatch("changeChatTab", { tabsText: "雑談" });
+      loadYaml("/static/conf/bgm.yaml").then(bgmList => {
+        bgmList.forEach((bgm, index) => (bgm.key = `bgm-${index}`));
+        rootState.public.bgm.list = bgmList;
+        rootState.public.bgm.maxKey = bgmList.length - 1;
+      });
 
+      /* ----------------------------------------------------------------------
+       * 画像の設定
+       */
+      loadYaml("/static/conf/image.yaml").then(imageList => {
+        imageList.forEach((image, index) => (image.key = `image-${index}`));
+        rootState.public.image.list = imageList;
+        rootState.public.image.maxKey = imageList.length - 1;
+      });
+
+      /* ----------------------------------------------------------------------
+       * 初期入室の処理
+       */
       if (roomName) {
         /* ------------------------------
          * 部屋存在チェック
@@ -273,9 +292,7 @@ export default new Vuex.Store({
       let type = null;
       if (state.public.room.members[0]) {
         value.ownerPeerId = rootGetters.peerId(isWait);
-        if (
-          state.public.room.members[0].peerId === rootGetters.peerId(isWait)
-        ) {
+        if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
           type = "DO_METHOD";
           dispatch(method, value);
         } else {
@@ -300,10 +317,10 @@ export default new Vuex.Store({
      * @param payload
      * @returns {*}
      */
-    changeDisplay: ({ dispatch }, payload) =>
+    reverseProperty: ({ dispatch }, payload) =>
       dispatch("sendNoticeOperation", {
         value: payload,
-        method: "doChangeDisplay"
+        method: "doReverseProperty"
       }),
     /**
      * 指定されたプロパティパスの値を反転させる
@@ -311,7 +328,7 @@ export default new Vuex.Store({
      * @param commit
      * @param property
      */
-    doChangeDisplay: ({ getters, commit }, { property }) => {
+    doReverseProperty: ({ getters, commit }, { property }) => {
       const target = getters.getStateValue(property);
       const payload = {};
       if (typeof target === "boolean") {
@@ -376,6 +393,67 @@ export default new Vuex.Store({
       }
       const target = getters.getStateValue(property);
       target.splice(0, target.length);
+    },
+    addChatTab: (
+      { rootState },
+      {
+        name,
+        isActive = false,
+        isHover = false,
+        unRead = 0,
+        order = rootState.public.chat.tab.list.length
+      }
+    ) => {
+      const key = `chatTab-${++rootState.public.chat.tab.maxKey}`;
+      const publicTab = {
+        key: key,
+        name: name
+      };
+      const privateTab = {
+        key: key,
+        isActive: isActive,
+        isHover: isHover,
+        unRead: unRead,
+        order: order
+      };
+      rootState.public.chat.tab.list.push(publicTab);
+      rootState.private.chat.tab.push(privateTab);
+      Vue.set(rootState.public.chat.tab.logs, key, []);
+    },
+    updateChatTab: (
+      { rootState },
+      {
+        key,
+        name = undefined,
+        isActive = undefined,
+        isHover = undefined,
+        unRead = undefined
+      }
+    ) => {
+      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
+        tab => tab.key === key
+      );
+      const publicTab = rootState.public.chat.tab.list[publicTabIndex];
+      const privateTabIndex = rootState.private.chat.tab.findIndex(
+        tab => tab.key === key
+      );
+      const privateTab = rootState.private.chat.tab[publicTabIndex];
+      if (name !== undefined) publicTab.name = name;
+      if (isActive !== undefined) privateTab.isActive = isActive;
+      if (isHover !== undefined) privateTab.isHover = isHover;
+      if (unRead !== undefined) privateTab.isActive = unRead;
+      rootState.public.chat.tab.list.splice(publicTabIndex, 1, publicTab);
+      rootState.private.chat.tab.splice(privateTabIndex, 1, privateTab);
+    },
+    deleteChatTab: ({ rootState }, { key }) => {
+      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
+        tab => tab.key === key
+      );
+      const privateTabIndex = rootState.private.chat.tab.findIndex(
+        tab => tab.key === key
+      );
+      rootState.public.chat.tab.list.splice(publicTabIndex, 1);
+      rootState.private.chat.tab.splice(privateTabIndex, 1);
     }
   },
   mutations: {
@@ -584,12 +662,11 @@ export default new Vuex.Store({
     isOverEvent: state => state.map.isOverEvent,
     isDraggingRight: state => state.map.isDraggingRight,
     move: state => state.map.move,
-    anglevolatile: state => state.map.angle,
+    angleVolatile: state => state.map.angle,
     mouseOnScreen: state => state.map.mouse.onScreen,
     mouseOnTable: state => state.map.mouse.onTable,
     mouseOnCanvas: state => state.map.mouse.onCanvas,
     mouseLocate: state => state.mouse,
-    volatileSaveData: state => state.volatileSaveData,
     deckCommand: state => state.deck.command,
     deckHoverIndex: state => state.deck.hoverIndex,
     deckHoverKey: state => state.deck.hoverKey,
@@ -597,6 +674,31 @@ export default new Vuex.Store({
       !isWait ? state.self.webRtcPeer : state.self.webRtcPeerWait,
     webRtcRoom: state => isWait =>
       !isWait ? state.room.webRtcRoom : state.room.webRtcRoomWait,
-    chatActorKey: state => state.chat.actorKey
+    chatActorKey: state => state.chat.actorKey,
+    volatilePrivateData: state => state.volatileSaveData.players,
+    chatTabs: (state, getters, rootState) => {
+      const tabs = rootState.public.chat.tab.list.map(publicTab => {
+        const privateTab = rootState.private.chat.tab.filter(
+          privateTab => privateTab.key === publicTab.key
+        )[0];
+        return {
+          key: publicTab.key,
+          name: publicTab.name,
+          isActive: privateTab.isActive,
+          isHover: privateTab.isHover,
+          unRead: privateTab.unRead,
+          order: privateTab.order
+        };
+      });
+      return tabs;
+    },
+    /**
+     * 選択済みのチャットのタブのオブジェクト
+     * @param state
+     * @param getters
+     * @returns any
+     */
+    activeChatTab: (state, getters) =>
+      getters.chatTabs.filter(tab => tab.isActive)[0]
   }
 });

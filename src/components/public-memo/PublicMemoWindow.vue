@@ -30,7 +30,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["chatTabSelect", "windowOpen", "setProperty"]),
+    ...mapActions(["windowOpen", "setProperty"]),
     open() {
       // TODO get data
     },

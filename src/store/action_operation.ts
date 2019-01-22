@@ -34,7 +34,7 @@ export default {
         const activeChatTab = rootGetters.activeChatTab;
         const name = payload.name;
         const color = payload.color;
-        const tab = payload.tab ? payload.tab : activeChatTab.name;
+        const tab = payload.tab || activeChatTab.key;
         const from = payload.from;
         const target = payload.target;
         let viewHtml;
@@ -58,12 +58,12 @@ export default {
         };
         // 未読カウントアップ
         if (tab !== activeChatTab.name) {
-          const tabObj = rootState.public.chat.tabs.filter(
-            (tabObj: any) => tabObj.name === tab
-          )[0];
+          const index = rootGetters.chatTabsOption.findIndex(
+            (tabObj: any) => tabObj.key === tab
+          );
+          const tabObj = rootGetters.chatTabsOption[index];
           tabObj.unRead++;
-          const index = rootState.public.chat.tabs.indexOf(tabObj);
-          rootState.public.chat.tabs.splice(index, 1, tabObj);
+          rootGetters.chatTabsOption.splice(index, 1, tabObj);
         }
         rootState.public.chat.logs[tab].push(logObj);
       }
@@ -143,7 +143,7 @@ export default {
       }: { dispatch: Function; rootState: any; rootGetters: any },
       text: string
     ) => {
-      rootState.setting.bgm.list
+      rootState.public.bgm.list
         .filter((bgmObj: any) => {
           if (
             bgmObj.chatLinkage === 1 &&
@@ -199,7 +199,7 @@ export default {
         key: key
       });
       if (rootGetters.peerId(false) === ownerPeerId) {
-        rootState.private.history.push({ type: "add", key: key });
+        rootGetters.historyList.push({ type: "add", key: key });
       }
     },
     /** ========================================================================
@@ -208,13 +208,19 @@ export default {
     addBGM: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", { value: payload, method: "doAddBGM" });
     },
-    doAddBGM: ({ rootState }: { rootState: any }, payload: any) => {
+    doAddBGM: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
       // 欠番を埋める方式は不採用
-      let maxKey = rootState.setting.bgm.maxKey;
+      let maxKey = rootState.public.bgm.maxKey;
       const key = `bgm-${++maxKey}`;
-      rootState.setting.bgm.maxKey = maxKey;
+      rootState.public.bgm.maxKey = maxKey;
       payload.key = key;
-      rootState.setting.bgm.list.push(payload);
+      rootState.public.bgm.list.push(payload);
+      if (rootGetters.peerId(false) === payload.ownerPeerId) {
+        rootGetters.historyList.push({ type: "add", key: key });
+      }
     },
     /** ========================================================================
      * マップオブジェクトを追加する
@@ -264,7 +270,7 @@ export default {
 
       rootState.public[payload.propName].list.push(obj);
       if (rootGetters.peerId(false) === payload.ownerPeerId) {
-        rootState.private.history.push({ type: "add", key: key });
+        rootGetters.historyList.push({ type: "add", key: key });
       }
     },
     /** ========================================================================
@@ -320,8 +326,8 @@ export default {
       rootState.public[payload.propName].list.splice(index, 1);
 
       if (rootGetters.peerId(false) === payload.ownerPeerId) {
-        rootState.private.history.splice(
-          rootState.private.history.findIndex(
+        rootGetters.historyList.splice(
+          rootGetters.historyList.findIndex(
             (hisObj: any) => hisObj.key === payload.key
           ),
           1
@@ -424,7 +430,7 @@ export default {
       payload: any
     ) => {
       const lastActiveTab = rootState.public.activeChatTab;
-      let tabsText = payload.tabsText;
+      let tabsText = payload.tabsText.trim();
       // 秘匿チャット以外を削除
       rootGetters.chatTabs
         .map((tab: any, index: number) => {
@@ -493,6 +499,7 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
+      window.console.log(rootGetters.activeTab, rootGetters.chatLogs);
       return rootGetters.chatLogs[rootGetters.activeTab].filter((log: any) => {
         if (log.from === rootGetters.playerKey) return true;
         if (!log.target) return true;

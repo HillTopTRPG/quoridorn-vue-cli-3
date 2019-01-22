@@ -9,7 +9,7 @@
               v-for="(tabObj, index) in chatTabs"
               :key="tabObj.name"
               :class="{ active: tabObj.name === activeTab, unRead: tabObj.unRead > 0 }"
-              @mousedown.prevent="selectChatTab(tabObj.name)"
+              @mousedown.prevent="selectChatTab(tabObj.key)"
               :tabindex="index + 1"
         >#{{tabObj.name}}/{{tabObj.unRead}}</span>
         <span class="tab addButton" @click="addTab" :tabindex="chatTabs.length + 1"><span class="icon-cog"></span></span>
@@ -331,18 +331,16 @@ export default class ChatWindow extends Vue {
 
     // タブの選択の場合
     if (this.chatOptionSelectMode === "tab") {
-      const selection = [
-        "[選択中]",
-        ...this.chatTabs.map((tab: any) => tab.name)
+      const selection: (null | any)[] = [
+        null, // [選択中]
+        ...this.chatTabs.map((tab: any) => tab.key)
       ];
 
       event.preventDefault();
       let index = selection.indexOf(this.outputTab);
       const newValue = arrangeIndex(selection, index);
 
-      this.selectChatTab(
-        newValue !== "[選択中]" ? newValue : this.volatileActiveTab
-      );
+      this.selectChatTab(newValue !== null ? newValue : this.volatileActiveTab);
       this.outputTab = newValue;
     }
   }
@@ -377,13 +375,13 @@ export default class ChatWindow extends Vue {
     this.volatileActiveTab = "";
     this.volatileTargetTab = "";
   }
-  selectChatTab(name: string): void {
+  selectChatTab(key: string): void {
     this.setProperty({
       property: "chat.activeTab",
-      value: name,
+      value: key,
       logOff: true
     });
-    this.chatTabSelect(name);
+    this.chatTabSelect(key);
   }
   groupTargetTabSelect(targetKey: string): void {
     this.chatTarget = targetKey;

@@ -176,7 +176,7 @@ export default {
       };
       const index = this.bgmList.findIndex(bgmObj => bgmObj.key === this.key);
       this.setProperty({
-        property: `setting.bgm.list.${index}`,
+        property: `public.bgm.list.${index}`,
         value: bgmObj,
         logOff: false
       });
@@ -211,7 +211,7 @@ export default {
   },
   computed: mapState({
     key: state => state.private.display["editBGMWindow"].key,
-    bgmList: state => state.setting.bgm.list
+    bgmList: state => state.public.bgm.list
   })
 };
 </script>
