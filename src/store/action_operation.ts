@@ -57,7 +57,7 @@ export default {
           viewHtml: viewHtml
         };
         // 未読カウントアップ
-        if (tab !== activeChatTab.name) {
+        if (tab !== activeChatTab.key) {
           const index = rootGetters.chatTabsOption.findIndex(
             (tabObj: any) => tabObj.key === tab
           );
@@ -217,10 +217,11 @@ export default {
       const key = `bgm-${++maxKey}`;
       rootState.public.bgm.maxKey = maxKey;
       payload.key = key;
-      rootState.public.bgm.list.push(payload);
       if (rootGetters.peerId(false) === payload.ownerPeerId) {
         rootGetters.historyList.push({ type: "add", key: key });
       }
+      delete payload.ownerPeerId;
+      rootState.public.bgm.list.push(payload);
     },
     /** ========================================================================
      * マップオブジェクトを追加する
@@ -268,10 +269,12 @@ export default {
         }, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}" }`
       );
 
-      rootState.public[payload.propName].list.push(obj);
       if (rootGetters.peerId(false) === payload.ownerPeerId) {
         rootGetters.historyList.push({ type: "add", key: key });
       }
+      delete payload.ownerPeerId;
+      delete payload.isNotice;
+      rootState.public[payload.propName].list.push(obj);
     },
     /** ========================================================================
      * マップオブジェクト情報を変更する
@@ -485,7 +488,7 @@ export default {
         if (!rootGetters.chatLogs[tabsTab.name]) {
           // this.$set(state.chat.logs, tabsTab.name, [])
           const newLogs = { ...rootGetters.chatLogs };
-          newLogs[tabsTab.name] = [];
+          newLogs[tabsTab.key] = [];
           rootState.public.chat.logs = newLogs;
           // state.chat.logs[tabsTab.name] = []
         }
@@ -499,7 +502,6 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
-      window.console.log(rootGetters.activeTab, rootGetters.chatLogs);
       return rootGetters.chatLogs[rootGetters.activeTab].filter((log: any) => {
         if (log.from === rootGetters.playerKey) return true;
         if (!log.target) return true;

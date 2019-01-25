@@ -418,7 +418,7 @@ export default new Vuex.Store({
       };
       rootState.public.chat.tab.list.push(publicTab);
       rootState.private.chat.tab.push(privateTab);
-      Vue.set(rootState.public.chat.tab.logs, key, []);
+      Vue.set(rootState.public.chat.logs, key, []);
     },
     updateChatTab: (
       { rootState },
@@ -699,6 +699,10 @@ export default new Vuex.Store({
      * @returns any
      */
     activeChatTab: (state, getters) =>
-      getters.chatTabs.filter(tab => tab.isActive)[0]
+      getters.chatTabs.filter(tab => tab.isActive)[0],
+    grid: state => ({
+      c: state.map.grid.c,
+      r: state.map.grid.r
+    })
   }
 });

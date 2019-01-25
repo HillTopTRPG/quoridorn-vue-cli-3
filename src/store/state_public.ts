@@ -492,6 +492,16 @@ export default {
       return `${baseUrl}?${params.join("&")}`;
     },
     isMapEditing: (state: any): boolean => state.map.isEditing,
-    groupTargetTab: (state: any): any => state.chat.groupTargetTab
+    groupTargetTab: (state: any): any => state.chat.groupTargetTab,
+    isDrawGridLine: (state: any): boolean => state.setting.gridLine,
+    isDrawGridId: (state: any): boolean => state.setting.gridId,
+    gridColor: (state: any): string => state.map.grid.color,
+    isReverse: (state: any): boolean => state.map.isReverse,
+    canvasSize(state: any, getter: any) {
+      return {
+        w: getter.columns * getter.gridSize,
+        h: getter.rows * getter.gridSize
+      };
+    }
   } /* end of getters */
 };

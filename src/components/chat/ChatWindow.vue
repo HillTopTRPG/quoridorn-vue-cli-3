@@ -8,7 +8,7 @@
         <span class="tab"
               v-for="(tabObj, index) in chatTabs"
               :key="tabObj.name"
-              :class="{ active: tabObj.name === activeTab, unRead: tabObj.unRead > 0 }"
+              :class="{ active: tabObj.key === activeTab, unRead: tabObj.unRead > 0 }"
               @mousedown.prevent="selectChatTab(tabObj.key)"
               :tabindex="index + 1"
         >#{{tabObj.name}}/{{tabObj.unRead}}</span>

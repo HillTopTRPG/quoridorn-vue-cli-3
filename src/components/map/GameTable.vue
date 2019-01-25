@@ -37,9 +37,9 @@ import MapMask from "./mapMask/MapMask.vue";
 import Character from "./character/Character.vue";
 import Chit from "./chit/Chit.vue";
 
+import { qLog } from "../common/Utility";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { Action, Getter } from "vuex-class";
-import { qLog } from "../common/Utility";
 import { Watch } from "vue-property-decorator";
 
 @Component({
