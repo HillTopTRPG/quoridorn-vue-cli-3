@@ -364,6 +364,11 @@ export default {
     volatileResolve: (state: any) =>
       state.display.inputPlayerInfoWindow.resolve,
     historyList: (state: any) => state.historyList,
-    chatTabsOption: (state: any): any[] => state.chat.tab
+    chatTabsOption: (state: any): any[] => state.chat.tab,
+    dropZipList: (state: any) => state.display.dropZipWindow.zipList,
+    dropImageList: (state: any) => state.display.dropImageWindow.imageDataList,
+    chitContextObjKey: (state: any) => state.display.chitContext.key,
+    mapMaskContextObjKey: (state: any) => state.display.mapMaskContext.key,
+    characterContextObjKey: (state: any) => state.display.characterContext.key
   }
 };

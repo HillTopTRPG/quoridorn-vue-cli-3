@@ -294,11 +294,11 @@ export default new Vuex.Store({
         value.ownerPeerId = rootGetters.peerId(isWait);
         if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
           type = "DO_METHOD";
-          dispatch(method, value);
+          return dispatch(method, value);
         } else {
           type = "NOTICE_OPERATION";
         }
-        dispatch("sendRoomData", {
+        return dispatch("sendRoomData", {
           type: type,
           value: value,
           method: method,
@@ -306,7 +306,7 @@ export default new Vuex.Store({
         });
       } else {
         value.ownerPeerId = null;
-        dispatch(method, value);
+        return dispatch(method, value);
       }
     },
 
@@ -676,10 +676,10 @@ export default new Vuex.Store({
       !isWait ? state.room.webRtcRoom : state.room.webRtcRoomWait,
     chatActorKey: state => state.chat.actorKey,
     volatilePrivateData: state => state.volatileSaveData.players,
-    chatTabs: (state, getters, rootState) => {
-      const tabs = rootState.public.chat.tab.list.map(publicTab => {
-        const privateTab = rootState.private.chat.tab.filter(
-          privateTab => privateTab.key === publicTab.key
+    chatTabs: (state, getters, rootState, rootGetters) => {
+      return rootGetters.chatTabsOption.map(privateTab => {
+        const publicTab = rootState.public.chat.tab.list.filter(
+          publicTab => publicTab.key === privateTab.key
         )[0];
         return {
           key: publicTab.key,
@@ -690,7 +690,6 @@ export default new Vuex.Store({
           order: privateTab.order
         };
       });
-      return tabs;
     },
     /**
      * 選択済みのチャットのタブのオブジェクト

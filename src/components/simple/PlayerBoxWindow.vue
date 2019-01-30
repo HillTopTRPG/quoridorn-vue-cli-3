@@ -41,10 +41,10 @@
               </fieldset>
             </li>
             <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'field', playerKey: currentPlayerKey })" :key="mapMask.key">
-              <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
+              <!-- <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" /> -->
             </li>
             <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'field', playerKey: currentPlayerKey })" :key="chit.key">
-              <ChitChip :type="chit.kind" :objKey="chit.key" />
+              <!-- <ChitChip :type="chit.kind" :objKey="chit.key" /> -->
             </li>
           </ul>
         </fieldset>
@@ -71,11 +71,11 @@
               <button @click="toMap(character.key)">マップへ</button>
             </li>
             <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'graveyard', playerKey: currentPlayerKey })" :key="mapMask.key">
-              <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
+              <!-- <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" /> -->
               <button @click="toMap(mapMask.key)">マップへ</button>
             </li>
             <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'graveyard', playerKey: currentPlayerKey })" :key="chit.key">
-              <ChitChip :type="chit.kind" :objKey="chit.key" />
+              <!-- <ChitChip :type="chit.kind" :objKey="chit.key" /> -->
               <button @click="toMap(chit.key)">マップへ</button>
             </li>
           </ul>

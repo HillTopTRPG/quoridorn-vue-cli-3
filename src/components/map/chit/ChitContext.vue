@@ -1,4 +1,3 @@
-
 <template>
   <ContextFrame displayProperty="private.display.chitContext">
     <div class="item" @click.left.prevent="viewEditChit">変更</div>
@@ -7,63 +6,66 @@
   </ContextFrame>
 </template>
 
-<script>
-import { mapState, mapActions, mapGetters } from "vuex";
-import ContextFrame from "../../ContextFrame";
-import WindowMixin from "../../WindowMixin";
+<script lang="ts">
+import ContextFrame from "../../ContextFrame.vue";
+import WindowMixin from "../../WindowMixin.vue";
 
-export default {
+import { Component, Vue } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+
+@Component<ChitContext>({
+  name: "chitContext",
   mixins: [WindowMixin],
   components: {
     ContextFrame
-  },
-  methods: {
-    ...mapActions([
-      "windowOpen",
-      "setProperty",
-      "deletePieceInfo",
-      "windowClose"
-    ]),
-    viewEditChit() {
-      window.console.log(
-        `  [methods] select context => item: Chit(${this.objKey}).viewEditChit`
-      );
-      this.setProperty({
-        property: "private.display.editChitWindow.key",
-        value: this.objKey
-      });
-      this.windowOpen("private.display.editChitWindow");
-      this.windowClose("private.display.chitContext");
-    },
-    copyChit() {
-      window.console.log(
-        `  [methods] select context => item: Chit(${this.objKey}).copyChit`
-      );
-      alert("未実装の機能です");
-      this.windowClose("private.display.chitContext");
-    },
-    deleteChit() {
-      window.console.log(
-        `  [methods] select context => item: Chit(${this.objKey}).deleteChit`
-      );
-      this.deletePieceInfo({
-        propName: "chit",
-        key: this.objKey,
-        isNotice: true
-      });
-      this.windowClose("private.display.chitContext");
-    }
-  },
-  computed: mapState({
-    ...mapGetters(["getObj"]),
-    objKey: state => state.private.display["chitContext"].key,
-    storeObj() {
-      const key = this.objKey;
-      // window.console.log(`key:${key}`)
-      return this.getObj(key);
-    }
-  })
-};
+  }
+})
+export default class ChitContext extends Vue {
+  @Action("windowOpen") windowOpen: any;
+  @Action("setProperty") setProperty: any;
+  @Action("deletePieceInfo") deletePieceInfo: any;
+  @Action("windowClose") windowClose: any;
+  @Getter("getObj") getObj: any;
+  @Getter("chitContextObjKey") chitContextObjKey: any;
+  @Getter("playerKey") playerKey: any;
+
+  viewEditChit() {
+    window.console.log(
+      `  [methods] select context => item: Chit(${
+        this.chitContextObjKey
+      }).viewEditChit`
+    );
+    this.setProperty({
+      property: "private.display.editChitWindow.key",
+      value: this.chitContextObjKey
+    });
+    this.windowOpen("private.display.editChitWindow");
+    this.windowClose("private.display.chitContext");
+  }
+  copyChit() {
+    window.console.log(
+      `  [methods] select context => item: Chit(${
+        this.chitContextObjKey
+      }).copyChit`
+    );
+    alert("未実装の機能です");
+    this.windowClose("private.display.chitContext");
+  }
+  deleteChit() {
+    window.console.log(
+      `  [methods] select context => item: Chit(${
+        this.chitContextObjKey
+      }).deleteChit`
+    );
+    this.deletePieceInfo({
+      propName: "chit",
+      key: this.chitContextObjKey,
+      owner: this.playerKey,
+      isNotice: true
+    });
+    this.windowClose("private.display.chitContext");
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

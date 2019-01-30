@@ -13,7 +13,7 @@ Vue.use(Vuex);
  */
 export default {
   actions: {
-    /**
+    /** ========================================================================
      * セーブデータ作成を開始する
      * @param dispatch
      * @param rootState
@@ -57,7 +57,7 @@ export default {
       }
     },
 
-    /**
+    /** ========================================================================
      * セーブデータ作成を実行する
      * @param dispatch
      * @param rootState
@@ -139,17 +139,6 @@ export default {
           () => `$${imageKeys.indexOf(matchKey)}`
         );
       };
-      const imgTagKeys = addKeyList.filter(
-        key => key.split("-")[0] === "imgTag"
-      );
-      // 画像を持つオブジェクトを全部まとめた配列にし、そこから参照される画像ファイルをすべて相対参照に変換する
-      const hasImgObjList: any[] = rootState.public.character.list.concat(
-        rootState.public.chit.list
-      );
-      const hasImgKeys = addKeyList.filter(key => {
-        const index = hasImgObjList.findIndex(obj => obj.key === key);
-        return index > -1;
-      });
       const addObjList: any[] = addKeyList.map(key => {
         const obj = JSON.parse(JSON.stringify(rootGetters.getObj(key)));
         // 画像を持つオブジェクトなら "useImageList" があるはず
@@ -203,17 +192,23 @@ export default {
         );
       });
     },
+
+    /** ========================================================================
+     *
+     * @param dispatch
+     * @param rootState
+     * @param zipFiles
+     */
     importStart(
       { dispatch, rootState }: { dispatch: Function; rootState: any },
       zipFiles: any[]
     ) {
       const zip: any = new JSZip();
       const zipList: any[] = [];
-      const promiseList: PromiseLike<any>[] = [];
-      for (const file of zipFiles) {
-        promiseList.push(
+      const promiseList: PromiseLike<any>[] = zipFiles.map(
+        zipFile =>
           new Promise(resolve => {
-            zip.loadAsync(file).then((zip: any) => {
+            zip.loadAsync(zipFile).then((zip: any) => {
               // you now have every files contained in the loaded zip
               zip
                 .file("save.json")
@@ -221,133 +216,184 @@ export default {
                 .then((jsonStr: string) => {
                   const saveData = JSON.parse(jsonStr);
                   zipList.push({
-                    fileName: file.name,
+                    fileName: zipFile.name,
                     saveData: saveData
                   });
                   resolve();
                 });
             });
           })
-        );
-      }
+      );
       Promise.all(promiseList).then(() => {
         rootState.private.display.dropZipWindow.zipList = zipList;
         dispatch("windowOpen", "private.display.dropZipWindow");
       });
     },
-    doImport(
-      { dispatch, rootState }: { dispatch: Function; rootState: any },
-      importData: any
-    ) {
-      const publicData = importData.public;
-      const privateData = importData.private;
-      const importFunc = () => {
-        // 設定データは上書きでいい
-        if (publicData.setting) {
-          rootState.public.setting = publicData.setting;
-        }
-        // FIXME
-        // チャットデータは上書きでいい…かな？（差分方式がいい気もしている
-        if (publicData.chat) {
-          rootState.public.chat = publicData.chat;
-        }
-        // TODO 追加された画像を元に、各プレイヤーの履歴情報を更新すること。
-        let addImageKeyList: string[];
-        if (publicData.image) {
-          addImageKeyList = publicData.image.list.map((imgObj: any) => {
-            dispatch("doAddImage", imgObj);
-            return `image-${rootState.public.image.maxKey}`;
-          });
-          const func = (hisObj: any) => {
-            let key = hisObj.key;
-            if (key.split("-")[0] === "image") {
-              const matchObj = key.match(/\$([0-9]+)/);
-              const index = parseInt(matchObj[1], 10);
-              hisObj.key = addImageKeyList[index];
-            }
-          };
-          privateData.history.forEach(func);
-          publicData.room.members.forEach((memberObj: any) => {
-            memberObj.private.history.forEach(func);
-          });
-        }
-        if (publicData.map) {
-          rootState.public.map = publicData.map;
-        }
-        if (publicData.mapMask) {
-          publicData.mapMask.list.forEach((mapMaskObj: any) => {
-            dispatch("doAddPieceInfo", mapMaskObj);
-          });
-        }
-        // TODO 追加されたキャラクターを元に、各プレイヤーの履歴情報を更新すること。
-        // let addCharacterKeyList = null
-        if (publicData.character) {
-          // addCharacterKeyList =
-          publicData.character.list.map((charObj: any) => {
-            let useImageList = charObj.useImageList;
-            addImageKeyList.forEach((key, index) => {
-              useImageList = useImageList.replace(
-                new RegExp(`image-\\$${index}$`, "g"),
-                key
-              );
-            });
-            charObj.useImageList = useImageList;
-            dispatch("doAddPieceInfo", charObj);
-            return `character-${rootState.public.character.maxKey}`;
-          });
-        }
-        // TODO 追加されたチットを元に、各プレイヤーの履歴情報を更新すること。
-        // let addChitKeyList = null
-        if (publicData.chit) {
-          // addChitKeyList =
-          publicData.chit.list.map((chitObj: any) => {
-            let imageKey = chitObj.imageKey;
-            addImageKeyList.forEach((key, index) => {
-              imageKey = imageKey.replace(
-                new RegExp(`image-\\$${index}$`, "g"),
-                key
-              );
-            });
-            chitObj.imageKey = imageKey;
-            dispatch("doAddPieceInfo", chitObj);
-            return `chit-${rootState.public.chit.maxKey}`;
-          });
-        }
-        if (publicData.publicMemo) {
-          rootState.public.publicMemo = publicData.publicMemo;
-        }
-        if (publicData.room.members.length > 0) {
-          dispatch("windowOpen", "private.display.selectPeerWindow");
-        }
-      };
-      if (publicData.room && publicData.room.name !== "") {
-        const roomName = publicData.room.name;
-        const peerId = privateData.self.peerId;
-        // 部屋の存在チェック
-        dispatch("checkRoomName", {
-          roomName: roomName,
-          /** 部屋が見つかったときのコールバック */
-          roomFindFunc: () => {
-            // 部屋が見つかったら接続しにいく。他のセーブデータは使わない。
-            rootState.private.display.confirmLoadRoomWindow.importData = importData;
-            dispatch("windowOpen", "private.display.confirmLoadRoomWindow");
-          },
-          /** 部屋が見つからなかったときのコールバック */
-          roomNonFindFunc: () => {
-            // ルームメンバーを自分も含めて、一旦入室前の状態にする
-            rootState.public.room = publicData.room;
 
-            if (peerId) {
-              // TODO 引数修正
-              dispatch("createPeer", { peerId: peerId, roomName: roomName });
-            }
-            importFunc();
-          }
+    /** ========================================================================
+     *
+     * @param dispatch
+     * @param rootState
+     * @param rootGetters
+     * @param publicData
+     * @param dataVersion
+     * @param delKeyList
+     * @param addObjList
+     */
+    doImport(
+      {
+        dispatch,
+        rootState,
+        rootGetters
+      }: { dispatch: Function; rootState: any; rootGetters: any },
+      {
+        publicData,
+        dataVersion,
+        delKeyList,
+        addObjList
+      }: {
+        publicData: any;
+        dataVersion: string;
+        delKeyList: string[];
+        addObjList: any[];
+      }
+    ) {
+      const importFunc = () => {
+        // FIXME チャットデータは上書きでいいの…かな？（差分方式がいい気もしている
+        dispatch("setProperty", {
+          property: "public",
+          value: publicData,
+          logOff: true
         });
-      } else {
-        // セーブデータに部屋情報が無いなら、単にログアウトしてからロード処理をする
-        dispatch("logout");
+
+        delKeyList.forEach(delKey => {
+          dispatch("delObj", delKey);
+        });
+
+        // 画像のみを先行して追加し、割り振られるkeyを他のオブジェクトから参照させる
+        const imageAddPromiseList: PromiseLike<any>[] = addObjList
+          .filter(addObj => addObj.key.split("-")[0] === "image")
+          .map(addObj => dispatch("addImage", {
+            tag: addObj.tag,
+            data: addObj.data,
+            owner: addObj.owner
+          }));
+        Promise.all([...imageAddPromiseList]).then(
+          function(imageList: string[]) {
+            // 画像を全て読み込み終えたら、他のオブジェクトの追加を処理する
+            addObjList
+              // 画像以外を処理対象とする
+              .filter(addObj => addObj.key.split("-")[0] !== "image")
+              .forEach(addObj => {
+                const type = addObj.key.split("-")[0];
+
+                // image参照の差分ロード
+                let useImageList: string = addObj.useImageList;
+                if (useImageList) {
+                  useImageList.split("|").forEach(useImage => {
+                    const matchResult = useImage.match(/image-\$([0-9]+)/);
+                    if (matchResult) {
+                      const replaceImage = imageList[parseInt(matchResult[1])];
+                      useImageList = useImageList.replace(
+                        matchResult[0],
+                        replaceImage
+                      );
+                    }
+                  });
+                }
+                addObj.useImageList = useImageList;
+
+                // グループチャットデータのロード
+                if (type === "groupTargetTab") {
+                  rootGetters.groupTargetTab.list.push({
+                    key: `groupTargetTab-${++rootGetters.groupTargetTab.maxKey}`,
+                    isSecret: addObj.isSecret,
+                    name: addObj.name,
+                    targetTab: addObj.targetTab,
+                    isAll: addObj.isAll,
+                    group: addObj.group
+                  });
+                  return;
+                }
+
+                // マップオブジェクトのロード
+                delete addObj.key;
+                dispatch("addPieceInfo", addObj);
+
+              })
+          });
+      };
+      if (!publicData.room) {
+        // セーブデータに部屋情報が無いなら、ロード処理を実行する
         importFunc();
+      } else {
+        // セーブデータに部屋情報があるなら、入室処理を行う
+        const roomName = publicData.room.name;
+        // 部屋の存在チェック
+        dispatch("loading", true);
+        Promise.resolve()
+          .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
+          .then(peerId => {
+            const logTexts = [];
+            logTexts.push(`create room by peer:"${peerId}"`);
+            logTexts.push(`本番: ${rootGetters.peerId(false)}`);
+            logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
+            window.console.log(logTexts.join(", "));
+            return dispatch("checkRoomName", { roomName: roomName });
+          })
+          .then((isExist: boolean) => {
+            if (isExist) {
+              // 既存部屋と部屋名が衝突しちゃったら回避する
+              const msg: string[] = [];
+              msg.push(`部屋「${roomName}」は既に存在します。`);
+              msg.push(`部屋名を変更して再挑戦しますか？`);
+              const result = window.confirm(msg.join("\n"));
+              if (result) {
+                const newRoomName = window.prompt("新規部屋名");
+              }
+              return;
+            }
+
+            // データインポート
+            importFunc();
+
+            const roomPassword = publicData.room.password;
+
+            Promise.resolve()
+              .then(() => {
+                return new Promise((resolve: Function) => {
+                  // プレイヤー情報を入力してもらう
+                  dispatch("setProperty", {
+                    property: "private.display.inputPlayerInfoWindow",
+                    value: {
+                      roomName: roomName,
+                      roomPassword: roomPassword || "",
+                      playerName: "",
+                      playerPassword: "",
+                      playerType: "PL",
+                      fontColor: "#000000",
+                      resolve: resolve
+                    },
+                    logOff: true
+                  });
+                  dispatch(
+                    "windowOpen",
+                    "private.display.inputPlayerInfoWindow"
+                  );
+                });
+              })
+              // プレイヤー情報を入力してもらったら部屋を新規作成して入室する
+              .then((payload: any) => dispatch("doNewRoom", {
+                roomName: roomName,
+                roomPassword: roomPassword || "",
+                playerName: payload.playerName,
+                playerPassword: payload.playerPassword,
+                playerType: payload.playerType || "PL",
+                fontColor: payload.fontColor
+              }))
+              .then(() => dispatch("loading", false))
+              .catch(() => dispatch("loading", false));
+          });
       }
     }
   }

@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import CanvasMixin from "../CanvasMixin";
+import CanvasMixin from "../CanvasMixin.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
@@ -35,7 +35,8 @@ export default class MapBoard extends Vue {
     this.paint();
   }
   paint(this: any): void {
-    const ctx = document.getElementById("map-canvas").getContext("2d");
+    const canvasElm: any = document.getElementById("map-canvas");
+    const ctx = canvasElm!.getContext("2d");
 
     ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h);
 

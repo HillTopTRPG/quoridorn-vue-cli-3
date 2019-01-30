@@ -188,6 +188,7 @@ export default {
       const player =
         playerIndex > -1 ? rootGetters.playerList[playerIndex] : null;
       const playerKey: string = player ? player.key : `player-${name}`;
+
       rootGetters.members.push({
         peerId: peerId,
         playerKey: playerKey
@@ -202,17 +203,16 @@ export default {
           type: type
         });
       } else {
-        player.type = type;
-        rootGetters.playerList.splice(playerIndex, 1, player);
-      }
-      if (peerId === rootGetters.peerId(isWait)) {
-        commit("updateActorKey", playerKey);
-        dispatch("setProperty", {
-          property: "private.self",
-          value: { playerKey: playerKey },
-          isNotice: false,
-          logOff: true
-        });
+        // privateデータの復元
+        if (player.private) {
+          dispatch("setProperty", {
+            property: "private",
+            value: player.private,
+            isNotice: false,
+            logOff: true
+          });
+          commit("updateActorKey", playerKey);
+        }
       }
     },
 
@@ -421,6 +421,25 @@ export default {
       }
     },
 
+    delObj: (state: any) => (key: string): void => {
+      if (!key) return;
+      const kind = key.split("-")[0];
+      let list: any[] = [];
+      const findIndexFunc: Function = () =>
+        list.findIndex(obj => obj.key === key);
+      if (kind === "groupTargetTab") {
+        // グループチャットタブ
+        list = state.chat.groupTargetTab.list;
+      } else {
+        // その他
+        list = state[kind].list;
+      }
+      const index = findIndexFunc(list);
+      if (index > -1) {
+        list.splice(index, 1);
+      }
+    },
+
     getViewName: (state: any, getters: any) => (key: string): string => {
       const obj = getters.getObj(key);
       if (!obj) return "名無し(PL)";
@@ -502,6 +521,8 @@ export default {
         w: getter.columns * getter.gridSize,
         h: getter.rows * getter.gridSize
       };
-    }
+    },
+    bgmList: (state: any) => state.bgm.list,
+    imageTagList: (state: any) => state.image.tags.list
   } /* end of getters */
 };

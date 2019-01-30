@@ -21,176 +21,166 @@
   </WindowFrame>
 </template>
 
-<script>
-import { mapState, mapActions } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
+<script lang="ts">
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
 
-export default {
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter, Mutation } from "vuex-class";
+
+@Component<DropZipWindow>({
   name: "dropZipWindow",
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
-  },
-  data() {
-    return {
-      saveDataList: null
+    WindowFrame
+  }
+})
+export default class DropZipWindow extends Vue {
+  @Action("windowClose") windowClose: any;
+  @Action("windowOpen") windowOpen: any;
+  @Action("doImport") doImport: any;
+  @Getter("dropZipList") dropZipList: any;
+
+  private saveDataList: any[] = [];
+
+  commit(): void {
+    // zipデータの配列のマージ先
+    const importData: any = {
+      publicData: null,
+      delKeyList: [],
+      addObjList: []
     };
-  },
-  methods: {
-    ...mapActions(["windowClose", "windowOpen", "doImport"]),
-    commit() {
-      const importData = {
-        private: this.$store.state.private,
-        public: {}
-      };
-      this.saveDataList.forEach(saveData => {
-        const propProc = (target, props) => {
-          for (const prop in props) {
-            if (!props.hasOwnProperty(prop)) continue;
-            const val = props[prop];
-            if (!(val instanceof Object) || val instanceof Array) {
-              target[prop] = val;
-            } else {
-              if (!target[prop]) {
-                target[prop] = {};
-              }
-              // window.console.log(target[prop], val)
-              propProc(target[prop], val);
-            }
-          }
-        };
-        saveData.useList.forEach(useObj => {
-          if (!useObj.isUse) {
-            return;
-          }
-          const target = useObj.target;
-          let toObj = importData.public;
-          let fromObj = saveData.saveData.public;
-          const props = target.split(".");
-          props.forEach(prop => {
-            if (toObj === null) return;
-            if (!toObj[prop]) {
-              if (fromObj[prop] instanceof Array) {
-                toObj[prop] = fromObj[prop];
-                toObj = null;
-                return;
-              } else {
-                toObj[prop] = {};
-              }
-            }
-            toObj = toObj[prop];
-            fromObj = fromObj[prop];
-          });
-          // window.console.log('$$ ', toObj, fromObj, importData)
-          if (toObj) {
-            propProc(toObj, fromObj);
-          }
+
+    // zipデータをマージする
+    // TODO とりあえず、インポートするデータの取捨選択は考慮しない（第一リリース仕様）
+    this.dropZipList.forEach(
+      ({ fileName, saveData }: { fileName: string; saveData: any }) => {
+        const publicData: any = saveData.public;
+        const dataVersion: string = saveData.dataVersion;
+        const delKeyList: string[] = saveData.delKeyList;
+        const addObjList: any[] = saveData.addObjList;
+
+        // TODO セーブデータの互換性の処理
+
+        // publicデータのマージ（先勝ち）
+        if (!importData.publicData) {
+          // TODO 本当はもっと細かい単位で処理したい
+          importData.publicData = publicData;
+        }
+
+        // 削除リストのマージ
+        delKeyList.forEach(delKey => {
+          if (importData.delKeyList.indexOf(delKey) !== -1) return;
+          importData.delKeyList.push(delKey);
         });
-        propProc(importData.private, saveData.saveData.private);
-      });
-      this.doImport(importData);
-      this.windowClose("private.display.dropZipWindow");
-    },
-    cancel() {
-      this.windowClose("private.display.dropZipWindow");
-    },
-    allSelect(index) {
-      const useList = this.saveDataList[index].useList;
-      useList.forEach((useObj, ind) => {
-        useObj.isUse = true;
-        useList.splice(ind, 1, useObj);
-      });
-    },
-    allDisSelect(index) {
-      const useList = this.saveDataList[index].useList;
-      useList.forEach((useObj, ind) => {
-        useObj.isUse = false;
-        useList.splice(ind, 1, useObj);
-      });
-    }
-  },
-  watch: {
-    storeZipList(storeZipList) {
-      this.saveDataList = [];
-      if (!storeZipList) {
-        return;
+
+        // 追加リストのマージ
+        addObjList.forEach(addObj => {
+          const index = importData.addObjList.findIndex((impAddObj: any) => {
+            return JSON.stringify(addObj) === JSON.stringify(impAddObj);
+          });
+          if (index !== -1) return;
+          importData.addObjList.push(addObj);
+        });
       }
-      storeZipList.forEach(saveDataObj => {
-        const useList = [];
-        const publicData = saveDataObj.saveData.public;
-        if (publicData.setting) {
-          useList.push({
-            label: "設定情報(マス目表示、回転マーカーの表示など)",
-            isUse: true,
-            target: "setting"
-          });
-        }
-        if (publicData.room) {
-          useList.push({
-            label: "部屋情報(継続卓なら必須)",
-            isUse: true,
-            target: "room"
-          });
-        }
-        if (publicData.chat) {
-          useList.push({
-            label: "チャット履歴(部屋情報とセットで)",
-            isUse: true,
-            target: "chat"
-          });
-        }
-        if (publicData.image) {
-          useList.push({ label: "画像情報", isUse: true, target: "image" });
-        }
-        if (publicData.map) {
-          useList.push({
-            label: "マップ情報(画像情報とセットで)",
-            isUse: true,
-            target: "map"
-          });
-        }
-        if (publicData.mapMask) {
-          useList.push({
-            label: "マップマスク情報",
-            isUse: true,
-            target: "mapMask"
-          });
-        }
-        if (publicData.character) {
-          useList.push({
-            label: "キャラクター情報(画像情報とセットで)",
-            isUse: true,
-            target: "character"
-          });
-        }
-        if (publicData.chit) {
-          useList.push({
-            label: "チット情報(画像情報とセットで)",
-            isUse: true,
-            target: "chit"
-          });
-        }
-        if (publicData.publicMemo) {
-          useList.push({
-            label: "共有メモ",
-            isUse: true,
-            target: "publicMemo"
-          });
-        }
-        this.saveDataList.push({
-          fileName: saveDataObj.fileName,
-          useList: useList,
-          saveData: saveDataObj.saveData
-        });
-      });
+    );
+    this.doImport(importData);
+    this.windowClose("private.display.dropZipWindow");
+  }
+  cancel(): void {
+    this.windowClose("private.display.dropZipWindow");
+  }
+  allSelect(index: number): void {
+    const useList: any[] = this.saveDataList[index].useList;
+    useList.forEach((useObj, index: number) => {
+      useObj.isUse = true;
+      useList.splice(index, 1, useObj);
+    });
+  }
+  allDisSelect(index: number): void {
+    const useList: any[] = this.saveDataList[index].useList;
+    useList.forEach((useObj, index: number) => {
+      useObj.isUse = false;
+      useList.splice(index, 1, useObj);
+    });
+  }
+
+  @Watch("dropZipList")
+  onChangeStoreZipList(dropZipList: any[]) {
+    this.saveDataList = [];
+    if (!dropZipList) {
+      return;
     }
-  },
-  computed: mapState({
-    storeZipList: state => state.private.display.dropZipWindow.zipList,
-    members: state => state.public.room.members
-  })
-};
+    dropZipList.forEach(saveDataObj => {
+      const useList = [];
+      const publicData = saveDataObj.saveData.public;
+      if (publicData.setting) {
+        useList.push({
+          label: "設定情報(マス目表示、回転マーカーの表示など)",
+          isUse: true,
+          target: "setting"
+        });
+      }
+      if (publicData.room) {
+        useList.push({
+          label: "部屋情報(継続卓なら必須)",
+          isUse: true,
+          target: "room"
+        });
+      }
+      if (publicData.chat) {
+        useList.push({
+          label: "チャット履歴(部屋情報とセットで)",
+          isUse: true,
+          target: "chat"
+        });
+      }
+      if (publicData.image) {
+        useList.push({ label: "画像情報", isUse: true, target: "image" });
+      }
+      if (publicData.map) {
+        useList.push({
+          label: "マップ情報(画像情報とセットで)",
+          isUse: true,
+          target: "map"
+        });
+      }
+      if (publicData.mapMask) {
+        useList.push({
+          label: "マップマスク情報",
+          isUse: true,
+          target: "mapMask"
+        });
+      }
+      if (publicData.character) {
+        useList.push({
+          label: "キャラクター情報(画像情報とセットで)",
+          isUse: true,
+          target: "character"
+        });
+      }
+      if (publicData.chit) {
+        useList.push({
+          label: "チット情報(画像情報とセットで)",
+          isUse: true,
+          target: "chit"
+        });
+      }
+      if (publicData.publicMemo) {
+        useList.push({
+          label: "共有メモ",
+          isUse: true,
+          target: "publicMemo"
+        });
+      }
+      this.saveDataList.push({
+        fileName: saveDataObj.fileName,
+        useList: useList,
+        saveData: saveDataObj.saveData
+      });
+    });
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
