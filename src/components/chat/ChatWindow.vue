@@ -209,7 +209,7 @@ export default class ChatWindow extends Vue {
   /** 発言先 */
   private chatTarget: string = "groupTargetTab-0";
   /** 出力先のタブ */
-  private outputTab?: string = null;
+  private outputTab: string | null = null;
   /** 選択されているシステム */
   private currentDiceBotSystem: string = "DiceBot";
   /** 秘匿チャットの相手 */
@@ -220,7 +220,7 @@ export default class ChatWindow extends Vue {
   private volatileFrom: string = "";
   private volatileTarget: string = "";
   private volatileActiveTab: string = "";
-  private volatileTargetTab: string = "";
+  private volatileTargetTab: string | null = "";
 
   onInput(event: any): void {
     const text = event.target.value;
@@ -253,7 +253,7 @@ export default class ChatWindow extends Vue {
       });
     }
 
-    let selectTab: string = undefined;
+    let selectTab: string | null | undefined = undefined;
     if (text.startsWith("#") || text.startsWith("＃")) {
       const useText = text.substring(1);
       if (useText.length === 0) {
@@ -534,8 +534,7 @@ export default class ChatWindow extends Vue {
         owner: currentActor ? currentActor.key : null
       });
 
-      // TODO シークレットダイス結果を別画面のリストに渡して、公開を選択させる
-      window.console.log("シークレットダイスの結果", diceRollResult);
+      // 隠しダイスロール結果画面に反映
       this.addSecretDice({
         name: this.getViewName(this.chatActorKey),
         diceBot: this.currentDiceBotSystem,

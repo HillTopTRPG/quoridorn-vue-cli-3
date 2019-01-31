@@ -214,10 +214,9 @@ export default {
                 .file("save.json")
                 .async("string")
                 .then((jsonStr: string) => {
-                  const saveData = JSON.parse(jsonStr);
                   zipList.push({
                     fileName: zipFile.name,
-                    saveData: saveData
+                    saveData: JSON.parse(jsonStr)
                   });
                   resolve();
                 });
@@ -273,55 +272,55 @@ export default {
         // 画像のみを先行して追加し、割り振られるkeyを他のオブジェクトから参照させる
         const imageAddPromiseList: PromiseLike<any>[] = addObjList
           .filter(addObj => addObj.key.split("-")[0] === "image")
-          .map(addObj => dispatch("addImage", {
-            tag: addObj.tag,
-            data: addObj.data,
-            owner: addObj.owner
-          }));
-        Promise.all([...imageAddPromiseList]).then(
-          function(imageList: string[]) {
-            // 画像を全て読み込み終えたら、他のオブジェクトの追加を処理する
-            addObjList
-              // 画像以外を処理対象とする
-              .filter(addObj => addObj.key.split("-")[0] !== "image")
-              .forEach(addObj => {
-                const type = addObj.key.split("-")[0];
+          .map(addObj =>
+            dispatch("addImage", {
+              tag: addObj.tag,
+              data: addObj.data,
+              owner: addObj.owner
+            })
+          );
+        Promise.all([...imageAddPromiseList]).then((imageList: string[]) => {
+          // 画像を全て読み込み終えたら、他のオブジェクトの追加を処理する
+          addObjList
+            // 画像以外を処理対象とする
+            .filter(addObj => addObj.key.split("-")[0] !== "image")
+            .forEach(addObj => {
+              const type = addObj.key.split("-")[0];
 
-                // image参照の差分ロード
-                let useImageList: string = addObj.useImageList;
-                if (useImageList) {
-                  useImageList.split("|").forEach(useImage => {
-                    const matchResult = useImage.match(/image-\$([0-9]+)/);
-                    if (matchResult) {
-                      const replaceImage = imageList[parseInt(matchResult[1])];
-                      useImageList = useImageList.replace(
-                        matchResult[0],
-                        replaceImage
-                      );
-                    }
-                  });
-                }
-                addObj.useImageList = useImageList;
+              // image参照の差分ロード
+              let useImageList: string = addObj.useImageList;
+              if (useImageList) {
+                useImageList.split("|").forEach(useImage => {
+                  const matchResult = useImage.match(/image-\$([0-9]+)/);
+                  if (matchResult) {
+                    const replaceImage = imageList[parseInt(matchResult[1])];
+                    useImageList = useImageList.replace(
+                      matchResult[0],
+                      replaceImage
+                    );
+                  }
+                });
+              }
+              addObj.useImageList = useImageList;
 
-                // グループチャットデータのロード
-                if (type === "groupTargetTab") {
-                  rootGetters.groupTargetTab.list.push({
-                    key: `groupTargetTab-${++rootGetters.groupTargetTab.maxKey}`,
-                    isSecret: addObj.isSecret,
-                    name: addObj.name,
-                    targetTab: addObj.targetTab,
-                    isAll: addObj.isAll,
-                    group: addObj.group
-                  });
-                  return;
-                }
+              // グループチャットデータのロード
+              if (type === "groupTargetTab") {
+                rootGetters.groupTargetTab.list.push({
+                  key: `groupTargetTab-${++rootGetters.groupTargetTab.maxKey}`,
+                  isSecret: addObj.isSecret,
+                  name: addObj.name,
+                  targetTab: addObj.targetTab,
+                  isAll: addObj.isAll,
+                  group: addObj.group
+                });
+                return;
+              }
 
-                // マップオブジェクトのロード
-                delete addObj.key;
-                dispatch("addPieceInfo", addObj);
-
-              })
-          });
+              // マップオブジェクトのロード
+              delete addObj.key;
+              dispatch("addPieceInfo", addObj);
+            });
+        });
       };
       if (!publicData.room) {
         // セーブデータに部屋情報が無いなら、ロード処理を実行する
@@ -383,14 +382,16 @@ export default {
                 });
               })
               // プレイヤー情報を入力してもらったら部屋を新規作成して入室する
-              .then((payload: any) => dispatch("doNewRoom", {
-                roomName: roomName,
-                roomPassword: roomPassword || "",
-                playerName: payload.playerName,
-                playerPassword: payload.playerPassword,
-                playerType: payload.playerType || "PL",
-                fontColor: payload.fontColor
-              }))
+              .then((payload: any) =>
+                dispatch("doNewRoom", {
+                  roomName: roomName,
+                  roomPassword: roomPassword || "",
+                  playerName: payload.playerName,
+                  playerPassword: payload.playerPassword,
+                  playerType: payload.playerType || "PL",
+                  fontColor: payload.fontColor
+                })
+              )
               .then(() => dispatch("loading", false))
               .catch(() => dispatch("loading", false));
           });

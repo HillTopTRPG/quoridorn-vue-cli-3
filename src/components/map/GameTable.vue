@@ -479,7 +479,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
 
   createBase64DataSet(imageFile: any, { w, h }: { w: number; h: number }): any {
     // 画像の読み込み処理
-    const normalLoad = new Promise<string>(
+    const normalLoad = new Promise<String>(
       (resolve: Function, reject: Function) => {
         try {
           const reader: any = new FileReader();
@@ -493,7 +493,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       }
     );
     // サムネイル画像の読み込み処理
-    const thumbnailLoad = new Promise<string>(
+    const thumbnailLoad = new Promise<String>(
       (resolve: Function, reject: Function) => {
         // 画像の読み込み処理
         try {
@@ -539,8 +539,8 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         }
       }
     );
-    return Promise.all([normalLoad, thumbnailLoad]).then(
-      (values: [String, String]) => ({
+    return Promise.all<String>([normalLoad, thumbnailLoad]).then(
+      (values: String[]) => ({
         name: imageFile.name,
         thumbnail: values[0],
         image: values[1]
