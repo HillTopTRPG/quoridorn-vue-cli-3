@@ -97,17 +97,14 @@ export default class DropImageWindow extends Vue {
 
   @Watch("dropImageList")
   onChangeDropImageList(dropImageList: any[]): void {
-    this.imageList = [];
-    dropImageList.forEach(imgObj => {
-      this.imageList.push({
-        image: imgObj.image,
-        name: imgObj.name,
-        key: imgObj.key,
-        currentTag: "キャラクター",
-        selectTag: "キャラクター",
-        password: ""
-      });
-    });
+    this.imageList = dropImageList.map(imgObj => ({
+      image: imgObj.image,
+      name: imgObj.name,
+      key: imgObj.key,
+      currentTag: "キャラクター",
+      selectTag: "キャラクター",
+      password: ""
+    }));
   }
 }
 </script>

@@ -19,7 +19,7 @@ import WindowMixin from "../WindowMixin";
 import Logo from "./Logo";
 
 export default {
-  name: "selectPeerWindow",
+  name: "versionWindow",
   mixins: [WindowMixin],
   components: {
     WindowFrame,

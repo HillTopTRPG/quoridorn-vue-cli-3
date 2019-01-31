@@ -108,7 +108,6 @@ export default {
         zipList: null
       },
       inviteLinkWindow: { command: null, isDisplay: false, zIndex: 1 },
-      selectPeerWindow: { command: null, isDisplay: false, zIndex: 1 },
       confirmLoadRoomWindow: {
         command: null,
         isDisplay: false,
@@ -316,6 +315,10 @@ export default {
     ) => {
       if (!isWait) state.self.peerId = peerId;
       else state.self.peerIdWait = peerId;
+    },
+
+    updatePlayerKey: (state: any, playerKey: string) => {
+      state.self.playerKey = playerKey;
     },
 
     /**

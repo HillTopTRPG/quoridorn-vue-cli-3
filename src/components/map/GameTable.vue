@@ -455,23 +455,19 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     // 画像ファイルの処理
     if (imageFiles.length > 0) {
       // どこに使う画像ファイルなのかを選んでもらう
-      const thumbnailSize = { w: 96, h: 96 };
-      const promiseList: PromiseLike<any>[] = [];
-      for (const file of imageFiles) {
-        promiseList.push(this.createBase64DataSet(file, thumbnailSize));
-      }
-      const _: any = this;
-      Promise.all([...promiseList]).then(
-        function(values: any[]) {
-          values.forEach((valueObj: any, index: number) => {
-            valueObj.key = index;
-          });
-          _.setProperty({
-            property: "private.display.dropImageWindow.imageDataList",
-            value: values
-          });
-        }.bind(this)
+      const promiseList: PromiseLike<any>[] = imageFiles.map(file =>
+        this.createBase64DataSet(file, { w: 96, h: 96 })
       );
+      const _: any = this;
+      Promise.all(promiseList).then((values: any[]) => {
+        values.forEach((valueObj: any, index: number) => {
+          valueObj.key = index;
+        });
+        _.setProperty({
+          property: "private.display.dropImageWindow.imageDataList",
+          value: values
+        });
+      });
       this.windowOpen("private.display.dropImageWindow");
     }
 
@@ -482,75 +478,74 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   createBase64DataSet(imageFile: any, { w, h }: { w: number; h: number }): any {
-    return new Promise(function(resolve, reject) {
-      const createPromise = function(isThumbnail: boolean): any {
-        // eslint-disable-next-line
-          return new Promise(function (resolve2) {
-          // 画像の読み込み処理
-          try {
-            const reader: any = new FileReader();
-            reader.onload = function(event: any) {
-              if (isThumbnail) {
-                // サムネイル画像作成の場合は小さくて決まったサイズの画像データに加工する（アニメGIFも最初の１コマの静止画になる）
+    // 画像の読み込み処理
+    const normalLoad = new Promise<string>(
+      (resolve: Function, reject: Function) => {
+        try {
+          const reader: any = new FileReader();
+          reader.onload = function(event: any) {
+            // サムネイル画像でない場合はプレーンな画像データからBase64データを取得する
+            resolve(reader.result);
+          };
+        } catch (error) {
+          reject(error);
+        }
+      }
+    );
+    // サムネイル画像の読み込み処理
+    const thumbnailLoad = new Promise<string>(
+      (resolve: Function, reject: Function) => {
+        // 画像の読み込み処理
+        try {
+          const reader: any = new FileReader();
+          reader.onload = function(event: any) {
+            // サムネイル画像作成の場合は小さくて決まったサイズの画像データに加工する（アニメGIFも最初の１コマの静止画になる）
 
-                const image = new Image();
-                image.onload = function() {
-                  const useSize = {
-                    w: image.width,
-                    h: image.height
-                  };
+            const image = new Image();
+            image.onload = function() {
+              const useSize = {
+                w: image.width,
+                h: image.height
+              };
 
-                  // 大きい場合は、比率を保ったまま縮小する
-                  if (useSize.w > w || useSize.h > h) {
-                    const scale = Math.min(w / useSize.w, h / useSize.h);
-                    useSize.w = useSize.w * scale;
-                    useSize.h = useSize.h * scale;
-                  }
-
-                  // 画像を描画してデータを取り出す（Base64変換の実装）
-                  const canvas = document.createElement("canvas");
-                  const ctx: any = canvas.getContext("2d");
-                  canvas.width = w;
-                  canvas.height = h;
-                  const locate = {
-                    x: (canvas.width - useSize.w) / 2,
-                    y: (canvas.height - useSize.h) / 2
-                  };
-                  ctx.drawImage(
-                    image,
-                    locate.x,
-                    locate.y,
-                    useSize.w,
-                    useSize.h
-                  );
-
-                  // 非同期で返却
-                  resolve2(canvas.toDataURL());
-                };
-                image.src = event.target.result;
-              } else {
-                // サムネイル画像でない場合はプレーンな画像データからBase64データを取得する
-
-                // 非同期で返却
-                resolve2(reader.result);
+              // 大きい場合は、比率を保ったまま縮小する
+              if (useSize.w > w || useSize.h > h) {
+                const scale = Math.min(w / useSize.w, h / useSize.h);
+                useSize.w = useSize.w * scale;
+                useSize.h = useSize.h * scale;
               }
+
+              // 画像を描画してデータを取り出す（Base64変換の実装）
+              const canvas: HTMLCanvasElement = document.createElement(
+                "canvas"
+              );
+              const ctx: any = canvas.getContext("2d");
+              canvas.width = w;
+              canvas.height = h;
+              const locate = {
+                x: (canvas.width - useSize.w) / 2,
+                y: (canvas.height - useSize.h) / 2
+              };
+              ctx.drawImage(image, locate.x, locate.y, useSize.w, useSize.h);
+
+              // 非同期で返却
+              resolve(canvas.toDataURL());
             };
-            reader.readAsDataURL(imageFile);
-          } catch (error) {
-            reject(error);
-          }
-        });
-      };
-      Promise.all([createPromise(true), createPromise(false)]).then(function(
-        values
-      ) {
-        resolve({
-          name: imageFile.name,
-          thumbnail: values[0],
-          image: values[1]
-        });
-      });
-    });
+            image.src = event.target.result;
+          };
+          reader.readAsDataURL(imageFile);
+        } catch (error) {
+          reject(error);
+        }
+      }
+    );
+    return Promise.all([normalLoad, thumbnailLoad]).then(
+      (values: [String, String]) => ({
+        name: imageFile.name,
+        thumbnail: values[0],
+        image: values[1]
+      })
+    );
   }
 
   get currentAngle(): number {
@@ -571,25 +566,19 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     const totalLeftX = (this.move.total.x + this.move.dragging.x) * zoom;
     const totalLeftY = (this.move.total.y + this.move.dragging.y) * zoom;
     let rotateZ = this.currentAngle;
+
+    const transformList: string[] = [];
+    transformList.push(`translateZ(${translateZ}px)`);
+    transformList.push(`translateY(${totalLeftY}px)`);
+    transformList.push(`translateX(${totalLeftX}px)`);
+    transformList.push(`rotateY(0deg)`);
+    transformList.push(`rotateX(0deg)`);
+    transformList.push(`rotateZ(${rotateZ}deg)`);
     const result: any = {
       width: this.sizeW + "px",
       height: this.sizeH + "px",
-      "border-width": this.borderWidth + "px",
-      transform:
-        "translateZ(" +
-        translateZ +
-        "px) " +
-        "translateY(" +
-        totalLeftY +
-        "px) " +
-        "translateX(" +
-        totalLeftX +
-        "px) " +
-        "rotateY(0deg) " +
-        "rotateX(0deg) " +
-        "rotateZ(" +
-        rotateZ +
-        "deg)"
+      borderWidth: this.borderWidth + "px",
+      transform: transformList.join(" ")
     };
     if (this.isUseImage) {
       result.backgroundImage = `url(${this.getBackgroundImage})`;

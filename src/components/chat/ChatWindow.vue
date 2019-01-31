@@ -492,24 +492,9 @@ export default class ChatWindow extends Vue {
       ownerKey = undefined;
     }
 
-    const currentActor = this.getPeerActors.filter(
-      (actor: any) => actor.key === this.chatActorKey
-    )[0];
-
-    const messageObj = {
-      name: this.getViewName(this.chatActorKey),
-      text: text,
-      color: color,
-      tab: outputTab,
-      from: ownerKey,
-      target: this.chatTarget,
-      owner: currentActor ? currentActor.key : null
-    };
-
-    // -------------------
-    // プレイヤー発言
-    // -------------------
-    this.addChatLog(messageObj);
+    let isDiceRoll: boolean = false;
+    let isSecretDice: boolean = false;
+    let diceRollResult: any = null;
 
     // -------------------
     // ダイスBot処理
@@ -518,28 +503,57 @@ export default class ChatWindow extends Vue {
     if (bcDice) {
       bcDice.setMessage(this.currentMessage);
       const resultObj = bcDice.dice_command();
-      const diceResult = resultObj[0].replace(/(^: )/g, "").replace(/＞/g, "→");
       const isSecret = resultObj[1];
-      if (diceResult !== "1") {
-        if (isSecret) {
-          this.addChatLog({
-            name: this.currentDiceBotSystem,
-            text: `シークレットダイス`,
-            color: "black",
-            tab: this.activeTab,
-            owner: "SYSTEM"
-          });
-        } else {
-          this.addChatLog({
-            name: this.currentDiceBotSystem,
-            text: diceResult,
-            color: "black",
-            tab: this.activeTab,
-            owner: "SYSTEM"
-          });
-        }
+      diceRollResult = resultObj[0].replace(/(^: )/g, "").replace(/＞/g, "→");
+      if (diceRollResult !== "1") {
+        isDiceRoll = true;
+        if (isSecret) isSecretDice = true;
       }
       this.currentMessage = "";
+    }
+
+    const currentActor = this.getPeerActors.filter(
+      (actor: any) => actor.key === this.chatActorKey
+    )[0];
+    if (isDiceRoll && isSecretDice) {
+      // -------------------
+      // シークレットダイス
+      // -------------------
+      this.addChatLog({
+        name: this.getViewName(this.chatActorKey),
+        text: `シークレットダイス`,
+        color: "black",
+        tab: outputTab,
+        owner: currentActor ? currentActor.key : null
+      });
+
+      // TODO シークレットダイス結果を別画面のリストに渡して、公開を選択させる
+      window.console.log("シークレットダイスの結果", diceRollResult);
+    } else {
+      // -------------------
+      // プレイヤー発言
+      // -------------------
+      this.addChatLog({
+        name: this.getViewName(this.chatActorKey),
+        text: text,
+        color: color,
+        tab: outputTab,
+        from: ownerKey,
+        target: this.chatTarget,
+        owner: currentActor ? currentActor.key : null
+      });
+      if (isDiceRoll) {
+        // -------------------
+        // ダイスロール結果
+        // -------------------
+        this.addChatLog({
+          name: this.currentDiceBotSystem,
+          text: diceRollResult,
+          color: "black",
+          tab: outputTab,
+          owner: "SYSTEM"
+        });
+      }
     }
   }
   nameToKeyView(name: string): string {

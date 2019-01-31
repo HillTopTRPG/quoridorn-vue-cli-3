@@ -8,15 +8,12 @@
       </div>
     </div>
     <input ref="fileChooser" type="file" style="display: none;" accept=".zip" multiple @change="event => selectFile(event)">
-    <div style="color: red; font-weight: bold;">この機能は未実装です。<br>入室後のセーブ機能も見直し中のため動きません。</div>
     <button type="button" @click="commit"><i class="icon-home3"></i> 作成</button>
   </fieldset>
 </template>
 
 <script lang="ts">
-// import { Action } from "vuex-class";
-
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { Action } from "vuex-class";
 
 @Component<CreateRoomFromRoomData>({
@@ -28,7 +25,8 @@ export default class CreateRoomFromRoomData extends Vue {
   private files: File[] = [];
 
   chooseFile(this: any): void {
-    this.$refs.fileChooser.click();
+    const fileChooser: HTMLElement = this.$refs.fileChooser;
+    fileChooser.click();
   }
 
   selectFile(event: any) {
@@ -41,6 +39,10 @@ export default class CreateRoomFromRoomData extends Vue {
    * 確定ボタン押下時
    */
   commit(): void {
+    if (!this.files.length) {
+      alert("ファイルを選択してください。");
+      return;
+    }
     this.importStart(this.files);
   }
 }

@@ -189,6 +189,12 @@ export default {
         playerIndex > -1 ? rootGetters.playerList[playerIndex] : null;
       const playerKey: string = player ? player.key : `player-${name}`;
 
+      const isSelf = rootGetters.peerId(isWait) === peerId;
+      if (isSelf) {
+        commit("updateActorKey", playerKey);
+        commit("updatePlayerKey", playerKey);
+      }
+
       rootGetters.members.push({
         peerId: peerId,
         playerKey: playerKey
@@ -204,14 +210,17 @@ export default {
         });
       } else {
         // privateデータの復元
-        if (player.private) {
+        const privateData = player.private;
+        if (privateData && isSelf) {
+          const peerId = rootGetters.peerId(isWait);
           dispatch("setProperty", {
             property: "private",
-            value: player.private,
+            value: privateData,
             isNotice: false,
             logOff: true
+          }).then(() => {
+            commit("updatePeerId", peerId);
           });
-          commit("updateActorKey", playerKey);
         }
       }
     },
@@ -393,7 +402,7 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
-      const player = state.player.list.filter(
+      const player = getters.playerList.filter(
         (p: any) => p.key === rootGetters.playerKey
       )[0];
       if (player) {
