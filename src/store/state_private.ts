@@ -39,7 +39,8 @@ export default {
           unRead: 0,
           order: 0
         }
-      ]
+      ],
+      secretDiceList: []
     },
 
     /** マップ */
@@ -321,6 +322,14 @@ export default {
       state.self.playerKey = playerKey;
     },
 
+    addSecretDice: (state: any, secretDiceObj: any) => {
+      state.chat.secretDiceList.push(secretDiceObj);
+    },
+
+    delSecretDice: (state: any, index: number) => {
+      state.chat.secretDiceList.splice(index, 1);
+    },
+
     /**
      * チャットのタブを選択したことをデータに反映する
      * @param state
@@ -372,6 +381,7 @@ export default {
     dropImageList: (state: any) => state.display.dropImageWindow.imageDataList,
     chitContextObjKey: (state: any) => state.display.chitContext.key,
     mapMaskContextObjKey: (state: any) => state.display.mapMaskContext.key,
-    characterContextObjKey: (state: any) => state.display.characterContext.key
+    characterContextObjKey: (state: any) => state.display.characterContext.key,
+    secretDiceList: (state: any) => state.chat.secretDiceList
   }
 };

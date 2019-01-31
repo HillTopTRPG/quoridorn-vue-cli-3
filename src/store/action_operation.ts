@@ -109,14 +109,6 @@ export default {
         const changeTab: any = {};
         change[tab] = changeTab;
         rootState.public.chat.logs[tab].forEach((log: any, index: number) => {
-          window.console.log(
-            "chatLogs",
-            tab,
-            log.owner,
-            target.key,
-            log.owner !== target.key,
-            log.viewHtml
-          );
           if (log.owner !== target.key) return;
           changeTab[index] = {
             viewHtml: log.viewHtml.replace(
@@ -130,7 +122,7 @@ export default {
         property: `public.chat.logs`,
         value: change,
         isNotice: false,
-        logOff: false
+        logOff: true
       });
     },
     /** ========================================================================

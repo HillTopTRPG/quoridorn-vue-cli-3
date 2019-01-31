@@ -48,6 +48,7 @@
     <EditGroupChatWindow/>
     <Deck/>
     <InputPlayerInfoWindow/>
+    <SecretDiceWindow/>
   </div>
 </template>
 
@@ -96,6 +97,7 @@ import ModalScreen from "../components/simple/ModalScreen";
 import Loading from "../components/simple/Loading";
 import LoadingScreen from "../components/simple/LoadingScreen";
 import InputPlayerInfoWindow from "../components/welcome/login/InputPlayerInfoWindow";
+import SecretDiceWindow from "../components/chat/SecretDiceWindow";
 
 export default {
   name: "App2",
@@ -140,7 +142,8 @@ export default {
     ModalScreen,
     Loading,
     LoadingScreen,
-    InputPlayerInfoWindow
+    InputPlayerInfoWindow,
+    SecretDiceWindow
   },
   mounted() {
     this.onMount();
