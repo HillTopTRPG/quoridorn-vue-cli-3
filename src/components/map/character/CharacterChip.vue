@@ -11,67 +11,64 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapGetters } from "vuex";
-import PieceMixin from "../../PieceMixin";
+<script lang="ts">
+import PieceMixin from "../../PieceMixin.vue";
 
-export default {
-  name: "characterChip",
-  mixins: [PieceMixin],
-  data() {
-    return {};
-  },
-  methods: {
-    getKeyObj(list, key) {
-      const filteredList = list.filter(obj => obj.key === key);
-      if (filteredList.length === 0) {
-        window.console.log(`key:"${key}" is not find.`);
-        return null;
-      }
-      if (filteredList.length > 1) {
-        window.console.log(`key:"(${key})" is duplicate.`);
-        return null;
-      }
-      return filteredList[0];
+import { Component } from "vue-property-decorator";
+import { Getter } from "vuex-class";
+
+@Component<CharacterChip>({
+  name: "characterChip"
+})
+export default class CharacterChip extends PieceMixin {
+  @Getter("imageList") imageList: any;
+
+  getKeyObj(list: any[], key: string) {
+    const filteredList = list.filter(obj => obj.key === key);
+    if (filteredList.length === 0) {
+      window.console.log(`key:"${key}" is not find.`);
+      return null;
     }
-  },
-  computed: mapState({
-    ...mapGetters([]),
-    characterStyle() {
-      let obj = this.style;
-      obj.left = 0;
-      obj.top = 0;
-      obj.width = this.gridSize + "px";
-      obj.height = this.gridSize + "px";
-      // delete obj.transform
-      // window.console.log(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
-      return obj;
-    },
-    name() {
-      return this.storeObj.name;
-    },
-    useImageList() {
-      return this.storeObj.useImageList;
-    },
-    useImageIndex() {
-      return this.storeObj.useImageIndex;
-    },
-    imageList: state => state.public.image.list,
-    imageObj() {
-      if (this.useImageList === "") {
-        return "";
-      }
-      const imageStr = this.useImageList.split("|")[this.useImageIndex];
-      // window.console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
-      const isReverse = imageStr.indexOf(":R") >= 0;
-      const imageKey = imageStr.replace(":R", "");
-      return {
-        isReverse: isReverse,
-        data: this.getKeyObj(this.imageList, imageKey).data
-      };
+    if (filteredList.length > 1) {
+      window.console.log(`key:"(${key})" is duplicate.`);
+      return null;
     }
-  })
-};
+    return filteredList[0];
+  }
+
+  get characterStyle(): void {
+    let obj: any = this.style;
+    obj.left = 0;
+    obj.top = 0;
+    obj.width = this.gridSize + "px";
+    obj.height = this.gridSize + "px";
+    // delete obj.transform
+    // window.console.log(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+    return obj;
+  }
+  get name() {
+    return this.storeObj.name;
+  }
+  get useImageList() {
+    return this.storeObj.useImageList;
+  }
+  get useImageIndex() {
+    return this.storeObj.useImageIndex;
+  }
+  get imageObj() {
+    if (this.useImageList === "") {
+      return "";
+    }
+    const imageStr = this.useImageList.split("|")[this.useImageIndex];
+    // window.console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
+    const isReverse = imageStr.indexOf(":R") >= 0;
+    const imageKey = imageStr.replace(":R", "");
+    return {
+      isReverse: isReverse,
+      data: this.getKeyObj(this.imageList, imageKey).data
+    };
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

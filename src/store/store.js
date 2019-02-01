@@ -702,6 +702,7 @@ export default new Vuex.Store({
     grid: state => ({
       c: state.map.grid.c,
       r: state.map.grid.r
-    })
+    }),
+    isRolling: state => state.map.rollObj.isRolling
   }
 });

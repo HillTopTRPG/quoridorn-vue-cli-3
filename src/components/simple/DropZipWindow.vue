@@ -26,7 +26,7 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 
 @Component<DropZipWindow>({
   name: "dropZipWindow",

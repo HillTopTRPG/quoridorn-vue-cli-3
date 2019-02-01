@@ -31,17 +31,21 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapGetters } from "vuex";
-import PieceMixin from "../../PieceMixin";
-import Range from "../../range/Range";
+<script lang="ts">
+import PieceMixin from "../../PieceMixin.vue";
+import Range from "../../range/Range.vue";
 
-export default {
+import { Component } from "vue-property-decorator";
+import { Getter } from "vuex-class";
+
+@Component<Character>({
   name: "character",
-  mixins: [PieceMixin],
   components: {
     Range
-  },
+  }
+})
+export default class Character extends PieceMixin {
+  @Getter("imageList") imageList: any;
   mounted() {
     let color = "rgba(200, 0, 0, 0.3)";
     let borderColor = "rgba(255, 0, 0, 1)";
@@ -63,94 +67,83 @@ export default {
       lineWidth: 5
     };
     this.rangeList.push(range);
-  },
-  data() {
+  }
+
+  private rangeList: any[] = [
+    // {
+    //   key: 'range-1',
+    //   distance: 7,
+    //   distanceMode: 0,
+    //   isVision: false,
+    //   color: 'rgba(200, 0, 0, 0.2)',
+    //   lineWidth: 1
+    // },
+    // {
+    //   key: 'range-3',
+    //   distance: 4,
+    //   distanceMode: 0,
+    //   isVision: false,
+    //   color: 'rgba(200, 0, 0, 0.2)',
+    //   lineWidth: 1
+    // }
+  ];
+
+  getKeyObj(list: any[], key: string) {
+    const filteredList = list.filter(obj => obj.key === key);
+    if (filteredList.length === 0) {
+      window.console.log(`key:"${key}" is not find.`);
+      return null;
+    }
+    if (filteredList.length > 1) {
+      window.console.log(`key:"(${key})" is duplicate.`);
+      return null;
+    }
+    return filteredList[0];
+  }
+  dblClick() {
+    const maxIndex = this.useImageList.split("|").length - 1;
+    let nextIndex = this.useImageIndex + 1;
+    if (nextIndex > maxIndex) {
+      nextIndex = 0;
+    }
+    this.setProperty({
+      property: `public.${this.type}.list.${this.storeIndex}.useImageIndex`,
+      value: nextIndex,
+      isNotice: true
+    });
+  }
+
+  get characterStyle(): any {
+    let obj = this.style;
+    if (this.storeObj.isDraggingLeft) {
+      const plus = 1.5;
+      obj.left = this.rect.left - plus + "px";
+      obj.top = this.rect.top - plus + "px";
+      obj.width = this.rect.width + plus * 2 + "px";
+      obj.height = this.rect.height + plus * 2 + "px";
+    }
+    // window.console.log(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+    return obj;
+  }
+  get name(): string {
+    return this.storeObj.name;
+  }
+  get useImageList(): string {
+    return this.storeObj.useImageList;
+  }
+  get useImageIndex(): number {
+    return this.storeObj.useImageIndex;
+  }
+  get imageObj() {
+    if (this.useImageList === "") return "";
+    const imageStr = this.useImageList.split("|")[this.useImageIndex];
+    const imageKey = imageStr.replace(":R", "");
     return {
-      rangeList: [
-        // {
-        //   key: 'range-1',
-        //   distance: 7,
-        //   distanceMode: 0,
-        //   isVision: false,
-        //   color: 'rgba(200, 0, 0, 0.2)',
-        //   lineWidth: 1
-        // },
-        // {
-        //   key: 'range-3',
-        //   distance: 4,
-        //   distanceMode: 0,
-        //   isVision: false,
-        //   color: 'rgba(200, 0, 0, 0.2)',
-        //   lineWidth: 1
-        // }
-      ]
+      isReverse: imageStr.indexOf(":R") >= 0,
+      data: this.getKeyObj(this.imageList, imageKey).data
     };
-  },
-  methods: {
-    getKeyObj(list, key) {
-      const filteredList = list.filter(obj => obj.key === key);
-      if (filteredList.length === 0) {
-        window.console.log(`key:"${key}" is not find.`);
-        return null;
-      }
-      if (filteredList.length > 1) {
-        window.console.log(`key:"(${key})" is duplicate.`);
-        return null;
-      }
-      return filteredList[0];
-    },
-    dblClick() {
-      const maxIndex = this.useImageList.split("|").length - 1;
-      let nextIndex = this.useImageIndex + 1;
-      if (nextIndex > maxIndex) {
-        nextIndex = 0;
-      }
-      this.setProperty({
-        property: `public.${this.type}.list.${this.storeIndex}.useImageIndex`,
-        value: nextIndex,
-        isNotice: true
-      });
-    }
-  },
-  computed: mapState({
-    ...mapGetters([]),
-    characterStyle() {
-      let obj = this.style;
-      if (this.storeObj.isDraggingLeft) {
-        const plus = 1.5;
-        obj.left = this.rect.left - plus + "px";
-        obj.top = this.rect.top - plus + "px";
-        obj.width = this.rect.width + plus * 2 + "px";
-        obj.height = this.rect.height + plus * 2 + "px";
-      }
-      // window.console.log(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
-      return obj;
-    },
-    name() {
-      return this.storeObj.name;
-    },
-    useImageList() {
-      return this.storeObj.useImageList;
-    },
-    useImageIndex() {
-      return this.storeObj.useImageIndex;
-    },
-    imageList: state => state.public.image.list,
-    imageObj() {
-      if (this.useImageList === "") {
-        return "";
-      }
-      const imageStr = this.useImageList.split("|")[this.useImageIndex];
-      // window.console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
-      const isReverse = imageStr.indexOf(":R") >= 0;
-      const imageKey = imageStr.replace(":R", "");
-      return {
-        isReverse: isReverse,
-        data: this.getKeyObj(this.imageList, imageKey).data
-      };
-    }
-  })
-};
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

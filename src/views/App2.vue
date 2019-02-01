@@ -27,8 +27,6 @@
     <DropImageWindow/>
     <RoomInfoWindow/>
     <DropZipWindow/>
-    <InviteLinkWindow/>
-    <ConfirmLoadRoomWindow/>
     <AddChitWindow/>
     <EditChitWindow/>
     <ChitContext/>
@@ -74,8 +72,6 @@ import CharacterContext from "../components/map/character/CharacterContext";
 import DropImageWindow from "../components/simple/DropImageWindow";
 import RoomInfoWindow from "../components/simple/RoomInfoWindow";
 import DropZipWindow from "../components/simple/DropZipWindow";
-import InviteLinkWindow from "../components/simple/InviteLinkWindow";
-import ConfirmLoadRoomWindow from "../components/simple/ConfirmLoadRoomWindow";
 import AddChitWindow from "../components/map/chit/AddChitWindow";
 import EditChitWindow from "../components/map/chit/EditChitWindow";
 import ChitContext from "../components/map/chit/ChitContext";
@@ -119,8 +115,6 @@ export default {
     DropImageWindow,
     RoomInfoWindow,
     DropZipWindow,
-    InviteLinkWindow,
-    ConfirmLoadRoomWindow,
     AddChitWindow,
     EditChitWindow,
     ChitContext,

@@ -516,8 +516,8 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
               }
 
               // 画像を描画してデータを取り出す（Base64変換の実装）
-              const canvas: HTMLCanvasElement = document.createElement(
-                "canvas"
+              const canvas: HTMLCanvasElement = <HTMLCanvasElement>(
+                document.createElement("canvas")
               );
               const ctx: any = canvas.getContext("2d");
               canvas.width = w;

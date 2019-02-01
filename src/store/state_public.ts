@@ -532,6 +532,7 @@ export default {
       };
     },
     bgmList: (state: any) => state.bgm.list,
-    imageTagList: (state: any) => state.image.tags.list
+    imageTagList: (state: any) => state.image.tags.list,
+    imageList: (state: any) => state.image.list
   } /* end of getters */
 };

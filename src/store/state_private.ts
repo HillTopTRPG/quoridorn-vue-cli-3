@@ -108,13 +108,6 @@ export default {
         zIndex: 1,
         zipList: null
       },
-      inviteLinkWindow: { command: null, isDisplay: false, zIndex: 1 },
-      confirmLoadRoomWindow: {
-        command: null,
-        isDisplay: false,
-        zIndex: 1,
-        importData: null
-      },
       addChitWindow: { command: null, isDisplay: false, zIndex: 1 },
       editChitWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
       editMapWindow: { command: null, isDisplay: false, zIndex: 1 },
