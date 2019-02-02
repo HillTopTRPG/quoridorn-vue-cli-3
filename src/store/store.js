@@ -294,7 +294,7 @@ export default new Vuex.Store({
         value.ownerPeerId = rootGetters.peerId(isWait);
         if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
           type = "DO_METHOD";
-          return dispatch(method, value);
+          dispatch(method, value);
         } else {
           type = "NOTICE_OPERATION";
         }
