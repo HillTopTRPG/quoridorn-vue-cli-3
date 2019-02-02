@@ -266,65 +266,56 @@ const YoutubeControlManager = () => {
 
   return {
     init: () => {
-      window.set_interval_id = setInterval(window.youtube.doInit, 100);
-    },
-    doInit: () => {
-      if (window.isYoutubeInitialized) {
-        clearInterval(set_interval_id);
-        delete window.set_interval_id;
-        delete window.isYoutubeInitialized;
-
-        // init処理
-        const ypContainer = document.getElementById("YoutubePlayerContainer");
-        Array.from(ypContainer.children).forEach((elm, i) => {
-          let player = new window["YT"]["Player"](elm.firstElementChild.id, {
-            width: "426",
-            height: "240",
-            events: {
-              onReady: event => eventHandler.onReady(i, event),
-              onStateChange: event => {
-                switch (event.data) {
-                  case window["YT"]["PlayerState"]["ENDED"]:
-                    eventHandler.onEnded(i, event);
-                    break;
-                  case window["YT"]["PlayerState"]["PLAYING"]:
-                    eventHandler.onPlaying(i, event);
-                    break;
-                  case window["YT"]["PlayerState"]["PAUSED"]:
-                    eventHandler.onPaused(i, event);
-                    break;
-                  case window["YT"]["PlayerState"]["BUFFERING"]:
-                    eventHandler.onBuffering(i, event);
-                    break;
-                  case window["YT"]["PlayerState"]["CUED"]:
-                    eventHandler.onCued(i, event);
-                    break;
-                  default:
-                }
-              },
-              onPlaybackQualityChange: event =>
-                eventHandler.onPlaybackQualityChange(i, event),
-              onPlaybackRateChange: event =>
-                eventHandler.onPlaybackRateChange(i, event),
-              onError: event => eventHandler.onError(i, event),
-              onApiChange: event => eventHandler.onApiChange(i, event)
+      // init処理
+      const ypContainer = document.getElementById("YoutubePlayerContainer");
+      Array.from(ypContainer.children).forEach((elm, i) => {
+        let player = new window["YT"]["Player"](elm.firstElementChild.id, {
+          width: "426",
+          height: "240",
+          events: {
+            onReady: event => eventHandler.onReady(i, event),
+            onStateChange: event => {
+              switch (event.data) {
+                case window["YT"]["PlayerState"]["ENDED"]:
+                  eventHandler.onEnded(i, event);
+                  break;
+                case window["YT"]["PlayerState"]["PLAYING"]:
+                  eventHandler.onPlaying(i, event);
+                  break;
+                case window["YT"]["PlayerState"]["PAUSED"]:
+                  eventHandler.onPaused(i, event);
+                  break;
+                case window["YT"]["PlayerState"]["BUFFERING"]:
+                  eventHandler.onBuffering(i, event);
+                  break;
+                case window["YT"]["PlayerState"]["CUED"]:
+                  eventHandler.onCued(i, event);
+                  break;
+                default:
+              }
             },
-            playerVars: {
-              origin: location.protocol + "//" + location.hostname + "/",
-              autoplay: 0, // 0:自動再生しない or 1:自動再生
-              controls: 0, // 再生ボタンとか出さない
-              disablekb: 1, // ショートカットキー無効
-              enablejsapi: 1, // JavaScript API 有効
-              list: "search", // 検索クエリ使用
-              listType: "search", // 検索クエリ使用
-              loop: 1, // 0:ループしない or 1:ループする 後で再設定する
-              rel: 0, // 関連動画出さない
-              showinfo: 0 // 動画名とか出さない
-            }
-          });
-          playerArr.push(player);
+            onPlaybackQualityChange: event =>
+              eventHandler.onPlaybackQualityChange(i, event),
+            onPlaybackRateChange: event =>
+              eventHandler.onPlaybackRateChange(i, event),
+            onError: event => eventHandler.onError(i, event),
+            onApiChange: event => eventHandler.onApiChange(i, event)
+          },
+          playerVars: {
+            origin: location.protocol + "//" + location.hostname + "/",
+            autoplay: 0, // 0:自動再生しない or 1:自動再生
+            controls: 0, // 再生ボタンとか出さない
+            disablekb: 1, // ショートカットキー無効
+            enablejsapi: 1, // JavaScript API 有効
+            list: "search", // 検索クエリ使用
+            listType: "search", // 検索クエリ使用
+            loop: 1, // 0:ループしない or 1:ループする 後で再設定する
+            rel: 0, // 関連動画出さない
+            showinfo: 0 // 動画名とか出さない
+          }
         });
-      }
+        playerArr.push(player);
+      });
     },
     play: youtubeMethod.play,
     pause: youtubeMethod.pause,
@@ -349,9 +340,4 @@ const YoutubeControlManager = () => {
   };
 };
 window.youtube = YoutubeControlManager();
-window.isYoutubeInitialized = false;
-window.onYouTubeIframeAPIReady = () => {
-  window.isYoutubeInitialized = true;
-  // window.youtube.init();
-};
-let set_interval_id = null;
+window.onYouTubeIframeAPIReady = window.youtube.init;

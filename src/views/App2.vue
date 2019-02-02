@@ -141,7 +141,12 @@ export default {
   },
   mounted() {
     this.onMount();
-    window.youtube.init();
+
+    // Youtubeの使用準備
+    const script = document.createElement("script");
+    script.src = "static/lib/YoutubeManager.js";
+    const firstScript = document.getElementsByTagName("script")[0];
+    firstScript.parentNode.insertBefore(script, firstScript);
 
     let count = 0;
     document.onkeydown = event => {
