@@ -274,7 +274,7 @@ export default new Vuex.Store({
      * @param isStart
      */
     loading({ state }, isStart) {
-      // window.console.log(`loading ${state.mode.isLoading} ${isStart ? "+1" : "-1"}`);
+      // window.console.error(`loading ${state.mode.isLoading} ${isStart ? "+1" : "-1"}`);
       state.mode.isLoading += isStart ? 1 : -1;
     },
 
@@ -282,28 +282,24 @@ export default new Vuex.Store({
      * =================================================================================================================
      * ルームメンバがいる場合は部屋主に対して処理の通知を出し、そうでない場合はこの場で処理を実行する
      * @param dispatch
-     * @param state
      * @param rootGetters
      * @param method
      * @param value
      */
-    sendNoticeOperation({ dispatch, state, rootGetters }, { method, value }) {
+    sendNoticeOperation({ dispatch, rootGetters }, { method, value }) {
       const isWait = rootGetters.isWait;
-      let type = null;
-      if (state.public.room.members[0]) {
+      if (rootGetters.members[0]) {
         value.ownerPeerId = rootGetters.peerId(isWait);
-        if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
-          type = "DO_METHOD";
-          dispatch(method, value);
-        } else {
-          type = "NOTICE_OPERATION";
-        }
-        return dispatch("sendRoomData", {
-          type: type,
+        const isMe =
+          rootGetters.members[0].peerId === rootGetters.peerId(isWait);
+        dispatch("sendRoomData", {
+          type: isMe ? "DO_METHOD" : "NOTICE_OPERATION",
           value: value,
           method: method,
           isWait: isWait
         });
+        if (isMe) return dispatch(method, value);
+        return null;
       } else {
         value.ownerPeerId = null;
         return dispatch(method, value);

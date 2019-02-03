@@ -198,10 +198,11 @@ export default {
      * @param dispatch
      * @param rootState
      * @param zipFiles
+     * @param isRoomCreate
      */
     importStart(
       { dispatch, rootState }: { dispatch: Function; rootState: any },
-      zipFiles: any[]
+      { zipFiles, isRoomCreate }: { zipFiles: any[]; isRoomCreate: boolean }
     ) {
       const zip: any = new JSZip();
       const zipList: any[] = [];
@@ -214,9 +215,17 @@ export default {
                 .file("save.json")
                 .async("string")
                 .then((jsonStr: string) => {
+                  const saveData = JSON.parse(jsonStr);
+                  if (!isRoomCreate) {
+                    delete saveData.public.room.name;
+                    delete saveData.public.room.members;
+                    delete saveData.public.room.password;
+                    delete saveData.public.player;
+                    delete saveData.public.chat;
+                  }
                   zipList.push({
                     fileName: zipFile.name,
-                    saveData: JSON.parse(jsonStr)
+                    saveData: saveData
                   });
                   resolve();
                 });
@@ -225,6 +234,7 @@ export default {
       );
       Promise.all(promiseList).then(() => {
         rootState.private.display.dropZipWindow.zipList = zipList;
+        rootState.private.display.dropZipWindow.isRoomCreate = isRoomCreate;
         dispatch("windowOpen", "private.display.dropZipWindow");
       });
     },
@@ -232,29 +242,34 @@ export default {
     /** ========================================================================
      *
      * @param dispatch
+     * @param commit
      * @param rootState
      * @param rootGetters
      * @param publicData
      * @param dataVersion
      * @param delKeyList
      * @param addObjList
+     * @param dropZipRoomCreate
      */
     doImport(
       {
         dispatch,
+        commit,
         rootState,
         rootGetters
-      }: { dispatch: Function; rootState: any; rootGetters: any },
+      }: { dispatch: Function; commit: any; rootState: any; rootGetters: any },
       {
         publicData,
         dataVersion,
         delKeyList,
-        addObjList
+        addObjList,
+        dropZipRoomCreate
       }: {
         publicData: any;
         dataVersion: string;
         delKeyList: string[];
         addObjList: any[];
+        dropZipRoomCreate: boolean;
       }
     ) {
       const importFunc = () => {
@@ -262,6 +277,7 @@ export default {
         dispatch("setProperty", {
           property: "public",
           value: publicData,
+          isNotice: true,
           logOff: true
         });
 
@@ -293,10 +309,9 @@ export default {
                 useImageList.split("|").forEach(useImage => {
                   const matchResult = useImage.match(/image-\$([0-9]+)/);
                   if (matchResult) {
-                    const replaceImage = imageList[parseInt(matchResult[1])];
                     useImageList = useImageList.replace(
                       matchResult[0],
-                      replaceImage
+                      imageList[parseInt(matchResult[1])]
                     );
                   }
                 });
@@ -322,14 +337,54 @@ export default {
             });
         });
       };
-      if (!publicData.room) {
-        // セーブデータに部屋情報が無いなら、ロード処理を実行する
+      const roomName = publicData.room.name;
+      if (!dropZipRoomCreate) {
+        // 部屋を作らないシンプルなロード
         importFunc();
-      } else {
-        // セーブデータに部屋情報があるなら、入室処理を行う
-        const roomName = publicData.room.name;
+        // Promise.resolve()
+        //   .then((payload: any) => {
+        //     dispatch("loading", false);
+        //     // モーダル状態の解除
+        //     commit("updateIsModal", false);
+        //     // 部屋情報以外のpublicデータはすでにセーブデータで上書きされている
+        //     // privateデータをセーブデータの内容にする
+        //     const newPlayerName = payload.playerName;
+        //     const player = rootGetters.getObj(rootGetters.playerKey);
+        //     if (newPlayerName === player.name) {
+        //       // 同じ名前を指定された場合
+        //       const peerId = rootGetters.peerId(false);
+        //       // 改めてプレイヤー追加を行うため、あらかじめメンバー一覧から自分を削除しておく
+        //       const memberIndex = rootGetters.members.findIndex((members: any) => members.peerId === peerId);
+        //       rootGetters.members.splice(memberIndex, 1);
+        //       window.console.log("同じ名前を指定しました。", peerId, rootGetters.members.concat());
+        //       // プレイヤー追加とprivateデータのインポート
+        //       dispatch("addPlayer", {
+        //         peerId: peerId,
+        //         name: payload.playerName,
+        //         password: payload.playerPassword,
+        //         type: payload.playerType,
+        //         fontColor: payload.fontColor,
+        //         isWait: false
+        //       }).then(() => {
+        //         window.console.log(rootGetters.members.concat(), rootGetters.playerList.concat());
+        //       });
+        //     } else {
+        //       // 違う名前を指定された場合
+        //       window.console.log("異なる名前を指定しました。");
+        //     }
+        //   })
+        //   .catch(() => dispatch("loading", false));
+        return;
+      }
+      if (!publicData.room) {
+        // 部屋を作る操作なのにセーブデータに部屋情報が含まれてないならここで終わり
+        alert("部屋情報が含まれていません。\n処理を中断します。");
+        return;
+      }
+      dispatch("loading", true);
+      // セーブデータに部屋情報があるなら、入室処理を行う
+      const checkFunc = (roomName: string) => {
         // 部屋の存在チェック
-        dispatch("loading", true);
         Promise.resolve()
           .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
           .then(peerId => {
@@ -348,7 +403,17 @@ export default {
               msg.push(`部屋名を変更して再挑戦しますか？`);
               const result = window.confirm(msg.join("\n"));
               if (result) {
-                const newRoomName = window.prompt("新規部屋名");
+                const inputRoomNameFunc = (): string | null => {
+                  const inputStr: string | null = window.prompt("新規部屋名");
+                  if (inputStr === null) {
+                    if (window.confirm("ロードを中止しますか？")) return null;
+                  }
+                  return inputStr || inputRoomNameFunc();
+                };
+                const newRoomName = inputRoomNameFunc();
+                if (!newRoomName) return;
+
+                checkFunc(newRoomName);
               }
               return;
             }
@@ -356,36 +421,34 @@ export default {
             // データインポート
             importFunc();
 
-            const roomPassword = publicData.room.password;
-
             Promise.resolve()
-              .then(() => {
-                return new Promise((resolve: Function) => {
-                  // プレイヤー情報を入力してもらう
-                  dispatch("setProperty", {
-                    property: "private.display.inputPlayerInfoWindow",
-                    value: {
-                      roomName: roomName,
-                      roomPassword: roomPassword || "",
-                      playerName: "",
-                      playerPassword: "",
-                      playerType: "PL",
-                      fontColor: "#000000",
-                      resolve: resolve
-                    },
-                    logOff: true
-                  });
-                  dispatch(
-                    "windowOpen",
-                    "private.display.inputPlayerInfoWindow"
-                  );
-                });
-              })
+              .then(
+                () =>
+                  new Promise((resolve: Function) => {
+                    // プレイヤー情報を入力してもらう
+                    dispatch("setProperty", {
+                      property: "private.display.inputPlayerInfoWindow",
+                      value: {
+                        roomName: roomName,
+                        playerName: "",
+                        playerPassword: "",
+                        playerType: "PL",
+                        fontColor: "#000000",
+                        resolve: resolve
+                      },
+                      logOff: true
+                    });
+                    dispatch(
+                      "windowOpen",
+                      "private.display.inputPlayerInfoWindow"
+                    );
+                  })
+              )
               // プレイヤー情報を入力してもらったら部屋を新規作成して入室する
               .then((payload: any) =>
                 dispatch("doNewRoom", {
                   roomName: roomName,
-                  roomPassword: roomPassword || "",
+                  roomPassword: publicData.room.password || "",
                   playerName: payload.playerName,
                   playerPassword: payload.playerPassword,
                   playerType: payload.playerType || "PL",
@@ -395,7 +458,8 @@ export default {
               .then(() => dispatch("loading", false))
               .catch(() => dispatch("loading", false));
           });
-      }
+      };
+      checkFunc(roomName);
     }
   }
 };

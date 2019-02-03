@@ -40,6 +40,7 @@ export default class DropZipWindow extends Vue {
   @Action("windowOpen") windowOpen: any;
   @Action("doImport") doImport: any;
   @Getter("dropZipList") dropZipList: any;
+  @Getter("dropZipRoomCreate") dropZipRoomCreate: any;
 
   private saveDataList: any[] = [];
 
@@ -48,7 +49,8 @@ export default class DropZipWindow extends Vue {
     const importData: any = {
       publicData: null,
       delKeyList: [],
-      addObjList: []
+      addObjList: [],
+      dropZipRoomCreate: this.dropZipRoomCreate
     };
 
     // zipデータをマージする

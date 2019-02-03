@@ -181,7 +181,7 @@ export default {
         fontColor: string;
         isWait: boolean;
       }
-    ) => {
+    ): any => {
       const playerIndex: number = rootGetters.playerList.findIndex((p: any) => {
         return p.name === name;
       });
@@ -195,10 +195,12 @@ export default {
         commit("updatePlayerKey", playerKey);
       }
 
-      rootGetters.members.push({
-        peerId: peerId,
-        playerKey: playerKey
-      });
+      if (peerId) {
+        rootGetters.members.push({
+          peerId: peerId,
+          playerKey: playerKey
+        });
+      }
       if (!player) {
         window.console.log(`Add player key:${playerKey} name:${name}`);
         rootGetters.playerList.push({
@@ -219,7 +221,7 @@ export default {
             isNotice: false,
             logOff: true
           }).then(() => {
-            commit("updatePeerId", peerId);
+            commit("updatePeerId", { peerId: peerId, isWait: isWait });
           });
         }
       }

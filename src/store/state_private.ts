@@ -106,7 +106,8 @@ export default {
         command: null,
         isDisplay: false,
         zIndex: 1,
-        zipList: null
+        zipList: null,
+        isRoomCreate: false
       },
       addChitWindow: { command: null, isDisplay: false, zIndex: 1 },
       editChitWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
@@ -371,6 +372,7 @@ export default {
     historyList: (state: any) => state.historyList,
     chatTabsOption: (state: any): any[] => state.chat.tab,
     dropZipList: (state: any) => state.display.dropZipWindow.zipList,
+    dropZipRoomCreate: (state: any) => state.display.dropZipWindow.isRoomCreate,
     dropImageList: (state: any) => state.display.dropImageWindow.imageDataList,
     chitContextObjKey: (state: any) => state.display.chitContext.key,
     mapMaskContextObjKey: (state: any) => state.display.mapMaskContext.key,

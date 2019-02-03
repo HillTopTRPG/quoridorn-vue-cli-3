@@ -473,7 +473,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
 
     // zipファイルの処理
     if (zipFiles.length > 0) {
-      this.importStart(zipFiles);
+      this.importStart({ zipFiles: zipFiles, isRoomCreate: false });
     }
   }
 

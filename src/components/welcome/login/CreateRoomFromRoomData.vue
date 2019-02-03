@@ -43,7 +43,7 @@ export default class CreateRoomFromRoomData extends Vue {
       alert("ファイルを選択してください。");
       return;
     }
-    this.importStart(this.files);
+    this.importStart({ zipFiles: this.files, isRoomCreate: true });
   }
 }
 </script>
