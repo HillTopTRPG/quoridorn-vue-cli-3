@@ -1,7 +1,8 @@
 <template>
-  <WindowFrame titleText="部屋データ読込" display-property="private.display.dropZipWindow" align="center" fixSize="385, 660">
+  <WindowFrame titleText="部屋データ読込" display-property="private.display.dropZipWindow" align="center" fixSize="300, 100">
     <div class="contents">
       <div v-if="!saveDataList">部屋データを読み込んでいます...</div>
+      <!-- TODO 初回リリース対応としては部分ロードはしない
       <div v-if="saveDataList">複数のセーブデータで同じ項目を読み込ませる場合、各セーブデータで順次上書きされていきます。</div>
       <fieldset v-for="(saveDataObj, index) in saveDataList" :key="index">
         <legend>{{saveDataObj.fileName}}</legend>
@@ -13,6 +14,8 @@
           </label>
         </div>
       </fieldset>
+      -->
+      <div v-if="saveDataList">現段階では部分的ロードは行えません。<br>全てのデータをロードします。</div>
       <div class="operateArea">
         <button @click="commit" :disabled="!saveDataList">決定</button>
         <button @click="cancel" :disabled="!saveDataList">キャンセル</button>
