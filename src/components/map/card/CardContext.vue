@@ -22,7 +22,6 @@ export default {
     ...mapActions([
       "windowOpen",
       "setProperty",
-      "deletePieceInfo",
       "windowClose"
     ]),
     draw() {

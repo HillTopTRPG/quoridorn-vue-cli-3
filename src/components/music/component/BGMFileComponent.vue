@@ -62,9 +62,7 @@ export default class BGMFileComponent extends Vue {
       }
     });
     if (this.url.startsWith("..")) {
-      import(this.url).then(module => {
-        this.jukeboxAudio.src = module;
-      });
+      this.jukeboxAudio.src = this.url;
     } else {
       this.jukeboxAudio.src = this.url;
     }

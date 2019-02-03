@@ -1,38 +1,49 @@
 <template>
   <fieldset class="root">
     <legend>部屋データから部屋を作る</legend>
-    <div class="input-room-data">部屋データ：<button @click="chooseFile">ファイルを選択</button><span class="description">fileName</span></div>
-    <div style="color: red; font-weight: bold;">この機能は未実装です。<br>入室後のセーブ機能も見直し中のため動きません。</div>
+    <div class="input-room-data">部屋データ：<button @click="chooseFile">ファイルを選択</button>
+      <div class="description">
+        {{files.length ? "" : "未選択"}}
+        <span v-for="file in files" :key="file.name">{{file.name}}</span>
+      </div>
+    </div>
+    <input ref="fileChooser" type="file" style="display: none;" accept=".zip" multiple @change="event => selectFile(event)">
     <button type="button" @click="commit"><i class="icon-home3"></i> 作成</button>
   </fieldset>
 </template>
 
 <script lang="ts">
-// import { Action } from "vuex-class";
-
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
+import { Action } from "vuex-class";
 
 @Component<CreateRoomFromRoomData>({
   name: "createRoomFromRoomData"
 })
 export default class CreateRoomFromRoomData extends Vue {
-  // @Action("setProperty") setProperty: any;
-  // @Action("emptyMember") emptyMember: any;
-  // @Action("windowClose") windowClose: any;
-  // @Action("checkRoomName") checkRoomName: any;
-  //
-  // /*
-  //  * data
-  //  */
-  // private roomName: string = "";
+  @Action("importStart") importStart: any;
 
-  chooseFile(): void {}
+  private files: File[] = [];
+
+  chooseFile(this: any): void {
+    const fileChooser: HTMLElement = this.$refs.fileChooser;
+    fileChooser.click();
+  }
+
+  selectFile(event: any) {
+    if (event.target.files.length === 0) return;
+    this.files = [];
+    Array.prototype.push.apply(this.files, event.target.files);
+  }
 
   /**
    * 確定ボタン押下時
    */
   commit(): void {
-    // TODO
+    if (!this.files.length) {
+      alert("ファイルを選択してください。");
+      return;
+    }
+    this.importStart({ zipFiles: this.files, isRoomCreate: true });
   }
 }
 </script>
@@ -63,5 +74,9 @@ fieldset.root > legend {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 </style>

@@ -74,11 +74,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        window.console.log(`key:"${key}" is not find.`);
+        // window.console.log(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        window.console.log(`key:"(${key})" is duplicate.`);
+        // window.console.log(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];

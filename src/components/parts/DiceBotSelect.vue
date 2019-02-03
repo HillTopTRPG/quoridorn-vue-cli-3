@@ -78,10 +78,10 @@ export default class DiceBotSelect extends Vue {
 
     /* bcdice-js を Dynamic import */
     setTimeout(() => {
-      _.loading(true);
+      // _.loading(true);
       import(/* webpackChunkName: "bcdice-js" */ "bcdice-js").then(module => {
         _.bcDice = new module.BCDice();
-        _.loading(false);
+        // _.loading(false);
 
         const DiceBotLoader = module.DiceBotLoader;
         DiceBotLoader["collectDiceBots"]().forEach(

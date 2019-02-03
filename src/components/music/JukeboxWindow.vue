@@ -31,15 +31,18 @@
   </WindowFrame>
 </template>
 
-<script>
-import { mapState, mapActions } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-import BGMFileComponent from "./component/BGMFileComponent";
-import BGMYoutubeComponent from "./component/BGMYoutubeComponent";
-import MasterVolumeComponent from "./component/MasterVolumeComponent";
+<script lang="ts">
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
 
-export default {
+import BGMYoutubeComponent from "@/components/music/component/BGMYoutubeComponent.vue";
+import MasterVolumeComponent from "@/components/music/component/MasterVolumeComponent.vue";
+import BGMFileComponent from "@/components/music/component/BGMFileComponent.vue";
+
+import { Component, Vue } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+
+@Component<JukeboxWindow>({
   name: "jukeboxWindow",
   mixins: [WindowMixin],
   components: {
@@ -47,65 +50,66 @@ export default {
     BGMFileComponent,
     BGMYoutubeComponent,
     MasterVolumeComponent
-  },
-  data() {
-    return {
-      playList: []
-    };
-  },
-  methods: {
-    ...mapActions(["windowClose", "windowOpen"]),
-    add(bgmKey) {
-      if (!bgmKey) return;
-      const addBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0];
-      // 見つからなかったらタイミング悪く削除されたということなので、処理しない
-      if (!addBgmObj) return;
+  }
+})
+export default class JukeboxWindow extends Vue {
+  @Action("windowClose") windowClose: any;
+  @Action("windowOpen") windowOpen: any;
+  @Getter("bgmList") bgmList: any;
 
-      // タグが同じものはプレイリストから削除する
-      const delList = this.playList.filter(plObj => {
-        const bgmObj = this.bgmList.filter(
-          bgmObj => bgmObj.key === plObj.key
-        )[0];
-        if (!bgmObj) {
-          // 見つからなかったらタイミング悪く削除されたということなので、削除リストに追加
-          return true;
-        }
-        return addBgmObj.tag === bgmObj.tag;
-      });
-      delList.forEach(delObj => {
-        const index = this.playList.indexOf(delObj);
-        this.playList.splice(index, 1);
-      });
+  private playList: any[] = [];
 
-      // 追加処理
-      if (addBgmObj.url !== "") {
-        setTimeout(() => {
-          this.playList.unshift(addBgmObj);
-          this.windowOpen("private.display.jukeboxWindow");
-        }, 0);
-      } else {
-        if (this.playList.length === 0) {
-          this.windowClose("private.display.jukeboxWindow");
-        }
+  add(bgmKey: string): void {
+    if (!bgmKey) return;
+    const addBgmObj = this.bgmList.filter(
+      (bgmObj: any) => bgmObj.key === bgmKey
+    )[0];
+    // 見つからなかったらタイミング悪く削除されたということなので、処理しない
+    if (!addBgmObj) return;
+
+    // タグが同じものはプレイリストから削除する
+    const delList = this.playList.filter(plObj => {
+      const bgmObj = this.bgmList.filter(
+        (bgmObj: any) => bgmObj.key === plObj.key
+      )[0];
+      if (!bgmObj) {
+        // 見つからなかったらタイミング悪く削除されたということなので、削除リストに追加
+        return true;
       }
-    },
-    remove(bgmKey) {
-      const delBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0];
-      // 見つからなかったらタイミング悪く削除されたということなので、処理しない
-      if (!delBgmObj) return;
-
-      const index = this.playList.indexOf(delBgmObj);
+      return addBgmObj.tag === bgmObj.tag;
+    });
+    delList.forEach(delObj => {
+      const index = this.playList.indexOf(delObj);
       this.playList.splice(index, 1);
+    });
 
+    // 追加処理
+    if (addBgmObj.url !== "") {
+      setTimeout(() => {
+        this.playList.unshift(addBgmObj);
+        this.windowOpen("private.display.jukeboxWindow");
+      }, 0);
+    } else {
       if (this.playList.length === 0) {
         this.windowClose("private.display.jukeboxWindow");
       }
     }
-  },
-  computed: mapState({
-    bgmList: state => state.public.bgm.list
-  })
-};
+  }
+  remove(bgmKey: string): void {
+    const delBgmObj = this.bgmList.filter(
+      (bgmObj: any) => bgmObj.key === bgmKey
+    )[0];
+    // 見つからなかったらタイミング悪く削除されたということなので、処理しない
+    if (!delBgmObj) return;
+
+    const index = this.playList.indexOf(delBgmObj);
+    this.playList.splice(index, 1);
+
+    if (this.playList.length === 0) {
+      this.windowClose("private.display.jukeboxWindow");
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

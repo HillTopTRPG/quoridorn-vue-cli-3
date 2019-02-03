@@ -181,17 +181,26 @@ export default {
         fontColor: string;
         isWait: boolean;
       }
-    ) => {
+    ): any => {
       const playerIndex: number = rootGetters.playerList.findIndex((p: any) => {
         return p.name === name;
       });
       const player =
         playerIndex > -1 ? rootGetters.playerList[playerIndex] : null;
       const playerKey: string = player ? player.key : `player-${name}`;
-      rootGetters.members.push({
-        peerId: peerId,
-        playerKey: playerKey
-      });
+
+      const isSelf = rootGetters.peerId(isWait) === peerId;
+      if (isSelf) {
+        commit("updateActorKey", playerKey);
+        commit("updatePlayerKey", playerKey);
+      }
+
+      if (peerId) {
+        rootGetters.members.push({
+          peerId: peerId,
+          playerKey: playerKey
+        });
+      }
       if (!player) {
         window.console.log(`Add player key:${playerKey} name:${name}`);
         rootGetters.playerList.push({
@@ -202,17 +211,19 @@ export default {
           type: type
         });
       } else {
-        player.type = type;
-        rootGetters.playerList.splice(playerIndex, 1, player);
-      }
-      if (peerId === rootGetters.peerId(isWait)) {
-        commit("updateActorKey", playerKey);
-        dispatch("setProperty", {
-          property: "private.self",
-          value: { playerKey: playerKey },
-          isNotice: false,
-          logOff: true
-        });
+        // privateデータの復元
+        const privateData = player.private;
+        if (privateData && isSelf) {
+          const peerId = rootGetters.peerId(isWait);
+          dispatch("setProperty", {
+            property: "private",
+            value: privateData,
+            isNotice: false,
+            logOff: true
+          }).then(() => {
+            commit("updatePeerId", { peerId: peerId, isWait: isWait });
+          });
+        }
       }
     },
 
@@ -393,7 +404,7 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
-      const player = state.player.list.filter(
+      const player = getters.playerList.filter(
         (p: any) => p.key === rootGetters.playerKey
       )[0];
       if (player) {
@@ -418,6 +429,25 @@ export default {
       } else {
         // その他
         return state[kind].list.filter(filterFunc)[0];
+      }
+    },
+
+    delObj: (state: any) => (key: string): void => {
+      if (!key) return;
+      const kind = key.split("-")[0];
+      let list: any[] = [];
+      const findIndexFunc: Function = () =>
+        list.findIndex(obj => obj.key === key);
+      if (kind === "groupTargetTab") {
+        // グループチャットタブ
+        list = state.chat.groupTargetTab.list;
+      } else {
+        // その他
+        list = state[kind].list;
+      }
+      const index = findIndexFunc(list);
+      if (index > -1) {
+        list.splice(index, 1);
       }
     },
 
@@ -492,6 +522,19 @@ export default {
       return `${baseUrl}?${params.join("&")}`;
     },
     isMapEditing: (state: any): boolean => state.map.isEditing,
-    groupTargetTab: (state: any): any => state.chat.groupTargetTab
+    groupTargetTab: (state: any): any => state.chat.groupTargetTab,
+    isDrawGridLine: (state: any): boolean => state.setting.gridLine,
+    isDrawGridId: (state: any): boolean => state.setting.gridId,
+    gridColor: (state: any): string => state.map.grid.color,
+    isReverse: (state: any): boolean => state.map.isReverse,
+    canvasSize(state: any, getter: any) {
+      return {
+        w: getter.columns * getter.gridSize,
+        h: getter.rows * getter.gridSize
+      };
+    },
+    bgmList: (state: any) => state.bgm.list,
+    imageTagList: (state: any) => state.image.tags.list,
+    imageList: (state: any) => state.image.list
   } /* end of getters */
 };

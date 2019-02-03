@@ -274,7 +274,7 @@ export default new Vuex.Store({
      * @param isStart
      */
     loading({ state }, isStart) {
-      // window.console.log(`loading ${state.mode.isLoading} ${isStart ? "+1" : "-1"}`);
+      // window.console.error(`loading ${state.mode.isLoading} ${isStart ? "+1" : "-1"}`);
       state.mode.isLoading += isStart ? 1 : -1;
     },
 
@@ -282,31 +282,27 @@ export default new Vuex.Store({
      * =================================================================================================================
      * ルームメンバがいる場合は部屋主に対して処理の通知を出し、そうでない場合はこの場で処理を実行する
      * @param dispatch
-     * @param state
      * @param rootGetters
      * @param method
      * @param value
      */
-    sendNoticeOperation({ dispatch, state, rootGetters }, { method, value }) {
+    sendNoticeOperation({ dispatch, rootGetters }, { method, value }) {
       const isWait = rootGetters.isWait;
-      let type = null;
-      if (state.public.room.members[0]) {
+      if (rootGetters.members[0]) {
         value.ownerPeerId = rootGetters.peerId(isWait);
-        if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
-          type = "DO_METHOD";
-          dispatch(method, value);
-        } else {
-          type = "NOTICE_OPERATION";
-        }
+        const isMe =
+          rootGetters.members[0].peerId === rootGetters.peerId(isWait);
         dispatch("sendRoomData", {
-          type: type,
+          type: isMe ? "DO_METHOD" : "NOTICE_OPERATION",
           value: value,
           method: method,
           isWait: isWait
         });
+        if (isMe) return dispatch(method, value);
+        return null;
       } else {
         value.ownerPeerId = null;
-        dispatch(method, value);
+        return dispatch(method, value);
       }
     },
 
@@ -418,7 +414,7 @@ export default new Vuex.Store({
       };
       rootState.public.chat.tab.list.push(publicTab);
       rootState.private.chat.tab.push(privateTab);
-      Vue.set(rootState.public.chat.tab.logs, key, []);
+      Vue.set(rootState.public.chat.logs, key, []);
     },
     updateChatTab: (
       { rootState },
@@ -676,10 +672,10 @@ export default new Vuex.Store({
       !isWait ? state.room.webRtcRoom : state.room.webRtcRoomWait,
     chatActorKey: state => state.chat.actorKey,
     volatilePrivateData: state => state.volatileSaveData.players,
-    chatTabs: (state, getters, rootState) => {
-      const tabs = rootState.public.chat.tab.list.map(publicTab => {
-        const privateTab = rootState.private.chat.tab.filter(
-          privateTab => privateTab.key === publicTab.key
+    chatTabs: (state, getters, rootState, rootGetters) => {
+      return rootGetters.chatTabsOption.map(privateTab => {
+        const publicTab = rootState.public.chat.tab.list.filter(
+          publicTab => publicTab.key === privateTab.key
         )[0];
         return {
           key: publicTab.key,
@@ -690,7 +686,6 @@ export default new Vuex.Store({
           order: privateTab.order
         };
       });
-      return tabs;
     },
     /**
      * 選択済みのチャットのタブのオブジェクト
@@ -699,6 +694,11 @@ export default new Vuex.Store({
      * @returns any
      */
     activeChatTab: (state, getters) =>
-      getters.chatTabs.filter(tab => tab.isActive)[0]
+      getters.chatTabs.filter(tab => tab.isActive)[0],
+    grid: state => ({
+      c: state.map.grid.c,
+      r: state.map.grid.r
+    }),
+    isRolling: state => state.map.rollObj.isRolling
   }
 });

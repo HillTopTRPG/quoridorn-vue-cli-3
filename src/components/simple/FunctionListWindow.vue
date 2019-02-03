@@ -10,10 +10,7 @@ import WindowMixin from "../WindowMixin";
 
 export default {
   mixins: [WindowMixin],
-  components: {
-    WindowFrame: WindowFrame
-  },
-  methods: {}
+  components: { WindowFrame: WindowFrame }
 };
 </script>
 

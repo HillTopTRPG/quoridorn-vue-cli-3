@@ -11,7 +11,7 @@
           <span class="tagLabel">付与するタグ(半角・全角スペースで区切り)</span>
           <input class="tagInput" type="text" @change="changeTag(imageObj.key)" v-model="imageObj.currentTag" />
           <select class="tagSelect" @change="selectTag(imageObj.key)" v-model="imageObj.selectTag">
-            <option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option>
+            <option v-for="tagObj in imageTagList.slice(1)" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option>
           </select>
         </div>
       </fieldset>
@@ -23,96 +23,90 @@
   </WindowFrame>
 </template>
 
-<script>
-import { mapState, mapActions } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
+<script lang="ts">
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
 
-export default {
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+
+@Component<DropImageWindow>({
   name: "dropImageWindow",
   mixins: [WindowMixin],
   components: {
     WindowFrame
-  },
-  data() {
-    return {
-      imageList: null
-    };
-  },
-  methods: {
-    ...mapActions([
-      "imageTagChange",
-      "addImage",
-      "windowClose",
-      "emptyProperty"
-    ]),
-    commit() {
-      this.imageList.forEach(imageObj => {
-        this.addImage({ tag: imageObj.currentTag, data: imageObj.image });
+  }
+})
+export default class DropImageWindow extends Vue {
+  @Action("imageTagChange") imageTagChange: any;
+  @Action("addImage") addImage: any;
+  @Action("windowClose") windowClose: any;
+  @Action("emptyProperty") emptyProperty: any;
+  @Getter("dropImageList") dropImageList: any;
+  @Getter("imageTagList") imageTagList: any;
+  @Getter("playerKey") playerKey: any;
+
+  private imageList: any[] = [];
+
+  commit(): void {
+    this.imageList.forEach(imageObj => {
+      this.addImage({
+        tag: imageObj.currentTag,
+        data: imageObj.image,
+        owner: this.playerKey
       });
-      this.windowClose("private.display.dropImageWindow");
-      this.emptyProperty({
-        property: "private.display.dropImageWindow.imageDataList"
-      });
-    },
-    cancel() {
-      this.windowClose("private.display.dropImageWindow");
-      this.emptyProperty({
-        property: "private.display.dropImageWindow.imageDataList"
-      });
-    },
-    getKeyObj(list, key) {
-      const filteredList = list.filter(obj => obj.key === key);
-      if (filteredList.length === 0) {
-        window.console.log(`key:"${key}" is not find.`);
-        return null;
-      }
-      if (filteredList.length > 1) {
-        window.console.log(`key:"(${key})" is duplicate.`);
-        return null;
-      }
-      return filteredList[0];
-    },
-    changeTag(key) {
-      // 入力によってタグの追加・削除が発生する可能性があるので、タグリストを整理してもらう
-      window.console.log("changeTag");
-      this.imageTagChange({ key: key, imageList: this.imageList });
-    },
-    selectTag(key) {
-      const imgObj = this.getKeyObj(this.imageList, key);
-      window.console.log(imgObj.currentTag, imgObj.selectTag);
-      imgObj.currentTag = imgObj.selectTag;
-      // const index = this.imageList.indexOf(imgObj)
-      // this.imageList.splice(index, 1, imgObj)
-      // 選択によってタグの削除が発生する可能性があるので、タグリストを整理してもらう
-      this.imageTagChange({ key: key, imageList: this.imageList });
+    });
+    this.windowClose("private.display.dropImageWindow");
+    this.emptyProperty({
+      property: "private.display.dropImageWindow.imageDataList"
+    });
+  }
+  cancel(): void {
+    this.windowClose("private.display.dropImageWindow");
+    this.emptyProperty({
+      property: "private.display.dropImageWindow.imageDataList"
+    });
+  }
+  getKeyObj(list: any[], key: string): any {
+    const filteredList = list.filter(obj => obj.key === key);
+    if (filteredList.length === 0) {
+      window.console.log(`key:"${key}" is not find.`);
+      return null;
     }
-  },
-  watch: {
-    storeImageList(storeImageList) {
-      this.imageList = [];
-      storeImageList.forEach(imgObj => {
-        this.imageList.push({
-          image: imgObj.image,
-          name: imgObj.name,
-          key: imgObj.key,
-          currentTag: "キャラクター",
-          selectTag: "キャラクター",
-          password: ""
-        });
-      });
+    if (filteredList.length > 1) {
+      window.console.log(`key:"(${key})" is duplicate.`);
+      return null;
     }
-  },
-  computed: mapState({
-    storeImageList: state =>
-      state.private.display.dropImageWindow.imageDataList,
-    tagList() {
-      const result = this.$store.state.public.image.tags.list.concat();
-      result.shift();
-      return result;
-    }
-  })
-};
+    return filteredList[0];
+  }
+  changeTag(key: string): void {
+    // 入力によってタグの追加・削除が発生する可能性があるので、タグリストを整理してもらう
+    window.console.log("changeTag");
+    this.imageTagChange({ key: key, imageList: this.imageList });
+  }
+
+  selectTag(key: string): void {
+    const imgObj = this.getKeyObj(this.imageList, key);
+    window.console.log(imgObj.currentTag, imgObj.selectTag);
+    imgObj.currentTag = imgObj.selectTag;
+    // const index = this.imageList.indexOf(imgObj)
+    // this.imageList.splice(index, 1, imgObj)
+    // 選択によってタグの削除が発生する可能性があるので、タグリストを整理してもらう
+    this.imageTagChange({ key: key, imageList: this.imageList });
+  }
+
+  @Watch("dropImageList")
+  onChangeDropImageList(dropImageList: any[]): void {
+    this.imageList = dropImageList.map(imgObj => ({
+      image: imgObj.image,
+      name: imgObj.name,
+      key: imgObj.key,
+      currentTag: "キャラクター",
+      selectTag: "キャラクター",
+      password: ""
+    }));
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -109,11 +109,11 @@ export default {
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
       if (filteredList.length === 0) {
-        window.console.log(`key:"${key}" is not find.`);
+        // window.console.log(`key:"${key}" is not find.`);
         return null;
       }
       if (filteredList.length > 1) {
-        window.console.log(`key:"(${key})" is duplicate.`);
+        // window.console.log(`key:"(${key})" is duplicate.`);
         return null;
       }
       return filteredList[0];
@@ -152,28 +152,22 @@ export default {
         alert(`名前を入力してください。`);
         return;
       }
-      let useImageList = "";
-      this.switchImageList.forEach(imgObj => {
-        const isReverseStr = imgObj.isReverse ? ":R" : "";
-        const imgStr = imgObj.imgKey + isReverseStr;
-        useImageList += imgStr + "|";
-      });
-      useImageList = useImageList.substr(0, useImageList.length - 1);
-      const obj = {
+      this.changePieceInfo({
         propName: "character",
         key: this.key,
         isNotice: true,
         name: this.name,
         columns: this.size,
         rows: this.size,
-        useImageList: useImageList,
+        useImageList: this.switchImageList
+          .map(imgObj => imgObj.imgKey + (imgObj.isReverse ? ":R" : ""))
+          .join("|"),
         isHide: this.isHide,
         url: this.url,
         text: this.text,
         useImageIndex: 0,
         currentImageTag: this.currentImageTag
-      };
-      this.changePieceInfo(obj);
+      });
       this.windowClose("private.display.editCharacterWindow");
     },
     cancel() {

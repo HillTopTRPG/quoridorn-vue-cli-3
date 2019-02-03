@@ -319,7 +319,6 @@ export default {
           property: "private.display.inputPlayerInfoWindow",
           value: {
             roomName: roomName,
-            roomPassword: roomPassword || "",
             playerName: playerName || "",
             playerPassword: playerPassword || "",
             playerType: playerType || "PL",
@@ -1086,18 +1085,14 @@ export default {
 
       qLog(`Room: ${roomName} のルームメンバーとして認識されました。`);
 
-      try {
-        // チャット追加
-        dispatch("addChatLog", {
-          name: rootGetters.systemLog.name,
-          text: `${playerName} が入室しました。`,
-          color: rootGetters.systemLog.color,
-          tab: rootGetters.systemLog.tab,
-          owner: rootGetters.systemLog.owner
-        });
-      } catch(err) {
-        console.error(err);
-      }
+      // チャット追加
+      dispatch("addChatLog", {
+        name: rootGetters.systemLog.name,
+        text: `${playerName} が入室しました。`,
+        color: rootGetters.systemLog.color,
+        tab: rootGetters.systemLog.tab,
+        owner: rootGetters.systemLog.owner
+      });
 
       dispatch("windowOpen", "private.display.playerBoxWindow");
 

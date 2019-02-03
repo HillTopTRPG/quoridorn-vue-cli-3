@@ -68,7 +68,6 @@ export default class SettingChatTabWindow extends Vue {
   public commit() {
     this.delTabs.forEach((key: string) => this.deleteChatTab(key));
     this.tabs.forEach((tab: any, index: number) => {
-      window.console.log(index, tab);
       if (tab.key.startsWith("chatTabAdd")) {
         this.addChatTab({
           name: tab.name,

@@ -3,6 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
+import { qLog } from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -57,7 +58,7 @@ export default {
           viewHtml: viewHtml
         };
         // 未読カウントアップ
-        if (tab !== activeChatTab.name) {
+        if (tab !== activeChatTab.key) {
           const index = rootGetters.chatTabsOption.findIndex(
             (tabObj: any) => tabObj.key === tab
           );
@@ -108,14 +109,6 @@ export default {
         const changeTab: any = {};
         change[tab] = changeTab;
         rootState.public.chat.logs[tab].forEach((log: any, index: number) => {
-          window.console.log(
-            "chatLogs",
-            tab,
-            log.owner,
-            target.key,
-            log.owner !== target.key,
-            log.viewHtml
-          );
           if (log.owner !== target.key) return;
           changeTab[index] = {
             viewHtml: log.viewHtml.replace(
@@ -129,7 +122,7 @@ export default {
         property: `public.chat.logs`,
         value: change,
         isNotice: false,
-        logOff: false
+        logOff: true
       });
     },
     /** ========================================================================
@@ -178,17 +171,16 @@ export default {
     /** ========================================================================
      * 画像を追加する
      */
-    addImage: ({ dispatch }: { dispatch: Function }, payload: any) => {
-      dispatch("sendNoticeOperation", { value: payload, method: "doAddImage" });
+    addImage: ({ dispatch }: { dispatch: Function }, payload: any): string => {
+      return dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doAddImage"
+      });
     },
     doAddImage: (
       { rootState, rootGetters }: { rootState: any; rootGetters: any },
-      {
-        tag,
-        data,
-        ownerPeerId
-      }: { tag: string; data: any; ownerPeerId: string }
-    ) => {
+      { tag, data, owner }: { tag: string; data: any; owner: string }
+    ): string => {
       // 欠番を埋める方式は不採用
       let maxKey = rootState.public.image.maxKey;
       const key = `image-${++maxKey}`;
@@ -196,11 +188,13 @@ export default {
       rootState.public.image.list.push({
         tag: tag,
         data: data,
+        owner: owner,
         key: key
       });
-      if (rootGetters.peerId(false) === ownerPeerId) {
+      if (rootGetters.playerKey === owner) {
         rootGetters.historyList.push({ type: "add", key: key });
       }
+      return key;
     },
     /** ========================================================================
      * BGMを追加する
@@ -217,8 +211,9 @@ export default {
       const key = `bgm-${++maxKey}`;
       rootState.public.bgm.maxKey = maxKey;
       payload.key = key;
+      delete payload.ownerPeerId;
       rootState.public.bgm.list.push(payload);
-      if (rootGetters.peerId(false) === payload.ownerPeerId) {
+      if (rootGetters.playerKey === payload.owner) {
         rootGetters.historyList.push({ type: "add", key: key });
       }
     },
@@ -235,7 +230,13 @@ export default {
       { rootState, rootGetters }: { rootState: any; rootGetters: any },
       payload: any
     ) => {
+      // 欠番を埋める方式は不採用
+      let maxKey = rootState.public[payload.propName].maxKey;
+      const key = `${payload.kind}-${++maxKey}`;
+      rootState.public[payload.propName].maxKey = maxKey;
+
       const obj: any = {
+        key: key,
         isDraggingLeft: false,
         move: {
           from: { x: 0, y: 0 },
@@ -249,29 +250,28 @@ export default {
         },
         isLock: false
       };
+
       for (let prop in payload) {
         if (!payload.hasOwnProperty(prop)) continue;
+        if (prop === "isNotice") continue;
         obj[prop] = payload[prop];
       }
 
-      // 欠番を埋める方式は不採用
-      let maxKey = rootState.public[payload.propName].maxKey;
-      const key = `${payload.kind}-${++maxKey}`;
-      obj.key = key;
-      rootState.public[payload.propName].maxKey = maxKey;
+      const pList: string[] = [];
+      pList.push(`type: ${obj.type}`);
+      pList.push(`name: ${obj.name}`);
+      pList.push(`key: ${obj.key}`);
+      pList.push(`locate: (${obj.top}, ${obj.left})`);
+      pList.push(`rows: ${obj.rows}`);
+      pList.push(`cols: ${obj.columns}`);
+      pList.push(`bg: "${obj.color}`);
+      pList.push(`font: ${obj.fontColor}`);
+      qLog(`マップオブジェクト追加 => ${pList.join(", ")}`);
 
-      window.console.log(
-        `[mutations] doAddPieceInfo => { type: ${obj.type}, key:${
-          obj.key
-        }, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${
-          obj.columns
-        }, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}" }`
-      );
-
-      rootState.public[payload.propName].list.push(obj);
-      if (rootGetters.peerId(false) === payload.ownerPeerId) {
+      if (rootGetters.playerKey === payload.owner) {
         rootGetters.historyList.push({ type: "add", key: key });
       }
+      rootState.public[payload.propName].list.push(obj);
     },
     /** ========================================================================
      * マップオブジェクト情報を変更する
@@ -322,10 +322,12 @@ export default {
     ) => {
       // window.console.log(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
       const obj = rootGetters.getObj(payload.key);
-      const index = rootState.public[payload.propName].list.indexOf(obj);
-      rootState.public[payload.propName].list.splice(index, 1);
+      rootState.public[payload.propName].list.splice(
+        rootState.public[payload.propName].list.indexOf(obj),
+        1
+      );
 
-      if (rootGetters.peerId(false) === payload.ownerPeerId) {
+      if (rootGetters.playerKey === payload.playerKey) {
         rootGetters.historyList.splice(
           rootGetters.historyList.findIndex(
             (hisObj: any) => hisObj.key === payload.key
@@ -485,7 +487,7 @@ export default {
         if (!rootGetters.chatLogs[tabsTab.name]) {
           // this.$set(state.chat.logs, tabsTab.name, [])
           const newLogs = { ...rootGetters.chatLogs };
-          newLogs[tabsTab.name] = [];
+          newLogs[tabsTab.key] = [];
           rootState.public.chat.logs = newLogs;
           // state.chat.logs[tabsTab.name] = []
         }
@@ -499,7 +501,6 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
-      window.console.log(rootGetters.activeTab, rootGetters.chatLogs);
       return rootGetters.chatLogs[rootGetters.activeTab].filter((log: any) => {
         if (log.from === rootGetters.playerKey) return true;
         if (!log.target) return true;
@@ -571,6 +572,18 @@ export default {
         ...rootGetters.playerList,
         ...rootGetters.getMapObjectList({ kind: "character", place: "field" })
       ];
+    },
+    mapMaskIsLock: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
+      if (!getters.isWindowOpen("private.display.mapMaskContext")) {
+        return false;
+      }
+      const obj = rootGetters.getObj(rootGetters.mapMaskContextObjKey);
+      return obj ? obj.isLock : false;
     }
   }
 };

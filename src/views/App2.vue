@@ -27,9 +27,6 @@
     <DropImageWindow/>
     <RoomInfoWindow/>
     <DropZipWindow/>
-    <SelectPeerWindow/>
-    <InviteLinkWindow/>
-    <ConfirmLoadRoomWindow/>
     <AddChitWindow/>
     <EditChitWindow/>
     <ChitContext/>
@@ -49,6 +46,7 @@
     <EditGroupChatWindow/>
     <Deck/>
     <InputPlayerInfoWindow/>
+    <SecretDiceWindow/>
   </div>
 </template>
 
@@ -74,9 +72,6 @@ import CharacterContext from "../components/map/character/CharacterContext";
 import DropImageWindow from "../components/simple/DropImageWindow";
 import RoomInfoWindow from "../components/simple/RoomInfoWindow";
 import DropZipWindow from "../components/simple/DropZipWindow";
-import SelectPeerWindow from "../components/simple/SelectPeerWindow";
-import InviteLinkWindow from "../components/simple/InviteLinkWindow";
-import ConfirmLoadRoomWindow from "../components/simple/ConfirmLoadRoomWindow";
 import AddChitWindow from "../components/map/chit/AddChitWindow";
 import EditChitWindow from "../components/map/chit/EditChitWindow";
 import ChitContext from "../components/map/chit/ChitContext";
@@ -98,6 +93,7 @@ import ModalScreen from "../components/simple/ModalScreen";
 import Loading from "../components/simple/Loading";
 import LoadingScreen from "../components/simple/LoadingScreen";
 import InputPlayerInfoWindow from "../components/welcome/login/InputPlayerInfoWindow";
+import SecretDiceWindow from "../components/chat/SecretDiceWindow";
 
 export default {
   name: "App2",
@@ -119,9 +115,6 @@ export default {
     DropImageWindow,
     RoomInfoWindow,
     DropZipWindow,
-    SelectPeerWindow,
-    InviteLinkWindow,
-    ConfirmLoadRoomWindow,
     AddChitWindow,
     EditChitWindow,
     ChitContext,
@@ -143,11 +136,17 @@ export default {
     ModalScreen,
     Loading,
     LoadingScreen,
-    InputPlayerInfoWindow
+    InputPlayerInfoWindow,
+    SecretDiceWindow
   },
   mounted() {
     this.onMount();
-    window.youtube.init();
+
+    // Youtubeの使用準備
+    const script = document.createElement("script");
+    script.src = "static/lib/YoutubeManager.js";
+    const firstScript = document.getElementsByTagName("script")[0];
+    firstScript.parentNode.insertBefore(script, firstScript);
 
     let count = 0;
     document.onkeydown = event => {

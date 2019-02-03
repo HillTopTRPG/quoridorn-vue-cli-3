@@ -8,7 +8,7 @@
         <span class="tab"
               v-for="(tabObj, index) in chatTabs"
               :key="tabObj.name"
-              :class="{ active: tabObj.name === activeTab, unRead: tabObj.unRead > 0 }"
+              :class="{ active: tabObj.key === activeTab, unRead: tabObj.unRead > 0 }"
               @mousedown.prevent="selectChatTab(tabObj.key)"
               :tabindex="index + 1"
         >#{{tabObj.name}}/{{tabObj.unRead}}</span>
@@ -103,7 +103,7 @@
               <li
                 v-for="tab in chatOptionPagingList"
                 :key="tab.key"
-                :class="{selected: outputTab === tab.name}"
+                :class="{selected: outputTab === tab.key}"
                 tabindex="-1"
               >{{tab.name}}</li>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
@@ -114,7 +114,7 @@
             <span class="chatOption" @click="clickChatOption">
               <span class="emphasis">! {{getViewName(chatActorKey)}}</span>
               <span :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{getGroupTargetName()}}</span>
-              <span :class="{emphasis: outputTab !== '[選択中]'}"># {{outputTab}}</span>
+              <span :class="{emphasis: outputTab !== null}"># {{outputTab ? getTabName(outputTab) : "[選択中]"}}</span>
             </span>
             <!----------------
              ! 入力欄
@@ -158,10 +158,11 @@
 <script lang="ts">
 import DiceBotSelect from "../parts/DiceBotSelect.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
+
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter, Mutation } from "vuex-class";
 
 @Component<ChatWindow>({
   name: "chatWindow",
@@ -178,6 +179,7 @@ export default class ChatWindow extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("sendRoomData") sendRoomData: any;
   @Mutation("updateActorKey") updateActorKey: any;
+  @Mutation("addSecretDice") addSecretDice: any;
   @Getter("getPeerActors") getPeerActors: any;
   @Getter("getViewName") getViewName: any;
   @Getter("getObj") getObj: any;
@@ -207,7 +209,7 @@ export default class ChatWindow extends Vue {
   /** 発言先 */
   private chatTarget: string = "groupTargetTab-0";
   /** 出力先のタブ */
-  private outputTab: string = "[選択中]";
+  private outputTab: string | null = null;
   /** 選択されているシステム */
   private currentDiceBotSystem: string = "DiceBot";
   /** 秘匿チャットの相手 */
@@ -218,7 +220,7 @@ export default class ChatWindow extends Vue {
   private volatileFrom: string = "";
   private volatileTarget: string = "";
   private volatileActiveTab: string = "";
-  private volatileTargetTab: string = "";
+  private volatileTargetTab: string | null = "";
 
   onInput(event: any): void {
     const text = event.target.value;
@@ -251,19 +253,19 @@ export default class ChatWindow extends Vue {
       });
     }
 
-    let selectTab: string = "";
+    let selectTab: string | null | undefined = undefined;
     if (text.startsWith("#") || text.startsWith("＃")) {
       const useText = text.substring(1);
       if (useText.length === 0) {
         selectTab = this.outputTab;
       }
-      const selection = [
-        "[選択中]",
-        ...this.chatTabs.map((tab: any) => tab.name)
+      const selection: any[] = [
+        { name: "[選択中]", key: null },
+        ...this.chatTabs
       ];
-      selection.forEach((tabName: string) => {
-        if (selectTab) return;
-        if (tabName.startsWith(useText)) selectTab = tabName;
+      selection.forEach(({ key, name }: { key: string; name: string }) => {
+        if (selectTab !== undefined) return;
+        if (name.startsWith(useText)) selectTab = key;
       });
     }
 
@@ -273,7 +275,7 @@ export default class ChatWindow extends Vue {
     } else if (selectTarget) {
       this.chatOptionSelectMode = "target";
       this.chatTarget = selectTarget;
-    } else if (selectTab) {
+    } else if (selectTab !== undefined) {
       this.chatOptionSelectMode = "tab";
       this.outputTab = selectTab;
     } else {
@@ -421,6 +423,10 @@ export default class ChatWindow extends Vue {
   settingBGM(): void {
     this.windowOpen("private.display.settingBGMWindow");
   }
+  getTabName(tabKey: string): string {
+    const tab = this.chatTabs.filter((tab: any) => tab.key === tabKey)[0];
+    return tab ? tab.name : null;
+  }
   commitChatOption(): void {
     if (this.chatOptionSelectMode) {
       this.currentMessage = "";
@@ -473,7 +479,7 @@ export default class ChatWindow extends Vue {
 
     // 出力先タブ決定
     let outputTab = this.outputTab;
-    if (outputTab === "[選択中]") {
+    if (outputTab === null) {
       outputTab = this.activeTab;
     }
 
@@ -491,24 +497,9 @@ export default class ChatWindow extends Vue {
       ownerKey = undefined;
     }
 
-    const currentActor = this.getPeerActors.filter(
-      (actor: any) => actor.key === this.chatActorKey
-    )[0];
-
-    const messageObj = {
-      name: this.getViewName(this.chatActorKey),
-      text: text,
-      color: color,
-      tab: outputTab,
-      from: ownerKey,
-      target: this.chatTarget,
-      owner: currentActor ? currentActor.key : null
-    };
-
-    // -------------------
-    // プレイヤー発言
-    // -------------------
-    this.addChatLog(messageObj);
+    let isDiceRoll: boolean = false;
+    let isSecretDice: boolean = false;
+    let diceRollResult: any = null;
 
     // -------------------
     // ダイスBot処理
@@ -517,28 +508,71 @@ export default class ChatWindow extends Vue {
     if (bcDice) {
       bcDice.setMessage(this.currentMessage);
       const resultObj = bcDice.dice_command();
-      const diceResult = resultObj[0].replace(/(^: )/g, "").replace(/＞/g, "→");
       const isSecret = resultObj[1];
-      if (diceResult !== "1") {
-        if (isSecret) {
-          this.addChatLog({
-            name: this.currentDiceBotSystem,
-            text: `シークレットダイス`,
-            color: "black",
-            tab: this.activeTab,
-            owner: "SYSTEM"
-          });
-        } else {
-          this.addChatLog({
-            name: this.currentDiceBotSystem,
-            text: diceResult,
-            color: "black",
-            tab: this.activeTab,
-            owner: "SYSTEM"
-          });
-        }
+      diceRollResult = resultObj[0].replace(/(^: )/g, "").replace(/＞/g, "→");
+      if (diceRollResult !== "1") {
+        isDiceRoll = true;
+        if (isSecret) isSecretDice = true;
       }
       this.currentMessage = "";
+    }
+
+    const currentActor = this.getPeerActors.filter(
+      (actor: any) => actor.key === this.chatActorKey
+    )[0];
+    if (isDiceRoll && isSecretDice) {
+      // -------------------
+      // シークレットダイス
+      // -------------------
+      this.addChatLog({
+        name: this.getViewName(this.chatActorKey),
+        text: `シークレットダイス`,
+        color: color,
+        tab: outputTab,
+        from: ownerKey,
+        target: this.chatTarget,
+        owner: currentActor ? currentActor.key : null
+      });
+
+      // 隠しダイスロール結果画面に反映
+      this.addSecretDice({
+        name: this.getViewName(this.chatActorKey),
+        diceBot: this.currentDiceBotSystem,
+        text: text,
+        diceRollResult: diceRollResult,
+        color: color,
+        tab: outputTab,
+        from: ownerKey,
+        target: this.chatTarget,
+        owner: currentActor ? currentActor.key : null
+      });
+    } else {
+      // -------------------
+      // プレイヤー発言
+      // -------------------
+      this.addChatLog({
+        name: this.getViewName(this.chatActorKey),
+        text: text,
+        color: color,
+        tab: outputTab,
+        from: ownerKey,
+        target: this.chatTarget,
+        owner: currentActor ? currentActor.key : null
+      });
+      if (isDiceRoll) {
+        // -------------------
+        // ダイスロール結果
+        // -------------------
+        this.addChatLog({
+          name: this.currentDiceBotSystem,
+          text: diceRollResult,
+          color: color,
+          tab: outputTab,
+          from: ownerKey,
+          target: this.chatTarget,
+          owner: currentActor ? currentActor.key : null
+        });
+      }
     }
   }
   nameToKeyView(name: string): string {
@@ -647,7 +681,7 @@ export default class ChatWindow extends Vue {
     }
     if (this.chatOptionSelectMode === "tab") {
       list = this.chatTabs.concat();
-      list.unshift({ name: "[選択中]" });
+      list.unshift({ name: "[選択中]", key: null });
     }
     const endIndex = Math.min(pageNum * this.chatOptionPagingSize, list.length);
     return list.splice(startIndex, endIndex - startIndex);

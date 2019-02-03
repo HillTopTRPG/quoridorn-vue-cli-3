@@ -39,7 +39,8 @@ export default {
           unRead: 0,
           order: 0
         }
-      ]
+      ],
+      secretDiceList: []
     },
 
     /** マップ */
@@ -105,15 +106,8 @@ export default {
         command: null,
         isDisplay: false,
         zIndex: 1,
-        zipList: null
-      },
-      inviteLinkWindow: { command: null, isDisplay: false, zIndex: 1 },
-      selectPeerWindow: { command: null, isDisplay: false, zIndex: 1 },
-      confirmLoadRoomWindow: {
-        command: null,
-        isDisplay: false,
-        zIndex: 1,
-        importData: null
+        zipList: null,
+        isRoomCreate: false
       },
       addChitWindow: { command: null, isDisplay: false, zIndex: 1 },
       editChitWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
@@ -318,6 +312,18 @@ export default {
       else state.self.peerIdWait = peerId;
     },
 
+    updatePlayerKey: (state: any, playerKey: string) => {
+      state.self.playerKey = playerKey;
+    },
+
+    addSecretDice: (state: any, secretDiceObj: any) => {
+      state.chat.secretDiceList.push(secretDiceObj);
+    },
+
+    delSecretDice: (state: any, index: number) => {
+      state.chat.secretDiceList.splice(index, 1);
+    },
+
     /**
      * チャットのタブを選択したことをデータに反映する
      * @param state
@@ -364,6 +370,13 @@ export default {
     volatileResolve: (state: any) =>
       state.display.inputPlayerInfoWindow.resolve,
     historyList: (state: any) => state.historyList,
-    chatTabsOption: (state: any): any[] => state.chat.tab
+    chatTabsOption: (state: any): any[] => state.chat.tab,
+    dropZipList: (state: any) => state.display.dropZipWindow.zipList,
+    dropZipRoomCreate: (state: any) => state.display.dropZipWindow.isRoomCreate,
+    dropImageList: (state: any) => state.display.dropImageWindow.imageDataList,
+    chitContextObjKey: (state: any) => state.display.chitContext.key,
+    mapMaskContextObjKey: (state: any) => state.display.mapMaskContext.key,
+    characterContextObjKey: (state: any) => state.display.characterContext.key,
+    secretDiceList: (state: any) => state.chat.secretDiceList
   }
 };

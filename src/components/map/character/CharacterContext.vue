@@ -1,4 +1,3 @@
-
 <template>
   <ContextFrame displayProperty="private.display.characterContext">
     <div class="item" @click.left.prevent="viewEditCharacter">変更</div>
@@ -7,93 +6,82 @@
     <div class="item" @click.left.prevent="moveToGraveyard">墓場に移動（削除）</div>
     <hr>
     <div class="item" @click.left.prevent="copyCharacter">複製</div>
-    <hr v-if="url">
-    <div class="item" @click.left.prevent="openRefURL" v-if="url">データ参照先URLを開く</div>
+    <template v-if="characterContextObjKey !== -1 ? getObj(characterContextObjKey).url : null">
+      <hr>
+      <div class="item" @click.left.prevent="openRefURL">データ参照先URLを開く</div>
+    </template>
   </ContextFrame>
 </template>
 
-<script>
-import { mapState, mapActions, mapGetters } from "vuex";
-import ContextFrame from "../../ContextFrame";
-import WindowMixin from "../../WindowMixin";
+<script lang="ts">
+import ContextFrame from "../../ContextFrame.vue";
+import WindowMixin from "../../WindowMixin.vue";
 
-export default {
+import { Component, Vue } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+
+@Component<CharacterContext>({
+  name: "characterContext",
   mixins: [WindowMixin],
   components: {
     ContextFrame
-  },
-  methods: {
-    ...mapActions([
-      "windowOpen",
-      "setProperty",
-      "deletePieceInfo",
-      "windowClose",
-      "changePieceInfo"
-    ]),
-    viewEditCharacter() {
-      window.console.log(
-        `  [methods] select context => item: Character(${
-          this.objKey
-        }).viewEditCharacter`
-      );
-      this.setProperty({
-        property: "private.display.editCharacterWindow.key",
-        value: this.objKey
-      });
-      this.windowOpen("private.display.editCharacterWindow");
-      this.windowClose("private.display.characterContext");
-    },
-    moveToWaitRoom() {
-      this.changePieceInfo({
-        propName: "character",
-        key: this.objKey,
-        place: "waiting",
-        isNotice: true
-      });
-      this.windowClose("private.display.characterContext");
-    },
-    moveToGraveyard() {
-      this.changePieceInfo({
-        propName: "character",
-        key: this.objKey,
-        place: "graveyard",
-        isNotice: true
-      });
-      this.windowClose("private.display.characterContext");
-    },
-    // deleteCharacter () {
-    //   window.console.log(`  [methods] select context => item: Character(${this.objKey}).deleteCharacter`)
-    //   this.deletePieceInfo({ propName: 'character', key: this.objKey, isNotice: true })
-    //   this.windowClose('private.display.characterContext')
-    // },
-    copyCharacter() {
-      window.console.log(
-        `  [methods] select context => item: Character(${
-          this.objKey
-        }).copyCharacter`
-      );
-      this.windowClose("private.display.characterContext");
-      alert("未実装の機能です。");
-    },
-    openRefURL() {
-      // window.console.log(this.storeObj.url)
-      window.open(this.storeObj.url, "_blank");
-      this.windowClose("private.display.characterContext");
-    }
-  },
-  computed: mapState({
-    ...mapGetters(["getObj"]),
-    objKey: state => state.private.display["characterContext"].key,
-    url() {
-      return this.objKey === -1 ? null : this.storeObj.url;
-    },
-    storeObj() {
-      const key = this.objKey;
-      // window.console.log(`key:${key}`)
-      return this.getObj(key);
-    }
-  })
-};
+  }
+})
+export default class CharacterContext extends Vue {
+  @Action("windowOpen") windowOpen: any;
+  @Action("setProperty") setProperty: any;
+  @Action("changePieceInfo") changePieceInfo: any;
+  @Action("windowClose") windowClose: any;
+  @Action("getObj") getObj: any;
+  @Getter("characterContextObjKey") characterContextObjKey: any;
+  @Getter("playerKey") playerKey: any;
+  @Getter("mapMaskIsLock") mapMaskIsLock: any;
+
+  viewEditCharacter(): void {
+    window.console.log(
+      `  [methods] select context => item: Character(${
+        this.characterContextObjKey
+      }).viewEditCharacter`
+    );
+    this.setProperty({
+      property: "private.display.editCharacterWindow.key",
+      value: this.characterContextObjKey
+    });
+    this.windowOpen("private.display.editCharacterWindow");
+    this.windowClose("private.display.characterContext");
+  }
+  moveToWaitRoom(): void {
+    this.changePieceInfo({
+      propName: "character",
+      key: this.characterContextObjKey,
+      place: "waiting",
+      isNotice: true
+    });
+    this.windowClose("private.display.characterContext");
+  }
+  moveToGraveyard(): void {
+    this.changePieceInfo({
+      propName: "character",
+      key: this.characterContextObjKey,
+      place: "graveyard",
+      isNotice: true
+    });
+    this.windowClose("private.display.characterContext");
+  }
+  copyCharacter(): void {
+    window.console.log(
+      `  [methods] select context => item: Character(${
+        this.characterContextObjKey
+      }).copyCharacter`
+    );
+    this.windowClose("private.display.characterContext");
+    alert("未実装の機能です。");
+  }
+  openRefURL(): void {
+    window.open(this.getObj(this.characterContextObjKey).url, "_blank");
+    this.windowClose("private.display.characterContext");
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

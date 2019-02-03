@@ -74,111 +74,115 @@
   </WindowFrame>
 </template>
 
-<script>
-import { mapActions, mapState } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-import VolumeComponent from "./component/VolumeComponent";
+<script lang="ts">
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
+import VolumeComponent from "./component/VolumeComponent.vue";
 
-export default {
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+
+@Component<AddBGMWindow>({
   name: "addBGMWindow",
   mixins: [WindowMixin],
   components: {
     WindowFrame,
     VolumeComponent
-  },
-  data() {
-    return {
-      isYoutube: false,
-      url: "",
-      title: "",
-      creditUrl: "",
-      tag: "",
-      isLoop: false,
-      fadeIn: 0,
-      fadeOut: 0,
-      start: 0,
-      end: 0,
-      playLength: 0,
-      isMute: false,
-      volume: 0.8,
-      options: [
-        { value: 0, label: "なし" },
-        { value: 1, label: "末尾文字" },
-        { value: 2, label: "正規表現" }
-      ],
-      tags: ["BGM", "SE"],
-      chatLinkage: 0,
-      chatLinkageSearch: ""
-    };
-  },
-  methods: {
-    ...mapActions(["windowClose", "windowOpen", "addBGM"]),
-    initWindow() {
-      this.isYoutube = false;
-      this.url = "";
-      this.title = "";
-      this.creditUrl = "";
-      this.tag = "";
-      this.isLoop = false;
-      this.fadeIn = 0;
-      this.fadeOut = 0;
-      this.start = 0;
-      this.end = 0;
-      this.playLength = 0;
-      this.isMute = false;
-      this.volume = 0.8;
-      this.chatLinkage = 0;
-      this.chatLinkageSearch = "";
-      setTimeout(() => this.$refs.urlElm.focus(), 0);
-    },
-    commit() {
-      const bgmObj = {
-        url: this.url,
-        title: this.title,
-        creditUrl: this.creditUrl,
-        tag: this.tag,
-        isLoop: this.isLoop,
-        fadeIn: Math.floor(parseFloat(this.fadeIn) * 10) / 10,
-        fadeOut: Math.floor(parseFloat(this.fadeOut) * 10) / 10,
-        playLength: Math.floor(parseFloat(this.playLength) * 10) / 10,
-        isMute: this.isMute,
-        volume: this.volume,
-        chatLinkage: this.chatLinkage,
-        chatLinkageSearch: this.chatLinkageSearch
-      };
-      this.addBGM(bgmObj);
+  }
+})
+export default class AddBGMWindow extends Vue {
+  @Action("windowClose") windowClose: any;
+  @Action("windowOpen") windowOpen: any;
+  @Action("addBGM") addBGM: any;
+  @Getter("bgmList") bgmList: any;
+  @Getter("playerKey") playerKey: any;
 
-      this.windowClose("private.display.addBGMWindow");
-    },
-    cancel() {
-      this.windowClose("private.display.addBGMWindow");
-    },
-    getCredit() {
-      this.creditUrl = this.url.replace(/^(https?:\/\/[^/]+).+$/, "$1");
-    },
-    preview() {
-      alert("未実装の機能です");
-    },
-    change(param) {
-      this[param] = !this[param];
-    },
-    setIsMute(isMute) {
-      this.isMute = isMute;
-    },
-    setVolume(volume) {
-      this.volume = Math.floor(parseFloat(volume) * 100) / 100;
-    }
-  },
-  watch: {
-    url(url) {
-      this.isYoutube = /www\.youtube\.com/.test(url);
-    }
-  },
-  computed: mapState({
-    bgmList: state => state.public.bgm.list
-  })
-};
+  private isYoutube: boolean = false;
+  private url: string = "";
+  private title: string = "";
+  private creditUrl: string = "";
+  private tag: string = "";
+  private isLoop: boolean = false;
+  private fadeIn: number = 0;
+  private fadeOut: number = 0;
+  private start: number = 0;
+  private end: number = 0;
+  private playLength: number = 0;
+  private isMute: boolean = false;
+  private volume: number = 0.8;
+  private options: any[] = [
+    { value: 0, label: "なし" },
+    { value: 1, label: "末尾文字" },
+    { value: 2, label: "正規表現" }
+  ];
+  private tags: string[] = ["BGM", "SE"];
+  private chatLinkage: number = 0;
+  private chatLinkageSearch: string = "";
+
+  initWindow(this: any): void {
+    this.isYoutube = false;
+    this.url = "";
+    this.title = "";
+    this.creditUrl = "";
+    this.tag = "";
+    this.isLoop = false;
+    this.fadeIn = 0;
+    this.fadeOut = 0;
+    this.start = 0;
+    this.end = 0;
+    this.playLength = 0;
+    this.isMute = false;
+    this.volume = 0.8;
+    this.chatLinkage = 0;
+    this.chatLinkageSearch = "";
+
+    const urlElm: HTMLElement = this.$refs.urlElm;
+    setTimeout(() => urlElm.focus(), 0);
+  }
+  commit(): void {
+    const bgmObj = {
+      url: this.url,
+      title: this.title,
+      creditUrl: this.creditUrl,
+      tag: this.tag,
+      isLoop: this.isLoop,
+      fadeIn: Math.floor(this.fadeIn * 10) / 10,
+      fadeOut: Math.floor(this.fadeOut * 10) / 10,
+      playLength: Math.floor(this.playLength * 10) / 10,
+      isMute: this.isMute,
+      volume: this.volume,
+      chatLinkage: this.chatLinkage,
+      chatLinkageSearch: this.chatLinkageSearch,
+      owner: this.playerKey
+    };
+    this.addBGM(bgmObj);
+
+    this.windowClose("private.display.addBGMWindow");
+  }
+  cancel(): void {
+    this.windowClose("private.display.addBGMWindow");
+  }
+  getCredit(): void {
+    this.creditUrl = this.url.replace(/^(https?:\/\/[^/]+).+$/, "$1");
+  }
+  preview() {
+    alert("未実装の機能です");
+  }
+  change(this: any, param: string): void {
+    this[param] = !this[param];
+  }
+  setIsMute(isMute: boolean): void {
+    this.isMute = isMute;
+  }
+  setVolume(volume: string): void {
+    this.volume = Math.floor(parseFloat(volume) * 100) / 100;
+  }
+
+  @Watch("url")
+  onChangeUrl(url: string): void {
+    this.isYoutube = /www\.youtube\.com/.test(url);
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

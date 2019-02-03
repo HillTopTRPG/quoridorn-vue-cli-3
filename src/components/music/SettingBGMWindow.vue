@@ -172,7 +172,6 @@ export default {
     }
   },
   computed: mapState({
-    importData: state => state.private.display.confirmLoadRoomWindow.importData,
     convertSecond: () => (start, end) => {
       if (start && end) return `${start}〜${end}`;
       if (start) return `${start}〜`;
