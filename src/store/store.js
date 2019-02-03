@@ -174,34 +174,36 @@ export default new Vuex.Store({
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
-      loadYaml("/static/conf/deck.yaml").then(deckList => {
-        const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
+      loadYaml(process.env.BASE_URL + "/static/conf/deck.yaml").then(
+        deckList => {
+          const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
 
-        cardSet.width = cardSet.width || 128;
-        cardSet.height = cardSet.height || 192;
-        cardSet.source = cardSet.source || {};
+          cardSet.width = cardSet.width || 128;
+          cardSet.height = cardSet.height || 192;
+          cardSet.source = cardSet.source || {};
 
-        const basePath = cardSet.basePath || "";
-        const storeDeck = rootState.public.deck;
-        storeDeck.name = cardSet.name;
-        storeDeck.back = basePath + cardSet.back;
-        storeDeck.width = cardSet.width;
-        storeDeck.height = cardSet.height;
-        storeDeck.author = cardSet.source.author || "";
-        storeDeck.title = cardSet.source.title || "";
-        storeDeck.refs = cardSet.source.refs || [];
-        storeDeck.cards.list = cardSet.cards.map((card, i) => ({
-          key: `card-${i}`,
-          front: { text: `` },
-          back: { text: ``, img: basePath + card.file }
-        }));
-        storeDeck.cards.maxKey = cardSet.cards.length - 1;
-      });
+          const basePath = cardSet.basePath || "";
+          const storeDeck = rootState.public.deck;
+          storeDeck.name = cardSet.name;
+          storeDeck.back = basePath + cardSet.back;
+          storeDeck.width = cardSet.width;
+          storeDeck.height = cardSet.height;
+          storeDeck.author = cardSet.source.author || "";
+          storeDeck.title = cardSet.source.title || "";
+          storeDeck.refs = cardSet.source.refs || [];
+          storeDeck.cards.list = cardSet.cards.map((card, i) => ({
+            key: `card-${i}`,
+            front: { text: `` },
+            back: { text: ``, img: basePath + card.file }
+          }));
+          storeDeck.cards.maxKey = cardSet.cards.length - 1;
+        }
+      );
 
       /* ----------------------------------------------------------------------
        * BGMの設定
        */
-      loadYaml("/static/conf/bgm.yaml").then(bgmList => {
+      loadYaml(process.env.BASE_URL + "/static/conf/bgm.yaml").then(bgmList => {
         bgmList.forEach((bgm, index) => (bgm.key = `bgm-${index}`));
         rootState.public.bgm.list = bgmList;
         rootState.public.bgm.maxKey = bgmList.length - 1;
@@ -210,11 +212,13 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * 画像の設定
        */
-      loadYaml("/static/conf/image.yaml").then(imageList => {
-        imageList.forEach((image, index) => (image.key = `image-${index}`));
-        rootState.public.image.list = imageList;
-        rootState.public.image.maxKey = imageList.length - 1;
-      });
+      loadYaml(process.env.BASE_URL + "/static/conf/image.yaml").then(
+        imageList => {
+          imageList.forEach((image, index) => (image.key = `image-${index}`));
+          rootState.public.image.list = imageList;
+          rootState.public.image.maxKey = imageList.length - 1;
+        }
+      );
 
       /* ----------------------------------------------------------------------
        * 初期入室の処理
