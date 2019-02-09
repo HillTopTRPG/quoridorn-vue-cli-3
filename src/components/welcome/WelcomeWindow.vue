@@ -234,6 +234,7 @@ input[type="radio"] {
 .tab_area {
   font-size: 0;
   margin: 0;
+  z-index: 10;
 }
 .tab_area label {
   width: 23.5%;

@@ -96,7 +96,9 @@ export function qLog(...a: any): void {
         .split("\n")
         .map(line => `${indent}${line}`)
         .join("\n");
-      if (jsonStr.length > 200) {
+
+      // Objectを整形して出力するかそのまま出力するか
+      if (jsonStr.length > 0) {
         format += "%O";
         logs.push(arg);
       } else {

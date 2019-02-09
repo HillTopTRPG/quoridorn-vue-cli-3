@@ -15,6 +15,7 @@ export default class SelectMixin extends Vue {
 
   @Watch("value", { immediate: true })
   onChangeValue(value: string) {
+    // window.console.error("###", "$" + value + "$");
     this.fontColor = value ? "#000" : "#999";
   }
 

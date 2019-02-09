@@ -178,7 +178,7 @@ export default {
       this.setProperty({
         property: `public.bgm.list.${index}`,
         value: bgmObj,
-        logOff: false
+        logOff: true
       });
       this.windowClose("private.display.editBGMWindow");
     },

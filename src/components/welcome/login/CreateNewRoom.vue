@@ -79,8 +79,8 @@
 import SubBlockTitle from "./SubBlockTitle.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 
-import DiceBotSelect from "@/components/parts/DiceBotSelect.vue";
-import PlayerTypeSelect from "@/components/parts/PlayerTypeSelect.vue";
+import DiceBotSelect from "@/components/parts/select/DiceBotSelect.vue";
+import PlayerTypeSelect from "@/components/parts/select/PlayerTypeSelect.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
 
@@ -204,7 +204,7 @@ export default class CreateNewRoom extends Vue {
     this.setProperty({
       property: `param.roomName`,
       value: this.roomName,
-      logOff: false
+      logOff: true
     });
 
     /* ------------------------------

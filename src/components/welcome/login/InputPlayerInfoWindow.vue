@@ -33,7 +33,7 @@
 <script lang="ts">
 import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
-import PlayerTypeSelect from "@/components/parts/PlayerTypeSelect.vue";
+import PlayerTypeSelect from "@/components/parts/select/PlayerTypeSelect.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
 

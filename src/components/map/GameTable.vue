@@ -391,6 +391,14 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.currentImageTag = currentImageTag;
       pieceObj.fontColorType = 0;
       pieceObj.fontColor = "";
+      const useImage = useImageList.split("|")[useImageIndex];
+      pieceObj.standImage = {
+        base: useImage,
+        baseTag: currentImageTag,
+        autoResize: true,
+        animationLength: 1,
+        diffList: []
+      };
 
       if (this.$store.state.private.display.addCharacterWindow.isContinuous) {
         const splits = name.split("_");

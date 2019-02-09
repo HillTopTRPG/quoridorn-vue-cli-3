@@ -103,7 +103,7 @@ export default {
       this.setProperty({
         property: "private.display.editGroupChatWindow.key",
         value: key,
-        logOff: false
+        logOff: true
       });
       this.windowOpen("private.display.editGroupChatWindow");
     },

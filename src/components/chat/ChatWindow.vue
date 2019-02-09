@@ -29,9 +29,16 @@
           <option v-for="actor in getPeerActors" :key="actor.key" :value="actor.key">{{getViewName(actor.key)}}</option>
         </select>
         <DiceBotSelect ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabs.length + 6" class="diceBotSystem"/>
-        <span class="icon"><i class="icon-dice" title="ダイスボットの設定" @click="settingDiceBot" :tabindex="chatTabs.length + 7"></i></span>
-        <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabs.length + 8"></i></span>-->
-        <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabs.length + 8"></i></span>
+        <span class="icon"><i class="icon-dice" title="ダイスボットの追加・編集・削除" @click="settingDiceBot" :tabindex="chatTabs.length + 7"></i></span>
+        <span class="icon"><i class="icon-bin" title="チャットログ全削除" @click="deleteChatLog" :tabindex="chatTabs.length + 8"></i></span>
+        <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabs.length + 9"></i></span>-->
+        <span class="icon"><i class="icon-cloud-check" title="点呼・投票設定" @click="settingRollCall" :tabindex="chatTabs.length + 10"></i></span>
+        <span class="icon"><i class="icon-bell" title="目覚ましアラーム設定" @click="settingAlerm" :tabindex="chatTabs.length + 11"></i></span>
+        <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabs.length + 12"></i></span>
+        <span class="icon"><i class="icon-film" title="カットイン設定" @click="settingCutIn" :tabindex="chatTabs.length + 13"></i></span>
+        <span class="icon"><i class="icon-list2" title="チャットパレット設定" @click="settingChatPalette" :tabindex="chatTabs.length + 14"></i></span>
+        <span class="icon"><i class="icon-accessibility" title="立ち絵設定" @click="settingStandImage" :tabindex="chatTabs.length + 15"></i></span>
+        <span class="icon"><i class="icon-target" title="射界設定" @click="settingRange" :tabindex="chatTabs.length + 16"></i></span>
       </label>
       <!----------------
        ! 発言
@@ -47,14 +54,14 @@
                   :key="tabObj.key"
                   :class="{ active: tabObj.key === chatTarget }"
                   @mousedown.prevent="groupTargetTabSelect(tabObj.key)"
-                  :tabindex="chatTabs.length + 12 + index"
+                  :tabindex="chatTabs.length + 17 + index"
             >> {{tabObj.name}}{{otherMatcherObj(tabObj) ? `(${getViewName(otherMatcherObj(tabObj).key)})` : ''}}</span>
             <span class="tab addButton"
                   @click="addTargetTab"
-                  :tabindex="chatTabs.length + chatTabs.length + 12"
+                  :tabindex="chatTabs.length + chatTabs.length + 17"
             ><span class="icon-cog"></span></span>
             <label class="bracketOption">
-              <input type="checkbox" v-model="addBrackets" :tabindex="chatTabs.length + chatTabs.length + 13" />
+              <input type="checkbox" v-model="addBrackets" :tabindex="chatTabs.length + chatTabs.length + 18" />
               発言時に「」を付与
             </label>
           </div>
@@ -156,7 +163,7 @@
 </template>
 
 <script lang="ts">
-import DiceBotSelect from "../parts/DiceBotSelect.vue";
+import DiceBotSelect from "../parts/select/DiceBotSelect.vue";
 
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
@@ -417,11 +424,32 @@ export default class ChatWindow extends Vue {
     });
     this.windowOpen("private.display.unSupportWindow");
   }
+  deleteChatLog(): void {
+    // TODO
+  }
   settingFont(): void {
     this.windowOpen("private.display.settingChatFontWindow");
   }
+  settingRollCall(): void {
+    // TODO
+  }
+  settingAlerm(): void {
+    // TODO
+  }
+  settingCutIn(): void {
+    // TODO
+  }
   settingBGM(): void {
     this.windowOpen("private.display.settingBGMWindow");
+  }
+  settingChatPalette(): void {
+    // TODO
+  }
+  settingStandImage(): void {
+    this.windowOpen("private.display.standImageSettingWindow");
+  }
+  settingRange(): void {
+    // TODO
   }
   getTabName(tabKey: string): string {
     const tab = this.chatTabs.filter((tab: any) => tab.key === tabKey)[0];
@@ -690,7 +718,7 @@ export default class ChatWindow extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
 .container {
   width: 100%;
   height: 100%;
@@ -727,21 +755,23 @@ export default class ChatWindow extends Vue {
   -moz-user-select: none;
   -webkit-user-select: none;
   outline: none;
-}
-.tab.addButton {
-  /*margin-right: 2em;*/
-  cursor: pointer;
-}
-.tab.addButton:active,
-.tab.active {
-  background: white none;
-}
-.tab:hover {
-  border-color: #0092ed;
-  z-index: 100;
-}
-.tab.unRead {
-  background-color: yellow;
+
+  &.addButton {
+    cursor: pointer;
+  }
+  &.unRead {
+    background-color: yellow;
+  }
+
+  &:hover {
+    border-color: #0092ed;
+    z-index: 100;
+  }
+
+  &.addButton:active,
+  &.active {
+    background: white none;
+  }
 }
 #chatLog {
   display: block;
@@ -782,33 +812,39 @@ export default class ChatWindow extends Vue {
   min-height: 26px;
   padding: 3px 0;
   vertical-align: middle;
+
+  * {
+    vertical-align: middle;
+    padding: 2px;
+  }
 }
-.oneLine * {
-  vertical-align: middle;
-  padding: 2px;
-}
+
 .sendLine {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row;
-}
-.sendLine .label {
-  width: 100%;
-  text-align: center;
-}
-.sendLine > * {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 42px;
-  min-height: 42px;
-}
-.sendLine > div:not(.textAreaContainer) {
-  margin-top: 2em;
-}
-.sendLine > div {
-  flex-direction: column;
+
+  .label {
+    width: 100%;
+    text-align: center;
+  }
+
+  > * {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 42px;
+    min-height: 42px;
+  }
+
+  > div {
+    flex-direction: column;
+
+    &:not(.textAreaContainer) {
+      margin-top: 2em;
+    }
+  }
 }
 .sendLine .textAreaContainer {
   height: 100%;
@@ -840,17 +876,18 @@ export default class ChatWindow extends Vue {
   color: #999;
   background-color: white;
   cursor: default;
-}
-.chatOption * {
-  width: 100%;
-  height: 33%;
-  display: flex;
-  justify-content: left !important;
-  align-items: center;
-  padding-left: 0.2rem;
-  padding-right: 0.4rem;
-  border-radius: 5px 0 0 5px;
-  font-size: 11px;
+
+  * {
+    width: 100%;
+    height: 33%;
+    display: flex;
+    justify-content: left !important;
+    align-items: center;
+    padding-left: 0.2rem;
+    padding-right: 0.4rem;
+    border-radius: 5px 0 0 5px;
+    font-size: 11px;
+  }
 }
 .chatOption .emphasis {
   color: black;
@@ -871,21 +908,24 @@ textarea {
   border: 1px solid gray;
   border-left: none;
   outline: none;
-}
-textarea::placeholder {
-  color: #999;
+
+  &::placeholder {
+    color: #999;
+  }
 }
 .inputtingArea {
   width: 100%;
   height: 20px;
   background-color: transparent;
   font-size: 10px;
+
+  div {
+    display: inline-flex;
+    justify-content: left;
+    align-items: center;
+  }
 }
-.inputtingArea div {
-  display: inline-flex;
-  justify-content: left;
-  align-items: center;
-}
+
 img {
   width: auto;
   height: auto;
@@ -894,47 +934,66 @@ img {
   cursor: pointer;
   margin: 0 2px;
   border: solid rgba(0, 0, 0, 0) 1px;
-}
-img:hover {
-  border-color: #0092ed;
+
+  &:hover {
+    border-color: #0092ed;
+  }
 }
 span.icon {
   padding: 0;
   margin-right: 4px;
 }
+
 i[class^="icon-"] {
   border: 1px solid #777;
   border-radius: 50%;
   font-size: 12px;
   padding: 5px;
   background-color: white;
-}
-i[class^="icon-"]:hover {
-  border-color: black;
+
+  &:hover {
+    border-color: black;
+    color: white;
+  }
 }
 i.icon-dice {
   color: rgb(0, 0, 150);
+  &:hover,
+  &.hover {
+    background-color: rgb(0, 0, 150);
+  }
 }
-i.icon-font {
-  color: rgb(150, 0, 150);
+i.icon-bin {
+  color: rgb(150, 150, 150);
+  &:hover,
+  &.hover {
+    background-color: rgb(150, 150, 150);
+  }
 }
-i.icon-music {
+i.icon-cloud-check,
+i.icon-bell {
+  color: rgb(150, 150, 0);
+  &:hover,
+  &.hover {
+    background-color: rgb(150, 150, 0);
+  }
+}
+i.icon-music,
+i.icon-film {
   color: rgb(0, 150, 150);
+  &:hover,
+  &.hover {
+    background-color: rgb(0, 150, 150);
+  }
 }
-i.icon-dice:hover,
-i.icon-dice.hover {
-  background-color: rgb(0, 0, 150);
-  color: white;
-}
-i.icon-font:hover,
-i.icon-font.hover {
-  background-color: rgb(150, 0, 150);
-  color: white;
-}
-i.icon-music:hover,
-i.icon-music.hover {
-  background-color: rgb(0, 150, 150);
-  color: white;
+i.icon-list2,
+i.icon-accessibility,
+i.icon-target {
+  color: rgb(150, 0, 150);
+  &:hover,
+  &.hover {
+    background-color: rgb(150, 0, 150);
+  }
 }
 
 .dep {

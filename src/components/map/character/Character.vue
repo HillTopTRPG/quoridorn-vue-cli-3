@@ -106,11 +106,6 @@ export default class Character extends PieceMixin {
     if (nextIndex > maxIndex) {
       nextIndex = 0;
     }
-    this.setProperty({
-      property: `public.${this.type}.list.${this.storeIndex}.useImageIndex`,
-      value: nextIndex,
-      isNotice: true
-    });
   }
 
   get characterStyle(): any {

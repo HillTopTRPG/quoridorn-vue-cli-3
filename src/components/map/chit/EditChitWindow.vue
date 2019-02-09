@@ -48,11 +48,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["windowOpen", "windowClose", "changePieceInfo"]),
+    ...mapActions(["windowOpen", "windowClose", "changeListInfo"]),
     commit() {
       window.console.log(this.key);
-      this.changePieceInfo({
-        propName: "chit",
+      this.changeListInfo({
         key: this.key,
         currentImageTag: this.currentImageTag,
         imageKey: this.imageKey,

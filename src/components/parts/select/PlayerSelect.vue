@@ -7,8 +7,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
-import SelectMixin from "./SelectMixin.vue";
-import SelectBase from "./SelectBase.vue";
+import SelectMixin from "./base/SelectMixin.vue";
+import SelectBase from "./base/SelectBase.vue";
 
 @Component<PlayerSelect>({
   name: "playerSelect",
