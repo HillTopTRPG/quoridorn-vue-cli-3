@@ -221,54 +221,64 @@ export default new Vuex.Store({
       );
 
       /* ----------------------------------------------------------------------
-       * 初期入室の処理
+       * 接続設定の設定
        */
-      if (roomName) {
-        /* ------------------------------
-         * 部屋存在チェック
-         */
-        dispatch("loading", true);
-        Promise.resolve()
-          .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
-          .then(peerId => {
-            const logTexts = [];
-            logTexts.push(`create room by peer:"${peerId}"`);
-            logTexts.push(`本番: ${rootGetters.peerId(false)}`);
-            logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
-            window.console.log(logTexts.join(", "));
-            return dispatch("checkRoomName", { roomName: roomName });
-          })
-          .then(isExist => {
-            const baseArg = {
-              roomName: roomName,
-              roomPassword: roomPassword,
-              playerName: playerName,
-              playerPassword: playerPassword,
-              playerType: playerType,
-              fontColor: "#000000"
-            };
-            // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
-            if (
-              !isExist &&
-              roomPassword !== null &&
-              playerName &&
-              playerPassword !== null &&
-              playerType !== null
-            ) {
-              baseArg.system = undefined;
-              baseArg.playerType = baseArg.playerType || "PL";
-              return dispatch("doNewRoom", baseArg);
-            }
-            // 「この部屋に入る」画面で入力される項目が指定されていれば既存部屋への入室を試みる
-            if (isExist && roomPassword !== null) {
-              baseArg.useWindow = true;
-              baseArg.useAlert = true;
-              return dispatch("doJoinRoom", baseArg);
-            }
-          })
-          .then(() => dispatch("loading", false))
-          .catch(() => dispatch("loading", false));
-      }
+      loadYaml(process.env.BASE_URL + "/static/conf/connect.yaml").then(
+        setting => {
+          rootState.setting.connect.skywayKey = setting.skywayKey;
+          rootState.setting.connect.type = setting.type;
+
+          /* ----------------------------------------------------------------------
+           * 初期入室の処理
+           */
+          if (roomName) {
+            /* ------------------------------
+             * 部屋存在チェック
+             */
+            dispatch("loading", true);
+            Promise.resolve()
+              .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
+              .then(peerId => {
+                const logTexts = [];
+                logTexts.push(`create room by peer:"${peerId}"`);
+                logTexts.push(`本番: ${rootGetters.peerId(false)}`);
+                logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
+                window.console.log(logTexts.join(", "));
+                return dispatch("checkRoomName", { roomName: roomName });
+              })
+              .then(isExist => {
+                const baseArg = {
+                  roomName: roomName,
+                  roomPassword: roomPassword,
+                  playerName: playerName,
+                  playerPassword: playerPassword,
+                  playerType: playerType,
+                  fontColor: "#000000"
+                };
+                // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
+                if (
+                  !isExist &&
+                  roomPassword !== null &&
+                  playerName &&
+                  playerPassword !== null &&
+                  playerType !== null
+                ) {
+                  baseArg.system = undefined;
+                  baseArg.playerType = baseArg.playerType || "PL";
+                  return dispatch("doNewRoom", baseArg);
+                }
+                // 「この部屋に入る」画面で入力される項目が指定されていれば既存部屋への入室を試みる
+                if (isExist && roomPassword !== null) {
+                  baseArg.useWindow = true;
+                  baseArg.useAlert = true;
+                  return dispatch("doJoinRoom", baseArg);
+                }
+              })
+              .then(() => dispatch("loading", false))
+              .catch(() => dispatch("loading", false));
+          }
+        }
+      );
     },
 
     /**
@@ -363,7 +373,10 @@ export default new Vuex.Store({
      * @param payload
      * @returns {*}
      */
-    doSetProperty: ({ commit }, payload) => commit("doSetProperty", payload),
+    doSetProperty: ({ commit }, payload) => {
+      delete payload.ownerPeerId;
+      return commit("doSetProperty", payload);
+    },
 
     /**
      * =================================================================================================================
@@ -470,8 +483,10 @@ export default new Vuex.Store({
       }
 
       const propProc = (target, props, value) => {
+        // if (!logOff) window.console.log("【0】propProc", target, props, value);
         const prop = props.shift();
         if (props.length > 0) {
+          // if (!logOff) window.console.log("【1】call propProc", JSON.parse(JSON.stringify(target[prop])), props, value);
           propProc(target[prop], props, value);
         } else {
           // 値の適用
@@ -480,27 +495,32 @@ export default new Vuex.Store({
             value instanceof Array ||
             typeof value === "function"
           ) {
+            // if (!logOff) window.console.log("【2】propProc", JSON.parse(JSON.stringify(target[prop])), "=", value);
             target[prop] = value;
           } else {
             const propProc2 = (target, props) => {
               for (const prop in props) {
                 if (!props.hasOwnProperty(prop)) continue;
                 const val = props[prop];
-                if (
-                  !(val instanceof Object) ||
-                  val instanceof Array ||
-                  typeof val === "function"
-                ) {
+                // if (!logOff) window.console.log("【4】propProc2", JSON.parse(JSON.stringify(target)), prop, val, props);
+                if (!(val instanceof Object) || typeof val === "function") {
                   target[prop] = val;
+                } else if (val instanceof Array) {
+                  target[prop] = val;
+                  if (val.length > 0) {
+                    val.splice(0, 1, val[0]);
+                  }
                 } else {
                   if (!target[prop]) {
                     target[prop] = {};
                   }
+                  // if (!logOff) window.console.log("【6】call propProc2", JSON.parse(JSON.stringify(target[prop])), "=", val);
                   propProc2(target[prop], val);
                 }
                 // 配列の場合、リアクティブになるよう、splice関数で更新する
                 if (target instanceof Array) {
                   const index = parseInt(prop, 10);
+                  // if (!logOff) window.console.log("【7】splice propProc2", JSON.parse(JSON.stringify(target)), index, target[index]);
                   target.splice(index, 1, target[index]);
                 }
               }
@@ -508,12 +528,14 @@ export default new Vuex.Store({
             if (!target[prop]) {
               target[prop] = {};
             }
+            // if (!logOff) window.console.log("【3】call propProc2", JSON.parse(JSON.stringify(target[prop])), value);
             propProc2(target[prop], value);
           }
         }
         // 配列の場合、リアクティブになるよう、splice関数で更新する
         if (target instanceof Array) {
           const index = parseInt(prop, 10);
+          // if (!logOff) window.console.log("【8】splice propProc", JSON.parse(JSON.stringify(target)), index, target[index]);
           target.splice(index, 1, target[index]);
         }
       };

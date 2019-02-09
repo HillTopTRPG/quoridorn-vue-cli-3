@@ -40,11 +40,11 @@ export default {
           // peer接続作成
           let peer: any = null;
           try {
-            peer = new Peer({ key: __SKYWAY_KEY__, debug: 1 });
+            peer = new Peer({ key: rootGetters.skywayKey, debug: 1 });
           } catch (err) {
             alert(
-              "__SKYWAY_KEY__の設定を見直してください。\n現在の値：" +
-                __SKYWAY_KEY__
+              "connect.yamlの設定を見直してください。\n現在の値：" +
+                rootGetters.skywayKey
             );
             reject.call(null);
             return;
@@ -56,10 +56,14 @@ export default {
            */
           peer.on("open", (peerId: string) => {
             qLog(`Peer接続成功 => PeerId: ${peerId}`);
-            qLog(`Room接続開始 => Room: ${roomName}`);
-            const room = peer.joinRoom(roomName, {
-              mode: "sfu"
-            });
+            const isSfu =
+              rootGetters && rootGetters.connectType.toUpperCase() === "SFU";
+            const connectStr = isSfu ? "SFU方式" : "Mesh方式";
+            qLog(`Room接続開始 => Room: ${roomName}, 接続方式: ${connectStr}`);
+            const room = peer.joinRoom(
+              roomName,
+              isSfu ? { mode: "sfu" } : undefined
+            );
             commit("updateWebRtcRoom", { room: room, isWait: isWait });
             commit("updatePeerId", { peerId: peerId, isWait: isWait });
 
@@ -841,14 +845,19 @@ export default {
       const room = rootGetters.webRtcRoom(payload.isWait);
       if (!room) return;
       if (payload && payload.type !== "NOTICE_INPUT") {
-        qLog(
-          `RoomData送信 => TYPE: ${payload.type}, VALUE:`,
-          payload.value,
-          "targets:",
-          payload.targets,
-          "this.peerId:",
-          rootGetters.peerId(payload.isWait)
-        );
+        const msgList: any[] = [];
+        msgList.push(`TYPE: ${payload.type}`);
+        if (payload.type === "DO_METHOD") {
+          msgList.push("METHOD:");
+          msgList.push(payload.method);
+        }
+        msgList.push("VALUE:");
+        msgList.push(payload.value);
+        msgList.push("targets:");
+        msgList.push(payload.targets);
+        msgList.push("this.peerId:");
+        msgList.push(rootGetters.peerId(payload.isWait));
+        qLog("RoomData送信 =>", ...msgList);
       }
       room.send(payload);
     },

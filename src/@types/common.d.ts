@@ -3,5 +3,4 @@ declare module "skyway-js";
 declare module "jszip";
 declare module "file-saver";
 declare module "vuedraggable";
-
-declare const __SKYWAY_KEY__: string;
+declare module "vue-slider-component";
