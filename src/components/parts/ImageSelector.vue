@@ -6,7 +6,7 @@
       <div class="tagImages">
         <img
           v-for="image in useImageList"
-          :class="{active : image.key === value.replace(':R', '')}"
+          :class="{active : value && (image.key === value.replace(':R', ''))}"
           :key="image.key"
           v-img="image.data"
           @click="selectTagImage(image.key)"
@@ -43,45 +43,48 @@ export default class ImageSelector extends Vue {
   @Getter("imageTagList") imageTagList: any;
   @Getter("imageList") imageList: any;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   public value!: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, default: "(全て)" })
   private imageTag!: string;
 
   private selectImageTag: string = "";
 
   @Emit("input")
-  public input(value: string) {}
+  public input(value: string | null) {}
 
   @Watch("imageTag", { immediate: true })
   onChangeImageTag(value: string) {
-    window.console.log(value);
-    this.selectImageTag = value;
+    this.selectImageTag = value || "(全て)";
   }
 
   @Watch("selectImageTag")
   @Emit("update:imageTag")
   onChangeSelectImageTag(value: string) {}
 
-  private get localValue(): string {
+  private get localValue(): string | null {
     return this.value;
   }
 
-  private set localValue(value: string) {
+  private set localValue(value: string | null) {
     this.input(value);
   }
 
-  private get imageKey(): string {
+  private get imageKey(): string | null {
+    if (this.localValue === null) return null;
     return this.localValue.replace(":R", "");
   }
 
   private get isReverse(): boolean {
+    if (!this.localValue) return false;
     return /:R/.test(this.localValue);
   }
 
   private set isReverse(isReverse: boolean) {
-    this.localValue = this.imageKey + (isReverse ? ":R" : "");
+    const imageKey = this.imageKey;
+    if (imageKey === null) this.localValue = null;
+    this.localValue = imageKey + (isReverse ? ":R" : "");
   }
 
   selectTagImage(key: string) {
@@ -101,7 +104,7 @@ export default class ImageSelector extends Vue {
 
   get useImageList(): any[] {
     return this.imageList.filter((obj: any) => {
-      if (this.imageTag === "(全て)") return true;
+      if (this.selectImageTag === "(全て)") return true;
       return obj.tag.indexOf(this.imageTag) >= 0;
     });
   }

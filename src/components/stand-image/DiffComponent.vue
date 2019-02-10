@@ -2,12 +2,15 @@
   <div class="container">
 
     <!-- 画像 -->
-    <img v-img="image" draggable="false" :class="{isReverse : isReverse}" @click="chooseImage"/>
+    <div class="img-container">
+      <div class="img" v-bg-img="image" :class="{isReverse : isReverse}" @click="chooseImage"></div>
+    </div>
 
     <!-- 数値情報 -->
     <div class="locate">
-      <label>位置：<input type="number" min="0" v-model="x">, <input type="number" min="0" v-model="y"></label>
-      <label>サイズ：<input type="number" min="0" max="999" v-model="size">%</label>
+      <label>位置</label>
+      <label>X：<input type="number" min="0" v-model="x"></label>
+      <label>Y：<input type="number" min="0" v-model="y"></label>
     </div>
 
     <!-- アニメーション周期 -->
@@ -18,7 +21,7 @@
 
     <span
       class="delete-button"
-      @click.prevent="deleteStandImageDiff({ key: actorKey, index: index })"
+      @click.prevent="deleteStandImageDiff({ key: actorKey, statusName: statusName, index: index })"
     >削除</span>
 
   </div>
@@ -41,6 +44,9 @@ import { Action, Getter } from "vuex-class";
 export default class DiffComponent extends Vue {
   @Prop({ type: String, required: true })
   private actorKey!: string;
+
+  @Prop({ type: String, required: true })
+  private statusName!: string;
 
   @Prop({ type: Object, required: true })
   private diff!: any;
@@ -65,23 +71,33 @@ export default class DiffComponent extends Vue {
    * 画像選択
    */
   chooseImage(): void {
-    window.console.log(
-      this.diff.image,
-      this.diff.tag,
-      JSON.parse(JSON.stringify(this.diff))
-    );
     const actorKey = this.actorKey;
     const index = this.index;
+    const image = this.diff.image;
+    const tag = this.diff.tag;
     Promise.resolve()
       .then(() =>
+        // リアクティブのための更新と、それに伴うコールバックの一時無効のための指定
         this.setProperty({
           property: "private.display.imageSelectorWindow",
           value: {
             imageKey: null,
             imageTag: null,
+            callback: null
+          },
+          logOff: true
+        })
+      )
+      .then(() => {
+        return this.setProperty({
+          property: "private.display.imageSelectorWindow",
+          value: {
+            imageKey: image,
+            imageTag: tag,
             callback: (imageKey: string, imageTag: string) => {
               this.editStandImageDiff({
                 key: actorKey,
+                statusName: this.statusName,
                 index: index,
                 image: imageKey,
                 tag: imageTag
@@ -89,18 +105,8 @@ export default class DiffComponent extends Vue {
             }
           },
           logOff: true
-        })
-      )
-      .then(() =>
-        this.setProperty({
-          property: "private.display.imageSelectorWindow",
-          value: {
-            imageKey: this.diff.image,
-            imageTag: this.diff.tag
-          },
-          logOff: true
-        })
-      )
+        });
+      })
       .then(() => {
         this.windowOpen("private.display.imageSelectorWindow");
       });
@@ -134,6 +140,7 @@ export default class DiffComponent extends Vue {
   set x(value: number) {
     this.editStandImageDiff({
       key: this.actorKey,
+      statusName: this.statusName,
       index: this.index,
       x: value
     });
@@ -147,21 +154,9 @@ export default class DiffComponent extends Vue {
   set y(value: number) {
     this.editStandImageDiff({
       key: this.actorKey,
+      statusName: this.statusName,
       index: this.index,
       y: value
-    });
-  }
-
-  get size(): number {
-    if (!this.diff || !this.diff.size) return 100;
-    return this.diff.size;
-  }
-
-  set size(value: number) {
-    this.editStandImageDiff({
-      key: this.actorKey,
-      index: this.index,
-      size: value
     });
   }
 
@@ -173,6 +168,7 @@ export default class DiffComponent extends Vue {
   set time(value: number[]) {
     this.editStandImageDiff({
       key: this.actorKey,
+      statusName: this.statusName,
       index: this.index,
       time: value
     });
@@ -195,12 +191,26 @@ export default class DiffComponent extends Vue {
     border-left: 1px dashed #666;
   }
 }
-img {
-  height: 5em;
+$color1: #f7f7f7;
+$color2: #bebebe;
+.img-container {
+  margin-bottom: 0.5em;
+  border: 1px solid #666;
   width: 5em;
-  display: inline-block;
-  outline: none;
-  border: solid 1px #666;
+  height: 5em;
+  background: $color1;
+  display: flex;
+  background-image: linear-gradient(45deg, $color2 25%, transparent 0),
+    linear-gradient(45deg, transparent 75%, $color2 0),
+    linear-gradient(45deg, $color2 25%, transparent 0),
+    linear-gradient(45deg, transparent 75%, $color2 0);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px, 8px 8px, 16px 16px;
+
+  .img {
+    flex: 1;
+    background-size: contain;
+  }
 }
 .delete-button {
   border-radius: 3px;

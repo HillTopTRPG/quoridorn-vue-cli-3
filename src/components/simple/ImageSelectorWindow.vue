@@ -1,12 +1,12 @@
 <template>
-  <WindowFrame titleText="画像選択" display-property="private.display.imageSelectorWindow" align="center" fixSize="400, 300">
+  <window-frame titleText="画像選択" display-property="private.display.imageSelectorWindow" align="center" fixSize="400, 193">
     <div class="contents">
       <image-selector
         v-model="imageKey"
         :imageTag.sync="imageTag"
       />
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
@@ -36,25 +36,23 @@ export default class ImageSelectorWindow extends Vue {
 
   @Watch("imageSelectorKey", { immediate: true })
   onChangeImageSelectorKey(imageSelectorKey: string) {
-    if (!imageSelectorKey) return;
     this.imageKey = imageSelectorKey;
   }
 
   @Watch("imageSelectorTag", { immediate: true })
   onChangeImageSelectorTag(imageSelectorTag: string) {
-    if (!imageSelectorTag) return;
     this.imageTag = imageSelectorTag;
   }
 
   @Watch("imageKey")
   onChangeImageKey(imageKey: string) {
-    if (!imageKey) return;
+    if (!this.imageSelectorCallback) return;
     this.imageSelectorCallback(imageKey, this.imageTag);
   }
 
   @Watch("imageTag")
   onChangeImageTag(imageTag: string) {
-    if (!imageTag) return;
+    if (!this.imageSelectorCallback) return;
     this.imageSelectorCallback(this.imageKey, imageTag);
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <select v-model="localValue" :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }">
-    <option disabled value="">{{defaultLabel}}</option>
+    <option :disabled="!defaultSelectable" value="" v-if="defaultLabel">{{defaultLabel}}</option>
     <slot/>
   </select>
 </template>
@@ -14,6 +14,10 @@ import { Component, Prop, Vue } from "vue-property-decorator";
   mixins: [SelectMixin]
 })
 export default class SelectBase extends Vue {
-  @Prop() public defaultLabel!: string;
+  @Prop({ type: String })
+  private defaultLabel: string | undefined;
+
+  @Prop({ type: Boolean, default: false })
+  private defaultSelectable!: boolean;
 }
 </script>

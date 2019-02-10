@@ -1,74 +1,124 @@
 <template>
-  <WindowFrame titleText="立ち絵設定" display-property="private.display.standImageSettingWindow" align="center" fixSize="653, 400">
+  <window-frame titleText="立ち絵設定" display-property="private.display.standImageSettingWindow" align="center" fixSize="660, 540">
     <div class="contents">
-      <actor-tab-component v-model="actorKey" @change="changeActor">
-        <template slot-scope="{ actor }" v-if="actor">
-          <div class="actorSetting">
-            <label>表示位置（１：左端、１２：右端）<input type="range" min="1" max="12">()</label>
-            <label>ステータス<input type="checkbox"></label>
-            <label>
-              <select>
-              </select>
-            </label>
-          </div>
-          <div class="tab-contents">
-            <div class="base">
-              <label>ベース</label>
-              <img v-img="image" draggable="false" :class="{isReverse : isReverse}" @click="selectBaseImage"/>
-              <div>
-                <button @click="viewPreview">プレビュー</button>
-                <button @click="addDiff">差分追加</button>
-              </div>
-              <label>サイズの自動調整
-                <input
-                  type="checkbox"
-                  :checked="actor.standImage.autoResize"
-                  @change="event => changeAutoResize(event.target.checked)">
+      <actor-tab-component @change="changeActor">
+        <actor-status-tab-component slot-scope="{ actor }" v-if="actor" :actor="actor" @change="changeStatus">
+          <template slot-scope="{ status }" v-if="status">
+            <div class="actorSetting">
+              <label>
+                データ
+                <actor-other-status-select
+                  :actor="actor"
+                  :statusName="status.name"
+                  :value="status.standImage.ref"
+                  :disabled="status.standImage.isSystemLock"
+                  @input="changeRef"/>
               </label>
-              <label>アニメーション：
-                <input
-                  type="number"
-                  :value="actor.standImage.animationLength"
-                  @change="event => changeAnimationLength(parseInt(event.target.value, 10))"
-                  min="0"
-                  max="99">
-                秒</label>
+
+              <span
+                class="delete-button"
+                @click.prevent="deleteActorStatus({ key: actorKey, statusName: status.name })"
+                v-if="!status.standImage.isSystemLock"
+              >状態の削除</span>
             </div>
-            <div class="diff">
-              <label>差分</label>
-              <div class="v-scroll">
-                <diff-component
-                  v-for="(diff, index) in actor.standImage.diffList"
-                  :key="index"
-                  :actorKey="actor.key"
-                  :diff="diff"
-                  :index="index"
-                  :animationLength="actor.standImage.animationLength"/>
+            <div class="tab-contents">
+              <div class="disable-overlay" v-if="status.standImage.ref || status.standImage.isSystemLock">
+                <span v-if="status.standImage.ref">状態「{{status.standImage.ref}}」のデータを参照しています</span>
+                <span v-if="status.standImage.isSystemLock">初期データとして必要なため<br>編集できません</span>
+              </div>
+              <div class="base">
+                <label>ベース</label>
+                <div class="img-container">
+                  <div class="img" v-bg-img="image" :class="{isReverse : isReverse}" @click="selectBaseImage"></div>
+                </div>
+                <!-- {{"#" + image + "#"}} -->
+                <div>
+                  <label>プレビュー
+                    <input
+                      type="checkbox"
+                      v-model="isPreview"
+                      :disabled="status.standImage.isSystemLock"
+                    >
+                  </label>
+                  <button
+                    @click="addDiff"
+                    :disabled="status.standImage.isSystemLock"
+                  >差分追加</button>
+                </div>
+                <label>サイズの自動調整
+                  <input
+                    type="checkbox"
+                    :checked="getViewStatus(status).standImage.autoResize"
+                    @change="event => changeAutoResize(event.target.checked)"
+                    :disabled="status.standImage.isSystemLock"
+                  >
+                </label>
+                <label>アニメーション：
+                  <input
+                    type="number"
+                    :value="getViewStatus(status).standImage.animationLength"
+                    @change="event => changeAnimationLength(parseInt(event.target.value, 10))"
+                    min="0"
+                    max="99"
+                    :disabled="status.standImage.isSystemLock"
+                  >
+                  秒</label>
+                <!--
+                -->
+                <label>表示位置（{{getViewStatus(status).standImage.locate}}）</label>
+                <label>
+                  左
+                  <input
+                    type="range"
+                    min="1"
+                    max="12"
+                    :value="getViewStatus(status).standImage.locate"
+                    @input="event => changeLocate(parseInt(event.target.value, 10))"
+                    :disabled="status.standImage.isSystemLock"
+                  >右
+                </label>
+              </div>
+              <div class="diff">
+                <label>差分</label>
+                <div class="v-scroll">
+                  <diff-component
+                    v-for="(diff, index) in getViewStatus(status).standImage.diffList"
+                    :key="index"
+                    :actorKey="actor.key"
+                    :statusName="getViewStatus(status).name"
+                    :diff="diff"
+                    :index="index"
+                    :animationLength="getViewStatus(status).standImage.animationLength"/>
+                </div>
               </div>
             </div>
-          </div>
-        </template>
+          </template>
+        </actor-status-tab-component>
       </actor-tab-component>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
+import ActorTabComponent from "@/components/parts/ActorTabComponent.vue";
+import ActorStatusTabComponent from "@/components/parts/ActorStatusTabComponent.vue";
+import DiffComponent from "@/components/stand-image/DiffComponent.vue";
+import ActorOtherStatusSelect from "@/components/parts/select/ActorOtherStatusSelect.vue";
 
 import { Action, Getter } from "vuex-class";
 
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import ActorTabComponent from "@/components/parts/ActorTabComponent.vue";
-import DiffComponent from "@/components/stand-image/DiffComponent.vue";
 
 @Component<StandImageSettingWindow>({
   name: "standImageSettingWindow",
   mixins: [WindowMixin],
   components: {
+    ActorOtherStatusSelect,
     WindowFrame,
     ActorTabComponent,
+    ActorStatusTabComponent,
     DiffComponent
   }
 })
@@ -76,42 +126,88 @@ export default class StandImageSettingWindow extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("windowOpen") windowOpen: any;
   @Action("addStandImageDiff") addStandImageDiff: any;
+  @Action("deleteActorStatus") deleteActorStatus: any;
   @Action("changeListInfo") changeListInfo: any;
   @Getter("imageList") imageList: any;
   @Getter("getObj") getObj: any;
 
   private actorKey: string = "";
+  private statusName: string = "";
+  private isPreview: boolean = false;
 
   changeActor(actorKey: string): void {
     this.actorKey = actorKey;
   }
 
+  getViewStatus(status: any) {
+    const useName = status.standImage.ref || this.statusName;
+    const actor = this.getObj(this.actorKey);
+
+    return actor.statusList.filter((status: any) => status.name === useName)[0];
+  }
+
+  private updateStatus(standImage: any) {
+    const actor = this.getObj(this.actorKey);
+    const statusIndex = actor.statusList.findIndex(
+      (status: any) => status.name === this.statusName
+    );
+    const updateStatusList: any = {};
+    updateStatusList[statusIndex] = {
+      standImage: standImage
+    };
+
+    setTimeout(() =>
+      this.changeListInfo({
+        key: this.actorKey,
+        statusList: updateStatusList
+      })
+    );
+  }
+
+  changeRef(ref: string): void {
+    this.updateStatus({
+      ref: ref
+    });
+  }
+
+  changeStatus(statusName: string): void {
+    this.statusName = statusName;
+  }
+
   changeAutoResize(autoResize: boolean) {
-    this.changeListInfo({
-      key: this.actorKey,
-      standImage: {
-        autoResize: autoResize
-      }
+    this.updateStatus({
+      autoResize: autoResize
+    });
+  }
+
+  changeLocate(locate: number) {
+    this.updateStatus({
+      locate: locate
     });
   }
 
   changeAnimationLength(animationLength: number) {
-    this.changeListInfo({
-      key: this.actorKey,
-      standImage: {
-        animationLength: animationLength
-      }
+    this.updateStatus({
+      animationLength: animationLength
     });
   }
 
   get imageKey(): string | null {
     if (!this.actorKey) return null;
-    return this.getObj(this.actorKey).standImage.base;
+    if (!this.statusName) return null;
+
+    const statusList: any[] = this.getObj(this.actorKey).statusList;
+    const status = statusList.filter(
+      (status: any) => status.name === this.statusName
+    )[0];
+
+    window.console.log(this.actorKey, this.statusName, status);
+    return this.getViewStatus(status).standImage.base;
   }
 
   get image(): string | null {
     const imageKey = this.imageKey;
-    if (!imageKey) return null;
+    if (!imageKey) return "";
     const imageObj = this.imageList.filter(
       (image: any) => image.key === imageKey.replace(":R", "")
     )[0];
@@ -124,28 +220,23 @@ export default class StandImageSettingWindow extends Vue {
     return /:R/.test(imageKey);
   }
 
-  viewPreview(): void {
-    alert("viewPreview");
-  }
-
   selectBaseImage(): void {
     const actor = this.getObj(this.actorKey);
+    const statusIndex = actor.statusList.findIndex(
+      (status: any) => status.name === this.statusName
+    );
+    const status = actor.statusList[statusIndex];
+    const base = status.standImage.base;
+    const baseTag = status.standImage.baseTag;
     Promise.resolve()
       .then(() =>
+        // リアクティブのための更新と、それに伴うコールバックの一時無効のための指定
         this.setProperty({
           property: "private.display.imageSelectorWindow",
           value: {
             imageKey: null,
             imageTag: null,
-            callback: (imageKey: string, imageTag: string) => {
-              this.changeListInfo({
-                key: this.actorKey,
-                standImage: {
-                  base: imageKey,
-                  baseTag: imageTag
-                }
-              });
-            }
+            callback: null
           },
           logOff: true
         })
@@ -154,8 +245,13 @@ export default class StandImageSettingWindow extends Vue {
         this.setProperty({
           property: "private.display.imageSelectorWindow",
           value: {
-            imageKey: actor.standImage.base,
-            imageTag: actor.standImage.baseTag
+            imageKey: base,
+            imageTag: baseTag,
+            callback: (imageKey: string, imageTag: string) =>
+              this.updateStatus({
+                base: imageKey,
+                baseTag: imageTag
+              })
           },
           logOff: true
         })
@@ -168,11 +264,11 @@ export default class StandImageSettingWindow extends Vue {
   addDiff(): void {
     this.addStandImageDiff({
       key: this.actorKey,
-      image: "image-1",
-      tag: "キャラクター",
+      statusName: this.statusName,
+      image: "",
+      tag: "立ち絵",
       x: 0,
       y: 0,
-      size: 100,
       time: [30, 70]
     });
   }
@@ -188,11 +284,19 @@ export default class StandImageSettingWindow extends Vue {
   font-size: 12px;
 }
 .actorSetting {
-  border-bottom: 1px dotted #666;
+  padding: 0.5em;
+  position: relative;
 }
+
 .base {
   display: flex;
   flex-direction: column;
+  padding: 0 0.5em 0.5em;
+
+  > label {
+    display: flex;
+    align-items: center;
+  }
 
   > div {
     display: flex;
@@ -201,29 +305,84 @@ export default class StandImageSettingWindow extends Vue {
   }
 
   button {
-    margin: 0 0.5em;
+    margin-left: 0;
   }
 
-  label {
-    margin: 0 0.5em;
+  input[type="range"] {
+    margin: 0;
+    padding: 0;
+    flex: 1;
   }
 
   input[type="number"] {
     width: 2.5em;
   }
 
-  img {
-    margin: 0 0.5em 0.5em;
+  $color1: #f7f7f7;
+  $color2: #bebebe;
+  .img-container {
+    margin-bottom: 0.5em;
     border: 1px solid #666;
-    width: 12em;
-    height: 16em;
-    object-fit: contain;
+    width: 192px;
+    height: 256px;
+    background: $color1;
+    display: flex;
+    background-image: linear-gradient(45deg, $color2 25%, transparent 0),
+      linear-gradient(45deg, transparent 75%, $color2 0),
+      linear-gradient(45deg, $color2 25%, transparent 0),
+      linear-gradient(45deg, transparent 75%, $color2 0);
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px, 8px 8px, 16px 16px;
+
+    .img {
+      flex: 1;
+      background-size: contain;
+    }
+  }
+}
+.delete-button {
+  border-radius: 3px;
+  border: solid 1px #666;
+  color: #666;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  padding: 0 1px;
+  font-size: 8px;
+
+  &:hover {
+    color: darkred;
+    border-color: darkred;
   }
 }
 .tab-contents {
   display: flex;
   flex-direction: row;
   height: 100%;
+  background-color: white;
+  margin: 0 0.5em 0.5em 1em;
+  border: 1px dotted #666;
+  position: relative;
+
+  .disable-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+
+    span {
+      background-color: white;
+      border: solid 2px black;
+      border-radius: 5px;
+      padding: 1em 0.5em;
+    }
+  }
 
   .diff {
     flex: 1;

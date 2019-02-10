@@ -218,6 +218,44 @@ export default {
       }
     },
     /** ========================================================================
+     * アクター状態を追加する
+     */
+    addActorStatus: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doAddActorStatus"
+      });
+    },
+    doAddActorStatus: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      const actor: any = rootGetters.getObj(payload.key);
+      delete payload.key;
+      delete payload.ownerPeerId;
+
+      actor.statusList.push(payload);
+    },
+    /** ========================================================================
+     * アクター状態を削除する
+     */
+    deleteActorStatus: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doDeleteActorStatus"
+      });
+    },
+    doDeleteActorStatus: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      const actor: any = rootGetters.getObj(payload.key);
+      const index = actor.statusList.findIndex(
+        (status: any) => status.name === payload.statusName
+      );
+      actor.statusList.splice(index, 1);
+    },
+    /** ========================================================================
      * 立ち絵差分を追加する
      */
     addStandImageDiff: ({ dispatch }: { dispatch: Function }, payload: any) => {
@@ -233,8 +271,12 @@ export default {
       const actor: any = rootGetters.getObj(payload.key);
       delete payload.key;
       delete payload.ownerPeerId;
+      const status = actor.statusList.filter(
+        (status: any) => status.name === payload.statusName
+      )[0];
+      delete payload.statusName;
 
-      actor.standImage.diffList.push(payload);
+      status.standImage.diffList.push(payload);
     },
     /** ========================================================================
      * 立ち絵差分を削除する
@@ -253,7 +295,11 @@ export default {
       payload: any
     ) => {
       const actor: any = rootGetters.getObj(payload.key);
-      actor.standImage.diffList.splice(payload.index, 1);
+      const status = actor.statusList.filter(
+        (status: any) => status.name === payload.statusName
+      )[0];
+      delete payload.statusName;
+      status.standImage.diffList.splice(payload.index, 1);
     },
     /** ========================================================================
      * 立ち絵差分を編集する
@@ -280,21 +326,29 @@ export default {
       const index: number = payload.index;
       delete payload.index;
       delete payload.ownerPeerId;
+      const statusName: string = payload.statusName;
+      delete payload.statusName;
 
       const actor: any = rootGetters.getObj(key);
 
-      const diffList = actor.standImage.diffList;
-      const diff = diffList[index];
-      if (!diff) return;
+      const statusIndex = actor.statusList.findIndex(
+        (status: any) => status.name === statusName
+      );
 
-      const updateDiffList: any = {};
-      updateDiffList[index] = payload;
+      const updateDiff: any = {};
+      updateDiff[index] = payload;
+      const updateStatusList: any = {};
+      updateStatusList[statusIndex] = {
+        standImage: {
+          diffList: updateDiff
+        }
+      };
+
+      // window.console.log("★★★", key, "★ statusList:", updateStatusList);
 
       dispatch("changeListInfo", {
         key: key,
-        standImage: {
-          diffList: updateDiffList
-        }
+        statusList: updateStatusList
       });
     },
     /** ========================================================================
@@ -377,7 +431,6 @@ export default {
       const index = rootState.public[propName].list.findIndex(
         (obj: any) => obj.key === key
       );
-      const obj = rootState.public[propName].list[index].standImage.diffList;
       dispatch("setProperty", {
         property: `public.${propName}.list.${index}`,
         value: payload,

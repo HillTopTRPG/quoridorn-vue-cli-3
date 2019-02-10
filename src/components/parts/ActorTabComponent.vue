@@ -2,7 +2,10 @@
   <div class="actor-tab-container">
 
     <!-- タブ -->
-    <div class="tabs">
+    <div class="actor-tabs">
+      <label class="tab">
+        <ActorSelect :selectedActorList="standActorList" v-model="selectActorKey"></ActorSelect>
+      </label>
       <label
         class="tab"
         v-for="(actor, index) in standActorList"
@@ -12,13 +15,10 @@
       >{{getViewName(actor.key)}}
         <span class="icon-cross" @click.stop="delTab(actor.key)"></span>
       </label>
-      <label class="tab">
-        <ActorSelect :selectedActorList="standActorList" v-model="selectActorKey"></ActorSelect>
-      </label>
     </div>
 
     <!-- 内容 -->
-    <div class="contents">
+    <div class="actor-contents">
       <slot :actor="actor"></slot>
     </div>
 
@@ -56,6 +56,7 @@ export default class ActorTabComponent extends Vue {
       actor => actor.key === actorKey
     );
     this.activeTabIndex--;
+    if (this.activeTabIndex < 0) this.activeTabIndex = 0;
     this.standActorList.splice(index, 1);
   }
 
@@ -72,9 +73,12 @@ export default class ActorTabComponent extends Vue {
   onChangeSelectActorKey(selectActorKey: string) {
     if (selectActorKey) {
       const actor = this.getObj(selectActorKey);
-      this.standActorList.push(actor);
-      this.activeTabIndex = this.standActorList.length - 1;
-      setTimeout(() => (this.selectActorKey = ""), 0);
+      this.standActorList.unshift(actor);
+      this.activeTabIndex++;
+      setTimeout(() => {
+        this.selectActorKey = "";
+        this.activeTabIndex = 0;
+      }, 0);
     }
   }
 
@@ -87,6 +91,7 @@ export default class ActorTabComponent extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+$backColor: rgba(230, 255, 230, 1);
 .actor-tab-container {
   height: 100%;
   width: 100%;
@@ -95,7 +100,7 @@ export default class ActorTabComponent extends Vue {
   display: flex;
   flex-direction: column;
 }
-.tabs {
+.actor-tabs {
   display: inline-flex;
   flex-direction: row;
   margin-bottom: -1px;
@@ -109,6 +114,8 @@ export default class ActorTabComponent extends Vue {
     border: 1px solid #777;
     border-radius: 5px 5px 0 0;
     padding: 0.2em 0.5em 0;
+    background-color: #ccc;
+    margin-top: 0.5em;
 
     span[class^="icon-"] {
       visibility: hidden;
@@ -124,13 +131,14 @@ export default class ActorTabComponent extends Vue {
       visibility: visible;
     }
     &.active {
-      background-color: white;
+      background-color: $backColor;
       border-bottom-color: transparent;
+      margin-top: 0;
     }
   }
 }
-.contents {
-  background-color: white;
+.actor-contents {
+  background-color: $backColor;
   border: 1px solid #777;
   height: 100px;
   box-sizing: border-box;

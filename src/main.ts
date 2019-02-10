@@ -8,7 +8,7 @@ Vue.config.productionTip = false;
 
 Vue.directive("img", (el: any, binding) => {
   const imgData = binding.value;
-  if (imgData === "") {
+  if (!imgData) {
     el.src = "";
     return;
   }
@@ -30,8 +30,15 @@ Vue.directive("bg-img", (el: any, binding) => {
   const img = new Image();
   img.src = imgData;
 
+  img.onerror = () => {
+    delete el.style.backgroundImage;
+    el.style.opacity = "0";
+    el.classList.remove("loaded");
+    delete el.style.transition;
+  };
+
   img.onload = () => {
-    el.style["background-image"] = `url(${imgData})`;
+    el.style.backgroundImage = `url(${imgData})`;
     el.style.opacity = "1";
     el.classList.add("loaded");
     if (el.className.indexOf("anime") >= 0) {

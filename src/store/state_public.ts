@@ -209,13 +209,21 @@ export default {
           password: password,
           fontColor: fontColor,
           type: type,
-          standImage: {
-            base: "image-1",
-            baseTag: "キャラクター",
-            autoResize: true,
-            animationLength: 1,
-            diffList: []
-          }
+          statusList: [
+            {
+              name: "◆",
+              standImage: {
+                ref: "",
+                base: "",
+                baseTag: "",
+                autoResize: false,
+                animationLength: 0,
+                locate: 1,
+                diffList: [],
+                isSystemLock: true
+              }
+            }
+          ]
         });
       } else {
         // privateデータの復元
