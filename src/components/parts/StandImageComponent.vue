@@ -44,7 +44,6 @@ export default class StandImageComponent extends Vue {
   private dataSetUpped: boolean = false;
 
   mounted(): void {
-    window.console.log("mounted");
     this.onMounted = true;
     if (this.dataSetUpped) {
       // 描画開始
@@ -54,8 +53,6 @@ export default class StandImageComponent extends Vue {
 
   @Watch("standImage", { deep: true })
   onChangeStandImage(standImage: any) {
-    window.console.log("onChangeStandImage");
-
     // 稼働中のタイマーはキャンセル
     if (this.timer !== -1) clearTimeout(this.timer);
 
@@ -92,28 +89,24 @@ export default class StandImageComponent extends Vue {
     this.diffImageList.splice(0, this.diffImageList.length);
     let diffImageList: any[] = [];
     standImage.diffList.forEach((diff: any, index: number) => {
-      const promise = Promise.resolve()
-        .then(() => {
-          return imageLoad(diff.image, (imageElm: HTMLImageElement) => {
-            if (!imageElm) return;
-            diffImageList.push({
-              index: index,
-              image: imageElm,
-              isReverse: diff.image ? /:R/.test(diff.image) : false,
-              start: diff.time[0],
-              end: diff.time[1],
-              rec: {
-                x: diff.x,
-                y: diff.y,
-                w: imageElm.naturalWidth,
-                h: imageElm.naturalHeight
-              }
-            });
+      const promise = Promise.resolve().then(() => {
+        return imageLoad(diff.image, (imageElm: HTMLImageElement) => {
+          if (!imageElm) return;
+          diffImageList.push({
+            index: index,
+            image: imageElm,
+            isReverse: diff.image ? /:R/.test(diff.image) : false,
+            start: diff.time[0],
+            end: diff.time[1],
+            rec: {
+              x: diff.x,
+              y: diff.y,
+              w: imageElm.naturalWidth,
+              h: imageElm.naturalHeight
+            }
           });
-        })
-        .catch(() => {
-          // FIXME １枚のエラーのために全体を失敗にする？rejectしちゃう？
         });
+      });
       promiseList.push(promise);
     });
 
@@ -151,7 +144,6 @@ export default class StandImageComponent extends Vue {
    * 描画を開始する
    */
   private startPaint() {
-    window.console.log("startPaint");
     this.timeIndex = 0;
     this.paint();
   }
@@ -183,7 +175,6 @@ export default class StandImageComponent extends Vue {
           StandImageComponent.drawTransparent(ctx, diff.image, diff.rec);
         } else {
           if (start <= time && time < end) {
-            // window.console.log("  drawImage", start, end);
             StandImageComponent.drawTransparent(ctx, diff.image, diff.rec);
           }
         }
@@ -217,7 +208,11 @@ export default class StandImageComponent extends Vue {
   @Emit("click")
   onClick() {}
 
-  get canvasSize(): any {
+  @Watch("canvasSize", { deep: true })
+  @Emit("resize")
+  onChangeCanvasSize(canvasSize: any) {}
+
+  private get canvasSize(): any {
     return {
       w: this.baseImageElm ? this.baseImageElm.naturalWidth : 0,
       h: this.baseImageElm ? this.baseImageElm.naturalHeight : 0

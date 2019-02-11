@@ -28,16 +28,14 @@
               </div>
               <div class="base">
                 <label>ベース</label>
-                <div class="img-container">
+                <div class="img-container" @click="selectBaseImage">
                   <stand-image-component
-                    :standImage="status.standImage"
+                    :standImage="getViewStatus(status).standImage"
                     :drawDiff="isPreview"
                     @click="selectBaseImage"
-                    style="width: 100%; height: 100%;"
+                    @resize="onBaseResize"
+                    :style="standImageStyle"
                   />
-                  <!--
-                  <div class="img" v-bg-img="image" :class="{isReverse : isReverse}"></div>
-                  -->
                 </div>
                 <!-- {{"#" + image + "#"}} -->
                 <div>
@@ -118,7 +116,7 @@ import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 
 import { Action, Getter } from "vuex-class";
 
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 @Component<StandImageSettingWindow>({
   name: "standImageSettingWindow",
@@ -144,6 +142,7 @@ export default class StandImageSettingWindow extends Vue {
   private actorKey: string = "";
   private statusName: string = "";
   private isPreview: boolean = false;
+  private baseSize: any = { w: 0, h: 0 };
 
   changeActor(actorKey: string): void {
     this.actorKey = actorKey;
@@ -271,6 +270,35 @@ export default class StandImageSettingWindow extends Vue {
       });
   }
 
+  onBaseResize(size: any) {
+    this.baseSize = size;
+  }
+
+  get standImageStyle(): any {
+    const canvasSize: any = this.baseSize;
+    if (canvasSize.w === 0 || canvasSize.h === 0) return {};
+
+    const ratioW: number = 192 / canvasSize.w;
+    const ratioH: number = 256 / canvasSize.h;
+
+    const ratio: number = Math.min(ratioW, ratioH);
+
+    const translate: number[] = [0, 0];
+    if (ratioW < ratioH) {
+      // 横長の場合は下寄せにする
+      translate[1] = 256 - canvasSize.h * ratio;
+    } else {
+      // 縦長の場合は左寄せでいいので何もしない
+    }
+    const transformList: string[] = [];
+    transformList.push(`translate(${translate[0]}px, ${translate[1]}px)`);
+    transformList.push(`scale(${ratio}, ${ratio})`);
+    return {
+      transform: transformList.join(" "),
+      transformOrigin: "left top"
+    };
+  }
+
   addDiff(): void {
     this.addStandImageDiff({
       key: this.actorKey,
@@ -308,7 +336,7 @@ export default class StandImageSettingWindow extends Vue {
     align-items: center;
   }
 
-  > div {
+  > div:not(.img-container) {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -336,7 +364,6 @@ export default class StandImageSettingWindow extends Vue {
     width: 192px;
     height: 256px;
     background: $color1;
-    display: flex;
     background-image: linear-gradient(45deg, $color2 25%, transparent 0),
       linear-gradient(45deg, transparent 75%, $color2 0),
       linear-gradient(45deg, $color2 25%, transparent 0),
@@ -345,8 +372,10 @@ export default class StandImageSettingWindow extends Vue {
     background-position: 0 0, 8px 8px, 8px 8px, 16px 16px;
 
     .img {
-      flex: 1;
       background-size: contain;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   }
 }

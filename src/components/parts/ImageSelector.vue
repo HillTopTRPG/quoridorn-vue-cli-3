@@ -103,7 +103,6 @@ export default class ImageSelector extends Vue {
   }
 
   get useImageList(): any[] {
-    window.console.log(this.selectImageTag, this.imageList);
     return this.imageList.filter((obj: any) => {
       if (this.selectImageTag === "(全て)") return true;
       return obj.tag.indexOf(this.selectImageTag) >= 0;
