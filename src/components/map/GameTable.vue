@@ -535,7 +535,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
               const canvas: HTMLCanvasElement = <HTMLCanvasElement>(
                 document.createElement("canvas")
               );
-              const ctx: any = canvas.getContext("2d");
+              const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
               canvas.width = w;
               canvas.height = h;
               const locate = {

@@ -6,7 +6,7 @@
     :width="canvasSize.w"
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
-    @contextmenu.prevent ></canvas>
+    @contextmenu.prevent></canvas>
 </template>
 
 <script lang="ts">
@@ -35,8 +35,10 @@ export default class MapBoard extends Vue {
     this.paint();
   }
   paint(this: any): void {
-    const canvasElm: any = document.getElementById("map-canvas");
-    const ctx = canvasElm!.getContext("2d");
+    const canvasElm: HTMLCanvasElement = <HTMLCanvasElement>(
+      document.getElementById("map-canvas")
+    );
+    const ctx: CanvasRenderingContext2D = canvasElm!.getContext("2d")!;
 
     ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h);
 

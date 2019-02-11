@@ -29,7 +29,15 @@
               <div class="base">
                 <label>ベース</label>
                 <div class="img-container">
-                  <div class="img" v-bg-img="image" :class="{isReverse : isReverse}" @click="selectBaseImage"></div>
+                  <stand-image-component
+                    :standImage="status.standImage"
+                    :drawDiff="isPreview"
+                    @click="selectBaseImage"
+                    style="width: 100%; height: 100%;"
+                  />
+                  <!--
+                  <div class="img" v-bg-img="image" :class="{isReverse : isReverse}"></div>
+                  -->
                 </div>
                 <!-- {{"#" + image + "#"}} -->
                 <div>
@@ -106,6 +114,7 @@ import ActorTabComponent from "@/components/parts/ActorTabComponent.vue";
 import ActorStatusTabComponent from "@/components/parts/ActorStatusTabComponent.vue";
 import DiffComponent from "@/components/stand-image/DiffComponent.vue";
 import ActorOtherStatusSelect from "@/components/parts/select/ActorOtherStatusSelect.vue";
+import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 
 import { Action, Getter } from "vuex-class";
 
@@ -119,7 +128,8 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
     WindowFrame,
     ActorTabComponent,
     ActorStatusTabComponent,
-    DiffComponent
+    DiffComponent,
+    StandImageComponent
   }
 })
 export default class StandImageSettingWindow extends Vue {
@@ -207,7 +217,7 @@ export default class StandImageSettingWindow extends Vue {
 
   get image(): string | null {
     const imageKey = this.imageKey;
-    if (!imageKey) return "";
+    if (!imageKey) return null;
     const imageObj = this.imageList.filter(
       (image: any) => image.key === imageKey.replace(":R", "")
     )[0];
