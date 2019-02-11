@@ -224,12 +224,14 @@ export default class StandImageComponent extends Vue {
     image: HTMLImageElement,
     rec: Rectangle
   ) {
-    // 重なり部分をクリアする設定
+    // 半透明色での塗りつぶし
     ctx.globalCompositeOperation = "destination-out";
     ctx.fillStyle = "rgba(0, 0, 0, 1)";
-    ctx.fill();
-    // 半透明色での塗りつぶし
+    ctx.fillRect(rec.x, rec.y, rec.w, rec.h);
     ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
+    ctx.fillRect(rec.x, rec.y, rec.w, rec.h);
+    // 画像の描画
     ctx.drawImage(image, rec.x, rec.y, rec.w, rec.h);
   }
 }
