@@ -58,7 +58,6 @@ export default class DiffComponent extends Vue {
   private animationLength!: number;
 
   @Action("setProperty") setProperty: any;
-  @Action("changeListInfo") changeListInfo: any;
   @Action("windowOpen") windowOpen: any;
   @Action("editStandImageDiff") editStandImageDiff: any;
   @Action("deleteStandImageDiff") deleteStandImageDiff: any;
@@ -230,7 +229,6 @@ export default class DiffComponent extends Vue {
 $color1: #f7f7f7;
 $color2: #bebebe;
 .img-container {
-  margin-bottom: 0.5em;
   border: 1px solid #666;
   width: 5em;
   height: 5em;
@@ -278,6 +276,7 @@ input[type="number"] {
     flex: 1;
     display: flex;
     align-items: center;
+    justify-content: space-between;
   }
 }
 .range {
