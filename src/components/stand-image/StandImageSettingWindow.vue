@@ -2,7 +2,7 @@
   <window-frame titleText="立ち絵設定" display-property="private.display.standImageSettingWindow" align="center" fixSize="660, 540">
     <div class="contents">
       <actor-tab-component @change="changeActor">
-        <actor-status-tab-component slot-scope="{ actor }" v-if="actor" :actor="actor" @change="changeStatus">
+        <actor-status-tab-component slot-scope="{ actor }" v-if="actor" :actor="actor" @change="changeStatus" ref="actorStatusTabComponent">
           <template slot-scope="{ status }" v-if="status">
             <div class="actorSetting">
               <label>
@@ -17,7 +17,7 @@
 
               <span
                 class="delete-button"
-                @click.prevent="deleteActorStatus({ key: actorKey, statusName: status.name })"
+                @click.prevent="doDeleteActorStatus({ key: actorKey, statusName: status.name })"
                 v-if="!status.standImage.isSystemLock"
               >状態の削除</span>
             </div>
@@ -142,12 +142,20 @@ export default class StandImageSettingWindow extends Vue {
   @Getter("getObj") getObj: any;
 
   private actorKey: string = "";
-  private statusName: string = "";
-  private isPreview: boolean = false;
+  private statusName: string | null = "";
+  private isPreview: boolean = true;
   private baseSize: any = { w: 0, h: 0 };
 
   changeActor(actorKey: string): void {
     this.actorKey = actorKey;
+  }
+
+  doDeleteActorStatus(key: string, statusName: string) {
+    const comp: ActorStatusTabComponent = <ActorStatusTabComponent>(
+      this.$refs.actorStatusTabComponent
+    );
+    this.statusName = comp.deleteTab();
+    this.deleteActorStatus(key, statusName);
   }
 
   getViewStatus(status: any) {

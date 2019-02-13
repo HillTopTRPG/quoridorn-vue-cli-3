@@ -58,13 +58,19 @@ export default class ActorStatusTabComponent extends Vue {
     );
   }
 
+  public deleteTab(index: number = this.activeTabIndex): string | null {
+    this.activeTabIndex--;
+    if (this.activeTabIndex < 0) this.activeTabIndex = 0;
+    this.statusList.splice(index, 1);
+    const status = this.statusList[this.activeTabIndex];
+    return status ? status.name : null;
+  }
+
   delTab(statusName: string) {
     const index = this.statusList.findIndex(
       (status: any) => status.name === statusName
     );
-    this.activeTabIndex--;
-    if (this.activeTabIndex < 0) this.activeTabIndex = 0;
-    this.statusList.splice(index, 1);
+    this.deleteTab(index);
   }
 
   @Watch("actor")
