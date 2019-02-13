@@ -1,5 +1,11 @@
 <template>
-  <window-frame titleText="画像選択" display-property="private.display.imageSelectorWindow" align="center" fixSize="400, 193">
+  <window-frame
+    titleText="画像選択"
+    display-property="private.display.imageSelectorWindow"
+    align="center"
+    fixSize="400, 193"
+    :message="fileName"
+  >
     <div class="contents">
       <image-selector
         v-model="imageKey"
@@ -30,6 +36,7 @@ export default class ImageSelectorWindow extends Vue {
   @Getter("imageSelectorKey") imageSelectorKey: any;
   @Getter("imageSelectorTag") imageSelectorTag: any;
   @Getter("imageSelectorCallback") imageSelectorCallback: any;
+  @Getter("imageList") imageList: any;
 
   private imageKey: string = "";
   private imageTag: string = "";
@@ -54,6 +61,13 @@ export default class ImageSelectorWindow extends Vue {
   onChangeImageTag(imageTag: string) {
     if (!this.imageSelectorCallback) return;
     this.imageSelectorCallback(this.imageKey, imageTag);
+  }
+
+  get fileName(): string {
+    const image = this.imageList.filter(
+      (image: any) => image.key === this.imageKey
+    )[0];
+    return image ? image.name : "";
   }
 }
 </script>
