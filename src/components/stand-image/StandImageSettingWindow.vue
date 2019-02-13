@@ -47,7 +47,7 @@
                     >
                   </label>
                   <button
-                    @click="addDiff"
+                    @click="addDiff()"
                     :disabled="status.standImage.isSystemLock"
                   >差分追加</button>
                 </div>
@@ -94,7 +94,8 @@
                     :statusName="getViewStatus(status).name"
                     :diff="diff"
                     :index="index"
-                    :animationLength="getViewStatus(status).standImage.animationLength"/>
+                    :animationLength="getViewStatus(status).standImage.animationLength"
+                    ref="diffList"/>
                 </div>
               </div>
             </div>
@@ -113,6 +114,7 @@ import ActorStatusTabComponent from "@/components/parts/ActorStatusTabComponent.
 import DiffComponent from "@/components/stand-image/DiffComponent.vue";
 import ActorOtherStatusSelect from "@/components/parts/select/ActorOtherStatusSelect.vue";
 import StandImageComponent from "@/components/parts/StandImageComponent.vue";
+import { removeExt } from "@/components/common/Utility";
 
 import { Action, Getter } from "vuex-class";
 
@@ -256,11 +258,52 @@ export default class StandImageSettingWindow extends Vue {
           value: {
             imageKey: base,
             imageTag: baseTag,
-            callback: (imageKey: string, imageTag: string) =>
-              this.updateStatus({
+            callback: (imageKey: string, imageTag: string) => {
+              if (this.imageKey === imageKey) return;
+
+              const arg = {
                 base: imageKey,
                 baseTag: imageTag
-              })
+              };
+
+              this.updateStatus(arg);
+
+              // 画像のファイル名の情報を利用
+              const baseImage: any = this.imageList.filter(
+                (image: any) => image.key === imageKey.replace(":R", "")
+              )[0];
+              if (baseImage) {
+                const baseImageName: string = removeExt(baseImage.name);
+                const diffImageList: any[] = this.imageList.filter(
+                  (image: any) =>
+                    image.key !== imageKey &&
+                    image.name.startsWith(baseImageName)
+                );
+                const diffList: DiffComponent[] | undefined = <
+                  Array<DiffComponent>
+                >this.$refs.diffList;
+                diffImageList.forEach(diffImage => {
+                  let isFind = false;
+                  if (diffList) {
+                    for (const diff of diffList) {
+                      if (diff.imageKey === diffImage.key) {
+                        isFind = true;
+                        break;
+                      }
+                    }
+                  }
+                  if (!isFind) {
+                    const argObj = DiffComponent.getArg(diffImage);
+                    this.addDiff(
+                      diffImage.key,
+                      diffImage.tag,
+                      argObj.x,
+                      argObj.y
+                    );
+                  }
+                });
+              }
+            }
           },
           logOff: true
         })
@@ -299,14 +342,19 @@ export default class StandImageSettingWindow extends Vue {
     };
   }
 
-  addDiff(): void {
+  private addDiff(
+    image: string = "",
+    tag: string = "立ち絵",
+    x: number = 0,
+    y: number = 0
+  ): void {
     this.addStandImageDiff({
       key: this.actorKey,
       statusName: this.statusName,
-      image: "",
-      tag: "立ち絵",
-      x: 0,
-      y: 0,
+      image,
+      tag,
+      x,
+      y,
       time: [30, 70]
     });
   }

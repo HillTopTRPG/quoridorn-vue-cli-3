@@ -184,14 +184,14 @@
 - # タグ
   tag: "立ち絵"
   # データ
-  data: "./static/img/stand/yukari__1.png"
+  data: "./static/img/stand/yukari__face_114_65.png"
   # パスワード
   password: ""
 #=========#=========#=========#=========#=========#=========#
 - # タグ
   tag: "立ち絵"
   # データ
-  data: "./static/img/stand/yukari__2.png"
+  data: "./static/img/stand/yukari__mouth_147_122.png"
   # パスワード
   password: ""
 #=========#=========#=========#=========#=========#=========#

@@ -51,8 +51,10 @@ export default class DropImageWindow extends Vue {
   commit(): void {
     this.imageList.forEach(imageObj => {
       this.addImage({
+        name: imageObj.name,
         tag: imageObj.currentTag,
         data: imageObj.image,
+        thumbnail: imageObj.thumbnail,
         owner: this.playerKey
       });
     });
@@ -98,9 +100,10 @@ export default class DropImageWindow extends Vue {
   @Watch("dropImageList")
   onChangeDropImageList(dropImageList: any[]): void {
     this.imageList = dropImageList.map(imgObj => ({
-      image: imgObj.image,
-      name: imgObj.name,
       key: imgObj.key,
+      name: imgObj.name,
+      image: imgObj.image,
+      thumbnail: imgObj.thumbnail,
       currentTag: "キャラクター",
       selectTag: "キャラクター",
       password: ""

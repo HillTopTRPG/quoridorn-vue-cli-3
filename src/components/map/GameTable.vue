@@ -37,7 +37,7 @@ import MapMask from "./mapMask/MapMask.vue";
 import Character from "./character/Character.vue";
 import Chit from "./chit/Chit.vue";
 
-import { qLog } from "../common/Utility";
+import { qLog, getFileNameArgList } from "../common/Utility";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { Action, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
@@ -558,6 +558,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     return Promise.all<String>([normalLoad, thumbnailLoad]).then(
       (values: String[]) => ({
         name: imageFile.name,
+        imageArgList: getFileNameArgList(imageFile.name),
         thumbnail: values[0],
         image: values[1]
       })

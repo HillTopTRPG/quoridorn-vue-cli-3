@@ -71,8 +71,6 @@ export default class DiffComponent extends Vue {
    * 画像選択
    */
   chooseImage(): void {
-    const actorKey = this.actorKey;
-    const index = this.index;
     const image = this.diff.image;
     const tag = this.diff.tag;
     Promise.resolve()
@@ -94,15 +92,7 @@ export default class DiffComponent extends Vue {
           value: {
             imageKey: image,
             imageTag: tag,
-            callback: (imageKey: string, imageTag: string) => {
-              this.editStandImageDiff({
-                key: actorKey,
-                statusName: this.statusName,
-                index: index,
-                image: imageKey,
-                tag: imageTag
-              });
-            }
+            callback: this.changeImage.bind(this)
           },
           logOff: true
         });
@@ -112,6 +102,46 @@ export default class DiffComponent extends Vue {
       });
   }
 
+  public changeImage(imageKey: string, imageTag: string) {
+    const arg: any = {
+      key: this.actorKey,
+      statusName: this.statusName,
+      index: this.index,
+      image: imageKey,
+      tag: imageTag
+    };
+
+    // 画像のファイル名の情報を利用
+    const imageObj: any = this.imageList.filter(
+      (image: any) => image.key === imageKey.replace(":R", "")
+    )[0];
+    const argObj = DiffComponent.getArg(imageObj);
+    if (argObj.x !== undefined) arg.x = argObj.x;
+    if (argObj.y !== undefined) arg.y = argObj.y;
+
+    this.editStandImageDiff(arg);
+  }
+
+  public static getArg(imageObj: any): any {
+    if (!imageObj) return {};
+
+    const arg: any = {};
+
+    const imageArgList: string[] = imageObj.imageArgList;
+
+    if (imageArgList.length >= 2) {
+      const num = parseInt(imageArgList[1], 10);
+      if (!isNaN(num)) arg.x = num;
+    }
+
+    if (imageArgList.length >= 3) {
+      const num = parseInt(imageArgList[2], 10);
+      if (!isNaN(num)) arg.y = num;
+    }
+
+    return arg;
+  }
+
   get viewTime(): string {
     const time = this.time;
     const start = (this.animationLength * time[0]) / 100;
@@ -119,8 +149,14 @@ export default class DiffComponent extends Vue {
     return `(${start}~${end})秒`;
   }
 
+  public get imageKey(): string | null {
+    if (!this.diff || !this.diff.image) return null;
+    return this.diff.image;
+  }
+
   get image(): string | null {
     if (!this.diff || !this.diff.image) return null;
+    window.console.log(this.diff.image);
     const imageObj = this.imageList.filter(
       (image: any) => image.key === this.diff.image.replace(":R", "")
     )[0];

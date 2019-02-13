@@ -134,4 +134,22 @@ export function execCopy(text: string): boolean {
   return result;
 }
 
+export function removeExt(fileName: string): string {
+  const matchExt: string[] | null = fileName.match(/(.*)(?:\.([^.]+$))/);
+  return matchExt ? matchExt[1] : fileName;
+}
+
+export function getFileNameArgList(fileName: string): string[] {
+  const matchExt: string[] | null = fileName.match(/(.*)(?:\.([^.]+$))/);
+
+  const useFileName: string = matchExt ? matchExt[1] : fileName;
+  const index: number = useFileName.indexOf("__");
+
+  if (index < 0) return [];
+
+  const argStr: string = useFileName.substring(index + 2).trim();
+
+  return argStr ? argStr.split("_") : [];
+}
+
 // qLog("aaaa -> bbb: val1", {rrr: 123, qqq: 432}, "bbb ccc: val2 ddd", {ppp: 222, fff: 4444})

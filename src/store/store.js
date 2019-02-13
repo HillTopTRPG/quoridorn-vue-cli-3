@@ -9,7 +9,7 @@ import stateSetting from "./state_setting";
 import actionFile from "./action_file";
 import actionPeer from "./action_peer.ts";
 import actionOperation from "./action_operation.ts";
-import { getUrlParam } from "../components/common/Utility";
+import { getUrlParam, getFileNameArgList } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
 import yaml from "js-yaml";
 
@@ -214,7 +214,11 @@ export default new Vuex.Store({
        */
       loadYaml(process.env.BASE_URL + "/static/conf/image.yaml").then(
         imageList => {
-          imageList.forEach((image, index) => (image.key = `image-${index}`));
+          imageList.forEach((image, index) => {
+            image.key = `image-${index}`;
+            image.name = image.data.replace(/.*\//, "");
+            image.imageArgList = getFileNameArgList(image.name);
+          });
           rootState.public.image.list = imageList;
           rootState.public.image.maxKey = imageList.length - 1;
         }

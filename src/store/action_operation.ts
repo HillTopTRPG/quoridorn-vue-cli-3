@@ -179,17 +179,31 @@ export default {
     },
     doAddImage: (
       { rootState, rootGetters }: { rootState: any; rootGetters: any },
-      { tag, data, owner }: { tag: string; data: any; owner: string }
+      {
+        name,
+        tag,
+        data,
+        thumbnail,
+        owner
+      }: {
+        name: string;
+        tag: string;
+        data: any;
+        thumbnail: string;
+        owner: string;
+      }
     ): string => {
       // 欠番を埋める方式は不採用
       let maxKey = rootState.public.image.maxKey;
       const key = `image-${++maxKey}`;
       rootState.public.image.maxKey = maxKey;
       rootState.public.image.list.push({
+        key: key,
+        name: name,
         tag: tag,
         data: data,
-        owner: owner,
-        key: key
+        thumbnail: thumbnail,
+        owner: owner
       });
       if (rootGetters.playerKey === owner) {
         rootGetters.historyList.push({ type: "add", key: key });
