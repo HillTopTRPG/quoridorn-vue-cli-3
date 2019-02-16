@@ -37,7 +37,34 @@ export default {
         const color = payload.color;
         const tab = payload.tab || activeChatTab.key;
         const from = payload.from;
+        const actorKey = payload.actorKey;
         const target = payload.target;
+
+        const actor: any = rootGetters.getObj(actorKey);
+        if (actor) {
+          const statusName = payload.statusName;
+          const status: any = actor.statusList.filter(
+            (status: any) => status.name === statusName
+          )[0];
+          if (status) {
+            const standImageList: any =
+              rootGetters.display.chatWindow.standImageList;
+            const standImageObj = {
+              actorKey: actorKey,
+              statusName: statusName,
+              standImage: status.standImage
+            };
+            const index: number = standImageList.findIndex(
+              (standImageObj: any) => standImageObj.actorKey === actorKey
+            );
+            if (index < 0) {
+              standImageList.push(standImageObj);
+            } else {
+              standImageList.splice(index, 1, standImageObj);
+            }
+          }
+        }
+
         let viewHtml;
         if (target) {
           const targetName = rootGetters.getObj(target).name;

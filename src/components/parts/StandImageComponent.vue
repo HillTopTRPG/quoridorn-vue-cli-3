@@ -1,12 +1,16 @@
 <template>
-  <canvas
+  <div
     class="stand-image"
-    :width="canvasSize.w"
-    :height="canvasSize.h"
-    @contextmenu.prevent
     @click="onClick"
-    ref="standImage"
-  ></canvas>
+    @contextmenu.prevent
+  >
+    <canvas
+      :width="canvasSize.w"
+      :height="canvasSize.h"
+      :style="standImageStyle"
+      ref="standImage"
+    ></canvas>
+  </div>
 </template>
 
 <script lang="ts">
@@ -45,16 +49,15 @@ export default class StandImageComponent extends Vue {
 
   mounted(): void {
     this.onMounted = true;
-    if (this.dataSetUpped) {
-      // 描画開始
-      this.startPaint();
-    }
+    this.onChangeStandImage(this.standImage);
   }
 
   @Watch("standImage", { deep: true })
   onChangeStandImage(standImage: any) {
     // 稼働中のタイマーはキャンセル
     if (this.timer !== -1) clearTimeout(this.timer);
+
+    if (!standImage) return;
 
     const imageLoad = (imageKey: string | null, callback: Function) =>
       new Promise((resolve: Function, reject: Function) => {
@@ -145,7 +148,36 @@ export default class StandImageComponent extends Vue {
    */
   private startPaint() {
     this.timeIndex = 0;
-    this.paint();
+    setTimeout(this.paint, 0);
+  }
+
+  beforeDestroy() {
+    clearTimeout(this.timer);
+  }
+
+  get standImageStyle(): any {
+    const canvasSize: any = this.canvasSize;
+    if (canvasSize.w === 0 || canvasSize.h === 0) return {};
+
+    const ratioW: number = 192 / canvasSize.w;
+    const ratioH: number = 256 / canvasSize.h;
+
+    const ratio: number = Math.min(ratioW, ratioH);
+
+    const translate: number[] = [0, 0];
+    if (ratioW < ratioH) {
+      // 横長の場合は下寄せにする
+      translate[1] = 256 - canvasSize.h * ratio;
+    } else {
+      // 縦長の場合は左寄せでいいので何もしない
+    }
+    const transformList: string[] = [];
+    transformList.push(`translate(${translate[0]}px, ${translate[1]}px)`);
+    transformList.push(`scale(${ratio}, ${ratio})`);
+    return {
+      transform: transformList.join(" "),
+      transformOrigin: "left top"
+    };
   }
 
   /**
@@ -157,28 +189,31 @@ export default class StandImageComponent extends Vue {
     const canvasElm: HTMLCanvasElement = <HTMLCanvasElement>(
       this.$refs.standImage
     );
-    const ctx: CanvasRenderingContext2D = canvasElm!.getContext("2d")!;
 
-    ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h);
+    if (canvasElm) {
+      const ctx: CanvasRenderingContext2D = canvasElm!.getContext("2d")!;
 
-    const canvasSize = this.canvasSize;
-    if (this.baseImageElm) {
-      ctx.drawImage(this.baseImageElm, 0, 0, canvasSize.w, canvasSize.h);
-    }
+      ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h);
 
-    if (this.drawDiff) {
-      // 差分の描画
-      this.diffImageList.forEach((diff: any) => {
-        const start = this.animationLength * diff.start * 10;
-        const end = this.animationLength * diff.end * 10;
-        if (start === 0 && end === this.animationLength * 1000) {
-          StandImageComponent.drawTransparent(ctx, diff.image, diff.rec);
-        } else {
-          if (start <= time && time < end) {
+      const canvasSize = this.canvasSize;
+      if (this.baseImageElm) {
+        ctx.drawImage(this.baseImageElm, 0, 0, canvasSize.w, canvasSize.h);
+      }
+
+      if (this.drawDiff) {
+        // 差分の描画
+        this.diffImageList.forEach((diff: any) => {
+          const start = this.animationLength * diff.start * 10;
+          const end = this.animationLength * diff.end * 10;
+          if (start === 0 && end === this.animationLength * 1000) {
             StandImageComponent.drawTransparent(ctx, diff.image, diff.rec);
+          } else {
+            if (start <= time && time < end) {
+              StandImageComponent.drawTransparent(ctx, diff.image, diff.rec);
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     // 描画タイマー更新
@@ -186,6 +221,8 @@ export default class StandImageComponent extends Vue {
   }
 
   private setNextTimer() {
+    if (this.timeList.length === 0) return;
+
     const lastTime = this.timeList[this.timeIndex];
     this.timeIndex++;
 
@@ -239,4 +276,16 @@ export default class StandImageComponent extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.stand-image {
+  position: relative;
+  width: 192px;
+  height: 256px;
+
+  canvas {
+    background-size: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
 </style>

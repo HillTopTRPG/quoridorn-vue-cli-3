@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="チャット" display-property="private.display.chatWindow" align="left-bottom" baseSize="-300, 260" :fontSizeBar="true">
+  <window-frame titleText="チャット" display-property="private.display.chatWindow" align="left-bottom" baseSize="-300, 260" :fontSizeBar="true">
     <div class="container">
       <!----------------
        ! タブ
@@ -28,7 +28,8 @@
         <select :tabindex="chatTabs.length + 2" :value="chatActorKey" @change="event => inputName(event.target.value)" title="">
           <option v-for="actor in getPeerActors" :key="actor.key" :value="actor.key">{{getViewName(actor.key)}}</option>
         </select>
-        <DiceBotSelect ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabs.length + 6" class="diceBotSystem"/>
+        <actor-status-select :actorKey="chatActorKey" v-model="statusName"/>
+        <dice-bot-select ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabs.length + 6" class="diceBotSystem"/>
         <span class="icon"><i class="icon-dice" title="ダイスボットの追加・編集・削除" @click="settingDiceBot" :tabindex="chatTabs.length + 7"></i></span>
         <span class="icon"><i class="icon-bin" title="チャットログ全削除" @click="deleteChatLog" :tabindex="chatTabs.length + 8"></i></span>
         <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabs.length + 9"></i></span>-->
@@ -159,7 +160,7 @@
         </div>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
@@ -170,11 +171,13 @@ import WindowFrame from "../WindowFrame.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
+import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
 
 @Component<ChatWindow>({
   name: "chatWindow",
   mixins: [WindowMixin],
   components: {
+    ActorStatusSelect,
     WindowFrame,
     DiceBotSelect
   }
@@ -228,6 +231,7 @@ export default class ChatWindow extends Vue {
   private volatileTarget: string = "";
   private volatileActiveTab: string = "";
   private volatileTargetTab: string | null = "";
+  private statusName: string = "◆";
 
   onInput(event: any): void {
     const text = event.target.value;
@@ -512,6 +516,9 @@ export default class ChatWindow extends Vue {
     }
 
     let ownerKey = null;
+
+    window.console.log(this.chatActorKey);
+
     if (this.chatActorKey) {
       const kind = this.chatActorKey.split("-")[0];
       if (kind === "player") {
@@ -558,6 +565,8 @@ export default class ChatWindow extends Vue {
         color: color,
         tab: outputTab,
         from: ownerKey,
+        actorKey: this.chatActorKey,
+        statusName: this.statusName,
         target: this.chatTarget,
         owner: currentActor ? currentActor.key : null
       });
@@ -571,6 +580,8 @@ export default class ChatWindow extends Vue {
         color: color,
         tab: outputTab,
         from: ownerKey,
+        actorKey: this.chatActorKey,
+        statusName: this.statusName,
         target: this.chatTarget,
         owner: currentActor ? currentActor.key : null
       });
@@ -578,12 +589,15 @@ export default class ChatWindow extends Vue {
       // -------------------
       // プレイヤー発言
       // -------------------
+      window.console.log("statusName:", this.statusName);
       this.addChatLog({
         name: this.getViewName(this.chatActorKey),
         text: text,
         color: color,
         tab: outputTab,
         from: ownerKey,
+        actorKey: this.chatActorKey,
+        statusName: this.statusName,
         target: this.chatTarget,
         owner: currentActor ? currentActor.key : null
       });
@@ -597,6 +611,8 @@ export default class ChatWindow extends Vue {
           color: color,
           tab: outputTab,
           from: ownerKey,
+          actorKey: this.chatActorKey,
+          statusName: this.statusName,
           target: this.chatTarget,
           owner: currentActor ? currentActor.key : null
         });

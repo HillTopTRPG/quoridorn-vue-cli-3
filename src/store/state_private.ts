@@ -62,7 +62,12 @@ export default {
         zIndex: 1,
         title: "default"
       },
-      chatWindow: { command: null, isDisplay: false, zIndex: 1 },
+      chatWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        standImageList: []
+      },
       initiativeWindow: { command: null, isDisplay: false, zIndex: 1 },
       resourceWindow: { command: null, isDisplay: false, zIndex: 1 },
       chatPaletteWindow: { command: null, isDisplay: false, zIndex: 1 },
@@ -392,6 +397,7 @@ export default {
     imageSelectorTag: (state: any) =>
       state.display.imageSelectorWindow.imageTag,
     imageSelectorCallback: (state: any) =>
-      state.display.imageSelectorWindow.callback
+      state.display.imageSelectorWindow.callback,
+    display: (state: any) => state.display
   }
 };

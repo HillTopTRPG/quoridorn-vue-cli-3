@@ -43,15 +43,28 @@
       @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
       @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"></div>
     <span v-if="!isBanClose"><i class="icon-cross window-close" @click.left.prevent="closeWindow"></i></span>
+
+    <!-- 立ち絵 -->
+    <stand-image-component
+      class="standImage"
+      v-for="(standImage, index) in standImageList"
+      :key="standImage.statusName"
+      :standImage="standImage.standImage"
+      :drawDiff="true"
+      @click="clickStandImage(standImage.standImage, index)"
+      :style="standImageStyle(standImage.standImage)"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 
 @Component<WindowFrame>({
-  name: "windowFrame"
+  name: "windowFrame",
+  components: { StandImageComponent }
 })
 export default class WindowFrame extends Vue {
   @Action("windowClose") windowClose: any;
@@ -91,6 +104,7 @@ export default class WindowFrame extends Vue {
     saveX: 0,
     saveY: 0
   };
+
   private windowFactor: any = {
     l: 0, // left
     r: 0, // right
@@ -101,6 +115,7 @@ export default class WindowFrame extends Vue {
     draggingX: 0,
     draggingY: 0
   };
+
   private fontSize: number = 12;
 
   mounted(): void {
@@ -117,11 +132,13 @@ export default class WindowFrame extends Vue {
     });
     this.addEventForIFrame();
   }
+
   closeWindow(this: any): void {
     // window.console.log(`  [methods] closeWindow(click [x]button)`)
     this.windowClose(this.displayProperty);
     this.$emit("cancel");
   }
+
   mouseUp(event: any): void {
     const evtObj = {
       clientX: event.pageX,
@@ -139,6 +156,7 @@ export default class WindowFrame extends Vue {
       .getElementById("mapBoardFrame")!
       .dispatchEvent(new MouseEvent("mouseUp", evtObj));
   }
+
   resize(
     this: any,
     event: any,
@@ -180,6 +198,7 @@ export default class WindowFrame extends Vue {
     // window.console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     this.moveMode = flg ? direct : "";
   }
+
   reflesh(this: any): void {
     const x = this.mouse.x;
     const y = this.mouse.y;
@@ -207,6 +226,7 @@ export default class WindowFrame extends Vue {
     }
     // window.console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
   }
+
   move(this: any, event: any, flg: boolean, isTouch: boolean): void {
     if (flg) {
       this.mouse.saveX = isTouch
@@ -226,6 +246,7 @@ export default class WindowFrame extends Vue {
     }
     this.moveMode = flg ? "move" : "";
   }
+
   addEventForIFrame(this: any): void {
     const elms: HTMLCollection = document.getElementsByTagName("iFrame");
     Array.prototype.slice.call(elms).forEach((iFrameElm: HTMLIFrameElement) => {
@@ -341,6 +362,18 @@ export default class WindowFrame extends Vue {
     });
   }
 
+  clickStandImage(standImage: any, index: number): void {
+    this.standImageList.splice(index, 1);
+  }
+
+  standImageStyle(standImage: any): any {
+    const locate = standImage.locate;
+    const mpx: number = (192 * (locate - 1)) / 12;
+    return {
+      left: `calc((100% - 192px) * ${locate - 1} / 11)`
+    };
+  }
+
   @Watch("command", { deep: true })
   onChangeCommand(this: any, command: any) {
     if (!command) {
@@ -358,7 +391,7 @@ export default class WindowFrame extends Vue {
       setTimeout(this.addEventForIFrame, 0);
     }
     this.setProperty({
-      property: `private.display.${this.displayProperty.command}`,
+      property: `${this.displayProperty}.command`,
       value: null,
       logOff: true
     });
@@ -378,6 +411,9 @@ export default class WindowFrame extends Vue {
   }
   get zIndex(this: any): any {
     return this.getStateValue(this.displayProperty).zIndex;
+  }
+  get standImageList(this: any): any[] {
+    return this.getStateValue(this.displayProperty).standImageList || [];
   }
   get isFix(this: any): boolean {
     return this.fixSize !== undefined;
@@ -703,6 +739,16 @@ export default class WindowFrame extends Vue {
       -webkit-border-radius: 50%;
       border: 1px solid rgb(167, 167, 167);
     }
+  }
+}
+.standImage {
+  width: 192px;
+  height: 256px;
+  position: absolute;
+  bottom: calc(100% + 1px);
+
+  &:hover {
+    outline: solid 1px magenta;
   }
 }
 </style>

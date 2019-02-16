@@ -28,16 +28,15 @@
               </div>
               <div class="base">
                 <label>ベース</label>
-                <div class="img-container" @click="selectBaseImage">
-                  <stand-image-component
-                    :standImage="getViewStatus(status).standImage"
-                    :drawDiff="isPreview"
-                    @click="selectBaseImage"
-                    @resize="onBaseResize"
-                    :style="standImageStyle"
-                  />
-                </div>
-                <!-- {{"#" + image + "#"}} -->
+
+                <!-- ベース画像 -->
+                <stand-image-component
+                  :standImage="getViewStatus(status).standImage"
+                  :drawDiff="isPreview"
+                  @click="selectBaseImage"
+                  @resize="onBaseResize"
+                />
+
                 <div>
                   <label>プレビュー
                     <input
@@ -412,13 +411,13 @@ export default class StandImageSettingWindow extends Vue {
     width: 2.5em;
   }
 
+  /*
+  */
   $color1: #f7f7f7;
   $color2: #bebebe;
-  .img-container {
+  .stand-image {
     margin-bottom: 0.5em;
     border: 1px solid #666;
-    width: 192px;
-    height: 256px;
     background: $color1;
     background-image: linear-gradient(45deg, $color2 25%, transparent 0),
       linear-gradient(45deg, transparent 75%, $color2 0),

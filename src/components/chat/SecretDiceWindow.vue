@@ -42,6 +42,8 @@ export default class SecretDiceWindow extends Vue {
       color: secretDiceObj.color,
       tab: secretDiceObj.tab,
       from: secretDiceObj.from,
+      actorKey: secretDiceObj.chatActorKey,
+      statusName: secretDiceObj.statusName,
       target: secretDiceObj.target,
       owner: secretDiceObj.owner
     });
@@ -52,6 +54,8 @@ export default class SecretDiceWindow extends Vue {
       color: secretDiceObj.color,
       tab: secretDiceObj.tab,
       from: secretDiceObj.from,
+      actorKey: secretDiceObj.chatActorKey,
+      statusName: secretDiceObj.statusName,
       target: secretDiceObj.target,
       owner: secretDiceObj.owner
     });
