@@ -37,6 +37,7 @@ export default class StandImageComponent extends Vue {
   @Getter("imageList") imageList: any;
 
   private baseImageElm: HTMLImageElement | null = null;
+  private baseImageReverse: boolean = false;
   private diffImageList: any[] = [];
   private timeList: number[] = [];
   private animationLength: number = 0;
@@ -60,7 +61,7 @@ export default class StandImageComponent extends Vue {
     if (!standImage) return;
 
     const imageLoad = (imageKey: string | null, callback: Function) =>
-      new Promise((resolve: Function, reject: Function) => {
+      new Promise((resolve: Function) => {
         let imageData = null;
         if (imageKey) {
           const imageObj = this.imageList.filter(
@@ -82,6 +83,7 @@ export default class StandImageComponent extends Vue {
 
     // ベースのロード
     let baseImageElm: HTMLImageElement | null = null;
+    const baseImageReverse: boolean = /:R/.test(standImage.base);
     promiseList.push(
       imageLoad(standImage.base, (imageElm: HTMLImageElement) => {
         baseImageElm = imageElm;
@@ -131,6 +133,7 @@ export default class StandImageComponent extends Vue {
       timeList = timeList.sort((time1, time2) => (time1 < time2 ? -1 : 1));
 
       this.baseImageElm = baseImageElm;
+      this.baseImageReverse = baseImageReverse;
       this.diffImageList = diffImageList;
       this.timeList = timeList;
       this.animationLength = standImage.animationLength;
@@ -197,7 +200,13 @@ export default class StandImageComponent extends Vue {
 
       const canvasSize = this.canvasSize;
       if (this.baseImageElm) {
-        ctx.drawImage(this.baseImageElm, 0, 0, canvasSize.w, canvasSize.h);
+        if (this.baseImageReverse) {
+          ctx.scale(-1, 1);
+          ctx.drawImage(this.baseImageElm, 0, 0, -canvasSize.w, canvasSize.h);
+          ctx.scale(-1, 1);
+        } else {
+          ctx.drawImage(this.baseImageElm, 0, 0, canvasSize.w, canvasSize.h);
+        }
       }
 
       if (this.drawDiff) {
@@ -205,11 +214,22 @@ export default class StandImageComponent extends Vue {
         this.diffImageList.forEach((diff: any) => {
           const start = this.animationLength * diff.start * 10;
           const end = this.animationLength * diff.end * 10;
+          const isReverse = diff.isReverse;
           if (start === 0 && end === this.animationLength * 1000) {
-            StandImageComponent.drawTransparent(ctx, diff.image, diff.rec);
+            StandImageComponent.drawTransparent(
+              ctx,
+              diff.image,
+              diff.rec,
+              isReverse
+            );
           } else {
             if (start <= time && time < end) {
-              StandImageComponent.drawTransparent(ctx, diff.image, diff.rec);
+              StandImageComponent.drawTransparent(
+                ctx,
+                diff.image,
+                diff.rec,
+                isReverse
+              );
             }
           }
         });
@@ -259,7 +279,8 @@ export default class StandImageComponent extends Vue {
   private static drawTransparent(
     ctx: CanvasRenderingContext2D,
     image: HTMLImageElement,
-    rec: Rectangle
+    rec: Rectangle,
+    isReverse: boolean
   ) {
     // 半透明色での塗りつぶし
     ctx.globalCompositeOperation = "destination-out";
@@ -269,7 +290,13 @@ export default class StandImageComponent extends Vue {
     ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fillRect(rec.x, rec.y, rec.w, rec.h);
     // 画像の描画
-    ctx.drawImage(image, rec.x, rec.y, rec.w, rec.h);
+    if (isReverse) {
+      ctx.scale(-1, 1);
+      ctx.drawImage(image, -rec.x, rec.y, -rec.w, rec.h);
+      ctx.scale(-1, 1);
+    } else {
+      ctx.drawImage(image, rec.x, rec.y, rec.w, rec.h);
+    }
   }
 }
 </script>
