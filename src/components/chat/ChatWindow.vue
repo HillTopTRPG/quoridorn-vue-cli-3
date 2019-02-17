@@ -75,10 +75,10 @@
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
               <li v-for="actor in chatOptionPagingList"
-                  :key="actor.key"
-                  :class="{selected: chatActorKey === actor.key}"
+                  :key="actor.name"
+                  :class="{selected: actor.key === chatActorKey && actor.statusName === statusName}"
                   tabindex="-1"
-              >{{getViewName(actor.key)}}</li>
+              >{{actor.name}}</li>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
             </ul>
@@ -120,7 +120,7 @@
           </div>
           <label class="chatInputArea">
             <span class="chatOption" @click="clickChatOption">
-              <span class="emphasis">! {{getViewName(chatActorKey)}}</span>
+              <span class="emphasis">! {{getViewName(chatActorKey)}}-{{statusName}}</span>
               <span :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{getGroupTargetName()}}</span>
               <span :class="{emphasis: outputTab !== null}"># {{outputTab ? getTabName(outputTab) : "[選択中]"}}</span>
             </span>
@@ -228,6 +228,7 @@ export default class ChatWindow extends Vue {
   private inputtingPeerIdList: any[] = [];
 
   private volatileFrom: string = "";
+  private volatileStatusName: string = "";
   private volatileTarget: string = "";
   private volatileActiveTab: string = "";
   private volatileTargetTab: string | null = "";
@@ -302,12 +303,14 @@ export default class ChatWindow extends Vue {
     let target = this.getObj(this.chatTarget);
     return target ? this.getViewName(target.key) : null;
   }
+
   /**
    * 上下キーを押下されてチャットオプションの選択項目を移動させる処理
    */
   chatOptionSelectChange(direction: string, event: any): void {
     // 変化前の値を保存
     if (!this.volatileFrom) this.volatileFrom = this.chatActorKey;
+    if (!this.volatileStatusName) this.volatileStatusName = this.statusName;
     if (!this.volatileTarget) this.volatileTarget = this.chatTarget;
     if (!this.volatileActiveTab) this.volatileActiveTab = this.activeTab;
     if (!this.volatileTargetTab) this.volatileTargetTab = this.outputTab;
@@ -323,12 +326,14 @@ export default class ChatWindow extends Vue {
     // 発言者の選択の場合
     if (this.chatOptionSelectMode === "from") {
       event.preventDefault();
-      let index = this.getPeerActors.findIndex(
-        (s: any) => s.key === this.chatActorKey
+      let index = this.useCommandActorList.findIndex(
+        (s: any) =>
+          s.key === this.chatActorKey && s.statusName === this.statusName
       );
-      const newValue = arrangeIndex(this.getPeerActors, index);
+      const newValue = arrangeIndex(this.useCommandActorList, index);
 
       this.updateActorKey(newValue.key);
+      this.statusName = newValue.statusName;
     }
 
     // 発言先の選択の場合
@@ -378,6 +383,7 @@ export default class ChatWindow extends Vue {
       if (this.volatileFrom) {
         this.updateActorKey(this.volatileFrom);
       }
+      if (this.volatileStatusName) this.statusName = this.volatileStatusName;
       if (this.volatileTarget) this.chatTarget = this.volatileTarget;
       if (this.volatileActiveTab) this.selectChatTab(this.volatileActiveTab);
       if (this.volatileTargetTab) this.outputTab = this.volatileTargetTab;
@@ -385,6 +391,7 @@ export default class ChatWindow extends Vue {
     this.chatOptionSelectMode = "";
     this.volatileFrom = "";
     this.volatileTarget = "";
+    this.volatileStatusName = "";
     this.volatileActiveTab = "";
     this.volatileTargetTab = "";
   }
@@ -430,30 +437,36 @@ export default class ChatWindow extends Vue {
   }
   deleteChatLog(): void {
     // TODO
+    alert("未実装です。");
   }
   settingFont(): void {
     this.windowOpen("private.display.settingChatFontWindow");
   }
   settingRollCall(): void {
     // TODO
+    alert("未実装です。");
   }
   settingAlerm(): void {
     // TODO
+    alert("未実装です。");
   }
   settingCutIn(): void {
     // TODO
+    alert("未実装です。");
   }
   settingBGM(): void {
     this.windowOpen("private.display.settingBGMWindow");
   }
   settingChatPalette(): void {
     // TODO
+    alert("未実装です。");
   }
   settingStandImage(): void {
     this.windowOpen("private.display.standImageSettingWindow");
   }
   settingRange(): void {
     // TODO
+    alert("未実装です。");
   }
   getTabName(tabKey: string): string {
     const tab = this.chatTabs.filter((tab: any) => tab.key === tabKey)[0];
@@ -465,6 +478,7 @@ export default class ChatWindow extends Vue {
     }
     this.chatOptionSelectMode = "";
     this.volatileFrom = "";
+    this.volatileStatusName = "";
     this.volatileTarget = "";
     this.volatileActiveTab = "";
     this.volatileTargetTab = "";
@@ -516,8 +530,6 @@ export default class ChatWindow extends Vue {
     }
 
     let ownerKey = null;
-
-    window.console.log(this.chatActorKey);
 
     if (this.chatActorKey) {
       const kind = this.chatActorKey.split("-")[0];
@@ -589,7 +601,6 @@ export default class ChatWindow extends Vue {
       // -------------------
       // プレイヤー発言
       // -------------------
-      window.console.log("statusName:", this.statusName);
       this.addChatLog({
         name: this.getViewName(this.chatActorKey),
         text: text,
@@ -683,30 +694,53 @@ export default class ChatWindow extends Vue {
     window.console.log("selectSecretTalk", secretTarget);
     this.secretTarget = "";
   }
+
+  @Watch("statusName")
+  onChangeStatusName(statusName: string) {
+    if (!statusName) this.statusName = "◆";
+  }
+
+  get useCommandActorList(): any[] {
+    const resultList: any[] = [];
+    this.getPeerActors.forEach((actor: any) => {
+      const statusList: any[] = actor.statusList;
+      statusList.forEach((status: any) => {
+        resultList.push({
+          key: actor.key,
+          statusName: status.name,
+          name: `${this.getViewName(actor.key)}-${status.name}`
+        });
+      });
+    });
+    return resultList;
+  }
+
   get chatOptionPageNum() {
-    let list: any[] = [];
-    let targetKey: string = "";
+    let index: number = -1;
     if (this.chatOptionSelectMode === "from") {
-      list = this.getPeerActors.concat();
-      targetKey = this.chatActorKey;
+      index = this.useCommandActorList.findIndex(
+        (target: any) =>
+          target.key === this.chatActorKey &&
+          target.statusName === this.statusName
+      );
     }
     if (this.chatOptionSelectMode === "target") {
-      list = this.chatTargetList.concat();
-      targetKey = this.chatTarget;
+      index = this.chatTargetList.findIndex(
+        (target: any) => target.key === this.chatTarget
+      );
     }
     if (this.chatOptionSelectMode === "tab") {
-      list = this.chatTabs.map((tab: any) => ({ key: tab.name }));
+      const list = this.chatTabs.map((tab: any) => ({ key: tab.name }));
       list.unshift({ key: null });
-      targetKey = this.activeTab;
+      index = list.findIndex((target: any) => target.key === this.activeTab);
     }
-    const index = list.findIndex((target: any) => target.key === targetKey);
     if (index === -1) return -1;
     return Math.floor(index / this.chatOptionPagingSize) + 1;
   }
   get chatOptionPageMaxNum() {
     let length: number = 0;
     if (this.chatOptionSelectMode === "from")
-      length = this.getPeerActors.length;
+      length = this.useCommandActorList.length;
     if (this.chatOptionSelectMode === "target")
       length = this.chatTargetList.length;
     if (this.chatOptionSelectMode === "tab") length = this.chatTabs.length;
@@ -718,7 +752,7 @@ export default class ChatWindow extends Vue {
     const startIndex = (pageNum - 1) * this.chatOptionPagingSize;
     let list: any[] = [];
     if (this.chatOptionSelectMode === "from") {
-      list = this.getPeerActors.concat();
+      list = this.useCommandActorList.concat();
     }
     if (this.chatOptionSelectMode === "target") {
       list = this.chatTargetList.concat();

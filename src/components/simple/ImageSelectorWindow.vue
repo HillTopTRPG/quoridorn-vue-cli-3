@@ -64,8 +64,9 @@ export default class ImageSelectorWindow extends Vue {
   }
 
   get fileName(): string {
+    if (!this.imageKey) return "";
     const image = this.imageList.filter(
-      (image: any) => image.key === this.imageKey
+      (image: any) => image.key === this.imageKey.replace(":R", "")
     )[0];
     return image ? image.name : "";
   }

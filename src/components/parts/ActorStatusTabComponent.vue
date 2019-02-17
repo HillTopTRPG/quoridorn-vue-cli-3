@@ -95,13 +95,24 @@ export default class ActorStatusTabComponent extends Vue {
       );
 
       const func = (index: number) => {
-        const status = this.actor.statusList[index];
-        this.statusList.unshift(status);
-        this.activeTabIndex++;
-        setTimeout(() => {
-          this.selectStatus = "";
-          this.activeTabIndex = 0;
-        }, 0);
+        const findIndex = this.statusList.findIndex(
+          (status: any) => status.name === selectStatus
+        );
+        if (findIndex === -1) {
+          const status = this.actor.statusList[index];
+          this.statusList.unshift(status);
+          this.activeTabIndex++;
+          setTimeout(() => {
+            this.selectStatus = "";
+            this.activeTabIndex = 0;
+          }, 0);
+        } else {
+          this.activeTabIndex++;
+          setTimeout(() => {
+            this.selectStatus = "";
+            this.activeTabIndex = findIndex;
+          }, 0);
+        }
       };
 
       if (index === -1) {

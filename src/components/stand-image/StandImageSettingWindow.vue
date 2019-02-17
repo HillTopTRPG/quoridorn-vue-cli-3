@@ -55,7 +55,7 @@
                     type="checkbox"
                     :checked="getViewStatus(status).standImage.autoResize"
                     @change="event => changeAutoResize(event.target.checked)"
-                    :disabled="status.standImage.isSystemLock"
+                    :disabled="status.standImage.isSystemLock || true"
                   >
                 </label>
                 <label>アニメーション：
@@ -219,7 +219,6 @@ export default class StandImageSettingWindow extends Vue {
       (status: any) => status.name === this.statusName
     )[0];
 
-    window.console.log(this.actorKey, this.statusName, status);
     return this.getViewStatus(status).standImage.base;
   }
 
@@ -283,7 +282,7 @@ export default class StandImageSettingWindow extends Vue {
                 const baseImageName: string = removeExt(baseImage.name);
                 const diffImageList: any[] = this.imageList.filter(
                   (image: any) =>
-                    image.key !== imageKey &&
+                    image.key !== imageKey.replace(":R", "") &&
                     image.name.startsWith(baseImageName)
                 );
                 const diffList: DiffComponent[] | undefined = <

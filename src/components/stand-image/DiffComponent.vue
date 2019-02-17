@@ -155,7 +155,6 @@ export default class DiffComponent extends Vue {
 
   get image(): string | null {
     if (!this.diff || !this.diff.image) return null;
-    window.console.log(this.diff.image);
     const imageObj = this.imageList.filter(
       (image: any) => image.key === this.diff.image.replace(":R", "")
     )[0];

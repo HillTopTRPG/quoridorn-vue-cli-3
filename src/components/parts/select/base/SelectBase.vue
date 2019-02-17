@@ -1,5 +1,5 @@
 <template>
-  <select v-model="localValue" :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }">
+  <select v-model="localValue" :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }" ref="select">
     <option :disabled="!defaultSelectable" value="" v-if="defaultLabel">{{defaultLabel}}</option>
     <slot/>
   </select>
