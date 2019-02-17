@@ -1,5 +1,5 @@
 <template>
-  <SpecFrame property="import" label-str="ロード機能" lastVersion="1.0.0b1" :isSpecFixed="false">
+  <SpecFrame property="import" label-str="ロード機能" lastVersion="1.0.0b5" :isSpecFixed="false">
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -128,7 +128,7 @@
      ! 未実装事項
      !--------------------->
     <SpecItem class-str="unImplemented" label-str="未実装事項">
-      <li>現状を整理中</li>
+      <li>取り込みデータを選んでのロードは初回リリースでは対象外とする。</li>
     </SpecItem>
     <!----------------------
      ! 実装しない機能
