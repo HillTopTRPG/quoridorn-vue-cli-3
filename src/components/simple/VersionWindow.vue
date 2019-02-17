@@ -12,33 +12,34 @@
   </WindowFrame>
 </template>
 
-<script>
-import { mapState, mapActions } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-import Logo from "./Logo";
+<script lang="ts">
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
+import Logo from "./Logo.vue";
 
-export default {
+import { Component, Vue } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+
+@Component<VersionWindow>({
   name: "versionWindow",
   mixins: [WindowMixin],
   components: {
     WindowFrame,
     Logo
-  },
-  methods: {
-    ...mapActions(["windowClose"]),
-    cancel() {
-      this.windowClose("private.display.versionWindow");
-    }
-  },
-  computed: mapState({
-    version: state => state.setting.version
-  })
-};
+  }
+})
+export default class VersionWindow extends Vue {
+  @Action("windowClose") windowClose: any;
+  @Getter("version") version: any;
+
+  cancel(): void {
+    this.windowClose("private.display.versionWindow");
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;

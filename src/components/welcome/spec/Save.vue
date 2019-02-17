@@ -1,5 +1,5 @@
 <template>
-  <SpecFrame property="export" label-str="セーブ機能" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <SpecFrame property="export" label-str="セーブ機能" lastVersion="1.0.0b5" :isSpecFixed="true">
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -34,7 +34,7 @@
      !--------------------->
     <SpecItem class-str="unImplemented" label-str="未実装事項">
       <li>Macの場合のショートカット<br>→ Macが買えたら実装する</li>
-      <li><a href="#ref_selectSaveDataWindow">「セーブデータ選択画面」</a>が未実装のため、画面表示機能がない<br>→ 初回リリースに含める機能。</li>
+      <li><a href="#ref_selectSaveDataWindow">「セーブデータ選択画面」</a>が未実装のため、画面表示機能がない<br>→ 初回リリースには含めない機能。</li>
       <li>データの暗号化<br>→ 初回リリースに含める機能。</li>
     </SpecItem>
     <!----------------------

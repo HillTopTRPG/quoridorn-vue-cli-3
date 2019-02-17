@@ -37,7 +37,7 @@ import MapMask from "./mapMask/MapMask.vue";
 import Character from "./character/Character.vue";
 import Chit from "./chit/Chit.vue";
 
-import { qLog } from "../common/Utility";
+import { qLog, getFileNameArgList } from "../common/Utility";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { Action, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
@@ -391,6 +391,22 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.currentImageTag = currentImageTag;
       pieceObj.fontColorType = 0;
       pieceObj.fontColor = "";
+      const useImage = useImageList.split("|")[useImageIndex];
+      pieceObj.statusList = [
+        {
+          name: "◆",
+          standImage: {
+            ref: "",
+            base: "",
+            baseTag: "",
+            autoResize: false,
+            animationLength: 0,
+            locate: 1,
+            diffList: [],
+            isSystemLock: true
+          }
+        }
+      ];
 
       if (this.$store.state.private.display.addCharacterWindow.isContinuous) {
         const splits = name.split("_");
@@ -519,7 +535,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
               const canvas: HTMLCanvasElement = <HTMLCanvasElement>(
                 document.createElement("canvas")
               );
-              const ctx: any = canvas.getContext("2d");
+              const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
               canvas.width = w;
               canvas.height = h;
               const locate = {
@@ -542,6 +558,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     return Promise.all<String>([normalLoad, thumbnailLoad]).then(
       (values: String[]) => ({
         name: imageFile.name,
+        imageArgList: getFileNameArgList(imageFile.name),
         thumbnail: values[0],
         image: values[1]
       })

@@ -208,7 +208,22 @@ export default {
           name: name,
           password: password,
           fontColor: fontColor,
-          type: type
+          type: type,
+          statusList: [
+            {
+              name: "◆",
+              standImage: {
+                ref: "",
+                base: "",
+                baseTag: "",
+                autoResize: false,
+                animationLength: 0,
+                locate: 1,
+                diffList: [],
+                isSystemLock: true
+              }
+            }
+          ]
         });
       } else {
         // privateデータの復元
@@ -535,6 +550,7 @@ export default {
     },
     bgmList: (state: any) => state.bgm.list,
     imageTagList: (state: any) => state.image.tags.list,
-    imageList: (state: any) => state.image.list
+    imageList: (state: any) => state.image.list,
+    backgroundColor: (state: any) => state.map.background
   } /* end of getters */
 };

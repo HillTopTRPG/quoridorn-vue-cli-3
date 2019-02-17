@@ -93,7 +93,7 @@ import CharacterChip from "../map/character/CharacterChip.vue";
 import { Action, Getter } from "vuex-class";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
-import PlayerSelect from "@/components/parts/PlayerSelect.vue";
+import PlayerSelect from "@/components/parts/select/PlayerSelect.vue";
 
 @Component<PlayerBoxWindow>({
   name: "playerBoxWindow",
@@ -107,7 +107,7 @@ import PlayerSelect from "@/components/parts/PlayerSelect.vue";
 export default class PlayerBoxWindow extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("changeChatFontColor") changeChatFontColor: any;
-  @Action("changePieceInfo") changePieceInfo: any;
+  @Action("changeListInfo") changeListInfo: any;
   @Getter("getObj") getObj: any;
   @Getter("playerKey") playerKey: any;
   @Getter("getMapObjectList") getMapObjectList: any;
@@ -125,7 +125,7 @@ export default class PlayerBoxWindow extends Vue {
       property: `public.character.list.${index}.fontColorType`,
       value: value,
       isNotice: true,
-      logOff: false
+      logOff: true
     });
   }
   changeCharacterFontColor(
@@ -158,9 +158,7 @@ export default class PlayerBoxWindow extends Vue {
     return player.name;
   }
   toMap(key: string): void {
-    const kind = key.split("-")[0];
-    this.changePieceInfo({
-      propName: kind,
+    this.changeListInfo({
       key: key,
       place: "field",
       isNotice: true

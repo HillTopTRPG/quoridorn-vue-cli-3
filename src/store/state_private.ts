@@ -62,7 +62,12 @@ export default {
         zIndex: 1,
         title: "default"
       },
-      chatWindow: { command: null, isDisplay: false, zIndex: 1 },
+      chatWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        standImageList: []
+      },
       initiativeWindow: { command: null, isDisplay: false, zIndex: 1 },
       resourceWindow: { command: null, isDisplay: false, zIndex: 1 },
       chatPaletteWindow: { command: null, isDisplay: false, zIndex: 1 },
@@ -198,6 +203,15 @@ export default {
         playerType: "",
         fontColor: "",
         resolve: null
+      },
+      standImageSettingWindow: { command: null, isDisplay: false, zIndex: 1 },
+      imageSelectorWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        imageKey: null,
+        imageTag: null,
+        callback: null
       }
     }
   } /* end of state */,
@@ -377,6 +391,13 @@ export default {
     chitContextObjKey: (state: any) => state.display.chitContext.key,
     mapMaskContextObjKey: (state: any) => state.display.mapMaskContext.key,
     characterContextObjKey: (state: any) => state.display.characterContext.key,
-    secretDiceList: (state: any) => state.chat.secretDiceList
+    secretDiceList: (state: any) => state.chat.secretDiceList,
+    imageSelectorKey: (state: any) =>
+      state.display.imageSelectorWindow.imageKey,
+    imageSelectorTag: (state: any) =>
+      state.display.imageSelectorWindow.imageTag,
+    imageSelectorCallback: (state: any) =>
+      state.display.imageSelectorWindow.callback,
+    display: (state: any) => state.display
   }
 };

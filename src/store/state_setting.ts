@@ -15,7 +15,12 @@ export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.0b4",
+    version: "1.0.0b5",
+    /** 接続情報 */
+    connect: {
+      skywayKey: "",
+      type: ""
+    },
     /** 権限 */
     roles: [
       {
@@ -49,6 +54,9 @@ export default {
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,
-    chatOptionPagingSize: () => 8
+    chatOptionPagingSize: () => 8,
+    skywayKey: (state: any) => state.connect.skywayKey,
+    connectType: (state: any) => state.connect.type,
+    version: (state: any) => state.version
   }
 };

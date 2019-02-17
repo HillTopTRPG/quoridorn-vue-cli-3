@@ -52,10 +52,9 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["windowClose", "changePieceInfo"]),
+    ...mapActions(["windowClose", "changeListInfo"]),
     commitEdit() {
-      this.changePieceInfo({
-        propName: "mapMask",
+      this.changeListInfo({
         key: this.key,
         name: this.name,
         columns: this.width,

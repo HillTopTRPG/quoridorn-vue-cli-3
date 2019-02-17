@@ -37,7 +37,34 @@ export default {
         const color = payload.color;
         const tab = payload.tab || activeChatTab.key;
         const from = payload.from;
+        const actorKey = payload.actorKey;
         const target = payload.target;
+
+        const actor: any = rootGetters.getObj(actorKey);
+        if (actor) {
+          const statusName = payload.statusName;
+          const status: any = actor.statusList.filter(
+            (status: any) => status.name === statusName
+          )[0];
+          if (status) {
+            const standImageList: any =
+              rootGetters.display.chatWindow.standImageList;
+            const standImageObj = {
+              actorKey: actorKey,
+              statusName: statusName,
+              standImage: status.standImage
+            };
+            const index: number = standImageList.findIndex(
+              (standImageObj: any) => standImageObj.actorKey === actorKey
+            );
+            if (index < 0) {
+              standImageList.push(standImageObj);
+            } else {
+              standImageList.splice(index, 1, standImageObj);
+            }
+          }
+        }
+
         let viewHtml;
         if (target) {
           const targetName = rootGetters.getObj(target).name;
@@ -179,17 +206,31 @@ export default {
     },
     doAddImage: (
       { rootState, rootGetters }: { rootState: any; rootGetters: any },
-      { tag, data, owner }: { tag: string; data: any; owner: string }
+      {
+        name,
+        tag,
+        data,
+        thumbnail,
+        owner
+      }: {
+        name: string;
+        tag: string;
+        data: any;
+        thumbnail: string;
+        owner: string;
+      }
     ): string => {
       // 欠番を埋める方式は不採用
       let maxKey = rootState.public.image.maxKey;
       const key = `image-${++maxKey}`;
       rootState.public.image.maxKey = maxKey;
       rootState.public.image.list.push({
+        key: key,
+        name: name,
         tag: tag,
         data: data,
-        owner: owner,
-        key: key
+        thumbnail: thumbnail,
+        owner: owner
       });
       if (rootGetters.playerKey === owner) {
         rootGetters.historyList.push({ type: "add", key: key });
@@ -216,6 +257,140 @@ export default {
       if (rootGetters.playerKey === payload.owner) {
         rootGetters.historyList.push({ type: "add", key: key });
       }
+    },
+    /** ========================================================================
+     * アクター状態を追加する
+     */
+    addActorStatus: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doAddActorStatus"
+      });
+    },
+    doAddActorStatus: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      const actor: any = rootGetters.getObj(payload.key);
+      delete payload.key;
+      delete payload.ownerPeerId;
+
+      actor.statusList.push(payload);
+    },
+    /** ========================================================================
+     * アクター状態を削除する
+     */
+    deleteActorStatus: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doDeleteActorStatus"
+      });
+    },
+    doDeleteActorStatus: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      const actor: any = rootGetters.getObj(payload.key);
+      const index = actor.statusList.findIndex(
+        (status: any) => status.name === payload.statusName
+      );
+      actor.statusList.splice(index, 1);
+    },
+    /** ========================================================================
+     * 立ち絵差分を追加する
+     */
+    addStandImageDiff: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doAddStandImageDiff"
+      });
+    },
+    doAddStandImageDiff: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      const actor: any = rootGetters.getObj(payload.key);
+      delete payload.key;
+      delete payload.ownerPeerId;
+      const status = actor.statusList.filter(
+        (status: any) => status.name === payload.statusName
+      )[0];
+      delete payload.statusName;
+
+      status.standImage.diffList.push(payload);
+    },
+    /** ========================================================================
+     * 立ち絵差分を削除する
+     */
+    deleteStandImageDiff: (
+      { dispatch }: { dispatch: Function },
+      payload: any
+    ) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doDeleteStandImageDiff"
+      });
+    },
+    doDeleteStandImageDiff: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      const actor: any = rootGetters.getObj(payload.key);
+      const status = actor.statusList.filter(
+        (status: any) => status.name === payload.statusName
+      )[0];
+      delete payload.statusName;
+      status.standImage.diffList.splice(payload.index, 1);
+    },
+    /** ========================================================================
+     * 立ち絵差分を編集する
+     */
+    editStandImageDiff: (
+      { dispatch }: { dispatch: Function },
+      payload: any
+    ) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doEditStandImageDiff"
+      });
+    },
+    doEditStandImageDiff: (
+      {
+        dispatch,
+        rootState,
+        rootGetters
+      }: { dispatch: Function; rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      const key = payload.key;
+      delete payload.key;
+      const index: number = payload.index;
+      delete payload.index;
+      delete payload.ownerPeerId;
+      const statusName: string = payload.statusName;
+      delete payload.statusName;
+
+      const actor: any = rootGetters.getObj(key);
+
+      const statusIndex = actor.statusList.findIndex(
+        (status: any) => status.name === statusName
+      );
+
+      const updateDiff: any = {};
+      updateDiff[index] = payload;
+      const updateStatusList: any = {};
+      updateStatusList[statusIndex] = {
+        standImage: {
+          diffList: updateDiff
+        }
+      };
+
+      // window.console.log("★★★", key, "★ statusList:", updateStatusList);
+
+      dispatch("changeListInfo", {
+        key: key,
+        statusList: updateStatusList
+      });
     },
     /** ========================================================================
      * マップオブジェクトを追加する
@@ -274,38 +449,35 @@ export default {
       rootState.public[payload.propName].list.push(obj);
     },
     /** ========================================================================
-     * マップオブジェクト情報を変更する
+     * リスト情報を変更する
      */
-    changePieceInfo: ({ dispatch }: { dispatch: Function }, payload: any) => {
+    changeListInfo: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
-        method: "doChangePieceInfo"
+        method: "doChangeListInfo"
       });
     },
-    doChangePieceInfo: (
-      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+    doChangeListInfo: (
+      {
+        dispatch,
+        rootState,
+        rootGetters
+      }: { dispatch: Function; rootState: any; rootGetters: any },
       payload: any
     ) => {
       const key = payload.key;
-      const propName = payload.propName;
+      const propName = key.split("-")[0];
 
-      const pieceObj = rootGetters.getObj(key);
-      for (let prop in payload) {
-        if (!payload.hasOwnProperty(prop)) continue;
-        if (prop === "key" || prop === "propName") {
-          continue;
-        }
-        if (pieceObj[prop] !== payload[prop]) {
-          window.console.log(
-            `[mutations] update ${propName}(${key}) => ${prop}: ${
-              pieceObj[prop]
-            } -> ${payload[prop]}`
-          );
-          pieceObj[prop] = payload[prop];
-        }
-      }
-      const index = rootState.public[propName].list.indexOf(pieceObj);
-      rootState.public[propName].list.splice(index, 1, pieceObj);
+      delete payload.key;
+      const index = rootState.public[propName].list.findIndex(
+        (obj: any) => obj.key === key
+      );
+      dispatch("setProperty", {
+        property: `public.${propName}.list.${index}`,
+        value: payload,
+        isNotice: false,
+        logOff: true
+      });
     },
     /** ========================================================================
      * マップオブジェクトの削除

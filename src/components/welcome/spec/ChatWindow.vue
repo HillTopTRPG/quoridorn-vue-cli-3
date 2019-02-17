@@ -1,5 +1,5 @@
 <template>
-  <SpecFrame property="chatWindow" label-str="チャット画面" lastVersion="1.0.0b2" :isSpecFixed="true">
+  <SpecFrame property="chatWindow" label-str="チャット画面" lastVersion="1.0.0b5" :isSpecFixed="true">
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -92,7 +92,7 @@
       <li>卓時計</li>
       <li>目覚ましアラーム</li>
       <li>カットイン設定</li>
-      <li>立ち絵設定</li>
+      <li><del>立ち絵設定</del> - 実装済(Ver1.0.0b5)</li>
       <li>
         ログ保存
         <ol>

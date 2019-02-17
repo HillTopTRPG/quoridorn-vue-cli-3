@@ -24,7 +24,7 @@ import { Action, Getter } from "vuex-class";
 export default class MapMaskContext extends Vue {
   @Action("windowOpen") windowOpen: any;
   @Action("setProperty") setProperty: any;
-  @Action("changePieceInfo") changePieceInfo: any;
+  @Action("changeListInfo") changeListInfo: any;
   @Action("deletePieceInfo") deletePieceInfo: any;
   @Action("windowClose") windowClose: any;
   @Getter("mapMaskContextObjKey") mapMaskContextObjKey: any;
@@ -51,8 +51,7 @@ export default class MapMaskContext extends Vue {
         this.mapMaskContextObjKey
       }).changeMapMaskLock`
     );
-    this.changePieceInfo({
-      propName: "mapMask",
+    this.changeListInfo({
       key: this.mapMaskContextObjKey,
       isLock: !this.mapMaskIsLock,
       isNotice: true

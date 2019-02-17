@@ -8,8 +8,15 @@
     <div class="title" :class="{fix : isFix}"
       @mousedown.left.prevent="(e) => move(e, true)" @mouseup.left.prevent="(e) => move(e, false)"
       @touchstart.prevent="(e) => move(e, true, true)" @touchend.prevent="(e) => move(e, false, true)" @touchcancel.prevent="(e) => move(e, false, true)">
-      <span>{{titleText}}</span>
-      <label v-if="fontSizeBar" class="fontSizeSlider">文字サイズ{{fontSize}}px<input type="range" min="10" max="18" v-model="fontSize" @mousedown.stop></label>
+      <div>
+        <span>{{titleText}}</span>
+        <span class="message" v-if="message">{{message}}</span>
+      </div>
+      <label
+        v-if="fontSizeBar"
+        class="fontSizeSlider"
+      >文字サイズ{{fontSize}}px<input type="range" min="10" max="18" v-model="fontSize" @mousedown.stop>
+      </label>
     </div>
     <div class="corner-left-top" v-if="!isFix"
       @mousedown.left.prevent="(e) => resize(e, 'corner-left-top', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-left-top', false)"
@@ -36,24 +43,28 @@
       @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
       @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"></div>
     <span v-if="!isBanClose"><i class="icon-cross window-close" @click.left.prevent="closeWindow"></i></span>
+
+    <!-- 立ち絵 -->
+    <stand-image-component
+      class="standImage"
+      v-for="(standImage, index) in standImageList"
+      :key="standImage.statusName"
+      :standImage="standImage.standImage"
+      :drawDiff="true"
+      @click="clickStandImage(standImage.standImage, index)"
+      :style="standImageStyle(standImage.standImage)"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 
 @Component<WindowFrame>({
   name: "windowFrame",
-  props: {
-    titleText: { type: String, required: true },
-    displayProperty: { type: String, required: true },
-    align: { type: String, required: true },
-    baseSize: String,
-    fixSize: String,
-    isBanClose: Boolean,
-    fontSizeBar: { type: Boolean, default: false }
-  }
+  components: { StandImageComponent }
 })
 export default class WindowFrame extends Vue {
   @Action("windowClose") windowClose: any;
@@ -62,6 +73,30 @@ export default class WindowFrame extends Vue {
   @Getter("getStateValue") getStateValue: any;
   @Getter("isModal") isModal: any;
 
+  @Prop({ type: String, required: true })
+  private titleText!: string;
+
+  @Prop({ type: String, required: true })
+  private displayProperty!: string;
+
+  @Prop({ type: String, required: true })
+  private align!: string;
+
+  @Prop({ type: String })
+  private baseSize!: string | null;
+
+  @Prop({ type: String })
+  private fixSize!: string | null;
+
+  @Prop({ type: Boolean, default: false })
+  private isBanClose!: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  private fontSizeBar!: boolean;
+
+  @Prop({ type: String })
+  private message!: string | null;
+
   private moveMode: string = "";
   private mouse: any = {
     x: 0,
@@ -69,6 +104,7 @@ export default class WindowFrame extends Vue {
     saveX: 0,
     saveY: 0
   };
+
   private windowFactor: any = {
     l: 0, // left
     r: 0, // right
@@ -79,6 +115,7 @@ export default class WindowFrame extends Vue {
     draggingX: 0,
     draggingY: 0
   };
+
   private fontSize: number = 12;
 
   mounted(): void {
@@ -95,11 +132,13 @@ export default class WindowFrame extends Vue {
     });
     this.addEventForIFrame();
   }
+
   closeWindow(this: any): void {
     // window.console.log(`  [methods] closeWindow(click [x]button)`)
     this.windowClose(this.displayProperty);
     this.$emit("cancel");
   }
+
   mouseUp(event: any): void {
     const evtObj = {
       clientX: event.pageX,
@@ -117,6 +156,7 @@ export default class WindowFrame extends Vue {
       .getElementById("mapBoardFrame")!
       .dispatchEvent(new MouseEvent("mouseUp", evtObj));
   }
+
   resize(
     this: any,
     event: any,
@@ -158,6 +198,7 @@ export default class WindowFrame extends Vue {
     // window.console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     this.moveMode = flg ? direct : "";
   }
+
   reflesh(this: any): void {
     const x = this.mouse.x;
     const y = this.mouse.y;
@@ -185,6 +226,7 @@ export default class WindowFrame extends Vue {
     }
     // window.console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
   }
+
   move(this: any, event: any, flg: boolean, isTouch: boolean): void {
     if (flg) {
       this.mouse.saveX = isTouch
@@ -204,6 +246,7 @@ export default class WindowFrame extends Vue {
     }
     this.moveMode = flg ? "move" : "";
   }
+
   addEventForIFrame(this: any): void {
     const elms: HTMLCollection = document.getElementsByTagName("iFrame");
     Array.prototype.slice.call(elms).forEach((iFrameElm: HTMLIFrameElement) => {
@@ -319,6 +362,18 @@ export default class WindowFrame extends Vue {
     });
   }
 
+  clickStandImage(standImage: any, index: number): void {
+    this.standImageList.splice(index, 1);
+  }
+
+  standImageStyle(standImage: any): any {
+    const locate = standImage.locate;
+    const mpx: number = (192 * (locate - 1)) / 12;
+    return {
+      left: `calc((100% - 192px) * ${locate - 1} / 11)`
+    };
+  }
+
   @Watch("command", { deep: true })
   onChangeCommand(this: any, command: any) {
     if (!command) {
@@ -336,7 +391,7 @@ export default class WindowFrame extends Vue {
       setTimeout(this.addEventForIFrame, 0);
     }
     this.setProperty({
-      property: `private.display.${this.displayProperty.command}`,
+      property: `${this.displayProperty}.command`,
       value: null,
       logOff: true
     });
@@ -356,6 +411,9 @@ export default class WindowFrame extends Vue {
   }
   get zIndex(this: any): any {
     return this.getStateValue(this.displayProperty).zIndex;
+  }
+  get standImageList(this: any): any[] {
+    return this.getStateValue(this.displayProperty).standImageList || [];
   }
   get isFix(this: any): boolean {
     return this.fixSize !== undefined;
@@ -464,7 +522,7 @@ export default class WindowFrame extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .window {
   position: fixed;
   display: block;
@@ -511,16 +569,26 @@ export default class WindowFrame extends Vue {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.title.fix {
-  background: linear-gradient(
-    rgba(170, 233, 203, 0.8),
-    rgba(142, 226, 186, 0.8)
-  );
-}
-.title span {
-  position: absolute;
-  left: 5px;
+
+  &.fix {
+    background: linear-gradient(
+      rgba(170, 233, 203, 0.8),
+      rgba(142, 226, 186, 0.8)
+    );
+  }
+  > div {
+    position: absolute;
+    left: 5px;
+
+    > span:not(:first-child) {
+      margin-left: 0.5em;
+      padding: 0 0.5em;
+      font-style: italic;
+      text-underline: #444444;
+      border-radius: 0.3em;
+      background-color: white;
+    }
+  }
 }
 
 .window-close {
@@ -538,10 +606,11 @@ export default class WindowFrame extends Vue {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-}
-.window-close:hover {
-  border-color: black;
-  color: black;
+
+  &:hover {
+    border-color: black;
+    color: black;
+  }
 }
 
 .side-left,
@@ -630,45 +699,56 @@ export default class WindowFrame extends Vue {
   justify-content: center;
   align-items: center;
   font-size: 10px;
-}
-.fontSizeSlider input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  background-image: linear-gradient(
-    to bottom,
-    rgb(160, 166, 162) 0%,
-    rgb(201, 199, 200) 100%
-  );
-  height: 0.4em;
-  width: 100%;
-  border-radius: 0.3em;
-  border: 1px solid rgb(167, 167, 167);
-  border-top: 1px solid rgb(105, 110, 106);
-  box-sizing: border-box;
-}
 
-.fontSizeSlider input[type="range"]:focus,
-.fontSizeSlider input[type="range"]:active {
-  outline: none;
-}
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: linear-gradient(
+      to bottom,
+      rgb(160, 166, 162) 0%,
+      rgb(201, 199, 200) 100%
+    );
+    height: 0.4em;
+    width: 100%;
+    border-radius: 0.3em;
+    border: 1px solid rgb(167, 167, 167);
+    border-top: 1px solid rgb(105, 110, 106);
+    box-sizing: border-box;
 
-.fontSizeSlider input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-  position: relative;
-  width: 1em;
-  height: 1em;
-  display: block;
-  background-image: linear-gradient(
-    to bottom,
-    rgb(242, 248, 246) 0%,
-    rgb(242, 248, 246) 50%,
-    rgb(230, 240, 239) 51%,
-    rgb(230, 240, 239) 100%
-  );
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  border: 1px solid rgb(167, 167, 167);
+    &:focus,
+    &:active {
+      outline: none;
+    }
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      position: relative;
+      width: 1em;
+      height: 1em;
+      display: block;
+      background-image: linear-gradient(
+        to bottom,
+        rgb(242, 248, 246) 0%,
+        rgb(242, 248, 246) 50%,
+        rgb(230, 240, 239) 51%,
+        rgb(230, 240, 239) 100%
+      );
+      border-radius: 50%;
+      -webkit-border-radius: 50%;
+      border: 1px solid rgb(167, 167, 167);
+    }
+  }
+}
+.standImage {
+  width: 192px;
+  height: 256px;
+  position: absolute;
+  bottom: calc(100% + 1px);
+
+  &:hover {
+    outline: solid 1px magenta;
+  }
 }
 </style>

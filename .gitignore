@@ -2,7 +2,7 @@
 node_modules
 /dist
 
-public/static/key.js
+connect.yaml
 
 # local env files
 .env.local

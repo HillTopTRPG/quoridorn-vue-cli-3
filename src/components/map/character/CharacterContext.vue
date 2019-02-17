@@ -30,7 +30,7 @@ import { Action, Getter } from "vuex-class";
 export default class CharacterContext extends Vue {
   @Action("windowOpen") windowOpen: any;
   @Action("setProperty") setProperty: any;
-  @Action("changePieceInfo") changePieceInfo: any;
+  @Action("changeListInfo") changeListInfo: any;
   @Action("windowClose") windowClose: any;
   @Action("getObj") getObj: any;
   @Getter("characterContextObjKey") characterContextObjKey: any;
@@ -51,8 +51,7 @@ export default class CharacterContext extends Vue {
     this.windowClose("private.display.characterContext");
   }
   moveToWaitRoom(): void {
-    this.changePieceInfo({
-      propName: "character",
+    this.changeListInfo({
       key: this.characterContextObjKey,
       place: "waiting",
       isNotice: true
@@ -60,8 +59,7 @@ export default class CharacterContext extends Vue {
     this.windowClose("private.display.characterContext");
   }
   moveToGraveyard(): void {
-    this.changePieceInfo({
-      propName: "character",
+    this.changeListInfo({
       key: this.characterContextObjKey,
       place: "graveyard",
       isNotice: true
