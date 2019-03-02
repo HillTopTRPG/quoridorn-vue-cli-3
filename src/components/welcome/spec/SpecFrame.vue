@@ -2,7 +2,6 @@
   <div class="menu-item">
     <input :id="property" type="checkbox" v-model="isOpened">
     <label :id="refProp" @click="clickLink">
-      <a :href="'#' + refProp" style="visibility: hidden;" @click.stop></a>
       <span>{{labelStr}}</span>
       <span class="deco-new" v-if="lastVersion === version">[NEW]</span>
       <span class="deco-fixed" v-if="!isSpecFixed">[仕様未確定]</span>
@@ -13,39 +12,51 @@
   </div>
 </template>
 
-<script>
-import { mapState } from "vuex";
-export default {
-  props: {
-    property: { type: String, required: true },
-    labelStr: { type: String, required: true },
-    lastVersion: { type: String, required: true },
-    isSpecFixed: { type: Boolean, required: true }
-  },
-  data() {
-    return {
-      isOpened: false
-    };
-  },
-  methods: {
-    clickLink(event) {
-      this.isOpened = !this.isOpened;
-      if (this.isOpened) {
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-property-decorator";
+
+@Component<SpecFrame>({ name: "specFrame" })
+export default class SpecFrame extends Vue {
+  @Prop({ type: String, required: true })
+  private property!: string;
+
+  @Prop({ type: String, required: true })
+  private labelStr!: string;
+
+  @Prop({ type: String, required: true })
+  private lastVersion!: string;
+
+  @Prop({ type: Boolean, required: true })
+  private isSpecFixed!: string;
+
+  private isOpened: boolean = false;
+
+  clickLink(event: any) {
+    this.isOpened = !this.isOpened;
+    if (this.isOpened) {
+      const contentsElm: HTMLElement = document.getElementById(
+        "welcomeWindowContents"
+      );
+      const targetElm: HTMLElement = contentsElm.querySelector(
+        "#" + this.refProp
+      );
+      if (targetElm) {
+        const offsetTop: number = targetElm.offsetTop;
         setTimeout(() => {
-          event.target.tagName === "SPAN"
-            ? event.target.parentNode.firstElementChild.click()
-            : event.target.firstElementChild.click();
+          contentsElm.scrollTop = offsetTop;
         }, 0);
       }
     }
-  },
-  computed: mapState({
-    refProp() {
-      return "ref_" + this.property;
-    },
-    version: state => state.setting.version
-  })
-};
+  }
+
+  get refProp() {
+    return "ref_" + this.property;
+  }
+
+  get version() {
+    return this.$store.state.setting.version;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
