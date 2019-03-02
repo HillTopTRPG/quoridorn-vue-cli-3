@@ -146,13 +146,13 @@ export default new Vuex.Store({
        */
       setTimeout(() => {
         dispatch("windowOpen", "private.display.chatWindow");
+        dispatch("windowOpen", "private.display.initiativeWindow");
+        // dispatch("windowOpen", "private.display.resourceWindow");
+        // dispatch("windowOpen", "private.display.chatPaletteWindow");
+        // dispatch("windowOpen", "private.display.counterRemoConWindow");
+        // dispatch("windowOpen", "private.display.functionListWindow");
+        // dispatch("windowOpen", "private.display.playerBoxWindow");
         dispatch("windowOpen", "private.display.welcomeWindow");
-        // dispatch("windowOpen", "private.display.initiativeWindow")
-        // dispatch("windowOpen", "private.display.resourceWindow")
-        // dispatch("windowOpen", "private.display.chatPaletteWindow")
-        // dispatch("windowOpen", "private.display.counterRemoConWindow")
-        // dispatch("windowOpen", "private.display.functionListWindow")
-        // dispatch("windowOpen", "private.display.playerBoxWindow")
       }, 0);
 
       /* ----------------------------------------------------------------------
@@ -243,11 +243,11 @@ export default new Vuex.Store({
             Promise.resolve()
               .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
               .then(peerId => {
-                const logTexts = [];
-                logTexts.push(`create room by peer:"${peerId}"`);
-                logTexts.push(`本番: ${rootGetters.peerId(false)}`);
-                logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
-                window.console.log(logTexts.join(", "));
+                // const logTexts = [];
+                // logTexts.push(`create room by peer:"${peerId}"`);
+                // logTexts.push(`本番: ${rootGetters.peerId(false)}`);
+                // logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
+                // window.console.log(logTexts.join(", "));
                 return dispatch("checkRoomName", { roomName: roomName });
               })
               .then(isExist => {

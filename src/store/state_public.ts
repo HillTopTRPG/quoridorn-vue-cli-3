@@ -202,7 +202,7 @@ export default {
         });
       }
       if (!player) {
-        window.console.log(`Add player key:${playerKey} name:${name}`);
+        // window.console.log(`Add player key:${playerKey} name:${name}`);
         rootGetters.playerList.push({
           key: playerKey,
           name: name,

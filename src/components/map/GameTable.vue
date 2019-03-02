@@ -407,6 +407,10 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
           }
         }
       ];
+      pieceObj.property = {
+        initiative: 0,
+        subInitiative: 0
+      };
 
       if (this.$store.state.private.display.addCharacterWindow.isContinuous) {
         const splits = name.split("_");

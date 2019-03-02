@@ -388,11 +388,11 @@ export default {
         Promise.resolve()
           .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
           .then(peerId => {
-            const logTexts = [];
-            logTexts.push(`create room by peer:"${peerId}"`);
-            logTexts.push(`本番: ${rootGetters.peerId(false)}`);
-            logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
-            window.console.log(logTexts.join(", "));
+            // const logTexts = [];
+            // logTexts.push(`create room by peer:"${peerId}"`);
+            // logTexts.push(`本番: ${rootGetters.peerId(false)}`);
+            // logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
+            // window.console.log(logTexts.join(", "));
             return dispatch("checkRoomName", { roomName: roomName });
           })
           .then((isExist: boolean) => {

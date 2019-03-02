@@ -58,9 +58,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
 import StandImageComponent from "@/components/parts/StandImageComponent.vue";
+
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
 
 @Component<WindowFrame>({
   name: "windowFrame",
@@ -105,7 +106,7 @@ export default class WindowFrame extends Vue {
     saveY: 0
   };
 
-  private windowFactor: any = {
+  public windowFactor: any = {
     l: 0, // left
     r: 0, // right
     t: 0, // top
@@ -433,6 +434,11 @@ export default class WindowFrame extends Vue {
       h: parseInt(this.baseSize.split(",")[1].trim(), 10)
     };
   }
+
+  @Emit("windowStyle")
+  @Watch("windowStyle")
+  onChangeWindowStyle(windowStyle: any) {}
+
   get windowStyle(this: any): any {
     const moveMode = this.moveMode;
     const winFac = this.windowFactor;

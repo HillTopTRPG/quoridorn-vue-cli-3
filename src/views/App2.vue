@@ -49,6 +49,8 @@
     <secret-dice-window/>
     <stand-image-setting-window/>
     <image-selector-window/>
+    <initiative-window/>
+    <initiative-setting-window/>
   </div>
 </template>
 
@@ -96,6 +98,8 @@ import InputPlayerInfoWindow from "../components/welcome/login/InputPlayerInfoWi
 import SecretDiceWindow from "../components/chat/SecretDiceWindow.vue";
 import StandImageSettingWindow from "../components/stand-image/StandImageSettingWindow.vue";
 import ImageSelectorWindow from "../components/simple/ImageSelectorWindow.vue";
+import InitiativeWindow from "../components/initiative/InitiativeWindow.vue";
+import InitiativeSettingWindow from "@/components/initiative/InitiativeSettingWindow.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
@@ -144,7 +148,9 @@ import { Action, Getter, Mutation } from "vuex-class";
     InputPlayerInfoWindow,
     SecretDiceWindow,
     StandImageSettingWindow,
-    ImageSelectorWindow
+    ImageSelectorWindow,
+    InitiativeWindow,
+    InitiativeSettingWindow
   }
 })
 export default class App2 extends Vue {

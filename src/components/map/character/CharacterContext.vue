@@ -6,7 +6,7 @@
     <div class="item" @click.left.prevent="moveToGraveyard">墓場に移動（削除）</div>
     <hr>
     <div class="item" @click.left.prevent="copyCharacter">複製</div>
-    <template v-if="characterContextObjKey !== -1 ? getObj(characterContextObjKey).url : null">
+    <template v-if="characterContextObjKey !== null && getObj(characterContextObjKey).url">
       <hr>
       <div class="item" @click.left.prevent="openRefURL">データ参照先URLを開く</div>
     </template>
@@ -32,7 +32,7 @@ export default class CharacterContext extends Vue {
   @Action("setProperty") setProperty: any;
   @Action("changeListInfo") changeListInfo: any;
   @Action("windowClose") windowClose: any;
-  @Action("getObj") getObj: any;
+  @Getter("getObj") getObj: any;
   @Getter("characterContextObjKey") characterContextObjKey: any;
   @Getter("playerKey") playerKey: any;
   @Getter("mapMaskIsLock") mapMaskIsLock: any;

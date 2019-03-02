@@ -103,12 +103,15 @@ export default class CanvasMixin extends AddressCalcMixin {
     let pageY = event.pageY;
 
     const obj = {
-      key: this.objKey,
+      objKey: this.objKey,
       x: pageX,
       y: pageY
     };
-    this.setProperty({ property: contextProperty, value: obj, logOff: true });
-    this.windowOpen(contextProperty);
+    this.setProperty({
+      property: contextProperty,
+      value: obj,
+      logOff: true
+    }).then(() => this.windowOpen(contextProperty));
     window.console.log(
       `  [methods] open context => ${contextProperty}(${this.objKey})`
     );

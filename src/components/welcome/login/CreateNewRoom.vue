@@ -214,11 +214,11 @@ export default class CreateNewRoom extends Vue {
     Promise.resolve()
       .then(() => this.simpleJoinRoom({ roomName: this.roomName }))
       .then((peerId: string) => {
-        const logTexts = [];
-        logTexts.push(`create room by peer:"${peerId}"`);
-        logTexts.push(`本番: ${this.peerId(false)}`);
-        logTexts.push(`待ち: ${this.peerId(true)}`);
-        window.console.log(logTexts.join(", "));
+        // const logTexts = [];
+        // logTexts.push(`create room by peer:"${peerId}"`);
+        // logTexts.push(`本番: ${this.peerId(false)}`);
+        // logTexts.push(`待ち: ${this.peerId(true)}`);
+        // window.console.log(logTexts.join(", "));
         return this.checkRoomName({ roomName: this.roomName });
       })
       .then(isExist => {
@@ -376,11 +376,11 @@ export default class CreateNewRoom extends Vue {
               this.simpleJoinRoom({ roomName: entranceRoomName, isWait: true })
             )
             .then((peerId: string) => {
-              const logTexts = [];
-              logTexts.push(`create room by peer:"${peerId}"`);
-              logTexts.push(`本番: ${this.peerId(false)}`);
-              logTexts.push(`待ち: ${this.peerId(true)}`);
-              window.console.log(logTexts.join(", "));
+              // const logTexts = [];
+              // logTexts.push(`create room by peer:"${peerId}"`);
+              // logTexts.push(`本番: ${this.peerId(false)}`);
+              // logTexts.push(`待ち: ${this.peerId(true)}`);
+              // window.console.log(logTexts.join(", "));
               return this.checkRoomName({
                 roomName: entranceRoomName,
                 isWait: true

@@ -1,9 +1,9 @@
 <template>
   <div class="loginContainer">
-    <CreateRoomFromRoomData v-if="!isRoomExist && !isRoomJoined"/>
-    <CreateNewRoom v-if="!isRoomJoined"/>
-    <RoomInfo v-if="isRoomJoined"/>
-    <PlayerInfo v-if="isRoomJoined"/>
+    <create-room-from-room-data v-if="!isRoomExist && !isRoomJoined"/>
+    <create-new-room v-if="!isRoomJoined"/>
+    <room-info v-if="isRoomJoined"/>
+    <player-info v-if="isRoomJoined"/>
   </div>
 </template>
 
