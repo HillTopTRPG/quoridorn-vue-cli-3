@@ -13,6 +13,7 @@ const YoutubeControlManager = () => {
   const registration = (tag, url, startSeconds, eventHandler) => {
     let playerObj = playerMapping[tag];
     if (!playerObj) {
+      // 空いてる番号を取得する
       const indexArr = [];
       for (const _tag in playerMapping) {
         if (!playerMapping.hasOwnProperty(_tag)) continue;
@@ -67,6 +68,10 @@ const YoutubeControlManager = () => {
   const destroyed = tag => {
     let playerObj = playerMapping[tag];
     if (!playerObj) return;
+
+    // 既にタイマーが張られていたら停止する
+    if (playerObj.timerReload) clearTimeout(playerObj.timerReload);
+
     playerObj.player.a.parentNode.classList.add("unUse");
     playerObj.using = false;
     playerObj.eventHandler = {};
@@ -175,30 +180,31 @@ const YoutubeControlManager = () => {
     }
     return playerObj;
   };
+
   const callEventHandler = (index, eventName, ...args) => {
     if (eventName !== "timeUpdate") {
       // window.console.log(`--- ${eventName} => ${index}`, ...args)
     }
-    let playerObj = getPlayerObj(index);
-    if (!playerObj) {
-      return;
-    }
-    if (playerObj.eventHandler[eventName]) {
-      playerObj.eventHandler[eventName](...args);
-    }
+
+    const playerObj = getPlayerObj(index);
+    if (!playerObj) return;
+
+    const eventHandler = playerObj.eventHandler[eventName];
+    if (eventHandler) eventHandler(...args);
   };
+
   const callEventHandlerTag = (tag, eventName, ...args) => {
     if (eventName !== "timeUpdate") {
       // window.console.log(`--- ${eventName} => ${index}`, ...args)
     }
-    let playerObj = playerMapping[tag];
-    if (!playerObj) {
-      return;
-    }
-    if (playerObj.eventHandler[eventName]) {
-      playerObj.eventHandler[eventName](...args);
-    }
+
+    const playerObj = playerMapping[tag];
+    if (!playerObj) return;
+
+    const eventHandler = playerObj.eventHandler[eventName];
+    if (eventHandler) eventHandler(...args);
   };
+
   const eventHandler = {
     onReady: index => {
       callEventHandler(index, "onReady");
@@ -235,6 +241,7 @@ const YoutubeControlManager = () => {
 
       // 既にタイマーが張られていたら停止する
       if (playerObj.timeUpdateTimer) clearInterval(playerObj.timeUpdateTimer);
+      if (playerObj.timerReload) clearTimeout(playerObj.timerReload);
 
       callEventHandler(index, "onPaused");
     },

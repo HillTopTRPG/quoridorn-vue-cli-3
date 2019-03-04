@@ -60,7 +60,6 @@
         <button @click="doModify">変更</button>
         <button @click="doDelete">削除</button>
         <label><input type="checkbox" @change="changeSortMode" />並べ替え許可</label>
-        <span class="comment">※ fadeIn/fadeOutは未実装</span>
       </div>
     </div>
   </WindowFrame>

@@ -12,7 +12,7 @@
       <div class="controlArea">
         <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="isPlay"><i class="icon-play3"></i></span>
         <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="!isPlay"><i class="icon-pause2"></i></span>
-        <VolumeComponent
+        <volume-component
           :initVolume="initVolume"
           @mute="setMute"
           @volume="setVolume"
@@ -27,23 +27,13 @@
 </template>
 
 <script lang="ts">
-import { mapState } from "vuex";
 import VolumeComponent from "./VolumeComponent.vue";
 import { getUrlParam } from "../../common/Utility";
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Getter } from "vuex-class";
 
 @Component<BGMCoreComponent>({
   name: "bgmCoreComponent",
-  props: {
-    tag: { type: String, required: true },
-    isLoop: { type: Boolean, required: true },
-    title: { type: String, required: true },
-    initVolume: { type: Number, required: true },
-    url: { type: String, required: true },
-    startSecond: { type: Number, required: true },
-    endSecond: { type: Number, required: true }
-  },
   components: {
     VolumeComponent
   }
@@ -52,6 +42,33 @@ export default class BGMCoreComponent extends Vue {
   @Getter("masterMute") masterMute: any;
   @Getter("masterVolume") masterVolume: any;
 
+  @Prop({ type: String, required: true })
+  private tag!: string;
+
+  @Prop({ type: Boolean, required: true })
+  private isLoop!: boolean;
+
+  @Prop({ type: String, required: true })
+  private title!: string;
+
+  @Prop({ type: Number, required: true })
+  private initVolume!: number;
+
+  @Prop({ type: String, required: true })
+  private url!: string;
+
+  @Prop({ type: Number, required: true })
+  private startSecond!: number;
+
+  @Prop({ type: Number, required: true })
+  private endSecond!: number;
+
+  @Prop({ type: Number, required: true })
+  private fadeIn!: number;
+
+  @Prop({ type: Number, required: true })
+  private fadeOut!: number;
+
   private jukeboxAudio: any = null;
   isYoutube: boolean = false;
   isPlay: boolean = true;
@@ -59,14 +76,22 @@ export default class BGMCoreComponent extends Vue {
   duration: number = 0;
   thumbnailData: string = "";
 
+  private fadeInTable: number[] = [];
+  private fadeOutTable: number[] = [];
+
   mounted(this: any): void {
     this.isYoutube = /www\.youtube\.com/.test(this.url);
     this.thumbnailData = `http://i.ytimg.com/vi/${getUrlParam(
       "v",
       this.url
     )}/default.jpg`;
-    this.$refs.volumeComponent.setVolume(this.initVolume);
-    this.$refs.volumeComponent.setMute(false);
+
+    const volumeComponent: VolumeComponent = <VolumeComponent>(
+      this.$refs.volumeComponent
+    );
+    volumeComponent.setVolume(this.initVolume);
+    volumeComponent.setMute(false);
+
     this.$emit("mounted");
   }
   destroyed(): void {
@@ -78,17 +103,21 @@ export default class BGMCoreComponent extends Vue {
     window.open(this.url, "_blank");
   }
   audioMute(this: any): void {
+    const volumeComponent: VolumeComponent = <VolumeComponent>(
+      this.$refs.volumeComponent
+    );
     this.$emit(
       "mute",
-      this.masterMute ||
-        (this.$refs.volumeComponent ? this.$refs.volumeComponent.mute : false)
+      this.masterMute || (volumeComponent ? volumeComponent.mute : false)
     );
   }
   audioVolume(this: any): void {
+    const volumeComponent: VolumeComponent = <VolumeComponent>(
+      this.$refs.volumeComponent
+    );
     this.$emit(
       "volume",
-      this.masterVolume *
-        (this.$refs.volumeComponent ? this.$refs.volumeComponent.volume : 0)
+      this.masterVolume * (volumeComponent ? volumeComponent.volume : 0)
     );
   }
   setMute(): void {
@@ -120,15 +149,67 @@ export default class BGMCoreComponent extends Vue {
         this.$emit("end");
       }
     }
+    this.fadeProc();
   }
   pause(): void {
     this.isPlay = false;
   }
   play(): void {
     this.isPlay = true;
+    this.fadeProc();
   }
   setDuration(duration: number): void {
     this.duration = duration;
+
+    this.fadeInTable = [];
+    for (let i = 0; i <= this.fadeIn; i++) {
+      this.fadeInTable.push(this.bgmStart + i / 10);
+    }
+
+    this.fadeOutTable = [];
+    for (let i = 0; i <= this.fadeOut; i++) {
+      this.fadeOutTable.push(this.bgmEnd - (this.fadeOut - i) / 10);
+    }
+
+    // window.console.log(this.fadeInTable, this.fadeOutTable);
+  }
+
+  fadeProc() {
+    const volumeComponent: VolumeComponent = <VolumeComponent>(
+      this.$refs.volumeComponent
+    );
+    let isProcessed: boolean = false;
+    if (this.fadeIn) {
+      this.fadeInTable.forEach((time, index) => {
+        if (isProcessed) return;
+        if (this.playLength <= time) {
+          if (index === 0) volumeComponent.startFade(true);
+          volumeComponent.setFadeCount(index, this.fadeIn);
+          isProcessed = true;
+        }
+      });
+    }
+    if (this.fadeOut) {
+      this.fadeOutTable
+        .concat()
+        .reverse()
+        .forEach((time, index) => {
+          if (isProcessed) return;
+          if (this.playLength > time) {
+            if (index === this.fadeOut) volumeComponent.startFade(false);
+            volumeComponent.setFadeCount(
+              this.fadeOut - index - 1,
+              this.fadeOut
+            );
+            isProcessed = true;
+          }
+        });
+    }
+    if (!isProcessed) {
+      if (this.fadeIn || this.fadeOut) {
+        volumeComponent.endFade();
+      }
+    }
   }
 
   get playLengthStyle(): any {

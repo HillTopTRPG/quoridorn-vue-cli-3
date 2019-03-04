@@ -1,34 +1,42 @@
 <template><!-- 150, 209 -->
-  <WindowFrame titleText="再生中BGM一覧" fixSize="222, 274" display-property="private.display.jukeboxWindow" align="right-bottom" :isBanClose="true" @add="add">
+  <window-frame titleText="再生中BGM一覧" fixSize="222, 274" display-property="private.display.jukeboxWindow" align="right-bottom" :isBanClose="true" @add="add">
     <div class="contents">
-      <MasterVolumeComponent/>
-      <BGMYoutubeComponent
-        v-for="bgmObj in playList.filter(pl => /www\.youtube\.com/.test(pl.url))"
-        :key="bgmObj.key"
-        :bgmKey="bgmObj.key"
-        :ref="bgmObj.key"
-        :tag="bgmObj.tag || ''"
-        :isLoop="bgmObj.isLoop || false"
-        :title="bgmObj.title || ''"
-        :initVolume="bgmObj.volume || 0.5"
-        :url="bgmObj.url || ''"
-        @end="remove(bgmObj.key)"
-        :startSecond="bgmObj.start || 0"
-        :endSecond="bgmObj.end || 0"></BGMYoutubeComponent>
-      <BGMFileComponent
-        v-for="bgmObj in playList.filter(pl => !/www\.youtube\.com/.test(pl.url))"
-        :key="bgmObj.key"
-        :ref="bgmObj.key"
-        :tag="bgmObj.tag || ''"
-        :isLoop="bgmObj.isLoop || false"
-        :title="bgmObj.title || ''"
-        :initVolume="bgmObj.volume || 0.5"
-        :url="bgmObj.url || ''"
-        @end="remove(bgmObj.key)"
-        :startSecond="bgmObj.start || 0"
-        :endSecond="bgmObj.end || 0"></BGMFileComponent>
+      <master-volume-component/>
+      <template v-for="bgmObj in playList">
+        <b-g-m-youtube-component
+          v-if="/www\.youtube\.com/.test(bgmObj.url)"
+          :key="bgmObj.key"
+          :bgmKey="bgmObj.key"
+          :ref="bgmObj.key"
+          :tag="bgmObj.tag || ''"
+          :isLoop="bgmObj.isLoop || false"
+          :title="bgmObj.title || ''"
+          :initVolume="bgmObj.volume || 0.5"
+          :url="bgmObj.url || ''"
+          @end="remove(bgmObj.key)"
+          :startSecond="bgmObj.start || 0"
+          :endSecond="bgmObj.end || 0"
+          :fadeIn="bgmObj.fadeIn || 0"
+          :fadeOut="bgmObj.fadeOut || 0"
+        />
+        <b-g-m-file-component
+          v-if="!/www\.youtube\.com/.test(bgmObj.url)"
+          :key="bgmObj.key"
+          :ref="bgmObj.key"
+          :tag="bgmObj.tag || ''"
+          :isLoop="bgmObj.isLoop || false"
+          :title="bgmObj.title || ''"
+          :initVolume="bgmObj.volume || 0.5"
+          :url="bgmObj.url || ''"
+          @end="remove(bgmObj.key)"
+          :startSecond="bgmObj.start || 0"
+          :endSecond="bgmObj.end || 0"
+          :fadeIn="bgmObj.fadeIn || 0"
+          :fadeOut="bgmObj.fadeOut || 0"
+        />
+      </template>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
