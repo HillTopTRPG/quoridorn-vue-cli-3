@@ -1,6 +1,6 @@
 <template>
   <window-frame
-    titleText="イニシアティブ表"
+    :titleText="titleText"
     display-property="private.display.initiativeWindow"
     align="right-top"
     baseSize="300, 500"
@@ -9,28 +9,27 @@
   >
     <div class="contents">
       <div class="playOperationArea">
-        <!-- 広げるボタン -->
+        <!-- 拡大ボタン -->
         <button
           @click="arrangeWindowSize(true)"
-          v-if="!isWindowWide"
-          :disabled="!isWindowViewScroll"
+          v-if="isWindowViewScroll"
         >◁︎拡大</button>
 
-        <!-- 戻すボタン -->
+        <!-- 縮小ボタン -->
         <button
           @click="arrangeWindowSize(false)"
-          v-if="isWindowWide"
-          :disabled="isWindowViewScroll"
+          v-if="!isWindowViewScroll"
+          :disabled="baseWindowWidth === 0"
         >縮小▷︎</button>
 
         <!-- 戻るボタン -->
-        <button class="back">戻る</button>
+        <button class="back" @click="roundBack">戻る</button>
         <!-- 次へボタン -->
-        <button class="next">次へ</button>
+        <button class="next" @click="roundNext">次へ</button>
         <!-- 空白 -->
-        <span class="space"></span>
+        <div style="flex: 1;"></div>
         <!-- 戦闘開始ボタン -->
-        <button class="start">戦闘開始</button>
+        <button class="start" @click="buttleStart">戦闘開始</button>
         <!-- 設定ボタン -->
         <button class="setting" @click="openSettingWindow">設定</button>
       </div>
@@ -71,9 +70,10 @@
           <tr v-for="character in characterList"
               :key="character.key"
               @click="selectLine(character.key)"
-              :class="{isActive: selectLineKey === character.key}">
+              :class="{ isActive: selectLineKey === character.key, roundPlayer: round && character.key === roundPlayerKey }"
+          >
             <!-- 順番 -->
-            <td :style="colStyle(0)">・</td>
+            <td :style="colStyle(0)"><span v-if="round && character.key === roundPlayerKey">●</span></td>
 
             <!-- イニシアティブ -->
             <divider :index="0" @doubleClick="doubleClick" prop="initiativeWindow"/>
@@ -176,7 +176,8 @@
       </div>
       <div class="operateArea">
         <button>変更</button>
-        <button>削除</button>
+        <span style="width: 0.5em;"></span>
+        <button disabled>削除</button>
       </div>
     </div>
   </window-frame>
@@ -208,23 +209,17 @@ export default class InitiativeWindow extends Vue {
   @Mutation("updateActorKey") updateActorKey: any;
   @Getter("getMapObjectList") getMapObjectList: any;
   @Getter("getObj") getObj: any;
+  @Getter("round") round: any;
+  @Getter("roundPlayerKey") roundPlayerKey: any;
+  @Getter("propertyList") propertyList: any;
 
   private windowWidth: number = 0;
   private windowPadding: number = 0;
-  private isWindowWide: boolean = false;
   private isWindowViewScroll: boolean = false;
+  private titleText: string = "イニシアティブ表";
 
   openSettingWindow() {
-    this.setProperty({
-      property: "private.display.initiativeSettingWindow.callback",
-      value: this.onChangeSetting,
-      logOff: true
-    });
     this.windowOpen("private.display.initiativeSettingWindow");
-  }
-
-  private onChangeSetting(value: string) {
-    alert(value);
   }
 
   selectLine(selectLineKey: string) {
@@ -250,7 +245,6 @@ export default class InitiativeWindow extends Vue {
       this.windowPadding -
       (sumWidth - this.widthList[this.widthList.length - 1]);
     this.isWindowViewScroll = lastWidth < minWidth;
-    this.isWindowWide = false;
     this.widthList.splice(
       this.widthList.length - 1,
       1,
@@ -442,8 +436,10 @@ export default class InitiativeWindow extends Vue {
           propName = prop.property;
           newValue = null;
         }
-        if (character.property[propName] === undefined)
-          character.property[propName] = newValue;
+        if (character.property[propName] === undefined) {
+          // character.property[propName] = newValue;
+          Vue.set(character.property, propName, newValue);
+        }
       });
     });
   }
@@ -462,7 +458,6 @@ export default class InitiativeWindow extends Vue {
       this.windowPadding -
       (sumWidth - this.widthList[this.widthList.length - 1]);
     this.isWindowViewScroll = lastWidth < minWidth;
-    this.isWindowWide = !this.isWindowViewScroll;
     this.widthList.splice(
       this.widthList.length - 1,
       1,
@@ -495,7 +490,6 @@ export default class InitiativeWindow extends Vue {
       const diff: number = newWidth - width;
       windowFrame.windowFactor.w += diff;
     }
-    this.isWindowWide = isWide;
   }
 
   setInitiative(objKey: string, value: number) {
@@ -516,10 +510,6 @@ export default class InitiativeWindow extends Vue {
         subInitiative: value
       }
     });
-  }
-
-  get propertyList() {
-    return this.$store.state.private.display.initiativeWindow.propertyList;
   }
 
   setMin(this: any, objKey: string, index: number, value: number) {
@@ -602,6 +592,57 @@ export default class InitiativeWindow extends Vue {
     if (prop.type === "checkbox") propName = prop.property;
     return propName ? character.property[propName] : null;
   }
+
+  roundBack() {}
+
+  roundNext() {}
+
+  buttleStart() {
+    // 最初の戦いかどうかの判定
+    let isFirstButtle: boolean = true;
+    for (const character of this.characterList) {
+      if (character.property.roundIndex > -1) {
+        isFirstButtle = false;
+        break;
+      }
+    }
+
+    const sortFunc: Function = (char1: any, char2: any): number => {
+      const prop1: any = char1.property;
+      const prop2: any = char2.property;
+
+      if (!isFirstButtle) {
+        if (prop1.roundIndex > -1 && prop2.roundIndex === -1) return -1;
+        if (prop1.roundIndex === -1 && prop2.roundIndex > -1) return 1;
+      }
+      if (prop1.initiative < prop2.initiative) return -1;
+      if (prop1.initiative > prop2.initiative) return 1;
+      if (prop1.subInitiative < prop2.subInitiative) return -1;
+      if (prop1.subInitiative > prop2.subInitiative) return 1;
+      return 0;
+    };
+
+    const promiseList: PromiseLike<any>[] = this.characterList
+      .concat()
+      .sort(sortFunc)
+      .map((character: any, index: number) =>
+        this.changeListInfo({
+          key: character.key,
+          isNotice: true,
+          property: {
+            roundIndex: index
+          }
+        })
+      );
+    Promise.all(promiseList).then(() => {
+      this.setProperty({
+        property: "public.initiative.round",
+        value: 1,
+        isNotice: true,
+        logOff: true
+      });
+    });
+  }
 }
 </script>
 
@@ -620,30 +661,28 @@ export default class InitiativeWindow extends Vue {
     flex-direction: row;
 
     button {
-      border-radius: 0.5em;
-
-      &.back {
-        margin-right: 1em;
-      }
+      &.back,
       &.start {
         margin-right: 1em;
       }
-      &:disabled {
-        background-color: gray;
-      }
-    }
-
-    .space {
-      display: block;
-      flex: 1;
     }
   }
 
   .operateArea {
     display: flex;
     flex-direction: row;
+    justify-content: center;
   }
 }
+
+button {
+  border-radius: 0.5em;
+
+  &:disabled {
+    background-color: gray;
+  }
+}
+
 td {
   label {
     width: 100%;

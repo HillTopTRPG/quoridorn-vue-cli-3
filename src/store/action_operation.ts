@@ -268,11 +268,14 @@ export default {
         formatObjList
       );
       dispatch("setProperty", {
-        property: `private.display.initiativeWindow`,
-        value: {
-          propertyList: formatObjList,
-          widthList: newWidthList
-        },
+        property: `private.display.initiativeWindow.widthList`,
+        value: newWidthList,
+        isNotice: false,
+        logOff: true
+      });
+      dispatch("setProperty", {
+        property: `public.initiative.propertyList`,
+        value: formatObjList,
         isNotice: false,
         logOff: true
       });

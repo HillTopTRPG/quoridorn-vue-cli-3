@@ -237,7 +237,6 @@ export default {
         command: null,
         isDisplay: false,
         zIndex: 1,
-        propertyList: [],
         baseWindowWidth: 0,
         // テーブル形式用データここから
         widthList: [20, 30, 30, 30, 151], // 270

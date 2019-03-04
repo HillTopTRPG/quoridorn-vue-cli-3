@@ -96,6 +96,13 @@ export default {
     /** チット */
     chit: { list: [], maxKey: -1 },
 
+    /** キャラクタープロパティ */
+    initiative: {
+      round: 0,
+      roundPlayerKey: "",
+      propertyList: []
+    },
+
     /** チャット */
     chat: {
       /** チャットのタブ */
@@ -551,6 +558,9 @@ export default {
     bgmList: (state: any) => state.bgm.list,
     imageTagList: (state: any) => state.image.tags.list,
     imageList: (state: any) => state.image.list,
-    backgroundColor: (state: any) => state.map.background
+    backgroundColor: (state: any) => state.map.background,
+    round: (state: any) => state.initiative.round,
+    roundPlayerKey: (state: any) => state.initiative.roundPlayerKey,
+    propertyList: (state: any) => state.initiative.propertyList
   } /* end of getters */
 };
