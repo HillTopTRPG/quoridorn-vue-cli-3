@@ -170,7 +170,8 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * カード情報の設定
        */
-      const cardSetName = "花札";
+      const cardSetName = null;
+      // const cardSetName = "花札";
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
@@ -178,16 +179,14 @@ export default new Vuex.Store({
         deckList => {
           const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
 
-          cardSet.width = cardSet.width || 128;
-          cardSet.height = cardSet.height || 192;
-          cardSet.source = cardSet.source || {};
-
+          if (!cardSet) return;
           const basePath = cardSet.basePath || "";
           const storeDeck = rootState.public.deck;
           storeDeck.name = cardSet.name;
           storeDeck.back = basePath + cardSet.back;
-          storeDeck.width = cardSet.width;
-          storeDeck.height = cardSet.height;
+          storeDeck.width = cardSet.width || 128;
+          storeDeck.height = cardSet.height || 192;
+          cardSet.source = cardSet.source || {};
           storeDeck.author = cardSet.source.author || "";
           storeDeck.title = cardSet.source.title || "";
           storeDeck.refs = cardSet.source.refs || [];

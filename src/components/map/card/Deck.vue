@@ -1,5 +1,5 @@
 <template>
-  <div :style="containerStyle" class="deckContainer">
+  <div :style="containerStyle" class="deckContainer" v-if="deck.name">
     <fieldset>
       <legend>{{deck.name}}</legend>
       <div class="refArea">

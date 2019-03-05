@@ -57,9 +57,13 @@ export default {
         list: [],
         maxKey: -1
       },
+      name: null,
       back: null,
       width: 0,
-      height: 0
+      height: 0,
+      author: null,
+      title: null,
+      refs: []
     },
 
     /** マップ */
