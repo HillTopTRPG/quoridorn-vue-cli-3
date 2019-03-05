@@ -1,8 +1,9 @@
 <template>
-  <div class="character"
+  <div class="character-chip"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
+    @click.right.prevent="(e) => openContext(e, 'private.display.characterContext')"
     @mouseover="mouseover" @mouseout="mouseout"
     @contextmenu.prevent>
     <div class="border"></div>
@@ -72,8 +73,8 @@ export default class CharacterChip extends PieceMixin {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.character {
+<style scoped lang="scss">
+.character-chip {
   /*position: fixed;*/
   display: flex;
   justify-content: center;
@@ -87,20 +88,24 @@ export default class CharacterChip extends PieceMixin {
   border-radius: 3px;
   z-index: 600000000;
   overflow: visible;
+  margin-top: 1em;
+
+  &.hover,
+  &.rolling {
+    z-index: 999999999;
+  }
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    top: -2px;
+    border: solid black 2px;
+  }
 }
-.character.hover,
-.character.rolling {
-  z-index: 999999999;
-}
-.character:before {
-  content: "";
-  position: absolute;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  top: -2px;
-  border: solid black 2px;
-}
+
 img.image {
   position: absolute;
   left: 0;
@@ -108,16 +113,19 @@ img.image {
   width: 100%;
   height: 100%;
   object-fit: contain;
+
+  &.reverse {
+    transform: scale(-1, 1);
+  }
 }
-img.image.reverse {
-  transform: scale(-1, 1);
-}
+
 .name {
   position: absolute;
   top: calc(-1em - 4px);
   background-color: rgba(255, 255, 255, 0.3);
   padding: 0 3px;
 }
+
 .border {
   position: absolute;
   left: 0;

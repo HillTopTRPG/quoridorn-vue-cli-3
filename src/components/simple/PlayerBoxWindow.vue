@@ -1,10 +1,10 @@
 <template>
-  <WindowFrame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
+  <window-frame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
     <div class="contents">
-      <label class="playerSelect"><PlayerSelect v-model="currentPlayerKey"/></label>
-      <fieldset v-if="currentPlayerKey">
-        <legend>{{getPlayerName(currentPlayerKey)}}（{{getPlayer ? getPlayer.type : ""}}）</legend>
-        <label>
+      <label class="playerSelect"><player-select v-model="currentPlayerKey"/>のプレイヤーボックス</label>
+      <!--<fieldset v-if="currentPlayerKey">-->
+        <!--<legend>{{getPlayerName(currentPlayerKey)}}（{{getPlayer ? getPlayer.type : ""}}）</legend>-->
+        <label class="playerFontColor">
           チャット文字色
           <input
             type="color"
@@ -16,11 +16,11 @@
         <!-----------------
          ! マップ
          !---------------->
-        <fieldset>
-          <legend>マップ</legend>
+        <fieldset class="field map">
+          <legend>マップにいる</legend>
           <ul class="objList">
             <li v-for="character in getMapObjectList({ kind: 'character', place: 'field', playerKey: currentPlayerKey })" :key="character.key">
-              <CharacterChip :type="character.kind" :objKey="character.key" />
+              <character-chip :type="character.kind" :objKey="character.key" />
               <fieldset class="fontColorArea">
                 <legend>チャット文字色</legend>
                 <label>
@@ -39,50 +39,82 @@
                 </label>
                 <label>過去ログ反映<input type="checkbox" checked /></label>
               </fieldset>
+              <div class="moveButtons">
+                <button @click="movePlace(character.key, 'waiting')">待合室へ</button>
+                <button @click="movePlace(character.key, 'graveyard')">墓地へ</button>
+              </div>
             </li>
+            <!--
             <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'field', playerKey: currentPlayerKey })" :key="mapMask.key">
-              <!-- <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" /> -->
+              <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
+              <div class="moveButtons">
+                <button @click="movePlace(mapMask.key, 'field')">マップへ</button>
+                <button @click="movePlace(mapMask.key, 'waiting')">待合室へ</button>
+              </div>
             </li>
+            -->
+            <!--
             <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'field', playerKey: currentPlayerKey })" :key="chit.key">
-              <!-- <ChitChip :type="chit.kind" :objKey="chit.key" /> -->
+              <ChitChip :type="chit.kind" :objKey="chit.key" />
+              <div class="moveButtons">
+                <button @click="movePlace(chit.key, 'field')">マップへ</button>
+                <button @click="movePlace(chit.key, 'waiting')">待合室へ</button>
+              </div>
             </li>
+            -->
           </ul>
         </fieldset>
         <!-----------------
          ! キャラクター待合室
          !---------------->
-        <fieldset v-if="currentPlayerKey === playerKey">
-          <legend>キャラクター待合室</legend>
+        <fieldset class="field waiting" v-if="currentPlayerKey === playerKey">
+          <legend>キャラクター待合室にいる</legend>
           <ul class="objList">
             <li v-for="character in getMapObjectList({ kind: 'character', place: 'waiting', playerKey: currentPlayerKey })" :key="character.key">
-              <CharacterChip :type="character.kind" :objKey="character.key" />
-              <button @click="toMap(character.key)">マップへ</button>
+              <character-chip :type="character.kind" :objKey="character.key" />
+              <div class="moveButtons">
+                <button @click="movePlace(character.key, 'field')">マップへ</button>
+                <button @click="movePlace(character.key, 'graveyard')">墓地へ</button>
+              </div>
             </li>
           </ul>
         </fieldset>
         <!-----------------
          ! 墓場
          !---------------->
-        <fieldset v-if="currentPlayerKey === playerKey">
-          <legend>墓場</legend>
+        <fieldset class="field graveyard" v-if="currentPlayerKey === playerKey">
+          <legend>墓場にいる</legend>
           <ul class="objList">
             <li v-for="character in getMapObjectList({ kind: 'character', place: 'graveyard', playerKey: currentPlayerKey })" :key="character.key">
-              <CharacterChip :type="character.kind" :objKey="character.key" />
-              <button @click="toMap(character.key)">マップへ</button>
+              <character-chip :type="character.kind" :objKey="character.key" />
+              <div class="moveButtons">
+                <button @click="movePlace(character.key, 'field')">マップへ</button>
+                <button @click="movePlace(character.key, 'waiting')">待合室へ</button>
+              </div>
             </li>
+            <!--
             <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'graveyard', playerKey: currentPlayerKey })" :key="mapMask.key">
-              <!-- <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" /> -->
-              <button @click="toMap(mapMask.key)">マップへ</button>
+              <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
+              <div class="moveButtons">
+                <button @click="movePlace(mapMask.key, 'field')">マップへ</button>
+                <button @click="movePlace(mapMask.key, 'waiting')">待合室へ</button>
+              </div>
             </li>
+            -->
+            <!--
             <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'graveyard', playerKey: currentPlayerKey })" :key="chit.key">
-              <!-- <ChitChip :type="chit.kind" :objKey="chit.key" /> -->
-              <button @click="toMap(chit.key)">マップへ</button>
+              <ChitChip :type="chit.kind" :objKey="chit.key" />
+              <div class="moveButtons">
+                <button @click="movePlace(chit.key, 'field')">マップへ</button>
+                <button @click="movePlace(chit.key, 'waiting')">待合室へ</button>
+              </div>
             </li>
+            -->
           </ul>
         </fieldset>
-      </fieldset>
+      <!--</fieldset>-->
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
@@ -157,10 +189,24 @@ export default class PlayerBoxWindow extends Vue {
     if (!player) return "";
     return player.name;
   }
-  toMap(key: string): void {
+  movePlace(key: string, place: string): void {
+    this.changeListInfo({
+      key,
+      place,
+      isNotice: true
+    });
+  }
+  toWaiting(key: string): void {
     this.changeListInfo({
       key: key,
       place: "field",
+      isNotice: true
+    });
+  }
+  toGraveyard(key: string): void {
+    this.changeListInfo({
+      key: key,
+      place: "graveyard",
       isNotice: true
     });
   }
@@ -188,9 +234,42 @@ export default class PlayerBoxWindow extends Vue {
 }
 fieldset {
   padding: 0 0.5rem 0.5rem;
+
+  &.field {
+    border-width: 2px;
+    border-style: solid;
+    &.map {
+      border-color: blue;
+    }
+    &.waiting {
+      border-color: green;
+    }
+    &.graveyard {
+      border-color: magenta;
+    }
+  }
+  legend {
+    font-weight: bold;
+  }
+
+  &.fontColorArea {
+    border: none;
+    padding: 0;
+
+    label {
+      display: flex;
+      flex-direction: row;
+    }
+  }
 }
 .playerSelect {
   display: block;
+}
+.playerFontColor {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: baseline;
   margin-bottom: 0.5rem;
 }
 li {
@@ -205,9 +284,8 @@ input[type="color"] {
 select {
   height: 1.5rem;
 }
-.fontColorArea label {
-  display: flex;
-  flex-direction: row;
+button {
+  border-radius: 5px;
 }
 ul {
   margin: 0;
@@ -218,7 +296,26 @@ ul {
     display: flex;
     flex-direction: row;
     justify-content: left;
-    align-items: center;
+    align-items: flex-end;
+
+    &:not(:last-child) {
+      border-bottom: 1px dashed black;
+      padding-bottom: 0.5em;
+      margin-bottom: 0.2em;
+    }
+
+    > *:not(:last-child) {
+      margin-right: 1em;
+    }
+
+    .moveButtons {
+      display: flex;
+      flex-direction: column;
+
+      button:not(:last-child) {
+        margin-bottom: 0.5em;
+      }
+    }
 
     .character {
       margin-top: 1em;

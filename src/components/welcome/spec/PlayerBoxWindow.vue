@@ -1,5 +1,5 @@
 <template>
-  <SpecFrame property="playerBoxWindow" label-str="プレイヤーボックス画面" lastVersion="1.0.0b2" :isSpecFixed="false">
+  <SpecFrame property="playerBoxWindow" label-str="プレイヤーボックス画面" lastVersion="1.0.0b6" :isSpecFixed="false">
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -15,13 +15,15 @@
       <li>セレクトボックスからプレイヤーを選ぶことで、そのプレイヤーが所持するオブジェクトの一覧を表示する。</li>
       <li>プレイヤーのチャット文字色を変更できる</li>
       <li>プレイヤーが所持するキャラクターのチャット文字色を変更できる</li>
+      <li>「キャラクター待合室」を兼ねる</li>
+      <li>「墓場」を兼ねる</li>
       <li>その他簡易的な設定変更機能を随時追加していく予定</li>
     </SpecItem>
     <!----------------------
      ! ユーザ要望
      !--------------------->
     <SpecItem class-str="request" label-str="ユーザ要望">
-      <li>なし</li>
+      <li>キャラクター待合室にいるキャラクターを編集したい</li>
     </SpecItem>
     <!----------------------
      ! 未実装事項

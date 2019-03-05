@@ -36,8 +36,8 @@ export default class SpecFrame extends Vue {
     if (this.isOpened) {
       const contentsElm: HTMLElement = document.getElementById(
         "welcomeWindowContents"
-      );
-      const targetElm: HTMLElement = contentsElm.querySelector(
+      )!;
+      const targetElm: HTMLElement | null = contentsElm.querySelector(
         "#" + this.refProp
       );
       if (targetElm) {

@@ -203,7 +203,7 @@ export default class WelcomeWindow extends Vue {
   scrollTo(target: string | undefined) {
     const contentsElm: HTMLElement = document.getElementById(
       "welcomeWindowContents"
-    );
+    )!;
     setTimeout(() => {
       contentsElm.scrollTop = 0;
     }, 0);
