@@ -13,6 +13,7 @@
               <li><span class="unSelectable">画面デザイン作成（ようこそ画面 - 仕様一覧タブ）</span></li>
               <li><span class="unSelectable">ログインに関するユーザフローデザイン</span></li>
               <li><span class="unSelectable">画面デザイン作成（ようこそ画面 - ログインタブ）</span></li>
+              <li><span class="unSelectable">画面デザインアドバイス（プレイヤーボックス画面）</span></li>
             </ul>
           </li>
         </ul>
