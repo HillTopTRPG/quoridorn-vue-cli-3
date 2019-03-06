@@ -22,16 +22,43 @@
           :disabled="baseWindowWidth === 0"
         >縮小▷︎</button>
 
-        <!-- 戻るボタン -->
-        <button class="back" @click="roundBack">戻る</button>
-        <!-- 次へボタン -->
-        <button class="next" @click="roundNext">次へ</button>
         <!-- 空白 -->
         <div style="flex: 1;"></div>
-        <!-- 戦闘開始ボタン -->
-        <button class="start" @click="buttleStart">戦闘開始</button>
+
         <!-- 設定ボタン -->
         <button class="setting" @click="openSettingWindow">設定</button>
+      </div>
+      <div class="playOperationArea">
+        <!-- 戻るボタン -->
+        <button
+          class="back"
+          @click="roundBack"
+          :disabled="round === 0 || backDisabled"
+        >戻る</button>
+
+        <!-- 次へボタン -->
+        <button
+          class="next"
+          @click="roundNext"
+          :disabled="round === 0"
+        >次へ</button>
+
+        <!-- 空白 -->
+        <div style="flex: 1;"></div>
+
+        <!-- 戦闘開始ボタン -->
+        <button
+          class="start"
+          @click="battleStart"
+          :disabled="sortCharacterList.length === 0"
+        >戦闘開始</button>
+
+        <!-- 戦闘終了ボタン -->
+        <button
+          class="end"
+          @click="battleEnd"
+          :disabled="round === 0"
+        >戦闘終了</button>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -67,7 +94,7 @@
           <!-- ===============================================================
             コンテンツ
           -->
-          <tr v-for="character in characterList"
+          <tr v-for="character in sortCharacterList"
               :key="character.key"
               @click="selectLine(character.key)"
               :class="{ isActive: selectLineKey === character.key, roundPlayer: round && character.key === roundPlayerKey }"
@@ -216,18 +243,31 @@ export default class InitiativeWindow extends Vue {
   private windowWidth: number = 0;
   private windowPadding: number = 0;
   private isWindowViewScroll: boolean = false;
-  private titleText: string = "イニシアティブ表";
+
+  private get titleText(): string {
+    const initiateCharacter: any = this.getObj(this.roundPlayerKey);
+    if (this.round === 0 || !initiateCharacter) return "イニシアティブ表";
+    const initiative: number = initiateCharacter.property.initiative;
+    return `ラウンド：${this.round}／イニシアティブ：${initiative}`;
+  }
 
   openSettingWindow() {
     this.windowOpen("private.display.initiativeSettingWindow");
   }
 
-  selectLine(selectLineKey: string) {
+  selectLine(selectLineKey: string | null) {
     this.setProperty({
-      property: "private.display.initiativeSettingWindow.selectLineKey",
+      property: "private.display.initiativeWindow.selectLineKey",
       value: selectLineKey,
       logOff: true
     });
+    if (selectLineKey) {
+      this.changeListInfo({
+        key: selectLineKey,
+        isNotice: false,
+        viewHighlight: true
+      });
+    }
   }
 
   moveDev(event: any) {
@@ -593,55 +633,72 @@ export default class InitiativeWindow extends Vue {
     return propName ? character.property[propName] : null;
   }
 
-  roundBack() {}
-
-  roundNext() {}
-
-  buttleStart() {
-    // 最初の戦いかどうかの判定
-    let isFirstButtle: boolean = true;
-    for (const character of this.characterList) {
-      if (character.property.roundIndex > -1) {
-        isFirstButtle = false;
-        break;
-      }
-    }
-
-    const sortFunc: Function = (char1: any, char2: any): number => {
-      const prop1: any = char1.property;
-      const prop2: any = char2.property;
-
-      if (!isFirstButtle) {
-        if (prop1.roundIndex > -1 && prop2.roundIndex === -1) return -1;
-        if (prop1.roundIndex === -1 && prop2.roundIndex > -1) return 1;
-      }
-      if (prop1.initiative < prop2.initiative) return -1;
-      if (prop1.initiative > prop2.initiative) return 1;
-      if (prop1.subInitiative < prop2.subInitiative) return -1;
-      if (prop1.subInitiative > prop2.subInitiative) return 1;
-      return 0;
-    };
-
-    const promiseList: PromiseLike<any>[] = this.characterList
+  get sortCharacterList(): any[] {
+    return this.characterList
       .concat()
-      .sort(sortFunc)
-      .map((character: any, index: number) =>
-        this.changeListInfo({
-          key: character.key,
-          isNotice: true,
-          property: {
-            roundIndex: index
-          }
-        })
-      );
-    Promise.all(promiseList).then(() => {
-      this.setProperty({
-        property: "public.initiative.round",
-        value: 1,
-        isNotice: true,
-        logOff: true
+      .filter((character: any) => character.place === "field")
+      .sort((char1: any, char2: any) => {
+        const prop1: any = char1.property;
+        const prop2: any = char2.property;
+
+        if (prop1.initiative > prop2.initiative) return -1;
+        if (prop1.initiative < prop2.initiative) return 1;
+        if (prop1.subInitiative > prop2.subInitiative) return -1;
+        if (prop1.subInitiative < prop2.subInitiative) return 1;
+        return 0;
       });
+  }
+
+  get backDisabled(): boolean {
+    const index: number = this.sortCharacterList.findIndex(
+      (character: any) => character.key === this.roundPlayerKey
+    );
+    return index === 0 && this.round === 1;
+  }
+
+  roundBack() {
+    if (!this.roundPlayerKey) return;
+    const index: number = this.sortCharacterList.findIndex(
+      (character: any) => character.key === this.roundPlayerKey
+    );
+    const isPrevRound: boolean = index === 0;
+    this.updateInitiative(
+      isPrevRound ? this.round - 1 : this.round,
+      this.sortCharacterList[
+        isPrevRound ? this.sortCharacterList.length - 1 : index - 1
+      ].key
+    );
+  }
+
+  roundNext() {
+    if (!this.roundPlayerKey) return;
+    const index: number = this.sortCharacterList.findIndex(
+      (character: any) => character.key === this.roundPlayerKey
+    );
+    const isNextRound: boolean = index === this.sortCharacterList.length - 1;
+    this.updateInitiative(
+      isNextRound ? this.round + 1 : this.round,
+      this.sortCharacterList[isNextRound ? 0 : index + 1].key
+    );
+  }
+
+  battleStart() {
+    const character = this.sortCharacterList[0];
+    this.updateInitiative(character ? 1 : 0, character ? character.key : null);
+  }
+
+  battleEnd() {
+    this.updateInitiative(0, null);
+  }
+
+  private updateInitiative(round: number, roundPlayerKey: string | null) {
+    this.setProperty({
+      property: "public.initiative",
+      value: { round, roundPlayerKey },
+      isNotice: true,
+      logOff: true
     });
+    this.selectLine(roundPlayerKey);
   }
 }
 </script>
@@ -661,9 +718,18 @@ export default class InitiativeWindow extends Vue {
     flex-direction: row;
 
     button {
+      font-size: 10px;
+      padding: 1px 3px;
+      min-width: 4em;
+      box-sizing: content-box;
+
       &.back,
       &.start {
         margin-right: 1em;
+      }
+
+      &.next {
+        margin-right: 2em;
       }
     }
   }
@@ -679,7 +745,7 @@ button {
   border-radius: 0.5em;
 
   &:disabled {
-    background-color: gray;
+    background-color: lightgrey;
   }
 }
 

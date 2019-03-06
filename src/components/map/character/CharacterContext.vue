@@ -2,8 +2,9 @@
   <ContextFrame displayProperty="private.display.characterContext">
     <div class="item" @click.left.prevent="viewEditCharacter">変更</div>
     <hr>
-    <div class="item" @click.left.prevent="moveToWaitRoom">キャラクター待合室に移動</div>
-    <div class="item" @click.left.prevent="moveToGraveyard">墓場に移動（削除）</div>
+    <div class="item" v-if="place !== 'field'" @click.left.prevent="moveToField">マップに移動</div>
+    <div class="item" v-if="place !== 'waiting'" @click.left.prevent="moveToWaitRoom">キャラクター待合室に移動</div>
+    <div class="item" v-if="place !== 'graveyard'" @click.left.prevent="moveToGraveyard">墓場に移動（削除）</div>
     <hr>
     <div class="item" @click.left.prevent="copyCharacter">複製</div>
     <template v-if="characterContextObjKey !== null && getObj(characterContextObjKey).url">
@@ -50,18 +51,19 @@ export default class CharacterContext extends Vue {
     this.windowOpen("private.display.editCharacterWindow");
     this.windowClose("private.display.characterContext");
   }
+  moveToField(): void {
+    this.moveTo("field");
+  }
   moveToWaitRoom(): void {
-    this.changeListInfo({
-      key: this.characterContextObjKey,
-      place: "waiting",
-      isNotice: true
-    });
-    this.windowClose("private.display.characterContext");
+    this.moveTo("waiting");
   }
   moveToGraveyard(): void {
+    this.moveTo("graveyard");
+  }
+  private moveTo(place: string): void {
     this.changeListInfo({
       key: this.characterContextObjKey,
-      place: "graveyard",
+      place: place,
       isNotice: true
     });
     this.windowClose("private.display.characterContext");
@@ -78,6 +80,10 @@ export default class CharacterContext extends Vue {
   openRefURL(): void {
     window.open(this.getObj(this.characterContextObjKey).url, "_blank");
     this.windowClose("private.display.characterContext");
+  }
+  get place(): string {
+    const character = this.getObj(this.characterContextObjKey);
+    return character ? character.place : null;
   }
 }
 </script>

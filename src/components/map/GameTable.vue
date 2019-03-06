@@ -408,10 +408,10 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
           }
         }
       ];
+      pieceObj.viewHighlight = false;
       pieceObj.property = {
         initiative: 0,
-        subInitiative: 0,
-        roundIndex: -1
+        subInitiative: 0
       };
 
       this.propertyList.forEach((prop: any, index: number) => {

@@ -37,8 +37,8 @@
         </div>
         <div class="value" :style="{ color: numObj.fontColor }">{{numObj.value}}</div>
       </div>
-
     </div>
+    <div class="selectHighlight" v-if="isViewHighlight"></div>
     <div class="border"></div>
     <img class="image" v-img="imageObj.data" :class="{reverse : imageObj.isReverse}" draggable="false"/>
     <div class="name">{{name}}</div>
@@ -53,7 +53,7 @@ import PieceMixin from "../../PieceMixin.vue";
 import Range from "../../range/Range.vue";
 
 import { Component, Watch } from "vue-property-decorator";
-import { Getter } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 
 @Component<Character>({
   name: "character",
@@ -62,11 +62,14 @@ import { Getter } from "vuex-class";
   }
 })
 export default class Character extends PieceMixin {
+  @Action("changeListInfo") changeListInfo: any;
   @Getter("imageList") imageList: any;
   @Getter("propertyList") propertyList: any;
 
   private checkPropertyList: any[] = [];
   private numberPropertyList: any[] = [];
+  private isViewHighlight: boolean = false;
+  private highlightTimer: number | null = null;
 
   private rangeList: any[] = [
     // {
@@ -265,6 +268,35 @@ export default class Character extends PieceMixin {
     });
   }
 
+  @Watch("viewHighlight")
+  onChangeViewHighlight(viewHighlight: boolean) {
+    if (viewHighlight) {
+      // タイマーをリセット
+      if (this.highlightTimer !== null) {
+        clearTimeout(this.highlightTimer);
+      }
+
+      // 値をすぐに戻す
+      this.changeListInfo({
+        key: this.objKey,
+        isNotice: false,
+        viewHighlight: false
+      });
+
+      // ハイライトを表示
+      this.isViewHighlight = true;
+      // 時間差でハイライトを非表示
+      this.highlightTimer = setTimeout(() => {
+        this.isViewHighlight = false;
+        this.highlightTimer = null;
+      }, 300);
+    }
+  }
+
+  get viewHighlight(): boolean {
+    return this.storeObj.viewHighlight;
+  }
+
   get property(): any {
     return this.storeObj.property;
   }
@@ -342,6 +374,16 @@ img.image {
   top: calc(-1em - 4px);
   background-color: rgba(255, 255, 255, 0.3);
   padding: 0 3px;
+}
+
+.selectHighlight {
+  position: absolute;
+  left: -15px;
+  top: -15px;
+  right: -15px;
+  bottom: -15px;
+  background-color: rgba(255, 255, 0, 1);
+  filter: blur(25px);
 }
 
 .border {
