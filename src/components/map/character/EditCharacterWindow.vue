@@ -174,7 +174,7 @@ export default {
     },
     open() {
       this.isOpenSwitch = false;
-      let characterObj = this.getObj("character", this.key);
+      let characterObj = this.getObj(this.key);
       this.currentImageTag = characterObj.currentImageTag;
       this.switchImageList.splice(0, this.switchImageList.length);
       characterObj.useImageList.split("|").forEach((imageStr, index) => {

@@ -1,7 +1,6 @@
 <template>
   <WindowFrame titleText="チャットタブ設定画面" display-property="private.display.settingChatTabWindow" align="center" fixSize="320, 432" @open="initWindow" @reset="initWindow">
     <div class="contents">
-      <div>半角・全角スペースでタブ名を区切ってください。<br>（例：「雑談 打ち合わせ メモ用」）</div>
       <draggable v-model="tabs">
         <template v-for="(tab, index) in tabs">
           <label :key="tab.key">

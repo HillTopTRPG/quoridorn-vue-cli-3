@@ -146,13 +146,13 @@ export default new Vuex.Store({
        */
       setTimeout(() => {
         dispatch("windowOpen", "private.display.chatWindow");
+        dispatch("windowOpen", "private.display.initiativeWindow");
+        // dispatch("windowOpen", "private.display.resourceWindow");
+        // dispatch("windowOpen", "private.display.chatPaletteWindow");
+        // dispatch("windowOpen", "private.display.counterRemoConWindow");
+        // dispatch("windowOpen", "private.display.functionListWindow");
+        // dispatch("windowOpen", "private.display.playerBoxWindow");
         dispatch("windowOpen", "private.display.welcomeWindow");
-        // dispatch("windowOpen", "private.display.initiativeWindow")
-        // dispatch("windowOpen", "private.display.resourceWindow")
-        // dispatch("windowOpen", "private.display.chatPaletteWindow")
-        // dispatch("windowOpen", "private.display.counterRemoConWindow")
-        // dispatch("windowOpen", "private.display.functionListWindow")
-        // dispatch("windowOpen", "private.display.playerBoxWindow")
       }, 0);
 
       /* ----------------------------------------------------------------------
@@ -170,7 +170,8 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * カード情報の設定
        */
-      const cardSetName = "花札";
+      const cardSetName = null;
+      // const cardSetName = "花札";
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
@@ -178,16 +179,14 @@ export default new Vuex.Store({
         deckList => {
           const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
 
-          cardSet.width = cardSet.width || 128;
-          cardSet.height = cardSet.height || 192;
-          cardSet.source = cardSet.source || {};
-
+          if (!cardSet) return;
           const basePath = cardSet.basePath || "";
           const storeDeck = rootState.public.deck;
           storeDeck.name = cardSet.name;
           storeDeck.back = basePath + cardSet.back;
-          storeDeck.width = cardSet.width;
-          storeDeck.height = cardSet.height;
+          storeDeck.width = cardSet.width || 128;
+          storeDeck.height = cardSet.height || 192;
+          cardSet.source = cardSet.source || {};
           storeDeck.author = cardSet.source.author || "";
           storeDeck.title = cardSet.source.title || "";
           storeDeck.refs = cardSet.source.refs || [];
@@ -243,11 +242,11 @@ export default new Vuex.Store({
             Promise.resolve()
               .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
               .then(peerId => {
-                const logTexts = [];
-                logTexts.push(`create room by peer:"${peerId}"`);
-                logTexts.push(`本番: ${rootGetters.peerId(false)}`);
-                logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
-                window.console.log(logTexts.join(", "));
+                // const logTexts = [];
+                // logTexts.push(`create room by peer:"${peerId}"`);
+                // logTexts.push(`本番: ${rootGetters.peerId(false)}`);
+                // logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
+                // window.console.log(logTexts.join(", "));
                 return dispatch("checkRoomName", { roomName: roomName });
               })
               .then(isExist => {

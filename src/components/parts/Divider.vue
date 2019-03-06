@@ -1,56 +1,62 @@
 <template>
   <td class="divider"
     :class="{isHover: hoverDevIndex === index}"
+    @dblclick.stop="doubleClick()"
     @mouseover="hoverDev(index)"
     @mouseout="hoverDev()"
     @mousedown="event => moveDevStart(event, index)"></td>
 </template>
 
-<script>
-import { mapState, mapActions } from "vuex";
+<script lang="ts">
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import { Action } from "vuex-class";
 
-export default {
-  name: "divider",
-  props: {
-    index: { type: Number, required: true },
-    prop: { type: String, required: true }
-  },
-  methods: {
-    ...mapActions(["setProperty"]),
-    hoverDev(index) {
-      if (this.movingIndex === -1) {
-        this.setProperty({
-          property: `private.display.${this.prop}.hoverDevIndex`,
-          value: index !== undefined ? index : -1,
-          logOff: true
-        });
-      }
-    },
-    moveDevStart(event, index) {
+@Component<Divider>({ name: "divider" })
+export default class Divider extends Vue {
+  @Prop({ type: Number, required: true })
+  private index!: number;
+
+  @Prop({ type: String, required: true })
+  private prop!: string;
+
+  @Action("setProperty") setProperty: any;
+
+  hoverDev(index: number): void {
+    if (this.movingIndex === -1) {
       this.setProperty({
-        property: `private.display.${this.prop}`,
-        value: {
-          movingIndex: index,
-          startX: event.clientX,
-          startLeftWidth: this.widthList[index],
-          startRightWidth: this.widthList[index + 1]
-        },
+        property: `private.display.${this.prop}.hoverDevIndex`,
+        value: index !== undefined ? index : -1,
         logOff: true
       });
     }
-  },
-  computed: mapState({
-    widthList(state) {
-      return state.private.display[this.prop].widthList;
-    },
-    hoverDevIndex(state) {
-      return state.private.display[this.prop].hoverDevIndex;
-    },
-    movingIndex(state) {
-      return state.private.display[this.prop].movingIndex;
-    }
-  })
-};
+  }
+  moveDevStart(event: any, index: number): void {
+    this.setProperty({
+      property: `private.display.${this.prop}`,
+      value: {
+        movingIndex: index,
+        movedIndex: index,
+        startX: event.clientX,
+        startLeftWidth: this.widthList[index],
+        startRightWidth: this.widthList[index + 1]
+      },
+      logOff: true
+    });
+  }
+
+  @Emit("doubleClick")
+  doubleClick(): void {}
+
+  get widthList() {
+    return this.$store.state.private.display[this.prop].widthList;
+  }
+  get hoverDevIndex() {
+    return this.$store.state.private.display[this.prop].hoverDevIndex;
+  }
+  get movingIndex() {
+    return this.$store.state.private.display[this.prop].movingIndex;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

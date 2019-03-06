@@ -3,7 +3,11 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-import { qLog } from "@/components/common/Utility";
+import {
+  qLog,
+  toInitiativeObjList,
+  arrangeInitiativeWidthList
+} from "@/components/common/Utility";
 
 Vue.use(Vuex);
 
@@ -236,6 +240,45 @@ export default {
         rootGetters.historyList.push({ type: "add", key: key });
       }
       return key;
+    },
+    /** ========================================================================
+     * イニシアティブ表のパラメータの設定を変更する
+     */
+    setInitiativeParams: (
+      { dispatch }: { dispatch: Function },
+      payload: any
+    ): string => {
+      return dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doSetInitiativeParams"
+      });
+    },
+    doSetInitiativeParams: (
+      { dispatch, rootState }: { dispatch: Function; rootState: any },
+      { format }: { format: string }
+    ) => {
+      // 数値配列の合計値を求める
+      const sum = (list: number[]): number =>
+        list.reduce((accumlator, current) => accumlator + current);
+
+      // １行のテキストをパースしてイニシアティブ表用のオブジェクト配列を生成
+      const formatObjList: any[] = toInitiativeObjList(format);
+      const newWidthList: number[] = arrangeInitiativeWidthList(
+        rootState.private.display.initiativeWindow.widthList,
+        formatObjList
+      );
+      dispatch("setProperty", {
+        property: `private.display.initiativeWindow.widthList`,
+        value: newWidthList,
+        isNotice: false,
+        logOff: true
+      });
+      dispatch("setProperty", {
+        property: `public.initiative.propertyList`,
+        value: formatObjList,
+        isNotice: false,
+        logOff: true
+      });
     },
     /** ========================================================================
      * BGMを追加する

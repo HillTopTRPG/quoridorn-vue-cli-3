@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame
+  <window-frame
     titleText="ようこそ"
     display-property="private.display.welcomeWindow"
     align="center"
@@ -12,7 +12,10 @@
        ! ロゴ
        !--------------------------------------------------------------------------------->
       <div id="logo-container">
-        <Logo></Logo>
+        <div>
+          <logo/>
+          <div>Ver.{{version}}</div>
+        </div>
       </div>
 
       <!----------------------------------------------------------------------------------
@@ -46,38 +49,39 @@
               <button class="close" @click="specAll(false)">全て閉じる</button>
             </div>
             <div class="menu">
-              <Environment/><!-- 動作環境 -->
-              <MenuBar/><!-- メインメニュー -->
-              <Save/><!-- セーブ機能 -->
-              <Load/><!-- ロード機能 -->
-              <ChatWindow/><!-- チャット画面 -->
-              <DiceWindow/><!-- ダイス画面 -->
-              <PlayerBoxWindow/><!-- プレイヤーボックス画面 -->
-              <ChangeFontSizeWindow/><!-- フォントサイズ調整画面 -->
-              <ResetAllWindow/><!-- ウィンドウ配置初期化機能 -->
-              <AddCharacterWindow/><!-- キャラクター追加画面 -->
-              <AddRangeWindow/><!-- 範囲追加画面 -->
-              <AddChitWindow/><!-- チット追加画面 -->
-              <GraveyardWindow/><!-- 墓場画面 -->
-              <WaitingRoomWindow/><!-- キャラクター待合室画面 -->
-              <EditMapWindow/><!-- マップ変更画面 -->
-              <EditFloorTileMode/><!-- フロアタイル変更モード -->
-              <AddMapMaskWindow/><!-- マップマスク追加機能 -->
-              <CreateEasyMapWindow/><!-- 簡易マップ作成機能 -->
-              <SaveMapWindow/><!-- マップ状態保存画面 -->
-              <LoadMapWindow/><!-- マップ切り替え画面 -->
-              <FileUploaderWindow/><!-- ファイルアップローダー画面 -->
-              <EditImageTagWindow/><!-- (画像)タグ編集画面 -->
-              <DeleteImageWindow/><!-- 画像削除画面 -->
-              <WelcomeWindowSpec/><!-- ようこそ画面 -->
-              <VersionWindow/><!-- バージョン画面 -->
-              <ManualWindow/><!-- マニュアル画面 -->
-              <OfficialSiteLink/><!-- オフィシャルサイトへ -->
-              <RoomInfoWindow/><!-- プレイルーム情報表示画面 -->
-              <AddPublicMemoWindow/><!-- 共有メモ追加画面 -->
-              <Logout/><!-- ログアウト -->
+              <environment/><!-- 動作環境 -->
+              <menu-bar/><!-- メインメニュー -->
+              <save/><!-- セーブ機能 -->
+              <load/><!-- ロード機能 -->
+              <chat-window/><!-- チャット画面 -->
+              <dice-window/><!-- ダイス画面 -->
+              <player-box-window/><!-- プレイヤーボックス画面 -->
+              <initiative-window/><!-- イニシアティブ画面 -->
+              <change-font-size-window/><!-- フォントサイズ調整画面 -->
+              <reset-all-window/><!-- ウィンドウ配置初期化機能 -->
+              <add-character-window/><!-- キャラクター追加画面 -->
+              <add-range-window/><!-- 範囲追加画面 -->
+              <add-chit-window/><!-- チット追加画面 -->
+              <graveyard-window/><!-- 墓場画面 -->
+              <waiting-room-window/><!-- キャラクター待合室画面 -->
+              <edit-map-window/><!-- マップ変更画面 -->
+              <edit-floor-tile-mode/><!-- フロアタイル変更モード -->
+              <add-map-mask-window/><!-- マップマスク追加機能 -->
+              <create-easy-map-window/><!-- 簡易マップ作成機能 -->
+              <save-map-window/><!-- マップ状態保存画面 -->
+              <load-map-window/><!-- マップ切り替え画面 -->
+              <file-uploader-window/><!-- ファイルアップローダー画面 -->
+              <edit-image-tag-window/><!-- (画像)タグ編集画面 -->
+              <delete-image-window/><!-- 画像削除画面 -->
+              <welcome-window-spec/><!-- ようこそ画面 -->
+              <version-window/><!-- バージョン画面 -->
+              <manual-window/><!-- マニュアル画面 -->
+              <official-site-link/><!-- オフィシャルサイトへ -->
+              <room-info-window/><!-- プレイルーム情報表示画面 -->
+              <add-public-memo-window/><!-- 共有メモ追加画面 -->
+              <logout/><!-- ログアウト -->
             </div>
-            <a class="toTop" href="#logo-container"><div class="rotate90">＜</div><div>TOP</div></a>
+            <span class="toTop" @click="scrollTo()"><span class="rotate90">＜</span><span>TOP</span></span>
           </div>
           <!--------------------------------
            ! タブ３ - 出典元情報
@@ -91,7 +95,7 @@
       </div>
       <!-- tab_wrap -->
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
@@ -129,6 +133,7 @@ import OfficialSiteLink from "./spec/OfficialSiteLink.vue";
 import RoomInfoWindow from "./spec/RoomInfoWindow.vue";
 import AddPublicMemoWindow from "./spec/AddPublicMemoWindow.vue";
 import Logout from "./spec/Logout.vue";
+import InitiativeWindow from "./spec/InitiativeWindow.vue";
 
 import Logo from "../simple/Logo.vue";
 import Source from "./source/Source.vue";
@@ -151,6 +156,7 @@ import { Getter } from "vuex-class";
     ChatWindow,
     DiceWindow,
     PlayerBoxWindow,
+    InitiativeWindow,
     ChangeFontSizeWindow,
     ResetAllWindow,
     AddCharacterWindow,
@@ -180,6 +186,7 @@ import { Getter } from "vuex-class";
 })
 export default class WelcomeWindow extends Vue {
   @Getter("isRoomJoined") isRoomJoined: any;
+  @Getter("version") version: any;
 
   private tabNum: string = "1";
 
@@ -192,11 +199,20 @@ export default class WelcomeWindow extends Vue {
       .filter(elm => elm.checked !== openFlg)
       .forEach(elm => elm.click());
   }
+
+  scrollTo(target: string | undefined) {
+    const contentsElm: HTMLElement = document.getElementById(
+      "welcomeWindowContents"
+    )!;
+    setTimeout(() => {
+      contentsElm.scrollTop = 0;
+    }, 0);
+  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   /*position: absolute;*/
   height: 100%;
@@ -209,16 +225,24 @@ export default class WelcomeWindow extends Vue {
 }
 
 #logo-container {
-  display: flex;
+  display: inline-flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1.3em;
+  padding: 0.8em;
   font-size: 16px;
   pointer-events: none;
   user-select: none;
   -ms-user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
+
+  div {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+  }
 }
 
 .tab_wrap {
@@ -235,30 +259,31 @@ input[type="radio"] {
   font-size: 0;
   margin: 0;
   z-index: 10;
-}
-.tab_area label {
-  width: 23.5%;
-  margin: 0 0 0 1.2%;
-  box-sizing: border-box;
-  display: inline-block;
-  padding: 0.2em 0;
-  color: #999;
-  background: #ddd;
-  text-align: center;
-  font-size: 13px;
-  cursor: pointer;
-  /*transition: ease 0.2s opacity;*/
-  border: 1px solid #777;
-  border-top-left-radius: 0.5em;
-  -webkit-border-top-left-radius: 0.5em;
-  -moz-border-top-left-radius: 0.5em;
-  border-top-right-radius: 0.5em;
-  -webkit-border-top-right-radius: 0.5em;
-  -moz-border-top-right-radius: 0.5em;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
+
+  label {
+    width: 23.5%;
+    margin: 0 0 0 1.2%;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0.2em 0;
+    color: #999;
+    background: #ddd;
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+    /*transition: ease 0.2s opacity;*/
+    border: 1px solid #777;
+    border-top-left-radius: 0.5em;
+    -webkit-border-top-left-radius: 0.5em;
+    -moz-border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    -webkit-border-top-right-radius: 0.5em;
+    -moz-border-top-right-radius: 0.5em;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+  }
 }
 /*.tab_area label:hover { opacity:0.5; }*/
 .panel_area {
@@ -274,11 +299,12 @@ input[type="radio"] {
   display: none;
   flex: 1;
   width: 100%;
-}
-.tab_panel p {
-  font-size: 14px;
-  letter-spacing: 1px;
-  text-align: center;
+
+  p {
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-align: center;
+  }
 }
 
 #welcomeWindow-tab1:checked ~ .tab_area .tab1_label,
@@ -307,44 +333,51 @@ input[type="radio"] {
   justify-content: flex-end;
   align-items: center;
   min-height: 1.4em;
-}
-.spec-header button {
-  background-color: transparent;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 0 0 0 1em;
-  margin-right: 0.5rem;
-  position: relative;
-  color: rgb(90, 131, 177);
-  font-size: 90%;
-  box-sizing: border-box;
-}
-.spec-header button:hover {
-  color: rgb(231, 50, 45);
-}
-.spec-header button:before {
-  content: "";
-  width: 0;
-  height: 0;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  border: 0.4em solid transparent;
-}
-.spec-header button.open:before {
-  border-top: 0.4em solid rgb(90, 131, 177);
-  transform: translateY(-25%);
-}
-.spec-header button.open:hover:before {
-  border-top-color: rgb(231, 50, 45);
-}
-.spec-header button.close:before {
-  border-bottom: 0.4em solid rgb(90, 131, 177);
-  transform: translateY(-75%);
-}
-.spec-header button.close:hover:before {
-  border-bottom-color: rgb(231, 50, 45);
+
+  button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0 0 0 1em;
+    margin-right: 0.5rem;
+    position: relative;
+    color: rgb(90, 131, 177);
+    font-size: 90%;
+    box-sizing: border-box;
+
+    &:hover {
+      color: rgb(231, 50, 45);
+    }
+
+    &.open:before {
+      border-top: 0.4em solid rgb(90, 131, 177);
+      transform: translateY(-25%);
+    }
+
+    &.close:before {
+      border-bottom: 0.4em solid rgb(90, 131, 177);
+      transform: translateY(-75%);
+    }
+
+    &.close:hover:before {
+      border-bottom-color: rgb(231, 50, 45);
+    }
+
+    &.open:hover:before {
+      border-top-color: rgb(231, 50, 45);
+    }
+
+    &:before {
+      content: "";
+      width: 0;
+      height: 0;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      border: 0.4em solid transparent;
+    }
+  }
 }
 
 .menu {
@@ -370,9 +403,10 @@ input[type="radio"] {
   box-shadow: 1px 1px 2px #94866a;
   cursor: pointer;
   text-decoration: none;
-}
-.toTop:hover {
-  background-color: rgb(30, 126, 226);
+
+  &:hover {
+    background-color: rgb(30, 126, 226);
+  }
 }
 .rotate90 {
   transform: rotate(90deg);

@@ -116,7 +116,7 @@ export default class StandImageComponent extends Vue {
     });
 
     Promise.all(promiseList).then(() => {
-      diffImageList = diffImageList.sort((diff1, diff2) => {
+      diffImageList.sort((diff1, diff2) => {
         if (diff1.index < diff2.index) return -1;
         if (diff1.index > diff2.index) return 1;
         return 0;
@@ -130,7 +130,7 @@ export default class StandImageComponent extends Vue {
         if (timeList.indexOf(start) === -1) timeList.push(start);
         if (timeList.indexOf(end) === -1) timeList.push(end);
       });
-      timeList = timeList.sort((time1, time2) => (time1 < time2 ? -1 : 1));
+      timeList.sort((time1, time2) => (time1 < time2 ? -1 : 1));
 
       this.baseImageElm = baseImageElm;
       this.baseImageReverse = baseImageReverse;

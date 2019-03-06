@@ -57,9 +57,13 @@ export default {
         list: [],
         maxKey: -1
       },
+      name: null,
       back: null,
       width: 0,
-      height: 0
+      height: 0,
+      author: null,
+      title: null,
+      refs: []
     },
 
     /** マップ */
@@ -95,6 +99,13 @@ export default {
 
     /** チット */
     chit: { list: [], maxKey: -1 },
+
+    /** キャラクタープロパティ */
+    initiative: {
+      round: 0,
+      roundPlayerKey: "",
+      propertyList: []
+    },
 
     /** チャット */
     chat: {
@@ -202,7 +213,7 @@ export default {
         });
       }
       if (!player) {
-        window.console.log(`Add player key:${playerKey} name:${name}`);
+        // window.console.log(`Add player key:${playerKey} name:${name}`);
         rootGetters.playerList.push({
           key: playerKey,
           name: name,
@@ -551,6 +562,9 @@ export default {
     bgmList: (state: any) => state.bgm.list,
     imageTagList: (state: any) => state.image.tags.list,
     imageList: (state: any) => state.image.list,
-    backgroundColor: (state: any) => state.map.background
+    backgroundColor: (state: any) => state.map.background,
+    round: (state: any) => state.initiative.round,
+    roundPlayerKey: (state: any) => state.initiative.roundPlayerKey,
+    propertyList: (state: any) => state.initiative.propertyList
   } /* end of getters */
 };

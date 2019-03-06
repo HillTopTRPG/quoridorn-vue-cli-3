@@ -78,6 +78,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("angleVolatile") angleVolatile: any;
   @Getter("isModal") isModal: any;
   @Getter("getMapObjectList") getMapObjectList: any;
+  @Getter("propertyList") propertyList: any;
 
   mounted(): void {
     document.addEventListener("mousemove", this.mouseMove);
@@ -407,6 +408,28 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
           }
         }
       ];
+      pieceObj.viewHighlight = false;
+      pieceObj.property = {
+        initiative: 0,
+        subInitiative: 0
+      };
+
+      this.propertyList.forEach((prop: any, index: number) => {
+        if (prop.type === "min") {
+          const nextProp = this.propertyList[index + 1];
+          pieceObj.property[nextProp.property + "-min"] = 0;
+        }
+        if (prop.type === "number") {
+          pieceObj.property[prop.property] = 0;
+        }
+        if (prop.type === "max") {
+          const prevProp = this.propertyList[index - 1];
+          pieceObj.property[prevProp.property + "-max"] = 99;
+        }
+        if (prop.type === "checkbox") {
+          pieceObj.property[prop.property] = false;
+        }
+      });
 
       if (this.$store.state.private.display.addCharacterWindow.isContinuous) {
         const splits = name.split("_");

@@ -68,7 +68,6 @@ export default {
         zIndex: 1,
         standImageList: []
       },
-      initiativeWindow: { command: null, isDisplay: false, zIndex: 1 },
       resourceWindow: { command: null, isDisplay: false, zIndex: 1 },
       chatPaletteWindow: { command: null, isDisplay: false, zIndex: 1 },
       counterRemoConWindow: { command: null, isDisplay: false, zIndex: 1 },
@@ -133,6 +132,7 @@ export default {
         selectLineKey: null,
         hoverDevIndex: -1,
         movingIndex: -1,
+        movedIndex: -1,
         startX: -1,
         startLeftWidth: -1,
         startRightWidth: -1
@@ -161,6 +161,7 @@ export default {
         selectLineKey: null,
         hoverDevIndex: -1,
         movingIndex: -1,
+        movedIndex: -1,
         startX: -1,
         startLeftWidth: -1,
         startRightWidth: -1
@@ -177,23 +178,42 @@ export default {
         selectLineKey: null,
         hoverDevIndex: -1,
         movingIndex: -1,
+        movedIndex: -1,
         startX: -1,
         startLeftWidth: -1,
         startRightWidth: -1
         // テーブル形式用データここまで
       },
       playerBoxWindow: { command: null, isDisplay: false, zIndex: 1 },
-      mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
+      mapMaskContext: {
+        command: null,
+        isDisplay: false,
+        objKey: null,
+        x: 0,
+        y: 0
+      },
       characterContext: {
         command: null,
         isDisplay: false,
-        key: -1,
+        objKey: null,
         x: 0,
         y: 0
       },
       gameTableContext: { command: null, isDisplay: false, x: 0, y: 0 },
-      chitContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 },
-      cardContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 },
+      chitContext: {
+        command: null,
+        isDisplay: false,
+        x: 0,
+        y: 0,
+        objKey: null
+      },
+      cardContext: {
+        command: null,
+        isDisplay: false,
+        x: 0,
+        y: 0,
+        objKey: null
+      },
       inputPlayerInfoWindow: {
         command: null,
         isDisplay: false,
@@ -211,6 +231,29 @@ export default {
         zIndex: 1,
         imageKey: null,
         imageTag: null,
+        callback: null
+      },
+      initiativeWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        baseWindowWidth: 0,
+        // テーブル形式用データここから
+        widthList: [20, 30, 30, 30, 151], // 270
+        selectLineKey: null,
+        hoverDevIndex: -1,
+        movingIndex: -1,
+        movedIndex: -1,
+        startX: -1,
+        startLeftWidth: -1,
+        startRightWidth: -1
+        // テーブル形式用データここまで
+      },
+      initiativeSettingWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        value: "",
         callback: null
       }
     }
@@ -388,9 +431,10 @@ export default {
     dropZipList: (state: any) => state.display.dropZipWindow.zipList,
     dropZipRoomCreate: (state: any) => state.display.dropZipWindow.isRoomCreate,
     dropImageList: (state: any) => state.display.dropImageWindow.imageDataList,
-    chitContextObjKey: (state: any) => state.display.chitContext.key,
-    mapMaskContextObjKey: (state: any) => state.display.mapMaskContext.key,
-    characterContextObjKey: (state: any) => state.display.characterContext.key,
+    chitContextObjKey: (state: any) => state.display.chitContext.objKey,
+    mapMaskContextObjKey: (state: any) => state.display.mapMaskContext.objKey,
+    characterContextObjKey: (state: any) =>
+      state.display.characterContext.objKey,
     secretDiceList: (state: any) => state.chat.secretDiceList,
     imageSelectorKey: (state: any) =>
       state.display.imageSelectorWindow.imageKey,

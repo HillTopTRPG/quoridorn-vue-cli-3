@@ -60,7 +60,6 @@
         <button @click="doModify">変更</button>
         <button @click="doDelete">削除</button>
         <label><input type="checkbox" @change="changeSortMode" />並べ替え許可</label>
-        <span class="comment">※ fadeIn/fadeOutは未実装</span>
       </div>
     </div>
   </WindowFrame>
@@ -221,7 +220,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
@@ -229,14 +228,16 @@ export default {
   font-size: 12px;
   display: flex;
   flex-direction: column;
-}
-.contents > div {
-  display: flex;
-  flex-direction: row;
-}
-.contents > div > .space {
-  display: block;
-  flex: 1;
+
+  > div {
+    display: flex;
+    flex-direction: row;
+
+    > .space {
+      display: block;
+      flex: 1;
+    }
+  }
 }
 button {
   font-size: 10px;
@@ -248,13 +249,14 @@ button {
 .operateArea {
   margin-top: 5px;
   text-align: center;
-}
-.operateArea label,
-.operateArea span {
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
+
+  label,
+  span {
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+  }
 }
 /* Start 列幅可変テーブルのCSS */
 .tableContainer {
@@ -280,79 +282,97 @@ table {
     rgb(247, 247, 247) 100%
   );
   background-size: 4em 4em;
-}
-tr {
-  height: 2em;
-}
-tr.space {
-  height: auto;
-}
-th,
-td {
-  padding: 0;
-  white-space: nowrap;
-  cursor: default;
-}
-th,
-td:not(.selectable) {
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
-th,
-td:not(.divider) {
-  overflow: hidden;
-}
-table tbody {
-  height: 100%;
-}
-table thead {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 1) 0%,
-    rgba(234, 234, 234, 1) 100%
-  );
-}
-table thead tr {
-  border-bottom: 1px solid rgb(183, 186, 188);
-}
-table tbody tr {
-  height: 2em;
-}
-table tbody tr:not(.space).isActive {
-  background-color: rgb(127, 206, 255) !important;
-}
-table thead tr th:hover {
-  background: rgb(178, 225, 255);
-}
-table tbody tr:not(.space):nth-child(odd):hover {
-  background: rgb(178, 225, 255);
-}
-table tbody tr:not(.space):nth-child(even):hover {
-  background: rgb(178, 225, 255);
-}
-table tbody td {
-  text-align: center;
-}
-table td.dev {
-  background-color: rgb(183, 186, 188);
-  cursor: col-resize;
-  position: relative;
-  width: 1px;
-}
-table td.dev:after {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: -2px;
-  content: "";
-  width: 5px;
-}
-td i {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+  td {
+    &.dev {
+      background-color: rgb(183, 186, 188);
+      cursor: col-resize;
+      position: relative;
+      width: 1px;
+
+      &:after {
+        position: absolute;
+        height: 100%;
+        top: 0;
+        left: -2px;
+        content: "";
+        width: 5px;
+      }
+    }
+
+    i {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  tr {
+    height: 2em;
+
+    &.space {
+      height: auto;
+    }
+  }
+  th,
+  td {
+    padding: 0;
+    white-space: nowrap;
+    cursor: default;
+  }
+  th,
+  td:not(.selectable) {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+  th,
+  td:not(.divider) {
+    overflow: hidden;
+  }
+
+  tbody {
+    height: 100%;
+
+    tr {
+      height: 2em;
+
+      &:not(.space) {
+        &.isActive {
+          background-color: rgb(127, 206, 255) !important;
+        }
+
+        &:nth-child(odd):hover {
+          background: rgb(178, 225, 255);
+        }
+
+        &:nth-child(even):hover {
+          background: rgb(178, 225, 255);
+        }
+      }
+    }
+
+    td {
+      text-align: center;
+    }
+  }
+
+  thead {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(234, 234, 234, 1) 100%
+    );
+
+    tr {
+      border-bottom: 1px solid rgb(183, 186, 188);
+
+      th:hover {
+        background: rgb(178, 225, 255);
+      }
+    }
+  }
 }
 /* End 列幅可変テーブルのCSS */
 .comment {

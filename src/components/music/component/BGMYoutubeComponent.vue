@@ -1,5 +1,5 @@
 <template>
-  <BGMCoreComponent
+  <b-g-m-core-component
     :tag="tag"
     :isLoop="isLoop"
     :title="title"
@@ -7,101 +7,136 @@
     :url="url"
     :startSecond="startSecond"
     :endSecond="endSecond"
-    @mounted="mounted"
-    @destroyed="destroyed"
-    @mute="mute"
-    @volume="volume"
-    @play="play"
-    @pause="pause"
-    @seekTo="seekTo"
-    @end="end"
+    :fadeIn="fadeIn"
+    :fadeOut="fadeOut"
+    @mounted="onMounted"
+    @destroyed="onDestroyed"
+    @mute="onMute"
+    @volume="onVolume"
+    @play="onPlay"
+    @pause="onPause"
+    @seekTo="onSeekTo"
+    @end="onEnd"
     ref="core"
-  ></BGMCoreComponent>
+  ></b-g-m-core-component>
 </template>
 
-<script>
-import { mapActions } from "vuex";
-import BGMCoreComponent from "./BGMCoreComponent";
+<script lang="ts">
+import BGMCoreComponent from "./BGMCoreComponent.vue";
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { Action } from "vuex-class";
 
-export default {
+@Component<BGMYoutubeComponent>({
   name: "bgmYoutubeComponent",
-  props: {
-    bgmKey: { type: String, required: true },
-    tag: { type: String, required: true },
-    isLoop: { type: Boolean, required: true },
-    title: { type: String, required: true },
-    initVolume: { type: Number, required: true },
-    url: { type: String, required: true },
-    startSecond: { type: Number, required: true },
-    endSecond: { type: Number, required: true }
-  },
   components: {
-    BGMCoreComponent: BGMCoreComponent
-  },
-  destroyed() {
-    this.destroyed();
-  },
-  methods: {
-    ...mapActions(["setProperty"]),
-    onReady() {},
-    onPlaying(duration, target) {
-      this.$refs.core.setDuration(duration);
-      this.$refs.core.play();
-    },
-    onError(event) {
-      window.console.log(event);
-    },
-    onPaused() {
-      this.$refs.core.pause();
-    },
-    onReject() {
-      window.console.log("youtube - onReject => reload");
-      this.setProperty({
-        property: "private.display.jukeboxWindow.command",
-        logOff: true,
-        value: { command: "add", payload: this.bgmKey }
-      });
-    },
-    mounted() {
-      const result = window.youtube.registration(this.tag, this.url, 0, {
+    BGMCoreComponent
+  }
+})
+export default class BGMYoutubeComponent extends Vue {
+  @Action("setProperty") setProperty: any;
+
+  @Prop({ type: String, required: true })
+  private bgmKey!: string;
+
+  @Prop({ type: String, required: true })
+  private tag!: string;
+
+  @Prop({ type: Boolean, required: true })
+  private isLoop!: boolean;
+
+  @Prop({ type: String, required: true })
+  private title!: string;
+
+  @Prop({ type: Number, required: true })
+  private initVolume!: number;
+
+  @Prop({ type: String, required: true })
+  private url!: string;
+
+  @Prop({ type: Number, required: true })
+  private startSecond!: number;
+
+  @Prop({ type: Number, required: true })
+  private endSecond!: number;
+
+  @Prop({ type: Number, required: true })
+  private fadeIn!: number;
+
+  @Prop({ type: Number, required: true })
+  private fadeOut!: number;
+
+  onMounted() {
+    const result = (<any>window)["youtube"]["registration"](
+      this.tag,
+      this.url,
+      0,
+      {
         onReady: this.onReady,
-        timeUpdate: this.timeUpdate,
+        timeUpdate: this.onTimeUpdate,
         onPlaying: this.onPlaying,
         onError: this.onError,
         onPaused: this.onPaused,
         onReject: this.onReject
-      });
-      // this.jukeboxAudio.loop = this.isLoop
-      if (!result) {
-        this.$emit("end");
       }
-    },
-    destroyed() {
-      window.youtube.destroyed(this.tag);
-    },
-    mute(mute) {
-      window.youtube[mute ? "mute" : "unMute"](this.tag);
-    },
-    volume(volume) {
-      window.youtube.setVolume(this.tag, volume * 100);
-    },
-    play() {
-      window.youtube.play(this.tag);
-    },
-    pause() {
-      window.youtube.pause(this.tag);
-    },
-    seekTo(time) {
-      window.youtube.seekTo(this.tag, time, true);
-    },
-    end() {
-      this.$emit("end");
-    },
-    timeUpdate(time) {
-      this.$refs.core.timeUpdate(time);
-    }
+    );
+    if (!result) this.$emit("end");
   }
-};
+
+  onDestroyed() {
+    (<any>window)["youtube"]["destroyed"](this.tag);
+  }
+
+  onReady() {}
+
+  onPlaying(this: any, duration: number) {
+    const bgmCoreComponent: BGMCoreComponent = this.$refs.core;
+    bgmCoreComponent.setDuration(duration);
+    bgmCoreComponent.play();
+  }
+
+  onError(event: any) {
+    window.console.log(event);
+  }
+
+  onPaused(this: any) {
+    const bgmCoreComponent: BGMCoreComponent = this.$refs.core;
+    bgmCoreComponent.pause();
+  }
+
+  onReject() {
+    window.console.log("youtube - onReject => reload");
+    this.setProperty({
+      property: "private.display.jukeboxWindow.command",
+      logOff: true,
+      value: { command: "add", payload: this.bgmKey }
+    });
+  }
+
+  onMute(mute: boolean) {
+    (<any>window)["youtube"][mute ? "mute" : "unMute"](this.tag);
+  }
+  onVolume(volume: number) {
+    (<any>window)["youtube"]["setVolume"](this.tag, volume * 100);
+  }
+  onPlay() {
+    (<any>window)["youtube"]["play"](this.tag);
+  }
+  onPause() {
+    (<any>window)["youtube"]["pause"](this.tag);
+  }
+  onSeekTo(time: any) {
+    (<any>window)["youtube"]["seekTo"](this.tag, time, true);
+  }
+  onEnd() {
+    this.$emit("end");
+  }
+  onTimeUpdate(time: number) {
+    const bgmCoreComponent: BGMCoreComponent = <BGMCoreComponent>(
+      this.$refs.core!
+    );
+    bgmCoreComponent.timeUpdate(time);
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -165,13 +165,13 @@
 
 <script lang="ts">
 import DiceBotSelect from "../parts/select/DiceBotSelect.vue";
+import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
 
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
-import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
 
 @Component<ChatWindow>({
   name: "chatWindow",

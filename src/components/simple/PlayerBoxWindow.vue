@@ -1,88 +1,89 @@
 <template>
-  <WindowFrame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
+  <window-frame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
     <div class="contents">
-      <label class="playerSelect"><PlayerSelect v-model="currentPlayerKey"/></label>
-      <fieldset v-if="currentPlayerKey">
-        <legend>{{getPlayerName(currentPlayerKey)}}（{{getPlayer ? getPlayer.type : ""}}）</legend>
-        <label>
-          チャット文字色
-          <input
-            type="color"
-            :value="getPlayer ? getPlayer.fontColor : ''"
-            @change="(event) => changePlayerFontColor(event.target.value, event.target.nextElementSibling.firstElementChild.checked)"
-          />
-          <label>過去ログ反映<input type="checkbox" checked /></label>
-        </label>
-        <!-----------------
-         ! マップ
-         !---------------->
-        <fieldset>
-          <legend>マップ</legend>
-          <ul class="objList">
-            <li v-for="character in getMapObjectList({ kind: 'character', place: 'field', playerKey: currentPlayerKey })" :key="character.key">
-              <CharacterChip :type="character.kind" :objKey="character.key" />
-              <fieldset class="fontColorArea">
-                <legend>チャット文字色</legend>
-                <label>
-                  <select
-                    :value="character.fontColorType"
-                    @change="(event) => changeFontColorType(character.key, event.target.value)"
-                  >
-                    <option value="0">主と同じ</option>
-                    <option value="1">個別</option>
-                  </select>
-                  <input
-                    type="color"
-                    :value="character.fontColorType === 0 ? getPlayer ? getPlayer.fontColor : '' : character.fontColor"
-                    @change="event => changeCharacterFontColor(character.key, event.target.value, event.target.parentNode.nextElementSibling.firstElementChild.checked)"
-                    :disabled="character.fontColorType === 0"/>
-                </label>
-                <label>過去ログ反映<input type="checkbox" checked /></label>
-              </fieldset>
-            </li>
-            <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'field', playerKey: currentPlayerKey })" :key="mapMask.key">
-              <!-- <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" /> -->
-            </li>
-            <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'field', playerKey: currentPlayerKey })" :key="chit.key">
-              <!-- <ChitChip :type="chit.kind" :objKey="chit.key" /> -->
-            </li>
-          </ul>
-        </fieldset>
-        <!-----------------
-         ! キャラクター待合室
-         !---------------->
-        <fieldset v-if="currentPlayerKey === playerKey">
-          <legend>キャラクター待合室</legend>
-          <ul class="objList">
-            <li v-for="character in getMapObjectList({ kind: 'character', place: 'waiting', playerKey: currentPlayerKey })" :key="character.key">
-              <CharacterChip :type="character.kind" :objKey="character.key" />
-              <button @click="toMap(character.key)">マップへ</button>
-            </li>
-          </ul>
-        </fieldset>
-        <!-----------------
-         ! 墓場
-         !---------------->
-        <fieldset v-if="currentPlayerKey === playerKey">
-          <legend>墓場</legend>
-          <ul class="objList">
-            <li v-for="character in getMapObjectList({ kind: 'character', place: 'graveyard', playerKey: currentPlayerKey })" :key="character.key">
-              <CharacterChip :type="character.kind" :objKey="character.key" />
-              <button @click="toMap(character.key)">マップへ</button>
-            </li>
-            <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'graveyard', playerKey: currentPlayerKey })" :key="mapMask.key">
-              <!-- <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" /> -->
-              <button @click="toMap(mapMask.key)">マップへ</button>
-            </li>
-            <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'graveyard', playerKey: currentPlayerKey })" :key="chit.key">
-              <!-- <ChitChip :type="chit.kind" :objKey="chit.key" /> -->
-              <button @click="toMap(chit.key)">マップへ</button>
-            </li>
-          </ul>
-        </fieldset>
+      <label class="playerSelect"><player-select v-model="currentPlayerKey"/>のプレイヤーボックス</label>
+      <label class="playerFontColor">
+        チャット文字色
+        <input
+          type="color"
+          :value="getPlayer ? getPlayer.fontColor : ''"
+          @change="(event) => changePlayerFontColor(event.target.value, event.target.nextElementSibling.firstElementChild.checked)"
+        />
+        <label>過去ログ反映<input type="checkbox" checked /></label>
+      </label>
+      <!-----------------
+       ! マップ
+       !---------------->
+      <fieldset class="field map">
+        <legend>マップにいる</legend>
+        <ul class="objList">
+          <li v-for="character in getMapObjectList({ kind: 'character', place: 'field', playerKey: currentPlayerKey })" :key="character.key">
+            <character-chip :type="character.kind" :objKey="character.key" />
+            <fieldset class="fontColorArea">
+              <legend>チャット文字色</legend>
+              <label>
+                <select
+                  :value="character.fontColorType"
+                  @change="(event) => changeFontColorType(character.key, event.target.value)"
+                >
+                  <option value="0">主と同じ</option>
+                  <option value="1">個別</option>
+                </select>
+                <input
+                  type="color"
+                  :value="character.fontColorType === 0 ? getPlayer ? getPlayer.fontColor : '' : character.fontColor"
+                  @change="event => changeCharacterFontColor(character.key, event.target.value, event.target.parentNode.nextElementSibling.firstElementChild.checked)"
+                  :disabled="character.fontColorType === 0"/>
+              </label>
+              <label>過去ログ反映<input type="checkbox" checked /></label>
+            </fieldset>
+          </li>
+          <!--
+          <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'field', playerKey: currentPlayerKey })" :key="mapMask.key">
+            <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
+          </li>
+          -->
+          <!--
+          <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'field', playerKey: currentPlayerKey })" :key="chit.key">
+            <ChitChip :type="chit.kind" :objKey="chit.key" />
+          </li>
+          -->
+        </ul>
+      </fieldset>
+      <!-----------------
+       ! キャラクター待合室
+       !---------------->
+      <fieldset class="field waiting" v-if="currentPlayerKey === playerKey">
+        <legend>キャラクター待合室にいる</legend>
+        <ul class="objList">
+          <li v-for="character in getMapObjectList({ kind: 'character', place: 'waiting', playerKey: currentPlayerKey })" :key="character.key">
+            <character-chip :type="character.kind" :objKey="character.key" />
+          </li>
+        </ul>
+      </fieldset>
+      <!-----------------
+       ! 墓場
+       !---------------->
+      <fieldset class="field graveyard" v-if="currentPlayerKey === playerKey">
+        <legend>墓場にいる</legend>
+        <ul class="objList">
+          <li v-for="character in getMapObjectList({ kind: 'character', place: 'graveyard', playerKey: currentPlayerKey })" :key="character.key">
+            <character-chip :type="character.kind" :objKey="character.key" />
+          </li>
+          <!--
+          <li v-for="mapMask in getMapObjectList({ kind: 'mapMask', place: 'graveyard', playerKey: currentPlayerKey })" :key="mapMask.key">
+            <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
+          </li>
+          -->
+          <!--
+          <li v-for="chit in getMapObjectList({ kind: 'chit', place: 'graveyard', playerKey: currentPlayerKey })" :key="chit.key">
+            <ChitChip :type="chit.kind" :objKey="chit.key" />
+          </li>
+          -->
+        </ul>
       </fieldset>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
@@ -157,13 +158,6 @@ export default class PlayerBoxWindow extends Vue {
     if (!player) return "";
     return player.name;
   }
-  toMap(key: string): void {
-    this.changeListInfo({
-      key: key,
-      place: "field",
-      isNotice: true
-    });
-  }
 
   @Watch("playerKey")
   onChangePlayerKey(playerKey: string) {
@@ -188,9 +182,42 @@ export default class PlayerBoxWindow extends Vue {
 }
 fieldset {
   padding: 0 0.5rem 0.5rem;
+
+  &.field {
+    border-width: 2px;
+    border-style: solid;
+    &.map {
+      border-color: blue;
+    }
+    &.waiting {
+      border-color: green;
+    }
+    &.graveyard {
+      border-color: magenta;
+    }
+  }
+  legend {
+    font-weight: bold;
+  }
+
+  &.fontColorArea {
+    border: none;
+    padding: 0;
+
+    label {
+      display: flex;
+      flex-direction: row;
+    }
+  }
 }
 .playerSelect {
   display: block;
+}
+.playerFontColor {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: baseline;
   margin-bottom: 0.5rem;
 }
 li {
@@ -205,9 +232,8 @@ input[type="color"] {
 select {
   height: 1.5rem;
 }
-.fontColorArea label {
-  display: flex;
-  flex-direction: row;
+button {
+  border-radius: 5px;
 }
 ul {
   margin: 0;
@@ -218,7 +244,26 @@ ul {
     display: flex;
     flex-direction: row;
     justify-content: left;
-    align-items: center;
+    align-items: flex-end;
+
+    &:not(:last-child) {
+      border-bottom: 1px dashed black;
+      padding-bottom: 0.5em;
+      margin-bottom: 0.2em;
+    }
+
+    > *:not(:last-child) {
+      margin-right: 1em;
+    }
+
+    .moveButtons {
+      display: flex;
+      flex-direction: column;
+
+      button:not(:last-child) {
+        margin-bottom: 0.5em;
+      }
+    }
 
     .character {
       margin-top: 1em;

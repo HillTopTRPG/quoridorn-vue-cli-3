@@ -1,5 +1,5 @@
 <template>
-  <BGMCoreComponent
+  <b-g-m-core-component
     :tag="tag"
     :isLoop="isLoop"
     :title="title"
@@ -7,16 +7,18 @@
     :url="url"
     :startSecond="startSecond"
     :endSecond="endSecond"
-    @mounted="mounted"
-    @destroyed="destroyed"
-    @mute="mute"
-    @volume="volume"
-    @play="play"
-    @pause="pause"
-    @seekTo="seekTo"
-    @end="end"
+    :fadeIn="fadeIn"
+    :fadeOut="fadeOut"
+    @mounted="onMounted"
+    @destroyed="onDestroyed"
+    @mute="onMute"
+    @volume="onVolume"
+    @play="onPlay"
+    @pause="onPause"
+    @seekTo="onSeekTo"
+    @end="onEnd"
     ref="core"
-  ></BGMCoreComponent>
+  ></b-g-m-core-component>
 </template>
 
 <script lang="ts">
@@ -31,35 +33,46 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 })
 export default class BGMFileComponent extends Vue {
   @Prop({ required: true })
-  tag!: string;
+  private tag!: string;
+
   @Prop({ required: true })
-  isLoop!: boolean;
+  private isLoop!: boolean;
+
   @Prop({ required: true })
-  title!: string;
+  private title!: string;
+
   @Prop({ required: true })
-  initVolume!: number;
+  private initVolume!: number;
+
   @Prop({ required: true })
-  url!: string;
+  private url!: string;
+
   @Prop({ required: true })
-  startSecond!: number;
+  private startSecond!: number;
+
   @Prop({ required: true })
-  endSecond!: number;
+  private endSecond!: number;
+
+  @Prop({ type: Number, required: true })
+  private fadeIn!: number;
+
+  @Prop({ type: Number, required: true })
+  private fadeOut!: number;
 
   private jukeboxAudio: any = null;
 
-  destroyed(): void {
-    this.jukeboxAudio = null;
-  }
-  mounted(this: any): void {
+  onMounted(this: any): void {
     this.jukeboxAudio = new Audio();
     this.jukeboxAudio.autoplay = true;
     this.jukeboxAudio.loop = this.isLoop;
-    this.jukeboxAudio.addEventListener("timeupdate", this.timeUpdate);
+    this.jukeboxAudio.addEventListener("timeupdate", this.onTimeUpdate);
     this.jukeboxAudio.addEventListener("play", () => {
       if (!this.jukeboxAudio) return;
-      if (this.$refs.core instanceof BGMCoreComponent) {
-        this.$refs.core.setDuration(this.jukeboxAudio.duration);
-      }
+      const bgmCoreComponent: BGMCoreComponent = <BGMCoreComponent>(
+        this.$refs.core
+      );
+      bgmCoreComponent.setDuration(this.jukeboxAudio.duration);
+      bgmCoreComponent.play();
     });
     if (this.url.startsWith("..")) {
       this.jukeboxAudio.src = this.url;
@@ -67,27 +80,41 @@ export default class BGMFileComponent extends Vue {
       this.jukeboxAudio.src = this.url;
     }
   }
-  mute(mute: boolean): void {
+
+  onDestroyed(): void {
+    this.jukeboxAudio = null;
+  }
+
+  onMute(mute: boolean): void {
     this.jukeboxAudio.muted = mute;
   }
-  volume(volume: number): void {
+
+  onVolume(volume: number): void {
     this.jukeboxAudio.volume = volume;
   }
-  play(): void {
+
+  onPlay(): void {
     this.jukeboxAudio.play().then();
   }
-  pause(): void {
+
+  onPause(): void {
     this.jukeboxAudio.pause();
   }
-  seekTo(time: number): void {
+
+  onSeekTo(time: number): void {
     this.jukeboxAudio.currentTime = time;
   }
-  end(): void {
+
+  onEnd(): void {
     this.$emit("end");
   }
-  timeUpdate(this: any): void {
+
+  onTimeUpdate(): void {
     if (!this.jukeboxAudio) return;
-    this.$refs.core.timeUpdate(this.jukeboxAudio.currentTime);
+    const bgmCoreComponent: BGMCoreComponent = <BGMCoreComponent>(
+      this.$refs.core
+    );
+    bgmCoreComponent.timeUpdate(this.jukeboxAudio.currentTime);
   }
 }
 </script>
