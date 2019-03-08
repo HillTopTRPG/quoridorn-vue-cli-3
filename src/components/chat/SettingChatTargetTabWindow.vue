@@ -1,5 +1,5 @@
-  <template>
-  <WindowFrame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`" @open="initWindow" @reset="initWindow">
+<template>
+  <window-frame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`" @open="initWindow" @reset="initWindow">
     <div class="contents">
       <div>
         <button type="button" @click="add">追加</button>
@@ -9,10 +9,10 @@
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
           <thead>
           <tr>
-            <th :style="colStyle(0)">秘匿</th><Divider :index="0" prop="settingChatTargetTabWindow"/>
-            <th :style="colStyle(1)">名前</th><Divider :index="1" prop="settingChatTargetTabWindow"/>
-            <th :style="colStyle(2)">出力先タブ</th><Divider :index="2" prop="settingChatTargetTabWindow"/>
-            <th :style="colStyle(3)">送信先</th><Divider :index="3" prop="settingChatTargetTabWindow"/>
+            <th :style="colStyle(0)">秘匿</th><divider :index="0" prop="settingChatTargetTabWindow"/>
+            <th :style="colStyle(1)">名前</th><divider :index="1" prop="settingChatTargetTabWindow"/>
+            <th :style="colStyle(2)">出力先タブ</th><divider :index="2" prop="settingChatTargetTabWindow"/>
+            <th :style="colStyle(3)">送信先</th><divider :index="3" prop="settingChatTargetTabWindow"/>
             <th :style="colStyle(4)"></th>
           </tr>
           </thead>
@@ -29,43 +29,47 @@
             <td :style="colStyle(0)">
               <span class="icon-checkmark" v-if="groupTargetTab.isSecret"></span>
             </td>
-            <Divider :index="0" prop="settingChatTargetTabWindow"/>
+            <divider :index="0" prop="settingChatTargetTabWindow"/>
 
             <!-- 名前 -->
             <td :style="colStyle(1)">
               {{groupTargetTab.name}}
             </td>
-            <Divider :index="1" prop="settingChatTargetTabWindow"/>
+            <divider :index="1" prop="settingChatTargetTabWindow"/>
 
             <!-- 出力先タブ -->
             <td :style="colStyle(2)">
               {{groupTargetTab.targetTab ? groupTargetTab.targetTab : '指定なし'}}
             </td>
-            <Divider :index="2" prop="settingChatTargetTabWindow"/>
+            <divider :index="2" prop="settingChatTargetTabWindow"/>
 
             <!-- 送信先 -->
             <td :style="colStyle(3)" style="text-align: left; padding: 0 0.3rem;">
               {{getViewNames(groupTargetTab)}}
             </td>
-            <Divider :index="2" prop="settingChatTargetTabWindow"/>
+            <divider :index="2" prop="settingChatTargetTabWindow"/>
 
             <!-- 編集ボタン -->
             <td :style="colStyle(4)">
-              <button type="button" @click="edit(groupTargetTab.key)">編集</button>
+              <button
+                type="button"
+                @click="edit(groupTargetTab.key)"
+                :disabled="groupTargetTab.key === 'groupTargetTab-0'"
+              >編集</button>
             </td>
           </tr>
           <tr class="space">
-            <td :style="colStyle(0)"></td><Divider :index="0" prop="settingChatTargetTabWindow"/>
-            <td :style="colStyle(1)"></td><Divider :index="1" prop="settingChatTargetTabWindow"/>
-            <td :style="colStyle(2)"></td><Divider :index="2" prop="settingChatTargetTabWindow"/>
-            <td :style="colStyle(3)"></td><Divider :index="3" prop="settingChatTargetTabWindow"/>
+            <td :style="colStyle(0)"></td><divider :index="0" prop="settingChatTargetTabWindow"/>
+            <td :style="colStyle(1)"></td><divider :index="1" prop="settingChatTargetTabWindow"/>
+            <td :style="colStyle(2)"></td><divider :index="2" prop="settingChatTargetTabWindow"/>
+            <td :style="colStyle(3)"></td><divider :index="3" prop="settingChatTargetTabWindow"/>
             <td :style="colStyle(4)"></td>
           </tr>
           </tbody>
         </table>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>
@@ -238,26 +242,29 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
   width: 100%;
-  /*overflow-y: scroll;*/
   font-size: 12px;
 }
+
 label {
   display: flex;
   margin-top: 5px;
+
+  input {
+    flex: 1;
+    margin-left: 5px;
+  }
 }
-label input {
-  flex: 1;
-  margin-left: 5px;
-}
+
 .operateArea {
   margin-top: 5px;
   text-align: center;
 }
+
 /* Start 列幅可変テーブルのCSS */
 .tableContainer {
   overflow-y: scroll;
@@ -268,6 +275,7 @@ label input {
   font-size: 10px;
   box-sizing: border-box;
 }
+
 table {
   width: calc(100% - 19px);
   height: 100%;
@@ -283,18 +291,22 @@ table {
   );
   background-size: 5em 5em;
 }
+
 tr {
   height: 2.5em;
+
+  &.space {
+    height: auto;
+  }
 }
-tr.space {
-  height: auto;
-}
+
 th,
 td {
   padding: 0;
   white-space: nowrap;
   cursor: default;
 }
+
 th,
 td:not(.selectable) {
   user-select: none;
@@ -302,70 +314,88 @@ td:not(.selectable) {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
+
 th,
 td:not(.divider) {
   overflow: hidden;
 }
+
 table tbody {
   height: 100%;
+
+  td {
+    text-align: center;
+  }
+
+  tr {
+    height: 2.5em;
+
+    &:not(.space) {
+      &.isActive {
+        background-color: rgb(127, 206, 255) !important;
+      }
+    }
+
+    &:nth-child(odd):hover {
+      background: rgb(178, 225, 255);
+    }
+
+    &:nth-child(even):hover {
+      background: rgb(178, 225, 255);
+    }
+  }
 }
+
 table thead {
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 1) 0%,
     rgba(234, 234, 234, 1) 100%
   );
+
+  tr {
+    border-bottom: 1px solid rgb(183, 186, 188);
+
+    th:hover {
+      background: rgb(178, 225, 255);
+    }
+  }
 }
-table thead tr {
-  border-bottom: 1px solid rgb(183, 186, 188);
-}
-table tbody tr {
-  height: 2.5em;
-}
-table tbody tr:not(.space).isActive {
-  background-color: rgb(127, 206, 255) !important;
-}
-table thead tr th:hover {
-  background: rgb(178, 225, 255);
-}
-table tbody tr:not(.space):nth-child(odd):hover {
-  background: rgb(178, 225, 255);
-}
-table tbody tr:not(.space):nth-child(even):hover {
-  background: rgb(178, 225, 255);
-}
-table tbody td {
-  text-align: center;
-}
+
 table td.dev {
   background-color: rgb(183, 186, 188);
   cursor: col-resize;
   position: relative;
   width: 1px;
+
+  &:after {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: -2px;
+    content: "";
+    width: 5px;
+  }
 }
-table td.dev:after {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: -2px;
-  content: "";
-  width: 5px;
-}
+
 td i {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 table select {
   width: 100%;
   height: 100%;
   background: none;
   border: none;
 }
+
 table input {
   background: none;
   border: none;
 }
+
 button {
   /*height: 2.5em;*/
   font-size: inherit;
@@ -373,6 +403,10 @@ button {
   border-radius: 3px;
   padding: 0.3em 0.5em;
   line-height: 1em;
+
+  &:disabled {
+    background-color: lightgrey;
+  }
 }
 /* End 列幅可変テーブルのCSS */
 </style>

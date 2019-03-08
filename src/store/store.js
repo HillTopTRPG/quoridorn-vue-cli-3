@@ -37,7 +37,8 @@ export default new Vuex.Store({
       roomPassword: null,
       playerName: null,
       playerPassword: null,
-      playerType: null
+      playerType: null,
+      system: null
     },
     room: {
       webRtcRoom: null,
@@ -47,7 +48,8 @@ export default new Vuex.Store({
     },
     chat: {
       activeTab: "chatTab-0",
-      actorKey: ""
+      actorKey: "",
+      diceSystemList: []
     },
     map: {
       grid: { c: 0, r: 0 },
@@ -110,6 +112,7 @@ export default new Vuex.Store({
       const playerName = getUrlParam("playerName");
       const playerPassword = getUrlParam("playerPassword");
       let playerType = getUrlParam("playerType");
+      let system = getUrlParam("system");
 
       if (!!roomName && roomName.endsWith(CreateNewRoom.ENTRANCE_ROOM_NAME)) {
         alert(
@@ -122,6 +125,7 @@ export default new Vuex.Store({
         const paramList = [];
         if (roomPassword !== null)
           paramList.push(`roomPassword=${roomPassword}`);
+        if (system !== null) paramList.push(`system=${system}`);
         if (playerName !== null) paramList.push(`playerName=${playerName}`);
         if (playerPassword !== null)
           paramList.push(`playerPassword=${playerPassword}`);
@@ -140,6 +144,7 @@ export default new Vuex.Store({
       } else {
         playerType = null;
       }
+      state.param.system = system;
 
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定
@@ -230,6 +235,26 @@ export default new Vuex.Store({
         setting => {
           rootState.setting.connect.skywayKey = setting.skywayKey;
           rootState.setting.connect.type = setting.type;
+          rootState.setting.connect.bcdiceServer = setting.bcdiceServer;
+
+          /* ----------------------------------------------------------------------
+           * ダイスシステムの検証
+           */
+          dispatch("getBcdiceSystemList")
+            .then(systemList => {
+              state.chat.diceSystemList = systemList;
+              const index = systemList.findIndex(
+                systemObj => systemObj.system === system
+              );
+              if (index === -1) system = "DiceBot";
+            })
+            .catch(() => {
+              alert(
+                `BCDice-apiサーバ\n${
+                  setting.bcdiceServer
+                }\nの接続に失敗しました。`
+              );
+            });
 
           /* ----------------------------------------------------------------------
            * 初期入室の処理
@@ -256,7 +281,8 @@ export default new Vuex.Store({
                   playerName: playerName,
                   playerPassword: playerPassword,
                   playerType: playerType,
-                  fontColor: "#000000"
+                  fontColor: "#000000",
+                  system: system
                 };
                 // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
                 if (
@@ -266,7 +292,6 @@ export default new Vuex.Store({
                   playerPassword !== null &&
                   playerType !== null
                 ) {
-                  baseArg.system = undefined;
                   baseArg.playerType = baseArg.playerType || "PL";
                   return dispatch("doNewRoom", baseArg);
                 }
@@ -728,6 +753,7 @@ export default new Vuex.Store({
       c: state.map.grid.c,
       r: state.map.grid.r
     }),
-    isRolling: state => state.map.rollObj.isRolling
+    isRolling: state => state.map.rollObj.isRolling,
+    diceSystemList: state => state.chat.diceSystemList
   }
 });

@@ -7,7 +7,7 @@
           <label>名前<input type="text" v-model="name"></label>
           <label>出力先のタブ<select v-model="targetTab">
             <option :value="null">指定なし</option>
-            <option v-for="tabObj in chatTabs" :key="tabObj.name" :value="tabObj.name">{{tabObj.name}}</option>
+            <option v-for="tabObj in chatTabs" :key="tabObj.name" :value="tabObj.key">{{tabObj.name}}</option>
           </select></label>
           <label>全体<input type="checkbox" v-model="isAll"></label>
         </div>

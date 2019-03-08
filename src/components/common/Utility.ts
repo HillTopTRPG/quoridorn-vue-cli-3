@@ -201,6 +201,7 @@ export function toInitiativeObjList(
   ];
 
   /* eslint no-irregular-whitespace: ["error", {"skipRegExps": true}] */
+  if (format === "") return resultList;
   format.split(/[ 　]+/).forEach(str => {
     const fs: any[] = str.split(/[<＜]/);
 

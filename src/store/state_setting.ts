@@ -1,10 +1,5 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-// // @ts-ignore
-// import deckList from "../../public/static/conf/deck.yaml";
 
 Vue.use(Vuex);
 
@@ -15,11 +10,12 @@ export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.0b6",
+    version: "1.0.0b7",
     /** 接続情報 */
     connect: {
       skywayKey: "",
-      type: ""
+      type: "",
+      bcdiceServer: ""
     },
     /** 権限 */
     roles: [
@@ -51,12 +47,78 @@ export default {
       owner: "SYSTEM"
     }
   } /* end of state */,
+
+  actions: {
+    /**
+     * ダイスボット一覧を取得する
+     * @param state
+     */
+    getBcdiceSystemList({ state }: { state: any }) {
+      return new Promise((resolve: Function, reject: Function) => {
+        const url = `${state.connect.bcdiceServer}/v1/names`;
+        fetch(url)
+          .then(response => response.json())
+          .then(json => {
+            resolve(json.names);
+          })
+          .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * ダイスボットの情報を取得する
+     * @param state
+     * @param system
+     */
+    getBcdiceSystemInfo({ state }: { state: any }, system: string) {
+      return new Promise((resolve: Function, reject: Function) => {
+        const params: string = `system=${system}`;
+        const url = `${state.connect.bcdiceServer}/v1/systeminfo?${params}`;
+        fetch(url)
+          .then(response => response.json())
+          .then(json => {
+            if (json.ok) {
+              resolve(json.systeminfo);
+            } else {
+              reject(json);
+            }
+          })
+          .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * ダイスコマンドを送信して結果を取得する
+     * @param state
+     * @param system
+     * @param command
+     */
+    sendBcdiceServer(
+      { state }: { state: any },
+      { system, command }: { system: string; command: string }
+    ) {
+      return new Promise((resolve: Function, reject: Function) => {
+        const params: string = [`system=${system}`, `command=${command}`].join(
+          "&"
+        );
+        const url = `${state.connect.bcdiceServer}/v1/diceroll?${params}`;
+        fetch(url)
+          .then(response => response.json())
+          .then(json => {
+            resolve(json);
+          })
+          .catch(err => reject(err));
+      });
+    }
+  },
+
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,
     chatOptionPagingSize: () => 8,
     skywayKey: (state: any) => state.connect.skywayKey,
     connectType: (state: any) => state.connect.type,
-    version: (state: any) => state.version
+    version: (state: any) => state.version,
+    bcdiceServer: (state: any) => state.bcdiceServer
   }
 };

@@ -202,7 +202,7 @@
         <span class="widthScale" ref="widthScale" style="visibility: hidden"></span>
       </div>
       <div class="operateArea">
-        <button>変更</button>
+        <button @click="editButtonOnClick">変更</button>
         <span style="width: 0.5em;"></span>
         <button disabled>削除</button>
       </div>
@@ -699,6 +699,10 @@ export default class InitiativeWindow extends Vue {
       logOff: true
     });
     this.selectLine(roundPlayerKey);
+  }
+
+  private editButtonOnClick() {
+    alert("未実装です。");
   }
 }
 </script>

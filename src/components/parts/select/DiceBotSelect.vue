@@ -1,26 +1,31 @@
 <template>
   <select :title="helpMessage" v-model="currentSystem">
-    <option :key="systemObj.value" :value="systemObj.value" v-for="systemObj in diceBotSystems">{{systemObj.name}}</option>
+    <option
+      v-for="systemObj in diceSystemList"
+      :key="systemObj.system"
+      :value="systemObj.system"
+    >{{systemObj.system !== 'DiceBot' ? systemObj.name : 'ダイスボット指定なし'}}</option>
   </select>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from "vue-property-decorator";
-import { Action } from "vuex-class";
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
 
 @Component<DiceBotSelect>({
   name: "diceBotSelect"
 })
 export default class DiceBotSelect extends Vue {
   @Action("loading") loading: any;
+  @Action("getBcdiceSystemInfo") getBcdiceSystemInfo: any;
+  @Getter("diceSystemList") diceSystemList: any;
   @Prop() public value!: string;
 
   /*
    * data
    */
-  private diceBotSystems: any[] = [];
-  /** bc-dice本体 */
-  private _bcDice: any = null;
+  private helpMessage: string = "";
+
   /** ダイスボットの説明文の定型部分 */
   private baseHelpMessage: string =
     "【ダイスボット】チャットにダイス用の文字を入力するとダイスロールが可能\n" +
@@ -42,70 +47,34 @@ export default class DiceBotSelect extends Vue {
   @Emit("input")
   input(currentSystem: string) {}
 
+  @Watch("currentSystem", { immediate: true })
+  onChangeCurrentSystem(currentSystem: string) {
+    if (currentSystem === "DiceBot") {
+      this.helpMessage =
+        this.baseHelpMessage +
+        `==【ダイスボット(指定なし)専用】====================\n` +
+        "ゲーム固有の判定がある場合はこの場所に記載されます。";
+    } else {
+      if (!currentSystem) return;
+      this.getBcdiceSystemInfo(currentSystem)
+        .then((info: any) => {
+          this.helpMessage =
+            this.baseHelpMessage +
+            `==【${info.name}専用】====================\n` +
+            info.info;
+        })
+        .catch((err: any) => {
+          window.console.error(err);
+          this.helpMessage = "ヘルプ文言の取得に失敗しました。";
+        });
+    }
+  }
+
   public get currentSystem(): string {
     return this.value;
   }
   public set currentSystem(value: string) {
-    const diceObj = this.diceBotSystems.filter(obj => obj.value === value)[0];
-
-    if (!this.bcDice) return;
-    this.bcDice.setDiceBot(diceObj.diceBot);
-
     this.input(value);
-  }
-
-  public get bcDice(): any {
-    return this._bcDice;
-  }
-  public set bcDice(bcDice: any) {
-    this._bcDice = bcDice;
-  }
-
-  /*
-   * ライフサイクルメソッド
-   */
-  created(): void {}
-  mounted(): void {
-    this.diceBotSystems.push({
-      name: "ダイスBot指定なし",
-      value: "DiceBot",
-      helpMessage:
-        this.baseHelpMessage +
-        `==【ダイスボット(指定なし)専用】====================\n` +
-        "ゲーム固有の判定がある場合はこの場所に記載されます。"
-    });
-    const _: any = this;
-
-    /* bcdice-js を Dynamic import */
-    setTimeout(() => {
-      // _.loading(true);
-      import(/* webpackChunkName: "bcdice-js" */ "bcdice-js").then(module => {
-        _.bcDice = new module.BCDice();
-        // _.loading(false);
-
-        const DiceBotLoader = module.DiceBotLoader;
-        DiceBotLoader["collectDiceBots"]().forEach(
-          (diceBot: any): void => {
-            // window.console.log(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`);
-            _.diceBotSystems.push({
-              name: diceBot["gameName"](),
-              value: diceBot.gameType(),
-              diceBot: diceBot,
-              helpMessage:
-                _.baseHelpMessage +
-                `==【${diceBot.gameName()}専用】====================\n` +
-                diceBot.getHelpMessage()
-            });
-          }
-        );
-      });
-    });
-  }
-  private get helpMessage(): string {
-    const diceObj = this.diceBotSystems.filter(
-      obj => obj.value === this.currentSystem
-    )[0];
-    return diceObj ? diceObj.helpMessage : "";
   }
 }
 </script>

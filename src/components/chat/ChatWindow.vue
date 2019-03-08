@@ -5,42 +5,132 @@
        ! タブ
        !--------------->
       <div class="tabs dep">
-        <span class="tab"
-              v-for="(tabObj, index) in chatTabs"
-              :key="tabObj.name"
-              :class="{ active: tabObj.key === activeTab, unRead: tabObj.unRead > 0 }"
-              @mousedown.prevent="selectChatTab(tabObj.key)"
-              :tabindex="index + 1"
+        <!-- タブ -->
+        <span
+          class="tab"
+          v-for="(tabObj, index) in chatTabs"
+          :key="tabObj.name"
+          :class="{ active: tabObj.key === activeTab, unRead: tabObj.unRead > 0 }"
+          @mousedown.prevent="chatTabOnSelect(tabObj.key)"
+          :tabindex="index + 1"
         >#{{tabObj.name}}/{{tabObj.unRead}}</span>
-        <span class="tab addButton" @click="addTab" :tabindex="chatTabs.length + 1"><span class="icon-cog"></span></span>
+
+        <!-- タブ設定ボタン -->
+        <span
+          class="tab addButton"
+          @click="tabAddButtonOnClick"
+          :tabindex="chatTabs.length + 1"
+        ><span class="icon-cog"></span></span>
       </div>
+
       <!----------------
        ! チャットログ
        !--------------->
       <ul id="chatLog" @wheel.stop>
         <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
       </ul>
+
       <!----------------
        ! 操作盤
        !--------------->
       <label class="oneLine dep">
+
+        <!-- 発言者選択 -->
         <span class="label">名前(！)</span>
-        <select :tabindex="chatTabs.length + 2" :value="chatActorKey" @change="event => inputName(event.target.value)" title="">
-          <option v-for="actor in getPeerActors" :key="actor.key" :value="actor.key">{{getViewName(actor.key)}}</option>
+        <select
+          :tabindex="chatTabs.length + 2"
+          :value="chatActorKey"
+          @change="event => updateActorKey(event.target.value)" title=""
+        >
+          <option
+            v-for="actor in getPeerActors"
+            :key="actor.key"
+            :value="actor.key"
+          >{{getViewName(actor.key)}}</option>
         </select>
-        <actor-status-select :actorKey="chatActorKey" v-model="statusName"/>
-        <dice-bot-select ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabs.length + 6" class="diceBotSystem"/>
-        <span class="icon"><i class="icon-dice" title="ダイスボットの追加・編集・削除" @click="settingDiceBot" :tabindex="chatTabs.length + 7"></i></span>
-        <span class="icon"><i class="icon-bin" title="チャットログ全削除" @click="deleteChatLog" :tabindex="chatTabs.length + 8"></i></span>
-        <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabs.length + 9"></i></span>-->
-        <span class="icon"><i class="icon-cloud-check" title="点呼・投票設定" @click="settingRollCall" :tabindex="chatTabs.length + 10"></i></span>
-        <span class="icon"><i class="icon-bell" title="目覚ましアラーム設定" @click="settingAlerm" :tabindex="chatTabs.length + 11"></i></span>
-        <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabs.length + 12"></i></span>
-        <span class="icon"><i class="icon-film" title="カットイン設定" @click="settingCutIn" :tabindex="chatTabs.length + 13"></i></span>
-        <span class="icon"><i class="icon-list2" title="チャットパレット設定" @click="settingChatPalette" :tabindex="chatTabs.length + 14"></i></span>
-        <span class="icon"><i class="icon-accessibility" title="立ち絵設定" @click="settingStandImage" :tabindex="chatTabs.length + 15"></i></span>
-        <span class="icon"><i class="icon-target" title="射界設定" @click="settingRange" :tabindex="chatTabs.length + 16"></i></span>
+
+        <!-- ステータス選択 -->
+        <actor-status-select :actorKey="chatActorKey" v-model="statusName" :tabindex="chatTabs.length + 3"/>
+
+        <!-- ダイスボット選択 -->
+        <dice-bot-select ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabs.length + 4" class="diceBotSystem"/>
+
+        <!-- ここから各種機能呼び出しボタン -->
+        <span class="icon">
+          <i
+            class="icon-dice"
+            title="ダイスボットの追加・編集・削除"
+            @click="diceBotSettingButtonOnClick"
+            :tabindex="chatTabs.length + 5"
+          ></i>
+        </span>
+        <span class="icon">
+          <i
+            class="icon-bin"
+            title="チャットログ全削除"
+            @click="chatLogDeleteButtonOnClick"
+            :tabindex="chatTabs.length + 6"
+          ></i>
+        </span>
+        <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="chatFontSettingButtonOnClick" :tabindex="chatTabs.length + 9"></i></span>-->
+        <span class="icon">
+          <i
+            class="icon-cloud-check"
+            title="点呼・投票設定"
+            @click="rollCallSettingButtonOnClick"
+            :tabindex="chatTabs.length + 7"
+          ></i>
+        </span>
+        <span class="icon">
+          <i
+            class="icon-bell"
+            title="目覚ましアラーム設定"
+            @click="alermSettingButtonOnClick"
+            :tabindex="chatTabs.length + 8"
+          ></i>
+        </span>
+        <span class="icon">
+          <i
+            class="icon-music"
+            title="BGMの設定"
+            @click="bgmSettingButtonOnClick"
+            :tabindex="chatTabs.length + 9"
+          ></i>
+        </span>
+        <span class="icon">
+          <i
+            class="icon-film"
+            title="カットイン設定"
+            @click="cutInSettingButtonOnClick"
+            :tabindex="chatTabs.length + 10"
+          ></i>
+        </span>
+        <span class="icon">
+          <i
+            class="icon-list2"
+            title="チャットパレット設定"
+            @click="chatPaletteSettingButtonOnClick"
+            :tabindex="chatTabs.length + 11"
+          ></i>
+        </span>
+        <span class="icon">
+          <i
+            class="icon-accessibility"
+            title="立ち絵設定"
+            @click="standImageSettingButtonOnClick"
+            :tabindex="chatTabs.length + 12"
+          ></i>
+        </span>
+        <span class="icon">
+          <i
+            class="icon-target"
+            title="射界設定"
+            @click="rangeSettingButtonOnClick"
+            :tabindex="chatTabs.length + 13"
+          ></i>
+        </span>
       </label>
+
       <!----------------
        ! 発言
        !--------------->
@@ -50,22 +140,32 @@
            ! グループチャットタブ
            !--------------->
           <div class="tabs">
-            <span class="tab"
-                  v-for="(tabObj, index) in groupTargetTabList"
-                  :key="tabObj.key"
-                  :class="{ active: tabObj.key === chatTarget }"
-                  @mousedown.prevent="groupTargetTabSelect(tabObj.key)"
-                  :tabindex="chatTabs.length + 17 + index"
-            >> {{tabObj.name}}{{otherMatcherObj(tabObj) ? `(${getViewName(otherMatcherObj(tabObj).key)})` : ''}}</span>
-            <span class="tab addButton"
-                  @click="addTargetTab"
-                  :tabindex="chatTabs.length + chatTabs.length + 17"
+
+            <!-- グループチャットタブ -->
+            <span
+              class="tab"
+              v-for="(tabObj, index) in groupTargetTabList"
+              :key="tabObj.key"
+              :class="{ active: tabObj.key === chatTarget }"
+              @mousedown.prevent="groupTargetTabOnSelect(tabObj.key)"
+              :tabindex="chatTabs.length + 14 + index"
+            >&gt; {{tabObj.name}}{{otherMatcherObj(tabObj) ? `(${getViewName(otherMatcherObj(tabObj).key)})` : ''}}</span>
+
+            <!-- グループチャットタブ編集ボタン -->
+            <span
+              class="tab addButton"
+              @click="targetTabAddButtonOnClick"
+              :tabindex="chatTabs.length + chatTabs.length + 14"
             ><span class="icon-cog"></span></span>
+
+            <!-- 「」付与チェックボックス -->
             <label class="bracketOption">
-              <input type="checkbox" v-model="addBrackets" :tabindex="chatTabs.length + chatTabs.length + 18" />
+              <input type="checkbox" v-model="addBrackets" :tabindex="chatTabs.length + chatTabs.length + 15" />
               発言時に「」を付与
             </label>
+
           </div>
+
           <!----------------
            ! チャットオプション（送信者）
            !--------------->
@@ -83,6 +183,7 @@
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
             </ul>
           </div>
+
           <!----------------
            ! チャットオプション（対象）
            !--------------->
@@ -100,6 +201,7 @@
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
             </ul>
           </div>
+
           <!----------------
            ! チャットオプション（タブ）
            !--------------->
@@ -118,30 +220,33 @@
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
             </ul>
           </div>
+
+          <!-- チャット入力エリア -->
           <label class="chatInputArea">
-            <span class="chatOption" @click="clickChatOption">
+            <span class="chatOption" @click="chatOptionOnClick">
               <span class="emphasis">! {{getViewName(chatActorKey)}}-{{statusName}}</span>
-              <span :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{getGroupTargetName()}}</span>
+              <span :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{groupTargetName}}</span>
               <span :class="{emphasis: outputTab !== null}"># {{outputTab ? getTabName(outputTab) : "[選択中]"}}</span>
             </span>
             <!----------------
              ! 入力欄
              !--------------->
-            <textarea id="chatTextArea"
-                      v-model="currentMessage"
-                      @input="onInput"
-                      @blur="blurTextArea"
-                      @keydown.up="event => chatOptionSelectChange('up', event)"
-                      @keydown.down="event => chatOptionSelectChange('down', event)"
-                      @keydown.esc.prevent="pressEsc"
-                      @keypress.enter.prevent="event => sendMessage(event, true)"
-                      @keyup.enter.prevent="event => sendMessage(event, false)"
-                      :tabindex="chatTabs.length + chatTabs.length + 14"
-                      :placeholder="'メッセージ（改行はShift + Enter）'"
+            <textarea
+              id="chatTextArea"
+              v-model="currentMessage"
+              @input="onInput"
+              @blur="textAreaOnBlur"
+              @keydown.up="event => chatOptionSelectChange('up', event)"
+              @keydown.down="event => chatOptionSelectChange('down', event)"
+              @keydown.esc.prevent="textAreaOnPressEsc"
+              @keypress.enter.prevent="event => sendMessage(event, true)"
+              @keyup.enter.prevent="event => sendMessage(event, false)"
+              :tabindex="chatTabs.length + chatTabs.length + 16"
+              :placeholder="'メッセージ（改行はShift + Enter）'"
             ></textarea>
           </label>
         </div>
-        <button :tabindex="chatTabs.length + chatTabs.length + 15">送信</button>
+        <button :tabindex="chatTabs.length + chatTabs.length + 17">送信</button>
       </div>
       <!----------------
        ! 入力者表示
@@ -188,6 +293,7 @@ export default class ChatWindow extends Vue {
   @Action("windowOpen") windowOpen: any;
   @Action("setProperty") setProperty: any;
   @Action("sendRoomData") sendRoomData: any;
+  @Action("sendBcdiceServer") sendBcdiceServer: any;
   @Mutation("updateActorKey") updateActorKey: any;
   @Mutation("addSecretDice") addSecretDice: any;
   @Getter("getPeerActors") getPeerActors: any;
@@ -208,6 +314,7 @@ export default class ChatWindow extends Vue {
   @Getter("chatOptionPagingSize") chatOptionPagingSize: any;
   @Getter("isWait") isWait: any;
   @Getter("chatActorKey") chatActorKey: any;
+  @Getter("roomSystem") roomSystem: any;
 
   private enterPressing: boolean = false;
   /** 入力されたチャット文字 */
@@ -234,7 +341,11 @@ export default class ChatWindow extends Vue {
   private volatileTargetTab: string | null = "";
   private statusName: string = "◆";
 
-  onInput(event: any): void {
+  /**
+   * チャット入力欄の入力イベントハンドラ
+   * @param event イベント
+   */
+  private onInput(event: any): void {
     const text = event.target.value;
 
     let selectFrom: string = "";
@@ -299,7 +410,11 @@ export default class ChatWindow extends Vue {
       });
     }
   }
-  getGroupTargetName(): void {
+
+  /**
+   * 現在のチャット送信対象
+   */
+  private get groupTargetName(): string | null {
     let target = this.getObj(this.chatTarget);
     return target ? this.getViewName(target.key) : null;
   }
@@ -307,7 +422,7 @@ export default class ChatWindow extends Vue {
   /**
    * 上下キーを押下されてチャットオプションの選択項目を移動させる処理
    */
-  chatOptionSelectChange(direction: string, event: any): void {
+  private chatOptionSelectChange(direction: string, event: any): void {
     // 変化前の値を保存
     if (!this.volatileFrom) this.volatileFrom = this.chatActorKey;
     if (!this.volatileStatusName) this.volatileStatusName = this.statusName;
@@ -344,7 +459,7 @@ export default class ChatWindow extends Vue {
       );
       const newValue = arrangeIndex(this.chatTargetList, index);
 
-      this.groupTargetTabSelect(newValue.key);
+      this.groupTargetTabOnSelect(newValue.key);
     }
 
     // タブの選択の場合
@@ -358,26 +473,31 @@ export default class ChatWindow extends Vue {
       let index = selection.indexOf(this.outputTab);
       const newValue = arrangeIndex(selection, index);
 
-      this.selectChatTab(newValue !== null ? newValue : this.volatileActiveTab);
+      this.chatTabOnSelect(
+        newValue !== null ? newValue : this.volatileActiveTab
+      );
       this.outputTab = newValue;
     }
   }
+
   /**
    * 入力欄からフォーカスが外れた場合
    */
-  blurTextArea(): void {
+  private textAreaOnBlur(): void {
     this.resetChatOption();
   }
+
   /**
    * 入力欄でESCキーを押下した場合
    */
-  pressEsc(): void {
+  private textAreaOnPressEsc(): void {
     this.resetChatOption();
   }
+
   /**
    * チャットオプションを仮変更前の状態に戻す
    */
-  resetChatOption(): void {
+  private resetChatOption(): void {
     if (this.chatOptionSelectMode) {
       this.currentMessage = "";
       if (this.volatileFrom) {
@@ -385,7 +505,7 @@ export default class ChatWindow extends Vue {
       }
       if (this.volatileStatusName) this.statusName = this.volatileStatusName;
       if (this.volatileTarget) this.chatTarget = this.volatileTarget;
-      if (this.volatileActiveTab) this.selectChatTab(this.volatileActiveTab);
+      if (this.volatileActiveTab) this.chatTabOnSelect(this.volatileActiveTab);
       if (this.volatileTargetTab) this.outputTab = this.volatileTargetTab;
     }
     this.chatOptionSelectMode = "";
@@ -395,7 +515,12 @@ export default class ChatWindow extends Vue {
     this.volatileActiveTab = "";
     this.volatileTargetTab = "";
   }
-  selectChatTab(key: string): void {
+
+  /**
+   * チャットログ表示タブを選択されたときの挙動
+   * @param key タブのkey
+   */
+  private chatTabOnSelect(key: string): void {
     this.setProperty({
       property: "chat.activeTab",
       value: key,
@@ -403,7 +528,12 @@ export default class ChatWindow extends Vue {
     });
     this.chatTabSelect(key);
   }
-  groupTargetTabSelect(targetKey: string): void {
+
+  /**
+   * グループターゲットタブを選択された時の挙動
+   * @param targetKey タブのkey
+   */
+  private groupTargetTabOnSelect(targetKey: string): void {
     this.chatTarget = targetKey;
 
     if (targetKey.split("-")[0] === "groupTargetTab") {
@@ -415,19 +545,32 @@ export default class ChatWindow extends Vue {
       }
     }
   }
-  inputName(key: string): void {
-    this.updateActorKey(key);
-  }
-  clickChatOption(): void {
+
+  /**
+   * チャットオプションクリックイベントハンドラ
+   */
+  private chatOptionOnClick(): void {
     document.getElementById("chatTextArea")!.focus();
   }
-  addTab(): void {
+
+  /**
+   * チャットタブ追加ボタンクリックイベントハンドラ
+   */
+  private tabAddButtonOnClick(): void {
     this.windowOpen("private.display.settingChatTabWindow");
   }
-  addTargetTab(): void {
+
+  /**
+   * グループチャットタグ追加ボタンクリックイベントハンドラ
+   */
+  private targetTabAddButtonOnClick(): void {
     this.windowOpen("private.display.settingChatTargetTabWindow");
   }
-  settingDiceBot(): void {
+
+  /**
+   * ダイスボット管理ボタンクリックイベントハンドラ
+   */
+  private diceBotSettingButtonOnClick(): void {
     this.setProperty({
       property: "private.display.unSupportWindow.title",
       value: "ダイスボット用表管理",
@@ -435,55 +578,91 @@ export default class ChatWindow extends Vue {
     });
     this.windowOpen("private.display.unSupportWindow");
   }
-  deleteChatLog(): void {
+
+  /**
+   * チャットログ削除ボタンクリックイベントハンドラ
+   */
+  private chatLogDeleteButtonOnClick(): void {
     // TODO
     alert("未実装です。");
   }
-  settingFont(): void {
+
+  /**
+   * グループチャットタグ追加ボタンクリックイベントハンドラ
+   */
+  private chatFontSettingButtonOnClick(): void {
     this.windowOpen("private.display.settingChatFontWindow");
   }
-  settingRollCall(): void {
+
+  /**
+   * 点呼・投票設定ボタンクリックイベントハンドラ
+   */
+  private rollCallSettingButtonOnClick(): void {
     // TODO
     alert("未実装です。");
   }
-  settingAlerm(): void {
+
+  /**
+   * 目覚ましアラーム設定ボタンクリックイベントハンドラ
+   */
+  private alermSettingButtonOnClick(): void {
     // TODO
     alert("未実装です。");
   }
-  settingCutIn(): void {
-    // TODO
-    alert("未実装です。");
-  }
-  settingBGM(): void {
+
+  /**
+   * BGM設定ボタンクリックイベントハンドラ
+   */
+  private bgmSettingButtonOnClick(): void {
     this.windowOpen("private.display.settingBGMWindow");
   }
-  settingChatPalette(): void {
+
+  /**
+   * カットイン設定ボタンクリックイベントハンドラ
+   */
+  private cutInSettingButtonOnClick(): void {
     // TODO
     alert("未実装です。");
   }
-  settingStandImage(): void {
+
+  /**
+   * チャットパレット設定ボタンクリックイベントハンドラ
+   */
+  private chatPaletteSettingButtonOnClick(): void {
+    // TODO
+    alert("未実装です。");
+  }
+
+  /**
+   * 立ち絵設定ボタンクリックイベントハンドラ
+   */
+  private standImageSettingButtonOnClick(): void {
     this.windowOpen("private.display.standImageSettingWindow");
   }
-  settingRange(): void {
+
+  /**
+   * 射界設定ボタンクリックイベントハンドラ
+   */
+  private rangeSettingButtonOnClick(): void {
     // TODO
     alert("未実装です。");
   }
-  getTabName(tabKey: string): string {
+
+  /**
+   * チャットオプションに表示するチャットタブの表示名の取得
+   * @param tabKey
+   */
+  private getTabName(tabKey: string): string {
     const tab = this.chatTabs.filter((tab: any) => tab.key === tabKey)[0];
     return tab ? tab.name : null;
   }
-  commitChatOption(): void {
-    if (this.chatOptionSelectMode) {
-      this.currentMessage = "";
-    }
-    this.chatOptionSelectMode = "";
-    this.volatileFrom = "";
-    this.volatileStatusName = "";
-    this.volatileTarget = "";
-    this.volatileActiveTab = "";
-    this.volatileTargetTab = "";
-  }
-  sendMessage(this: any, event: any, flg: boolean): void {
+
+  /**
+   * チャット欄に記入された内容をチャットに反映させる
+   * @param event イベント
+   * @param flg 押下ならtrue, 離す場合はfalse
+   */
+  private sendMessage(this: any, event: any, flg: boolean): void {
     if (this.enterPressing === flg) return;
     this.enterPressing = flg;
     if (!flg) return;
@@ -495,7 +674,13 @@ export default class ChatWindow extends Vue {
 
     // チャット送信オプション選択中のEnterは特別仕様
     if (this.chatOptionSelectMode) {
-      this.commitChatOption();
+      if (this.chatOptionSelectMode) this.currentMessage = "";
+      this.chatOptionSelectMode = "";
+      this.volatileFrom = "";
+      this.volatileStatusName = "";
+      this.volatileTarget = "";
+      this.volatileActiveTab = "";
+      this.volatileTargetTab = "";
       return;
     }
 
@@ -529,7 +714,7 @@ export default class ChatWindow extends Vue {
       outputTab = this.activeTab;
     }
 
-    let ownerKey = null;
+    let ownerKey: string | undefined = undefined;
 
     if (this.chatActorKey) {
       const kind = this.chatActorKey.split("-")[0];
@@ -544,122 +729,125 @@ export default class ChatWindow extends Vue {
       ownerKey = undefined;
     }
 
-    let isDiceRoll: boolean = false;
-    let isSecretDice: boolean = false;
-    let diceRollResult: any = null;
-
     // -------------------
     // ダイスBot処理
     // -------------------
-    const bcDice: any = this.$refs.diceBot.bcDice;
-    if (bcDice) {
-      bcDice.setMessage(this.currentMessage);
-      const resultObj = bcDice.dice_command();
-      const isSecret = resultObj[1];
-      diceRollResult = resultObj[0].replace(/(^: )/g, "").replace(/＞/g, "→");
-      if (diceRollResult !== "1") {
-        isDiceRoll = true;
-        if (isSecret) isSecretDice = true;
-      }
-      this.currentMessage = "";
-    }
+    this.sendBcdiceServer({
+      system: this.currentDiceBotSystem,
+      command: this.currentMessage
+    })
+      .then((json: any) => {
+        let isDiceRoll: boolean = false;
+        let isSecretDice: boolean = false;
+        let diceRollResult: string | null = null;
 
-    const currentActor = this.getPeerActors.filter(
-      (actor: any) => actor.key === this.chatActorKey
-    )[0];
-    if (isDiceRoll && isSecretDice) {
-      // -------------------
-      // シークレットダイス
-      // -------------------
-      this.addChatLog({
-        name: this.getViewName(this.chatActorKey),
-        text: `シークレットダイス`,
-        color: color,
-        tab: outputTab,
-        from: ownerKey,
-        actorKey: this.chatActorKey,
-        statusName: this.statusName,
-        target: this.chatTarget,
-        owner: currentActor ? currentActor.key : null
-      });
+        if (json.ok) {
+          // bcdiceとして結果が取れた
+          const resultStr: string = json.result;
+          isSecretDice = json.secret;
+          const diceList: any[] = json.dices;
+          diceRollResult = resultStr.replace(/(^: )/g, "").replace(/＞/g, "→");
+          isDiceRoll = true;
+        } else {
+          // bcdiceとして結果は取れなかった
+        }
+        this.currentMessage = "";
 
-      // 隠しダイスロール結果画面に反映
-      this.addSecretDice({
-        name: this.getViewName(this.chatActorKey),
-        diceBot: this.currentDiceBotSystem,
-        text: text,
-        diceRollResult: diceRollResult,
-        color: color,
-        tab: outputTab,
-        from: ownerKey,
-        actorKey: this.chatActorKey,
-        statusName: this.statusName,
-        target: this.chatTarget,
-        owner: currentActor ? currentActor.key : null
+        const currentActor = this.getPeerActors.filter(
+          (actor: any) => actor.key === this.chatActorKey
+        )[0];
+
+        if (isDiceRoll && isSecretDice) {
+          // -------------------
+          // シークレットダイス
+          // -------------------
+          this.addChatLog({
+            name: this.getViewName(this.chatActorKey),
+            text: `シークレットダイス`,
+            color: color,
+            tab: outputTab,
+            from: ownerKey,
+            actorKey: this.chatActorKey,
+            statusName: this.statusName,
+            target: this.chatTarget,
+            owner: currentActor ? currentActor.key : null
+          });
+
+          // 隠しダイスロール結果画面に反映
+          this.addSecretDice({
+            name: this.getViewName(this.chatActorKey),
+            diceBot: this.currentDiceBotSystem,
+            text: text,
+            diceRollResult: diceRollResult,
+            color: color,
+            tab: outputTab,
+            from: ownerKey,
+            actorKey: this.chatActorKey,
+            statusName: this.statusName,
+            target: this.chatTarget,
+            owner: currentActor ? currentActor.key : null
+          });
+        } else {
+          // -------------------
+          // プレイヤー発言
+          // -------------------
+          this.addChatLog({
+            name: this.getViewName(this.chatActorKey),
+            text: text,
+            color: color,
+            tab: outputTab,
+            from: ownerKey,
+            actorKey: this.chatActorKey,
+            statusName: this.statusName,
+            target: this.chatTarget,
+            owner: currentActor ? currentActor.key : null
+          });
+          if (isDiceRoll) {
+            // -------------------
+            // ダイスロール結果
+            // -------------------
+            this.addChatLog({
+              name: this.currentDiceBotSystem,
+              text: diceRollResult,
+              color: color,
+              tab: outputTab,
+              from: ownerKey,
+              actorKey: this.chatActorKey,
+              statusName: this.statusName,
+              target: this.chatTarget,
+              owner: currentActor ? currentActor.key : null
+            });
+          }
+        }
+      })
+      .catch((err: any) => {
+        window.console.error(err);
       });
-    } else {
-      // -------------------
-      // プレイヤー発言
-      // -------------------
-      this.addChatLog({
-        name: this.getViewName(this.chatActorKey),
-        text: text,
-        color: color,
-        tab: outputTab,
-        from: ownerKey,
-        actorKey: this.chatActorKey,
-        statusName: this.statusName,
-        target: this.chatTarget,
-        owner: currentActor ? currentActor.key : null
-      });
-      if (isDiceRoll) {
-        // -------------------
-        // ダイスロール結果
-        // -------------------
-        this.addChatLog({
-          name: this.currentDiceBotSystem,
-          text: diceRollResult,
-          color: color,
-          tab: outputTab,
-          from: ownerKey,
-          actorKey: this.chatActorKey,
-          statusName: this.statusName,
-          target: this.chatTarget,
-          owner: currentActor ? currentActor.key : null
-        });
-      }
-    }
   }
-  nameToKeyView(name: string): string {
-    const key = this.nameToKey(name);
-    this.updateActorKey(key);
-    return key;
-  }
-  nameToKey(name: string): string {
-    const obj = this.getPeerActors
-      .map((actor: any) => ({
-        name: this.getViewName(actor.key),
-        key: actor.key
-      }))
-      .filter((obj: any) => obj.name === name)[0];
-    return obj ? obj.key : "";
-  }
+
+  /**
+   * グループチャットタブの発言者の名前を取得する
+   * @param tabObj グループチャットオブジェクト
+   */
   otherMatcherObj(tabObj: any): string {
     if (tabObj.isAll) return "";
-    return this.tabMatchObj(tabObj).filter(
-      (obj: any) => obj.key !== this.chatActorKey
-    )[0];
+    return tabObj.group
+      .map((g: any) => this.getObj(g))
+      .filter((obj: any) => {
+        const kind = obj.key.split("-")[0];
+        if (kind === "player") {
+          if (obj.key === this.playerKey) return true;
+        } else {
+          if (obj.owner === this.playerKey) return true;
+        }
+        return false;
+      })
+      .filter((obj: any) => obj.key !== this.chatActorKey)[0];
   }
-  tabMatchObj(tabObj: any): any {
-    return tabObj.group.map((g: any) => this.getObj(g)).filter((obj: any) => {
-      const kind = obj.key.split("-")[0];
-      if (kind === "player") {
-        if (obj.key === this.playerKey) return true;
-      } else {
-        if (obj.owner === this.playerKey) return true;
-      }
-      return false;
-    });
+
+  @Watch("roomSystem")
+  onChangeRoomSystem(roomSystem: string) {
+    this.currentDiceBotSystem = roomSystem;
   }
 
   @Watch("currentDiceBotSystem")
@@ -784,6 +972,8 @@ export default class ChatWindow extends Vue {
   padding-left: 1em;
   width: 100%;
   box-sizing: border-box;
+  z-index: 10;
+  margin-bottom: -1px;
 }
 .tab {
   position: relative;

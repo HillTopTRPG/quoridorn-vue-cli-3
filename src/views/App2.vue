@@ -159,6 +159,7 @@ export default class App2 extends Vue {
   @Getter("backgroundColor") backgroundColor: any;
 
   mounted() {
+    // bcdiceの使用準備
     this.onMount();
 
     // Youtubeの使用準備
@@ -169,19 +170,18 @@ export default class App2 extends Vue {
     )[0];
     firstScript!.parentNode!.insertBefore(script, firstScript);
 
+    // 保存イベント
     let count = 0;
-    document.onkeydown = event => {
+    document.onkeydown = (event: any) => {
       if (
         (event.ctrlKey || event.metaKey) &&
         (event.keyCode === 83 || event.which === 83)
       ) {
-        if (count++ === 0) {
-          this.exportStart();
-        }
+        if (count++ === 0) this.exportStart();
         return false;
       }
     };
-    document.onkeyup = event => {
+    document.onkeyup = (event: any) => {
       if (
         (event.ctrlKey || event.metaKey) &&
         (event.keyCode === 83 || event.which === 83)

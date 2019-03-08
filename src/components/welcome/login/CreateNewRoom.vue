@@ -59,7 +59,7 @@
     <div class="subBlock newRoom" v-if="isViewNewRoom && !isRoomExist">
       <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword"/></label>
       <label class="roomSystem">システム：
-        <DiceBotSelect :outputFlg="true" v-model="currentSystem"/>
+        <dice-bot-select :outputFlg="true" v-model="currentSystem"/>
       </label>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
@@ -191,6 +191,8 @@ export default class CreateNewRoom extends Vue {
     paramList.push(`roomName=${this.roomName}`);
     if (this.roomPassword !== null)
       paramList.push(`roomPassword=${this.roomPassword}`);
+    if (this.currentSystem !== null)
+      paramList.push(`system=${this.currentSystem}`);
     if (this.playerName !== null)
       paramList.push(`playerName=${this.playerName}`);
     if (this.playerPassword !== null)
@@ -229,7 +231,8 @@ export default class CreateNewRoom extends Vue {
           playerName: this.playerName,
           playerPassword: this.playerPassword,
           playerType: this.playerType,
-          fontColor: "#000000"
+          fontColor: "#000000",
+          system: this.currentSystem
         };
         if (!isExist && this.roomPassword !== null) {
           baseArg.system = undefined;
@@ -274,7 +277,8 @@ export default class CreateNewRoom extends Vue {
           playerName: this.playerName,
           playerPassword: this.playerPassword,
           playerType: this.playerType,
-          fontColor: "#000000"
+          fontColor: "#000000",
+          system: this.currentSystem
         };
         if (!isExist && isNewRoom) {
           baseArg.system = this.currentSystem;
@@ -394,7 +398,8 @@ export default class CreateNewRoom extends Vue {
                 playerPassword: this.playerPassword,
                 playerType: this.playerType,
                 fontColor: "#000000",
-                isWait: true
+                isWait: true,
+                system: this.currentSystem
               };
               const loadingEnd = this.loading.bind(this, false);
               this.updateIsWait(true);

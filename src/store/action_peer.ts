@@ -926,13 +926,14 @@ export default {
         });
 
         dispatch("afterRoomJoin", {
-          roomName: roomName,
-          roomPassword: roomPassword,
-          playerName: playerName,
-          playerPassword: playerPassword,
-          playerType: playerType,
-          fontColor: fontColor,
-          isWait: isWait
+          roomName,
+          roomPassword,
+          playerName,
+          playerPassword,
+          playerType,
+          fontColor,
+          isWait,
+          system
         });
 
         resolve();
@@ -952,6 +953,7 @@ export default {
      * @param useWindow
      * @param useAlert
      * @param isWait
+     * @param system
      */
     doJoinRoom(
       { dispatch }: { dispatch: Function },
@@ -964,6 +966,7 @@ export default {
         fontColor,
         useWindow,
         useAlert,
+        system,
         isWait
       }: {
         roomName: string;
@@ -974,21 +977,22 @@ export default {
         fontColor: string;
         useWindow: boolean;
         useAlert: boolean;
+        system: string;
         isWait: boolean;
       }
     ): Promise<any> {
       return new Promise((resolve: Function, reject: Function) => {
         // 部屋に接続する
         dispatch("joinPlayer", {
-          roomName: roomName,
+          roomName,
           roomPassword: roomPassword || "",
-          playerName: playerName,
-          playerPassword: playerPassword,
-          playerType: playerType,
-          fontColor: fontColor,
-          useWindow: useWindow,
-          useAlert: useAlert,
-          isWait: isWait
+          playerName,
+          playerPassword,
+          playerType,
+          fontColor,
+          useWindow,
+          useAlert,
+          isWait
         })
           .then(
             ({
@@ -1003,13 +1007,14 @@ export default {
               fontColor: string;
             }) => {
               dispatch("afterRoomJoin", {
-                roomName: roomName,
-                roomPassword: roomPassword,
-                playerName: playerName,
-                playerPassword: playerPassword,
-                playerType: playerType,
-                fontColor: fontColor,
-                isWait: isWait
+                roomName,
+                roomPassword,
+                playerName,
+                playerPassword,
+                playerType,
+                fontColor,
+                isWait,
+                system
               });
               resolve();
             }
@@ -1042,6 +1047,7 @@ export default {
         playerPassword,
         playerType,
         fontColor,
+        system,
         isWait
       }: {
         roomName: string;
@@ -1050,6 +1056,7 @@ export default {
         playerPassword: string;
         playerType: string;
         fontColor: string;
+        system: string;
         isWait: boolean;
       }
     ) {
@@ -1073,6 +1080,7 @@ export default {
       const paramList: string[] = [];
       paramList.push(`roomName=${roomName}`);
       paramList.push(`roomPassword=${roomPassword || ""}`);
+      paramList.push(`system=${system}`);
       paramList.push(`playerName=${playerName}`);
       paramList.push(`playerPassword=${playerPassword}`);
       paramList.push(`playerType=${playerType}`);
