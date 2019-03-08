@@ -72,7 +72,8 @@ export default {
         let viewHtml;
         if (target) {
           const targetName = rootGetters.getObj(target).name;
-          viewHtml = `<span style="color: ${color};"><b>${name} > ${targetName}</b>：${text.replace(
+          const useTargetText = targetName === "全体" ? "" : " > " + targetName;
+          viewHtml = `<span style="color: ${color};"><b>${name}${useTargetText}</b>：${text.replace(
             /\r?\n/g,
             "<br>"
           )}</span>`;

@@ -197,6 +197,8 @@ export default class CreateNewRoom extends Vue {
       paramList.push(`playerPassword=${this.playerPassword}`);
     if (this.playerType !== null)
       paramList.push(`playerType=${this.playerType}`);
+    if (this.currentSystem !== null)
+      paramList.push(`system=${this.currentSystem}`);
     const newUrl = `?${paramList.join("&")}`;
     window.history.replaceState("", "", newUrl);
 
@@ -229,7 +231,8 @@ export default class CreateNewRoom extends Vue {
           playerName: this.playerName,
           playerPassword: this.playerPassword,
           playerType: this.playerType,
-          fontColor: "#000000"
+          fontColor: "#000000",
+          system: this.currentSystem
         };
         if (!isExist && this.roomPassword !== null) {
           baseArg.system = undefined;
@@ -274,7 +277,8 @@ export default class CreateNewRoom extends Vue {
           playerName: this.playerName,
           playerPassword: this.playerPassword,
           playerType: this.playerType,
-          fontColor: "#000000"
+          fontColor: "#000000",
+          system: this.currentSystem
         };
         if (!isExist && isNewRoom) {
           baseArg.system = this.currentSystem;
@@ -394,7 +398,8 @@ export default class CreateNewRoom extends Vue {
                 playerPassword: this.playerPassword,
                 playerType: this.playerType,
                 fontColor: "#000000",
-                isWait: true
+                isWait: true,
+                system: this.currentSystem
               };
               const loadingEnd = this.loading.bind(this, false);
               this.updateIsWait(true);

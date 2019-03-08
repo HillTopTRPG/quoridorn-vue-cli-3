@@ -98,6 +98,9 @@ export default class DiceBotSelect extends Vue {
             });
           }
         );
+
+        // 初期値でダイスボットを更新
+        this.currentSystem = this.currentSystem;
       });
     });
   }

@@ -19,7 +19,8 @@ export default {
     /** 接続情報 */
     connect: {
       skywayKey: "",
-      type: ""
+      type: "",
+      bcdiceServer: ""
     },
     /** 権限 */
     roles: [
@@ -51,12 +52,46 @@ export default {
       owner: "SYSTEM"
     }
   } /* end of state */,
+
+  actions: {
+    getBcdiceSystemList({ state }: { state: any }) {
+      return new Promise((resolve: Function, reject: Function) => {
+        const url = state.connect.bcdiceServer + "/v1/names";
+        fetch(url)
+          .then(response => response.json())
+          .then(json => {
+            resolve(json.names);
+          })
+          .catch(err => reject(err));
+      });
+    },
+
+    sendBcdiceServer(
+      { state }: { state: any },
+      { system, command }: { system: string; command: string }
+    ) {
+      return new Promise((resolve: Function, reject: Function) => {
+        const params: string = [`system=${system}`, `command=${command}`].join(
+          "&"
+        );
+        const url = `${state.connect.bcdiceServer}/v1/diceroll?${params}`;
+        fetch(url)
+          .then(response => response.json())
+          .then(json => {
+            resolve(json);
+          })
+          .catch(err => reject(err));
+      });
+    }
+  },
+
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,
     chatOptionPagingSize: () => 8,
     skywayKey: (state: any) => state.connect.skywayKey,
     connectType: (state: any) => state.connect.type,
-    version: (state: any) => state.version
+    version: (state: any) => state.version,
+    bcdiceServer: (state: any) => state.bcdiceServer
   }
 };
