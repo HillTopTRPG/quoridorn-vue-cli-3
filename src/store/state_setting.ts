@@ -15,7 +15,7 @@ export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.0b6",
+    version: "1.0.0b7",
     /** 接続情報 */
     connect: {
       skywayKey: "",
