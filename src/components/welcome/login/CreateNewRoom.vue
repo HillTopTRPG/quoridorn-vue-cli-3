@@ -191,14 +191,14 @@ export default class CreateNewRoom extends Vue {
     paramList.push(`roomName=${this.roomName}`);
     if (this.roomPassword !== null)
       paramList.push(`roomPassword=${this.roomPassword}`);
+    if (this.currentSystem !== null)
+      paramList.push(`system=${this.currentSystem}`);
     if (this.playerName !== null)
       paramList.push(`playerName=${this.playerName}`);
     if (this.playerPassword !== null)
       paramList.push(`playerPassword=${this.playerPassword}`);
     if (this.playerType !== null)
       paramList.push(`playerType=${this.playerType}`);
-    if (this.currentSystem !== null)
-      paramList.push(`system=${this.currentSystem}`);
     const newUrl = `?${paramList.join("&")}`;
     window.history.replaceState("", "", newUrl);
 

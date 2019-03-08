@@ -125,11 +125,11 @@ export default new Vuex.Store({
         const paramList = [];
         if (roomPassword !== null)
           paramList.push(`roomPassword=${roomPassword}`);
+        if (system !== null) paramList.push(`system=${system}`);
         if (playerName !== null) paramList.push(`playerName=${playerName}`);
         if (playerPassword !== null)
           paramList.push(`playerPassword=${playerPassword}`);
         if (playerType !== null) paramList.push(`playerType=${playerType}`);
-        if (system !== null) paramList.push(`system=${system}`);
         const newUrl = `?${paramList.join("&")}`;
         window.history.replaceState("", "", newUrl);
       }

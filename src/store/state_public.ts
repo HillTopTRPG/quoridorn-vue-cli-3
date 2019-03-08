@@ -548,6 +548,7 @@ export default {
       const params: string[] = [];
       params.push(`roomName=${getters.roomName}`);
       params.push(`roomPassword=${getters.roomPassword}`);
+      params.push(`system=${getters.roomSystem}`);
       return `${baseUrl}?${params.join("&")}`;
     },
     isMapEditing: (state: any): boolean => state.map.isEditing,

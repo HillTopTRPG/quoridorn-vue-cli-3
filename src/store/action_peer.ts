@@ -1080,10 +1080,10 @@ export default {
       const paramList: string[] = [];
       paramList.push(`roomName=${roomName}`);
       paramList.push(`roomPassword=${roomPassword || ""}`);
+      paramList.push(`system=${system}`);
       paramList.push(`playerName=${playerName}`);
       paramList.push(`playerPassword=${playerPassword}`);
       paramList.push(`playerType=${playerType}`);
-      paramList.push(`system=${system}`);
       const newUrl = `?${paramList.join("&")}`;
       window.history.replaceState("", "", newUrl);
 
