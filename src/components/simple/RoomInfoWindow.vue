@@ -12,31 +12,59 @@
           <div class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createURL(player)"/></div>
         </li>
       </ul>
-      <div>内容はもっと増やします！</div>
+
+      <!-- ダイスボット選択 -->
+      <label>
+        部屋のダイスボット：
+        <dice-bot-select ref="diceBot" v-model="currentDiceBotSystem" class="diceBotSystem"/>
+      </label>
+
+      <div style="margin-top: 20px;">内容はもっと増やします！</div>
     </div>
   </WindowFrame>
 </template>
 
-<script>
-import { mapState, mapGetters } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
+<script lang="ts">
+import DiceBotSelect from "@/components/parts/select/DiceBotSelect.vue";
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
 
-export default {
+import { Component, Vue } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+
+@Component<RoomInfoWindow>({
   name: "roomInfoWindow",
   mixins: [WindowMixin],
   components: {
-    WindowFrame
-  },
-  methods: {
-    createURL(player) {
-      return `${this.inviteUrl}&playerName=${player.name}`;
-    }
-  },
-  computed: mapState({
-    ...mapGetters(["roomName", "playerKey", "playerList", "inviteUrl"])
-  })
-};
+    WindowFrame,
+    DiceBotSelect
+  }
+})
+export default class RoomInfoWindow extends Vue {
+  @Action("setProperty") setProperty: any;
+  @Getter("roomName") roomName: any;
+  @Getter("playerKey") playerKey: any;
+  @Getter("playerList") playerList: any;
+  @Getter("inviteUrl") inviteUrl: any;
+  @Getter("roomSystem") roomSystem: any;
+
+  get currentDiceBotSystem(): string {
+    return this.roomSystem;
+  }
+
+  set currentDiceBotSystem(currentDiceBotSystem: string) {
+    this.setProperty({
+      property: `public.room.system`,
+      value: currentDiceBotSystem,
+      isNotice: true,
+      logOff: true
+    });
+  }
+
+  createURL(player: any) {
+    return `${this.inviteUrl}&playerName=${player.name}`;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

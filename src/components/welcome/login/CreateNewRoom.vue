@@ -59,7 +59,7 @@
     <div class="subBlock newRoom" v-if="isViewNewRoom && !isRoomExist">
       <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword"/></label>
       <label class="roomSystem">システム：
-        <DiceBotSelect :outputFlg="true" v-model="currentSystem"/>
+        <dice-bot-select :outputFlg="true" v-model="currentSystem"/>
       </label>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>

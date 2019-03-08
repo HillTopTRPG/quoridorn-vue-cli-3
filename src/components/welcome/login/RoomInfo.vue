@@ -3,7 +3,7 @@
     <legend>部屋情報</legend>
     <label>部屋名：<span>{{roomName}}</span></label>
     <label>パスワード：<span>{{roomPassword || "設定なし"}}</span></label>
-    <label>システム：<span style="color: red;">この項目は未実装</span></label>
+    <label>システム：<span>{{systemName}}</span></label>
     <div style="color: darkgreen;">※ ログイン情報の暗号化はまだしてないので、いずれ実装します。</div>
     <label v-if="!isWait">招待用URL：<input class="inviteUrl" type="text" readonly="readonly" :value="inviteUrl" />
       <button class="copy" @click="event => doCopy(event)">コピー</button>
@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Getter } from "vuex-class";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
 
 import { execCopy } from "../../common/Utility";
 
@@ -22,13 +22,29 @@ import { execCopy } from "../../common/Utility";
   name: "roomInfo"
 })
 export default class RoomInfo extends Vue {
+  @Action("getBcdiceSystemInfo") getBcdiceSystemInfo: any;
   @Getter("roomName") roomName: any;
   @Getter("roomPassword") roomPassword: any;
   @Getter("inviteUrl") inviteUrl: any;
   @Getter("isWait") isWait: any;
+  @Getter("roomSystem") roomSystem: any;
+
+  private systemName: string = "";
+
+  @Watch("roomSystem", { immediate: true })
+  onChangeRoomSystem(roomSystem: string) {
+    this.getBcdiceSystemInfo(roomSystem)
+      .then((info: any) => {
+        this.systemName = info.name;
+      })
+      .catch((err: any) => {
+        window.console.error(err);
+        this.systemName = "ダイスボット名の取得に失敗しました。";
+      });
+  }
 
   /**
-   *
+   * テキストをクリップボードにコピーする
    * @param event
    */
   doCopy(event: any): void {

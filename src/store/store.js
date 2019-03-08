@@ -753,6 +753,7 @@ export default new Vuex.Store({
       c: state.map.grid.c,
       r: state.map.grid.r
     }),
-    isRolling: state => state.map.rollObj.isRolling
+    isRolling: state => state.map.rollObj.isRolling,
+    diceSystemList: state => state.chat.diceSystemList
   }
 });

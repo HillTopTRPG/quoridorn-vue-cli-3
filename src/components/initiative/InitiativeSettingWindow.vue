@@ -59,7 +59,7 @@ export default class InitiativeSettingWindow extends Vue {
       logOff: true
     });
     this.windowClose("private.display.initiativeSettingWindow");
-    this.setInitiativeParams({ format: this.format });
+    this.setInitiativeParams({ format: this.format.trim() });
   }
 
   cancel() {
