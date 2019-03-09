@@ -1,6 +1,11 @@
-
 <template>
-  <div class="context" v-if="isDisplay" :style="contextStyle" @mouseleave.prevent="windowClose(displayProperty)">
+  <div
+    class="context"
+    v-if="isDisplay"
+    :style="contextStyle"
+    @mouseleave.prevent="windowClose(displayProperty)"
+    @contextmenu.prevent
+  >
     <slot/>
   </div>
 </template>

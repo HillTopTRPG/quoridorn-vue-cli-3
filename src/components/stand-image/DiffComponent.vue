@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" @contextmenu.prevent>
 
     <!-- 画像 -->
     <div class="img-container">
@@ -16,7 +16,7 @@
     <!-- アニメーション周期 -->
     <div class="range">
       <label>表示時間{{viewTime}}</label>
-      <RangeMultiplePersent v-model="time"/>
+      <range-multiple-persent v-model="time"/>
     </div>
 
     <span

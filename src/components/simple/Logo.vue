@@ -1,5 +1,5 @@
 <template>
-  <img src="../../assets/logo/bg_white_4c.svg">
+  <img src="../../assets/logo/bg_white_4c.svg" @contextmenu.prevent>
 </template>
 
 <script>

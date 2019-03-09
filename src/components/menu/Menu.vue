@@ -1,5 +1,5 @@
 <template>
-  <div :style="menuStyle" id="menu">
+  <div :style="menuStyle" id="menu" @contextmenu.prevent>
     <!-- 操作ボタングループ -->
     <div class="span-group">
       <span @click="menuClick()" @mouseenter="menuHover('ファイル')" :class="{isHover : isShow('ファイル')}">ファイル</span>
@@ -34,14 +34,14 @@
     <div class="hoverMenu hoverMenu3" v-show="isShow('表示', 'ウィンドウ')">
       <div class="item" @mouseenter="menuHover('ウィンドウ')">ウィンドウ<span class="triangle"></span></div>
       <hr @mouseenter="menuHover('表示')">
-      <MenuBooleanItem property="private.setting.standImage" @mouseenter="menuHover('表示')">立ち絵表示</MenuBooleanItem>
-      <MenuBooleanItem property="private.setting.cutIn" @mouseenter="menuHover('表示')">カットイン表示</MenuBooleanItem>
+      <menu-boolean-item property="private.setting.standImage" @mouseenter="menuHover('表示')">立ち絵表示</menu-boolean-item>
+      <menu-boolean-item property="private.setting.cutIn" @mouseenter="menuHover('表示')">カットイン表示</menu-boolean-item>
       <hr @mouseenter="menuHover('表示')">
-      <MenuBooleanItem property="public.setting.gridId" @mouseenter="menuHover('表示')">座標表示</MenuBooleanItem>
-      <MenuBooleanItem property="public.setting.gridLine" @mouseenter="menuHover('表示')">マス目表示</MenuBooleanItem>
+      <menu-boolean-item property="public.setting.gridId" @mouseenter="menuHover('表示')">座標表示</menu-boolean-item>
+      <menu-boolean-item property="public.setting.gridLine" @mouseenter="menuHover('表示')">マス目表示</menu-boolean-item>
       <hr @mouseenter="menuHover('表示')">
-      <MenuBooleanItem property="public.setting.isFitGrid" @mouseenter="menuHover('表示')">マス目にキャラクターを合わせる</MenuBooleanItem>
-      <MenuBooleanItem property="private.setting.standImageAutoResize" @mouseenter="menuHover('表示')">立ち絵のサイズを自動調整する</MenuBooleanItem>
+      <menu-boolean-item property="public.setting.isFitGrid" @mouseenter="menuHover('表示')">マス目にキャラクターを合わせる</menu-boolean-item>
+      <menu-boolean-item property="private.setting.standImageAutoResize" @mouseenter="menuHover('表示')">立ち絵のサイズを自動調整する</menu-boolean-item>
       <hr @mouseenter="menuHover('表示')">
       <div class="item" @click="clickSettingFontSize" @mouseenter="menuHover('表示')">フォントサイズ調整</div>
       <hr @mouseenter="menuHover('表示')">
@@ -59,7 +59,7 @@
       <div class="item" @click="clickGraveyard">墓場</div>
       <div class="item" @click="clickWaitingRoom">キャラクター待合室</div>
       <hr>
-      <MenuBooleanItem property="public.setting.pieceRotateMarker">回転マーカーを表示する</MenuBooleanItem>
+      <menu-boolean-item property="public.setting.pieceRotateMarker">回転マーカーを表示する</menu-boolean-item>
     </div>
     <!--------------------------------------------------
      ! マップ
@@ -96,14 +96,14 @@
      ! ウィンドウ
      !-------------------------------------------------->
     <div class="hoverMenu hoverMenu8" v-show="isShow('ウィンドウ')">
-      <MenuBooleanItem property="private.display.chatWindow">チャット表示</MenuBooleanItem>
-      <MenuBooleanItem property="private.setting.dice">ダイス表示</MenuBooleanItem>
-      <MenuBooleanItem property="private.display.playerBoxWindow">プレイヤーボックス表示</MenuBooleanItem>
-      <MenuBooleanItem property="private.display.initiativeWindow">イニシアティブ表示</MenuBooleanItem>
-      <MenuBooleanItem property="private.display.resourceWindow">リソース表示</MenuBooleanItem>
+      <menu-boolean-item property="private.display.chatWindow">チャット表示</menu-boolean-item>
+      <menu-boolean-item property="private.setting.dice">ダイス表示</menu-boolean-item>
+      <menu-boolean-item property="private.display.playerBoxWindow">プレイヤーボックス表示</menu-boolean-item>
+      <menu-boolean-item property="private.display.initiativeWindow">イニシアティブ表示</menu-boolean-item>
+      <menu-boolean-item property="private.display.resourceWindow">リソース表示</menu-boolean-item>
       <hr>
-      <MenuBooleanItem property="private.display.chatPaletteWindow">チャットパレット表示</MenuBooleanItem>
-      <MenuBooleanItem property="private.display.counterRemoConWindow">カウンターリモコン表示</MenuBooleanItem>
+      <menu-boolean-item property="private.display.chatPaletteWindow">チャットパレット表示</menu-boolean-item>
+      <menu-boolean-item property="private.display.counterRemoConWindow">カウンターリモコン表示</menu-boolean-item>
     </div>
     <!--------------------------------------------------
      ! デモ
@@ -498,10 +498,6 @@ span.isDisconnect {
     align-items: center;
     padding: 0 1em;
     white-space: nowrap;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 }
 .span-group span:hover,
@@ -521,9 +517,6 @@ span.isDisconnect {
   border-radius: 5px;
   cursor: pointer;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   z-index: 100;
   height: 2em;
 
@@ -576,10 +569,6 @@ span.isDisconnect {
 .item {
   position: relative;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 
   > * {
     display: inline;

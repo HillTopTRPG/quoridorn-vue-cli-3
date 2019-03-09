@@ -8,7 +8,7 @@
     ref="window"
   >
     <div class="contents">
-      <div class="playOperationArea">
+      <div class="playOperationArea" @contextmenu.prevent>
         <!-- 拡大ボタン -->
         <button
           @click="arrangeWindowSize(true)"
@@ -28,7 +28,7 @@
         <!-- 設定ボタン -->
         <button class="setting" @click="openSettingWindow">設定</button>
       </div>
-      <div class="playOperationArea">
+      <div class="playOperationArea" @contextmenu.prevent>
         <!-- 戻るボタン -->
         <button
           class="back"
@@ -62,7 +62,7 @@
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
-          <thead>
+          <thead @contextmenu.prevent>
           <tr>
             <!-- 順番 -->
             <th :style="colStyle(0)">順番</th>
@@ -124,7 +124,7 @@
 
             <!-- 名前 -->
             <divider :index="2" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(3)">{{character.name}}</td>
+            <td :style="colStyle(3)" class="selectable">{{character.name}}</td>
 
             <!-- 追加パラメータ -->
             <template v-for="(property, index) in propertyList">

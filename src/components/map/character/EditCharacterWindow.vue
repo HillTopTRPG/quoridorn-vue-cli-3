@@ -1,6 +1,12 @@
 <template>
-  <WindowFrame titleText="キャラクター変更" display-property="private.display.editCharacterWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
-    <div class="container">
+  <window-frame
+    titleText="キャラクター変更"
+    display-property="private.display.editCharacterWindow"
+    align="center"
+    fixSize="653, 377"
+    @open="open"
+  ><!--  baseSize="601, 377" -->
+    <div class="container" @contextmenu.prevent>
       <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
       <div class="choseImage">
         <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === currentImageKey}" :key="image.key" v-img="image.data" @click="selectTagImage(image.key)" draggable="false"/></div>
@@ -33,7 +39,7 @@
         </div>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>

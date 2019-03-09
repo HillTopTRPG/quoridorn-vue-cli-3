@@ -6,7 +6,7 @@
     fixSize="400, 193"
     :message="fileName"
   >
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
       <image-selector
         v-model="imageKey"
         :imageTag.sync="imageTag"

@@ -1,5 +1,5 @@
 <template>
-  <div class="imageSelector">
+  <div class="imageSelector" @contextmenu.prevent>
 
     <!-- 画像選択エリア -->
     <div class="choseImage">

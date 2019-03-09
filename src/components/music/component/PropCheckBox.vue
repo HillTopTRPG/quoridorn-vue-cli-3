@@ -2,7 +2,9 @@
   <input type="checkbox"
     @change="event => changeProperty(event.target.checked)"
     :checked="storePropertyValue"
-    @dblclick.stop>
+    @dblclick.stop
+    @contextmenu.prevent
+  >
 </template>
 
 <script>

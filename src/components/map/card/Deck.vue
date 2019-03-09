@@ -1,5 +1,5 @@
 <template>
-  <div :style="containerStyle" class="deckContainer" v-if="deck.name">
+  <div :style="containerStyle" class="deckContainer" v-if="deck.name" @contextmenu.prevent>
     <fieldset>
       <legend>{{deck.name}}</legend>
       <div class="refArea">
@@ -9,8 +9,8 @@
         <div class="refUrlContainer"><a v-for="(ref, index) in deck.refs" :key="index" :href="ref.url" target="_blank" :title="createRefStr(ref, index)">{{createRefStr(ref, index)}}</a></div>
       </div>
       <div class="deck" ref="deck" :style="deckStyle">
-        <Card :class="[card.key]" :index="index" :key="card.key" :objKey="card.key" :ref="card.key"
-              v-for="(card, index) in deckCardList"></Card>
+        <card :class="[card.key]" :index="index" :key="card.key" :objKey="card.key" :ref="card.key"
+              v-for="(card, index) in deckCardList"></card>
         <Card :index="deckHoverIndex" :isViewer="true" :objKey="deckHoverKey" ref="centerCard"></Card>
         カードなし
       </div>
@@ -184,11 +184,5 @@ a {
   align-items: center;
   font-size: 20px;
   font-weight: bold;
-}
-button {
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
 }
 </style>

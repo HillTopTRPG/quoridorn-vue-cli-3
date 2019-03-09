@@ -1,5 +1,5 @@
 <template>
-  <div class="bgmCoreComponent">
+  <div class="bgmCoreComponent" @contextmenu.prevent>
     <div class="thumbnail">
       <img v-img="thumbnailData" draggable="false" alt="Not Found" :title="thumbnailTitle" @click="thumbnailClick">
     </div>

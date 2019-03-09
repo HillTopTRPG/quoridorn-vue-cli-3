@@ -1,5 +1,5 @@
 <template>
-  <ContextFrame displayProperty="private.display.characterContext">
+  <context-frame displayProperty="private.display.characterContext">
     <div class="item" @click.left.prevent="viewEditCharacter">変更</div>
     <hr>
     <div class="item" v-if="place !== 'field'" @click.left.prevent="moveToField">マップに移動</div>
@@ -11,7 +11,7 @@
       <hr>
       <div class="item" @click.left.prevent="openRefURL">データ参照先URLを開く</div>
     </template>
-  </ContextFrame>
+  </context-frame>
 </template>
 
 <script lang="ts">

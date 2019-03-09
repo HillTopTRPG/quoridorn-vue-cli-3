@@ -1,5 +1,5 @@
   <template>
-  <div id="app2" @wheel.passive="onWheel" @contextmenu.prevent>
+  <div id="app2" @wheel.passive="onWheel">
     <game-table ref="gameTable"/>
     <div id="YoutubePlayerContainer">
       <div class="unUse"><div id="YoutubePlayer001"></div></div>
@@ -243,16 +243,17 @@ hr {
   justify-content: center;
   align-items: center;
   white-space: nowrap;
+  user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
 }
 
-.unSelectable {
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
+.selectable {
+  user-select: text;
+  -ms-user-select: text;
+  -moz-user-select: text;
+  -webkit-user-select: text;
 }
 .flexCenter {
   display: flex;

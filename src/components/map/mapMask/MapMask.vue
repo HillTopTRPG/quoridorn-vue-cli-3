@@ -64,9 +64,6 @@ export default {
   border-width: 0px;
   border-color: rgba(0, 0, 0, 0);
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   font-size: 12px;
   cursor: crosshair;
   z-index: 200000000;

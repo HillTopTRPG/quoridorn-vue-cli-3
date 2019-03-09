@@ -1,11 +1,10 @@
-
 <template>
-  <ContextFrame displayProperty="private.display.cardContext">
+  <context-frame displayProperty="private.display.cardContext">
     <div class="item" @click.left.prevent="draw">1枚引く</div>
     <div class="item" @click.left.prevent="choice">展開する</div>
     <div class="item" @click.left.prevent="reverse">裏返す</div>
     <div class="item" @click.left.prevent="shuffle">シャッフル</div>
-  </ContextFrame>
+  </context-frame>
 </template>
 
 <script>
@@ -19,11 +18,7 @@ export default {
     ContextFrame
   },
   methods: {
-    ...mapActions([
-      "windowOpen",
-      "setProperty",
-      "windowClose"
-    ]),
+    ...mapActions(["windowOpen", "setProperty", "windowClose"]),
     draw() {
       if (this.viewMode !== "normal") {
         this.setProperty({

@@ -2,7 +2,9 @@
   <input type="number"
     @change="event => changeProperty(event.target.value)"
     :value="storePropertyValue"
-    @dblclick.stop>
+    @dblclick.stop
+    @contextmenu.prevent
+  >
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <label>
+  <label @contextmenu.prevent>
     <span v-if="label && labelSide === 'left'">{{label}}</span>
     <input
       type="checkbox"

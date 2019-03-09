@@ -1,7 +1,7 @@
 <template>
-  <WindowFrame titleText="現時点の仕様" display-property="private.display.functionListWindow" align="center" fixSize="500, 400">
+  <window-frame titleText="現時点の仕様" display-property="private.display.functionListWindow" align="center" fixSize="500, 400">
     <iframe src="./static/FunctionList.html"></iframe>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>

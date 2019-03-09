@@ -1,6 +1,6 @@
 <template>
   <window-frame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`" @open="initWindow" @reset="initWindow">
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
       <div>
         <button type="button" @click="add">追加</button>
         <button type="button" @click="add">削除</button>

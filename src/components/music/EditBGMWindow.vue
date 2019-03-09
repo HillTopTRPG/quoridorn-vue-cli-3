@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame titleText="BGM編集画面" display-property="private.display.editBGMWindow" align="right-bottom" fixSize="300, 350" @open="initWindow">
-    <div class="contents">
+  <window-frame titleText="BGM編集画面" display-property="private.display.editBGMWindow" align="right-bottom" fixSize="300, 350" @open="initWindow">
+    <div class="contents" @contextmenu.prevent>
       <fieldset>
         <legend>読込</legend>
         <!-- URL -->
@@ -32,7 +32,7 @@
             <option v-for="tag in tags" :key="tag" :value="tag">{{tag}}</option>
           </datalist>
           <!-- 音量 -->
-          <VolumeComponent
+          <volume-component
             :initVolume="volume"
             @volume="setVolume"
             @mute="setIsMute"
@@ -92,7 +92,7 @@
         </div>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>
@@ -302,10 +302,6 @@ legend,
 label,
 button {
   font-size: 10px;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
 }
 select,
 input[type="text"],

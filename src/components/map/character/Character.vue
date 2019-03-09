@@ -1,15 +1,21 @@
 <template>
-  <div class="character"
+  <div
+    class="character"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
     @click.right.prevent="(e) => openContext(e, 'private.display.characterContext')"
-    @mouseover="mouseover" @mouseout="mouseout"
+    @mouseover="mouseover"
+    @mouseout="mouseout"
     @dblclick="dblClick"
-    @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
-    @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
-    @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
-    @contextmenu.prevent>
+    @mousedown.left.stop="leftDown"
+    @mouseup.left.stop="leftUp"
+    @mousedown.right.stop="rightDown"
+    @mouseup.right.stop="rightUp"
+    @touchstart="leftDown" @touchend="leftUp"
+    @touchcancel="leftUp"
+    @contextmenu.prevent
+  >
     <range v-for="range in rangeList"
            :key="range.key"
            :type="type"

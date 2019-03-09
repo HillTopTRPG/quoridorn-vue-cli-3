@@ -1,9 +1,9 @@
 <template>
-  <ContextFrame displayProperty="private.display.chitContext">
+  <context-frame displayProperty="private.display.chitContext">
     <div class="item" @click.left.prevent="viewEditChit">変更</div>
     <div class="item" @click.left.prevent="copyChit">複製</div>
     <div class="item" @click.left.prevent="deleteChit">削除</div>
-  </ContextFrame>
+  </context-frame>
 </template>
 
 <script lang="ts">

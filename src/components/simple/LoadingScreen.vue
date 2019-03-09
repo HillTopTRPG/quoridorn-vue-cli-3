@@ -1,5 +1,9 @@
 <template>
-  <div @mousemove.stop class="loadingScreen" v-if="isLoading"></div>
+  <div
+    @mousemove.stop class="loadingScreen"
+    v-if="isLoading"
+    @contextmenu.prevent
+  ></div>
 </template>
 
 <script lang="ts">

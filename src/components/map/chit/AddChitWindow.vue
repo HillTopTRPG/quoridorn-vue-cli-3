@@ -1,9 +1,9 @@
 <template>
-  <WindowFrame titleText="チット作成" display-property="private.display.addChitWindow" align="center" fixSize="653, 271" @open="open">
-    <div class="container">
+  <window-frame titleText="チット作成" display-property="private.display.addChitWindow" align="center" fixSize="653, 271" @open="open">
+    <div class="container" @contextmenu.prevent>
       <div class="viewImage"><img class="img" v-img="currentImage" @dragstart="dragStart" draggable="true" :class="{isReverse : isReverse}" @mousedown.stop/></div>
       <!-- <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div> -->
-      <ImageSelector
+      <image-selector
         v-model="imageKey"
         :imageTag.sync="currentImageTag"
         class="imageSelector"
@@ -12,7 +12,7 @@
       <div class="columnsNum"><label>横マス：</label><input type="number" min="1" class="size" v-model="columns"/></div>
       <textarea class="otherText" v-model="description" placeholder="説明"></textarea>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">

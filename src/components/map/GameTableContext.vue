@@ -1,6 +1,5 @@
-
 <template>
-  <ContextFrame displayProperty="private.display.gameTableContext">
+  <context-frame displayProperty="private.display.gameTableContext">
     <div class="item" @click.left.prevent="addCharacter">キャラクター追加</div>
     <div class="item" @click.left.prevent="addMapMask">マップマスク追加</div>
     <div class="item" @click.left.prevent="addMapMarker">マップマーカー追加</div>
@@ -11,7 +10,7 @@
     <div class="item" @click.left.prevent="createMessageCard">メッセージカード作成</div>
     <hr>
     <div class="item" @click.left.prevent="resetWindowLocate">ウィンドウ配置初期化</div>
-  </ContextFrame>
+  </context-frame>
 </template>
 
 <script>

@@ -112,9 +112,6 @@ export default {
 table {
   font-size: 12px;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   border-collapse: collapse;
 }
 th,

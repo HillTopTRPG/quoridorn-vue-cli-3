@@ -1,15 +1,15 @@
 <template>
-  <WindowFrame titleText="バージョン" display-property="private.display.versionWindow" align="center" fixSize="300, 158">
+  <window-frame titleText="バージョン" display-property="private.display.versionWindow" align="center" fixSize="300, 158">
     <div class="contents">
-      <div class="logo-container">
-        <Logo></Logo>
+      <div class="logo-container" @contextmenu.prevent>
+        <logo/>
       </div>
       <div class="footer">
         <span>Quoridorn Ver.{{version}}</span>
-        <button @click="cancel">閉じる</button>
+        <button @click="cancel" @contextmenu.prevent>閉じる</button>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">

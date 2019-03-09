@@ -1,10 +1,15 @@
 <template>
-  <WindowFrame :titleText="title" display-property="private.display.unSupportWindow" align="center" fixSize="200, 120">
-    <div class="contents">
+  <window-frame
+    :titleText="title"
+    display-property="private.display.unSupportWindow"
+    align="center"
+    fixSize="200, 120"
+  >
+    <div class="contents" @contextmenu.prevent>
       <div>未実装の機能です。</div>
       <button @click="close">閉じる</button>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>

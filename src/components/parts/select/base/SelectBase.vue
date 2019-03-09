@@ -1,5 +1,10 @@
 <template>
-  <select v-model="localValue" :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }" ref="select">
+  <select
+    v-model="localValue"
+    :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }"
+    ref="select"
+    @contextmenu.prevent
+  >
     <option :disabled="!defaultSelectable" value="" v-if="defaultLabel">{{defaultLabel}}</option>
     <slot/>
   </select>

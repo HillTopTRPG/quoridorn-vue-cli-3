@@ -1,7 +1,7 @@
 <template>
-  <SelectBase defaultLabel="権限" v-model="localValue">
+  <select-base defaultLabel="権限" v-model="localValue">
     <option :key="role.value" :value="role.value" v-for="role in roles">{{role.label}}</option>
-  </SelectBase>
+  </select-base>
 </template>
 
 <script lang="ts">

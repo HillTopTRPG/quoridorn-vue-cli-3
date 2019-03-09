@@ -1,6 +1,6 @@
 <template>
   <WindowFrame titleText="グループチャット編集画面" display-property="private.display.editGroupChatWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`" @open="initWindow" @reset="initWindow">
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
       <div class="scrollArea">
         <div>
           <label>秘匿チャット<input type="checkbox" v-model="isSecret"></label>

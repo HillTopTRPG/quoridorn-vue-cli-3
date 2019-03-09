@@ -1,8 +1,8 @@
 <template>
-  <WindowFrame titleText="キャラクター追加" display-property="private.display.addCharacterSettingWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
-    <div class="container">
+  <window-frame titleText="キャラクター追加" display-property="private.display.addCharacterSettingWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
+    <div class="container" @contextmenu.prevent>
       <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
-      <ImageSelector
+      <image-selector
         v-model="selectImage"
         :imageTag.sync="currentImageTag"
         class="imageSelector"
@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">

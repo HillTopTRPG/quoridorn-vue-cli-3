@@ -2,9 +2,9 @@
   <div class="actor-tab-container">
 
     <!-- タブ -->
-    <div class="actor-tabs">
+    <div class="actor-tabs" @contextmenu.prevent>
       <label class="tab">
-        <ActorSelect :selectedActorList="standActorList" v-model="selectActorKey"></ActorSelect>
+        <actor-select :selectedActorList="standActorList" v-model="selectActorKey"></actor-select>
       </label>
       <label
         class="tab"

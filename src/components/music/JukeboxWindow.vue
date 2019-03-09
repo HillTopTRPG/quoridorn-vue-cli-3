@@ -1,6 +1,6 @@
 <template><!-- 150, 209 -->
   <window-frame titleText="再生中BGM一覧" fixSize="222, 274" display-property="private.display.jukeboxWindow" align="right-bottom" :isBanClose="true" @add="add">
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
       <master-volume-component/>
       <template v-for="bgmObj in playList">
         <b-g-m-youtube-component

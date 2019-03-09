@@ -27,7 +27,7 @@
         <input id="welcomeWindow-tab3" type="radio" name="tab_btn" value="3" v-model="tabNum">
         <input id="welcomeWindow-tab4" type="radio" name="tab_btn" value="4" v-model="tabNum">
 
-        <div class="tab_area">
+        <div class="tab_area" @contextmenu.prevent>
           <label class="tab1_label" for="welcomeWindow-tab1">ログイン</label>
           <label class="tab2_label" for="welcomeWindow-tab2">仕様一覧</label>
           <label class="tab3_label" for="welcomeWindow-tab3">出典元情報</label>
@@ -38,7 +38,7 @@
            ! タブ１ - ログイン
            !------------------------------->
           <div id="panel1" class="tab_panel">
-            <Login/>
+            <login/>
           </div>
           <!--------------------------------
            ! タブ２ - 仕様一覧
@@ -86,11 +86,11 @@
           <!--------------------------------
            ! タブ３ - 出典元情報
            !------------------------------->
-          <div id="panel3" class="tab_panel"><Source/></div>
+          <div id="panel3" class="tab_panel"><source/></div>
           <!--------------------------------
            ! タブ４ - 開発支援
            !------------------------------->
-          <div id="panel4" class="tab_panel"><DevSupport/></div>
+          <div id="panel4" class="tab_panel"><dev-support/></div>
         </div>
       </div>
       <!-- tab_wrap -->

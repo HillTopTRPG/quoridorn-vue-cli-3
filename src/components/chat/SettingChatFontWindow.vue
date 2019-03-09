@@ -1,6 +1,6 @@
 <template>
   <WindowFrame titleText="チャットフォント設定画面" display-property="private.display.settingChatFontWindow" align="center" fixSize="320, 132" @open="initWindow" @reset="initWindow">
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
       <div>この画面の操作は即時反映されます。</div>
       <label v-if="members.length === 0">文字色<input type="color" :value="fontColor" @change="event => changePrivateFontColor(event)"></label>
       <label v-if="members.length === 0">過去ログ反映<input type="checkbox" v-model="historyChange"></label>

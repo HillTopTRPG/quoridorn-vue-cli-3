@@ -6,7 +6,7 @@
     baseSize="300, 500"
     ref="window"
   >
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
 
       <!-- ボタン表示エリア -->
       <div class="buttonArea">

@@ -1,14 +1,15 @@
 <template>
-  <div class="masterVolumeComponent">
+  <div class="masterVolumeComponent" @contextmenu.prevent>
     <div class="attrArea">
       <span class="title" title="すべてのBGMの再生音量を割合で補正します">【マスターボリューム】</span>
     </div>
     <div class="controlArea">
-      <VolumeComponent
+      <volume-component
         :initVolume="0.5"
         @mute="mute"
         @volume="volume"
-        ref="volumeComponent"/>
+        ref="volumeComponent"
+      />
     </div>
   </div>
 </template>

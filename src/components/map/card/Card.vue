@@ -1,9 +1,13 @@
 <template>
-  <div class="card" :style="cardStyle"
-       :class="[viewMode, {isViewer: isViewer, isOdd: useIndex % 2 === 1, isEven: useIndex % 2 === 0}]"
-       @mouseover="mouseOver" @mouseout="mouseOut"
-       @click.right.prevent="openContext"
-       ref="card"
+  <div
+    class="card"
+    :style="cardStyle"
+    :class="[viewMode, {isViewer: isViewer, isOdd: useIndex % 2 === 1, isEven: useIndex % 2 === 0}]"
+    @mouseover="mouseOver"
+    @mouseout="mouseOut"
+    @click.right.prevent="openContext"
+    ref="card"
+    @contextmenu.prevent
   >
     <figure class="front" :style="frontStyle"></figure>
     <div class="back" :style="backStyle" v-html="card ? card.back.text.replace(/\n/g, '<br>') : ''"></div>

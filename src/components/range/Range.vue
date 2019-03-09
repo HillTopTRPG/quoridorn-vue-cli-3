@@ -3,8 +3,9 @@
     :style='rangeStyle'
     :width='width'
     :height='height'
-    ref='canvas'>
-  </canvas>
+    ref='canvas'
+    @contextmenu.prevent
+  ></canvas>
 </template>
 
 <script lang="ts">

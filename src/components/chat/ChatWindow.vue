@@ -4,7 +4,7 @@
       <!----------------
        ! タブ
        !--------------->
-      <div class="tabs dep">
+      <div class="tabs dep" @contextmenu.prevent>
         <!-- タブ -->
         <span
           class="tab"
@@ -33,7 +33,7 @@
       <!----------------
        ! 操作盤
        !--------------->
-      <label class="oneLine dep">
+      <label class="oneLine dep" @contextmenu.prevent>
 
         <!-- 発言者選択 -->
         <span class="label">名前(！)</span>
@@ -139,7 +139,7 @@
           <!----------------
            ! グループチャットタブ
            !--------------->
-          <div class="tabs">
+          <div class="tabs" @contextmenu.prevent>
 
             <!-- グループチャットタブ -->
             <span
@@ -169,7 +169,7 @@
           <!----------------
            ! チャットオプション（送信者）
            !--------------->
-          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'from'">
+          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'from'" @contextmenu.prevent>
             <span>送信者{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
             <ul>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
@@ -187,7 +187,7 @@
           <!----------------
            ! チャットオプション（対象）
            !--------------->
-          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'target'">
+          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'target'" @contextmenu.prevent>
             <span>送信先{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
             <ul>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
@@ -205,7 +205,7 @@
           <!----------------
            ! チャットオプション（タブ）
            !--------------->
-          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'tab'">
+          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'tab'" @contextmenu.prevent>
             <span>出力先のタブ{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
             <ul>
               <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
@@ -223,7 +223,7 @@
 
           <!-- チャット入力エリア -->
           <label class="chatInputArea">
-            <span class="chatOption" @click="chatOptionOnClick">
+            <span class="chatOption" @click="chatOptionOnClick" @contextmenu.prevent>
               <span class="emphasis">! {{getViewName(chatActorKey)}}-{{statusName}}</span>
               <span :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{groupTargetName}}</span>
               <span :class="{emphasis: outputTab !== null}"># {{outputTab ? getTabName(outputTab) : "[選択中]"}}</span>
@@ -246,12 +246,12 @@
             ></textarea>
           </label>
         </div>
-        <button :tabindex="chatTabs.length + chatTabs.length + 17">送信</button>
+        <button :tabindex="chatTabs.length + chatTabs.length + 17" @contextmenu.prevent>送信</button>
       </div>
       <!----------------
        ! 入力者表示
        !--------------->
-      <div class="inputtingArea dep">
+      <div class="inputtingArea dep" @contextmenu.prevent>
         <div
           v-for="name in inputtingPeerIdList"
           :key="name"
@@ -990,10 +990,6 @@ export default class ChatWindow extends Vue {
   margin-bottom: -1px;
   z-index: 10;
   white-space: nowrap;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
   outline: none;
 
   &.addButton {

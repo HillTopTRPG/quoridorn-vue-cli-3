@@ -1,6 +1,11 @@
 <template>
-  <WindowFrame titleText="画像データ登録" display-property="private.display.dropImageWindow" align="center" fixSize="385, 660">
-    <div class="contents">
+  <window-frame
+    titleText="画像データ登録"
+    display-property="private.display.dropImageWindow"
+    align="center"
+    fixSize="385, 660"
+  >
+    <div class="contents" @contextmenu.prevent>
       <div v-if="!imageList">画像読込中...</div>
       <fieldset v-for="imageObj in imageList" :key="imageObj.key">
         <legend>{{imageObj.name}}</legend>
@@ -20,7 +25,7 @@
         <button @click="cancel" :disabled="!imageList">キャンセル</button>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">

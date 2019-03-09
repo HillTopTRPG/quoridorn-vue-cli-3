@@ -1,5 +1,5 @@
 <template>
-  <select :title="helpMessage" v-model="currentSystem">
+  <select :title="helpMessage" v-model="currentSystem" @contextmenu.prevent>
     <option
       v-for="systemObj in diceSystemList"
       :key="systemObj.system"

@@ -1,6 +1,6 @@
 <template>
   <WindowFrame titleText="隠しダイスロール結果" display-property="private.display.secretDiceWindow" align="center" fixSize="400, 200" :isBanClose="true">
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
       <div class="secret-unit" v-for="(secretDiceObj, index) in secretDiceList" :key="index">
         <label><textarea :value="createTextAreaValue(secretDiceObj)"></textarea></label>
         <button type="button" @click="publish(index)">結果公開</button>

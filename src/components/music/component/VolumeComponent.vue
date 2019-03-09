@@ -1,29 +1,33 @@
 <template>
-  <div class="volumeComponent">
+  <div class="volumeComponent" @contextmenu.prevent>
+    <!-- スライダー -->
     <label>
-      <input class="volume"
-             :class="{muted: mute, masterMute: masterMute, mutable: mutable}"
-             type="range"
-             min="0"
-             max="1"
-             step="0.01"
-             v-model="volume">
+      <input
+        class="volume"
+        :class="{muted: mute, masterMute: masterMute, mutable: mutable}"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        v-model="volume"
+      >
     </label>
-    <span class="icon mute"
-          :class="{muted: mute, masterMute: masterMute}"
-          @click="setMute()"
-          v-show="mutable && !mute">
-      <i class="icon-volume-high"></i>
+
+    <span
+      class="icon mute"
+      :class="{muted: mute, masterMute: masterMute}"
+      @click="setMute()"
+      v-show="mutable"
+    >
+      <!-- ミュート解除ボタン -->
+      <i class="icon-volume-high" v-show="!mute"></i>
+
+      <!-- ミュートボタン -->
+      <i class="icon-volume-mute2" v-show="mute"></i>
     </span>
-    <span class="icon mute"
-          :class="{muted: mute, masterMute: masterMute}"
-          @click="setMute()"
-          v-show="mutable && mute">
-      <i class="icon-volume-mute2"></i>
-    </span>
-    <span class="volumeText"
-          :class="{mutable: mutable}"
-    >{{Math.round(volume * 100)}}</span>
+
+    <!-- 数値表示 -->
+    <span class="volumeText" :class="{mutable: mutable}">{{Math.round(volume * 100)}}</span>
   </div>
 </template>
 

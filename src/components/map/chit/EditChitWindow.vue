@@ -1,6 +1,13 @@
 <template>
-  <WindowFrame titleText="チット変更" display-property="private.display.editChitWindow" align="center" fixSize="653, 312" @open="initWindow" @reset="initWindow">
-    <div class="container">
+  <window-frame
+    titleText="チット変更"
+    display-property="private.display.editChitWindow"
+    align="center"
+    fixSize="653, 312"
+    @open="initWindow"
+    @reset="initWindow"
+  >
+    <div class="container" @contextmenu.prevent>
       <div class="viewImage"><img class="img" v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
       <!-- <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div> -->
       <div class="choseImage">
@@ -23,7 +30,7 @@
         </div>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>

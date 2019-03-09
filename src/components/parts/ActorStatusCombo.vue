@@ -1,5 +1,5 @@
 <template>
-  <label>
+  <label @contextmenu.prevent>
     <input
       type="text"
       list="actorStatus"

@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame :titleText="`プレイルーム${roomName === '' ? '' : `「${roomName}」`}情報表示`" display-property="private.display.roomInfoWindow" align="center" fixSize="400, 310">
-    <div class="container">
+  <window-frame :titleText="`プレイルーム${roomName === '' ? '' : `「${roomName}」`}情報表示`" display-property="private.display.roomInfoWindow" align="center" fixSize="400, 310">
+    <div class="container" @contextmenu.prevent>
       <div v-if="playerList.length === 0">お部屋に接続していません。</div>
       <div class="inviteUrlArea" v-if="playerList.length > 0">
         招待用URL：<input class="inviteUrl" type="text" readonly="readonly" :value="inviteUrl" />
@@ -21,7 +21,7 @@
 
       <div style="margin-top: 20px;">内容はもっと増やします！</div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">

@@ -1,7 +1,7 @@
 <template>
-  <SelectBase defaultLabel="アクター" v-model="localValue">
+  <select-base defaultLabel="アクター" v-model="localValue">
     <option :key="actor.key" :value="actor.key" v-for="actor in selectActors">{{actor.name}}</option>
-  </SelectBase>
+  </select-base>
 </template>
 
 <script lang="ts">

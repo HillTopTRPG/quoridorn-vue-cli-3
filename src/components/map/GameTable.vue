@@ -1,31 +1,63 @@
 <template>
   <div
     :style="gameTableStyle"
-    @contextmenu.prevent
     @dragover.prevent
     @drop.prevent="drop"
     dropzone="move"
-    id="gameTable">
-
-    <div :style="gridPaperStyle">
+    id="gameTable"
+  >
+    <div :style="gridPaperStyle" @contextmenu.prevent>
     </div>
 
-    <div @mousedown.left.prevent="leftDown"
-         @mousedown.right.prevent="rightDown" @mouseup.left.prevent="leftUp"
-         @mouseup.right.prevent="rightUp" @touchcancel.prevent="leftUp"
-         @touchend.prevent="leftUp" @touchstart.prevent="leftDown" id="mapBoardFrame">
-      <MapBoard/>
+    <div
+      id="mapBoardFrame"
+      @mousedown.left.prevent="leftDown"
+      @mousedown.right.prevent="rightDown"
+      @mouseup.left.prevent="leftUp"
+      @mouseup.right.prevent="rightUp"
+      @touchcancel.prevent="leftUp"
+      @touchend.prevent="leftUp"
+      @touchstart.prevent="leftDown"
+      @contextmenu.prevent
+    >
+      <map-board/>
     </div>
 
-    <MapMask v-for="obj in getMapObjectList({ kind: 'mapMask', place: 'field' })"
-             :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
-             @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="mapMask"/>
-    <Character v-for="obj in getMapObjectList({ kind: 'character', place: 'field' })"
-               :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
-               @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="character"/>
-    <Chit v-for="obj in getMapObjectList({ kind: 'chit', place: 'field' })"
-          :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
-          @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="chit"/>
+    <map-mask
+      v-for="obj in getMapObjectList({ kind: 'mapMask', place: 'field' })"
+      :key="obj.key"
+      :objKey="obj.key"
+      @drag="dragging"
+      @leftDown="leftDown"
+      @leftUp="leftUp"
+      @rightDown="rightDown"
+      @rightUp="rightUp"
+      type="mapMask"
+    />
+
+    <character
+      v-for="obj in getMapObjectList({ kind: 'character', place: 'field' })"
+      :key="obj.key"
+      :objKey="obj.key"
+      @drag="dragging"
+      @leftDown="leftDown"
+      @leftUp="leftUp"
+      @rightDown="rightDown"
+      @rightUp="rightUp"
+      type="character"
+    />
+
+    <chit
+      v-for="obj in getMapObjectList({ kind: 'chit', place: 'field' })"
+      :key="obj.key"
+      :objKey="obj.key"
+      @drag="dragging"
+      @leftDown="leftDown"
+      @leftUp="leftUp"
+      @rightDown="rightDown"
+      @rightUp="rightUp"
+      type="chit"
+    />
 
   </div>
 </template>

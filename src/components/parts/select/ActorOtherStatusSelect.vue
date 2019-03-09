@@ -1,7 +1,7 @@
 <template>
-  <SelectBase defaultLabel="個別設定" :defaultSelectable="true" v-model="localValue">
+  <select-base defaultLabel="個別設定" :defaultSelectable="true" v-model="localValue">
     <option :key="status.name" :value="status.name" v-for="status in useStatusList">{{status.name}}</option>
-  </SelectBase>
+  </select-base>
 </template>
 
 <script lang="ts">

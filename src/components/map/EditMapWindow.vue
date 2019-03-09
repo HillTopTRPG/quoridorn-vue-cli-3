@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame titleText="マップ変更" display-property="private.display.editMapWindow" align="center" fixSize="401, 435" @open="initWindow" @reset="initWindow" @cancel="cancel" @close="close">
-    <div class="container">
+  <window-frame titleText="マップ変更" display-property="private.display.editMapWindow" align="center" fixSize="401, 435" @open="initWindow" @reset="initWindow" @cancel="cancel" @close="close">
+    <div class="container" @contextmenu.prevent>
       <div class="choseImage">
         <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === edit.imageKey}" :key="image.key" v-img="image.data" @click="selectImage(image.key)" draggable="false" /></div>
       </div>
@@ -45,7 +45,7 @@
         <p>確定ボタンを押下しないとルームメンバーには反映されません。</p>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>

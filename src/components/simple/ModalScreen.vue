@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isModal"></div>
+  <div v-if="isModal" @contextmenu.prevent></div>
 </template>
 
 <script lang="ts">

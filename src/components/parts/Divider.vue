@@ -4,7 +4,9 @@
     @dblclick.stop="doubleClick()"
     @mouseover="hoverDev(index)"
     @mouseout="hoverDev()"
-    @mousedown="event => moveDevStart(event, index)"></td>
+    @mousedown="event => moveDevStart(event, index)"
+    @contextmenu.prevent
+  ></td>
 </template>
 
 <script lang="ts">

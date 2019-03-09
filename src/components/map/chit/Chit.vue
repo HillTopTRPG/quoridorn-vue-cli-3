@@ -1,14 +1,20 @@
 <template>
-  <div class="chit"
+  <div
+    class="chit"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="chitStyle"
     :title="description"
     @click.right.prevent="(e) => openContext(e, 'private.display.chitContext')"
-    @mouseover="mouseover" @mouseout="mouseout"
-    @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
-    @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
-    @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
-    @contextmenu.prevent>
+    @mouseover="mouseover"
+    @mouseout="mouseout"
+    @mousedown.left.stop="leftDown"
+    @mouseup.left.stop="leftUp"
+    @mousedown.right.stop="rightDown"
+    @mouseup.right.stop="rightUp"
+    @touchstart="leftDown" @touchend="leftUp"
+    @touchcancel="leftUp"
+    @contextmenu.prevent
+  >
     <div class="border"></div>
     <img class="image" v-img="getKeyObj(imageList, imageKey).data" :class="{reverse : isReverse}" draggable="false"/>
   </div>
@@ -78,9 +84,6 @@ export default {
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;

@@ -1,6 +1,6 @@
 <template>
   <window-frame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
       <label class="playerSelect"><player-select v-model="currentPlayerKey"/>のプレイヤーボックス</label>
       <label class="playerFontColor">
         チャット文字色

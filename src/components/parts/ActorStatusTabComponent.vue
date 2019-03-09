@@ -2,7 +2,7 @@
   <div class="actor-status-tab-container">
 
     <!-- タブ -->
-    <div class="actor-status-tabs">
+    <div class="actor-status-tabs" @contextmenu.prevent>
       <label class="tab">
         <actor-status-combo
           :statusList="actor.statusList"

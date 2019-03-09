@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame titleText="部屋データ読込" display-property="private.display.dropZipWindow" align="center" fixSize="300, 100">
-    <div class="contents">
+  <window-frame titleText="部屋データ読込" display-property="private.display.dropZipWindow" align="center" fixSize="300, 100">
+    <div class="contents" @contextmenu.prevent>
       <div v-if="!saveDataList">部屋データを読み込んでいます...</div>
       <!-- TODO 初回リリース対応としては部分ロードはしない
       <div v-if="saveDataList">複数のセーブデータで同じ項目を読み込ませる場合、各セーブデータで順次上書きされていきます。</div>
@@ -21,7 +21,7 @@
         <button @click="cancel" :disabled="!saveDataList">キャンセル</button>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">

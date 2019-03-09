@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame titleText="キャラクター置き場" display-property="private.display.addCharacterWindow" align="center" fixSize="200, 200" @open="open">
-    <div class="container">
+  <window-frame titleText="キャラクター置き場" display-property="private.display.addCharacterWindow" align="center" fixSize="200, 200" @open="open">
+    <div class="container" @contextmenu.prevent>
       <div class="name">{{name}}</div>
       <div class="image"><img class="img" v-img="imageObj.data" @dragstart="dragStart" draggable="true" :class="{reverse : imageObj.isReverse}" @mousedown.stop/></div>
       <div class="controlArea">
@@ -8,7 +8,7 @@
         <span>連番：</span><input type="number" min="0" v-model="continuous_Num" :disabled="!isContinuous"/>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>
