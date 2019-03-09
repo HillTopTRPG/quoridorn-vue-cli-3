@@ -32,13 +32,17 @@ export default {
         alert("現在「保存」機能はご利用いただけません。");
         return;
       }
+
       // 連想配列の中身を空にする
       for (const playerKey in rootGetters.volatilePrivateData) {
         if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
           continue;
-        delete rootGetters.volatilePrivateData.hasOwnProperty[playerKey];
+        delete rootGetters.volatilePrivateData[playerKey];
       }
+
+      // privateデータのコピー
       const privateData = JSON.parse(JSON.stringify(rootState.private));
+
       // 開いてないディスプレイ情報は送信データに含めない
       for (const key in privateData.display) {
         if (!privateData.display.hasOwnProperty(key)) continue;
@@ -49,7 +53,11 @@ export default {
           delete privateData.display[key].zIndex;
         }
       }
+
+      // 自分のprivateデータを一時領域に保存する
       rootGetters.volatilePrivateData[rootGetters.playerKey] = privateData;
+
+      // 1人だったら即保存処理、複数人だったらprivateデータをクリエストする
       if (rootGetters.members.length === 1) {
         dispatch("doExport");
       } else {
@@ -72,6 +80,7 @@ export default {
       rootState: any;
       rootGetters: any;
     }) {
+      // ------------------------------------------------------------
       // セーブデータのベース作成
       const saveData = JSON.parse(
         JSON.stringify({
@@ -81,12 +90,14 @@ export default {
       );
       saveData.public.room.members = [];
 
+      // listに対する差分を取り扱う
       const addKeyList: string[] = [];
       const delKeyList: string[] = [];
       for (const playerKey in rootGetters.volatilePrivateData) {
         if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
           continue;
 
+        // ------------------------------------------------------------
         // セーブデータ内のplayerのリストに各プレイヤーのprivateデータを持たせる
         const playerPrivateObj: any =
           rootGetters.volatilePrivateData[playerKey];
@@ -95,16 +106,16 @@ export default {
           player.private = playerPrivateObj;
         });
 
+        // ------------------------------------------------------------
         // 各プレイヤーのデータの操作履歴をまとめる
-        const historyList = playerPrivateObj.historyList;
-        delete playerPrivateObj.historyList;
-
-        historyList.forEach((history: any) => {
+        playerPrivateObj.historyList.forEach((history: any) => {
           if (history.type === "add") addKeyList.push(history.key);
           if (history.type === "del") delKeyList.push(history.key);
         });
+        delete playerPrivateObj.historyList;
       }
 
+      // ------------------------------------------------------------
       // 削除したデータが追加したデータに含まれている場合は双方のリストから消す
       const delKeyDelList: string[] = [];
       delKeyList.forEach((delKey: string) => {
@@ -116,49 +127,67 @@ export default {
           delKeyDelList.push(delKey);
         }
       });
-      delKeyDelList.forEach((delKeyDel: string) => {
-        const index = delKeyList.findIndex(
-          (delKey: string) => delKey === delKeyDel
-        );
-        delKeyList.splice(index, 1);
-      });
+      delKeyDelList.forEach((delKeyDel: string) =>
+        delKeyList.splice(
+          delKeyList.findIndex((delKey: string) => delKey === delKeyDel),
+          1
+        )
+      );
 
+      // ------------------------------------------------------------
       // この時点で削除リストはプリセットデータの削除のみとなっているはず
       // → 対象のkeyのリストが保存データに含まれれば、ロード時に十分なデータとなる
       saveData.delKeyList = delKeyList;
 
+      // ============================================================
+
       // ここからは追加データ間の関連データを調べ、差分データとして用意する
-      const imageKeys = addKeyList.filter(key => key.split("-")[0] === "image");
+      const imageKeyList = addKeyList.filter(
+        key => key.split("-")[0] === "image"
+      );
+
+      /** -----------------------------------------------------------
+       * imageKeyListに含まれるなら間接参照keyに変換する
+       */
       const getAfterKey = (beforeKey: string) => {
-        const matchKey = imageKeys.filter(
+        const index: number = imageKeyList.findIndex(
           imageKey => imageKey === beforeKey
-        )[0];
-        if (!matchKey) return beforeKey;
-        return matchKey.replace(
-          /[0-9]+/,
-          () => `$${imageKeys.indexOf(matchKey)}`
         );
+        if (index === -1) return beforeKey;
+        return beforeKey.replace(/[0-9]+/, () => `$${index}`);
       };
+
       const addObjList: any[] = addKeyList.map(key => {
-        const obj = JSON.parse(JSON.stringify(rootGetters.getObj(key)));
-        // 画像を持つオブジェクトなら "useImageList" があるはず
-        let useImageList = obj.useImageList;
-        if (useImageList) {
-          const useImageKeys = useImageList
-            .split("|")
-            .map((str: string) => str.replace(":R", ""));
-          useImageKeys.forEach((uiKey: string) => {
-            const afterKey = getAfterKey(uiKey);
-            useImageList = useImageList.replace(uiKey, afterKey);
-          });
-          obj.useImageList = useImageList;
-        }
-        const imageKey = obj.imageKey;
-        if (imageKey) {
-          obj.imageKey = getAfterKey(imageKey);
-        }
-        return obj;
+        // オブジェクトのデータを文字列化し、そこに含まれるイメージkeyを必要に応じて置換する
+        let objStr = JSON.stringify(rootGetters.getObj(key));
+        (objStr.match(/image-([0-9])+/g) || []).forEach((imageKey: string) => {
+          objStr = objStr.replace(
+            new RegExp(imageKey, "g"),
+            getAfterKey(imageKey)
+          );
+        });
+        return JSON.parse(objStr);
+
+        // // 画像を持つオブジェクトなら "useImageList" があるはず
+        // const obj = JSON.parse(JSON.stringify(rootGetters.getObj(key)));
+        // let useImageList = obj.useImageList;
+        // if (useImageList) {
+        //   const useImageKeys = useImageList
+        //     .split("|")
+        //     .map((str: string) => str.replace(":R", ""));
+        //   useImageKeys.forEach((uiKey: string) => {
+        //     const afterKey = getAfterKey(uiKey);
+        //     useImageList = useImageList.replace(uiKey, afterKey);
+        //   });
+        //   obj.useImageList = useImageList;
+        // }
+        // const imageKey = obj.imageKey;
+        // if (imageKey) {
+        //   obj.imageKey = getAfterKey(imageKey);
+        // }
+        // return obj;
       });
+
       addObjList.forEach(addObj => {
         const prefix = addObj.key.split("-")[0];
         if (prefix === "image") {
@@ -178,6 +207,7 @@ export default {
       // お試しデータのカードデッキはとりあえず削除
       delete saveData.public.deck;
 
+      // セーブデータに追加差分データを含める
       saveData.addObjList = addObjList;
 
       // zipファイルの生成
@@ -331,8 +361,15 @@ export default {
                 return;
               }
 
-              // マップオブジェクトのロード
               delete addObj.key;
+
+              // BGMのロード
+              if (type === "bgm") {
+                dispatch("addBGM", addObj);
+                return;
+              }
+
+              // マップオブジェクトのロード
               dispatch("addPieceInfo", addObj);
             });
         });
