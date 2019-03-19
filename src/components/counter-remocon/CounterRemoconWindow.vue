@@ -2,7 +2,7 @@
   <window-frame
     titleText="カウンターリモコン"
     display-property="private.display.counterRemoconWindow"
-    align="right-top"
+    align="center"
     baseSize="300, 500"
     ref="window"
   >
@@ -72,6 +72,8 @@ import { sum } from "@/components/common/Utility";
   }
 })
 export default class CounterRemoconWindow extends Vue {
+  @Action("windowOpen") windowOpen: any;
+
   private publicCounterRemoconList: any[] = [];
   private useCharacterList: any[] = [];
 
@@ -86,6 +88,10 @@ export default class CounterRemoconWindow extends Vue {
     } else {
       // 数値の場合
     }
+  }
+
+  doAdd() {
+    this.windowOpen("private.display.counterRemoconEditorWindow");
   }
 }
 </script>

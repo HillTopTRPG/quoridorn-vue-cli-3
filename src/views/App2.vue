@@ -51,6 +51,8 @@
     <image-selector-window/>
     <initiative-window/>
     <initiative-setting-window/>
+    <counter-remocon-window/>
+    <counter-remocon-editor-window/>
   </div>
 </template>
 
@@ -100,6 +102,8 @@ import StandImageSettingWindow from "../components/stand-image/StandImageSetting
 import ImageSelectorWindow from "../components/simple/ImageSelectorWindow.vue";
 import InitiativeWindow from "../components/initiative/InitiativeWindow.vue";
 import InitiativeSettingWindow from "@/components/initiative/InitiativeSettingWindow.vue";
+import CounterRemoconWindow from "@/components/counter-remocon/CounterRemoconWindow.vue";
+import CounterRemoconEditorWindow from "@/components/counter-remocon/CounterRemoconEditorWindow.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
@@ -150,7 +154,9 @@ import { Action, Getter, Mutation } from "vuex-class";
     StandImageSettingWindow,
     ImageSelectorWindow,
     InitiativeWindow,
-    InitiativeSettingWindow
+    InitiativeSettingWindow,
+    CounterRemoconWindow,
+    CounterRemoconEditorWindow
   }
 })
 export default class App2 extends Vue {

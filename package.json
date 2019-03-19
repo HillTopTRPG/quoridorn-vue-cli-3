@@ -8,11 +8,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "ajv": "^6.10.0",
+    "ajv-keywords": "^3.4.0",
+    "compression-webpack-plugin": "^2.0.0",
     "file-saver": "^2.0.0",
     "js-yaml": "^3.12.1",
     "json-loader": "^0.5.7",
     "jszip": "^3.1.5",
     "skyway-js": "^1.1.19",
+    "typescript": "^3.3.3333",
     "vue": "^2.5.17",
     "vue-class-component": "^6.0.0",
     "vue-mixin-decorator": "^1.0.0",
@@ -37,7 +41,6 @@
     "lint-staged": "^7.2.2",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
-    "typescript": "^3.0.0",
     "vue-template-compiler": "^2.5.17"
   },
   "eslintConfig": {

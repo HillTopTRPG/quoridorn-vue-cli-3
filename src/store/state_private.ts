@@ -255,7 +255,9 @@ export default {
         zIndex: 1,
         value: "",
         callback: null
-      }
+      },
+      counterRemoconWindow: { command: null, isDisplay: false, zIndex: 1 },
+      counterRemoconEditorWindow: { command: null, isDisplay: false, zIndex: 1 }
     }
   } /* end of state */,
   actions: {

@@ -1,8 +1,10 @@
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
+const productionGzipExtensions = ["js", "eot", "ttf"];
+
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
 
 module.exports = {
-  /* パターン３ */
   baseUrl: process.env.VUE_APP_BASE_URL,
   devServer: {
     watchOptions: {
@@ -20,7 +22,16 @@ module.exports = {
     }
   },
   configureWebpack: {
-    plugins: [new BundleAnalyzerPlugin()]
+    plugins: [
+      new CompressionWebpackPlugin({
+        filename: "[path].gz[query]",
+        algorithm: "gzip",
+        test: new RegExp("\\.(" + productionGzipExtensions.join("|") + ")$"),
+        threshold: 1024,
+        minRatio: 0.8
+      }),
+      new BundleAnalyzerPlugin()
+    ]
   },
   // yamlローダーの追加
   chainWebpack: config => {
@@ -34,22 +45,4 @@ module.exports = {
       .loader("yaml-loader")
       .end();
   }
-  /* パターン１
-  baseUrl: "./",
-  devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    compress: true,
-    port: 9000
-  }
-  */
-  /* パターン２
-  devServer: {
-    public: "192.168.11.2:2104",
-    host: "0.0.0.0",
-    port: "8080",
-    watchOptions: {
-      poll: true
-    }
-  }
-  */
 };
