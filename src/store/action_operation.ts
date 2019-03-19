@@ -216,12 +216,14 @@ export default {
         tag,
         data,
         thumbnail,
+        imageArgList,
         owner
       }: {
         name: string;
         tag: string;
         data: any;
         thumbnail: string;
+        imageArgList: string[];
         owner: string;
       }
     ): string => {
@@ -230,12 +232,13 @@ export default {
       const key = `image-${++maxKey}`;
       rootState.public.image.maxKey = maxKey;
       rootState.public.image.list.push({
-        key: key,
-        name: name,
-        tag: tag,
-        data: data,
-        thumbnail: thumbnail,
-        owner: owner
+        key,
+        name,
+        tag,
+        data,
+        thumbnail,
+        imageArgList,
+        owner
       });
       if (rootGetters.playerKey === owner) {
         rootGetters.historyList.push({ type: "add", key: key });

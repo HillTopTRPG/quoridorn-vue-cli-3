@@ -558,6 +558,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
             // サムネイル画像でない場合はプレーンな画像データからBase64データを取得する
             resolve(reader.result);
           };
+          reader.readAsDataURL(imageFile);
         } catch (error) {
           reject(error);
         }
@@ -614,8 +615,8 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       (values: String[]) => ({
         name: imageFile.name,
         imageArgList: getFileNameArgList(imageFile.name),
-        thumbnail: values[0],
-        image: values[1]
+        image: values[0],
+        thumbnail: values[1]
       })
     );
   }

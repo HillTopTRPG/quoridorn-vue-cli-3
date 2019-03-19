@@ -60,6 +60,7 @@ export default class DropImageWindow extends Vue {
         tag: imageObj.currentTag,
         data: imageObj.image,
         thumbnail: imageObj.thumbnail,
+        imageArgList: imageObj.imageArgList,
         owner: this.playerKey
       });
     });
@@ -109,6 +110,7 @@ export default class DropImageWindow extends Vue {
       name: imgObj.name,
       image: imgObj.image,
       thumbnail: imgObj.thumbnail,
+      imageArgList: imgObj.imageArgList,
       currentTag: "キャラクター",
       selectTag: "キャラクター",
       password: ""
