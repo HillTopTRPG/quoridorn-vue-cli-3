@@ -54,10 +54,11 @@ export default class Range extends Mixins<RangeMixins>(
   }
 
   private paint(this: any) {
-    let canvas: HTMLCanvasElement = <HTMLCanvasElement>this.$refs.canvas;
-    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D>(
-      canvas.getContext("2d")
-    );
+    let canvas: HTMLCanvasElement = this.$refs.canvas as HTMLCanvasElement;
+    const ctx: CanvasRenderingContext2D = canvas.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
+
     // ctx.globalAlpha = 0.4
     ctx.lineJoin = "round";
     // ctx.lineCap = 'round'

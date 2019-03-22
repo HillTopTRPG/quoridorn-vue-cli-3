@@ -85,9 +85,8 @@ export default class BGMCoreComponent extends Vue {
       this.url
     )}/default.jpg`;
 
-    const volumeComponent: VolumeComponent = <VolumeComponent>(
-      this.$refs.volumeComponent
-    );
+    const volumeComponent: VolumeComponent = this.$refs
+      .volumeComponent as VolumeComponent;
     volumeComponent.setVolume(this.initVolume);
     volumeComponent.setMute(false);
 
@@ -102,18 +101,16 @@ export default class BGMCoreComponent extends Vue {
     window.open(this.url, "_blank");
   }
   audioMute(this: any): void {
-    const volumeComponent: VolumeComponent = <VolumeComponent>(
-      this.$refs.volumeComponent
-    );
+    const volumeComponent: VolumeComponent = this.$refs
+      .volumeComponent as VolumeComponent;
     this.$emit(
       "mute",
       this.masterMute || (volumeComponent ? volumeComponent.mute : false)
     );
   }
   audioVolume(this: any): void {
-    const volumeComponent: VolumeComponent = <VolumeComponent>(
-      this.$refs.volumeComponent
-    );
+    const volumeComponent: VolumeComponent = this.$refs
+      .volumeComponent as VolumeComponent;
     this.$emit(
       "volume",
       this.masterVolume * (volumeComponent ? volumeComponent.volume : 0)

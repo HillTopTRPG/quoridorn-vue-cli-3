@@ -130,9 +130,8 @@ export default class BGMYoutubeComponent extends Vue {
     this.$emit("end");
   }
   onTimeUpdate(time: number) {
-    const bgmCoreComponent: BGMCoreComponent = <BGMCoreComponent>(
-      this.$refs.core!
-    );
+    const bgmCoreComponent: BGMCoreComponent = this.$refs
+      .core! as BGMCoreComponent;
     bgmCoreComponent.timeUpdate(time);
   }
 }

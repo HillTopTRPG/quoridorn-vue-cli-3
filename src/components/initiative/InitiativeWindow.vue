@@ -444,7 +444,8 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
    * @param text
    */
   getWidth(text: string): number {
-    const widthScale: HTMLSpanElement = <HTMLSpanElement>this.$refs.widthScale!;
+    const widthScale: HTMLSpanElement = this.$refs
+      .widthScale! as HTMLSpanElement;
     widthScale.innerText = text;
     const width: number = widthScale.offsetWidth;
     widthScale.innerText = "";
@@ -512,7 +513,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   arrangeWindowSize(isWide: boolean) {
-    const windowFrame: WindowFrame = <WindowFrame>this.$refs.window;
+    const windowFrame: WindowFrame = this.$refs.window as WindowFrame;
     const width = this.windowWidth;
     if (!isWide) {
       const newWidth: number = this.baseWindowWidth;

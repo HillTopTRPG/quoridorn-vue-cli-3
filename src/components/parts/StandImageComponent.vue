@@ -187,9 +187,8 @@ export default class StandImageComponent extends Vue {
   paint(this: any): void {
     const time = this.timeList[this.timeIndex];
 
-    const canvasElm: HTMLCanvasElement = <HTMLCanvasElement>(
-      this.$refs.standImage
-    );
+    const canvasElm: HTMLCanvasElement = this.$refs
+      .standImage as HTMLCanvasElement;
 
     if (canvasElm) {
       const ctx: CanvasRenderingContext2D = canvasElm!.getContext("2d")!;

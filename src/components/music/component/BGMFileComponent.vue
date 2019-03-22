@@ -67,9 +67,8 @@ export default class BGMFileComponent extends Vue {
     this.jukeboxAudio.addEventListener("timeupdate", this.onTimeUpdate);
     this.jukeboxAudio.addEventListener("play", () => {
       if (!this.jukeboxAudio) return;
-      const bgmCoreComponent: BGMCoreComponent = <BGMCoreComponent>(
-        this.$refs.core
-      );
+      const bgmCoreComponent: BGMCoreComponent = this.$refs
+        .core as BGMCoreComponent;
       bgmCoreComponent.setDuration(this.jukeboxAudio.duration);
       bgmCoreComponent.play();
     });

@@ -149,9 +149,8 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
   }
 
   doDeleteActorStatus(key: string, statusName: string) {
-    const comp: ActorStatusTabComponent = <ActorStatusTabComponent>(
-      this.$refs.actorStatusTabComponent
-    );
+    const comp: ActorStatusTabComponent = this.$refs
+      .actorStatusTabComponent as ActorStatusTabComponent;
     this.statusName = comp.deleteTab();
     this.deleteActorStatus(key, statusName);
   }

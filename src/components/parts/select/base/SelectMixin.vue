@@ -27,11 +27,11 @@ export default class SelectMixin extends Vue {
   }
 
   updated() {
-    const selectElm: HTMLSelectElement = <HTMLSelectElement>this.$refs.select;
+    const selectElm: HTMLSelectElement = this.$refs.select as HTMLSelectElement;
     if (selectElm) {
-      const options: HTMLOptionElement[] = <Array<HTMLOptionElement>>(
-        Array.prototype.slice.call(selectElm.querySelectorAll("option"))
-      );
+      const options: HTMLOptionElement[] = Array.prototype.slice.call(
+        selectElm.querySelectorAll("option")
+      ) as Array<HTMLOptionElement>;
       const index = options.findIndex(
         option => option.value === this.localValue
       );

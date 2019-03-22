@@ -33,9 +33,9 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
     this.paint();
   }
   paint(this: any): void {
-    const canvasElm: HTMLCanvasElement = <HTMLCanvasElement>(
-      document.getElementById("map-canvas")
-    );
+    const canvasElm: HTMLCanvasElement = document.getElementById(
+      "map-canvas"
+    ) as HTMLCanvasElement;
     const ctx: CanvasRenderingContext2D = canvasElm!.getContext("2d")!;
 
     ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h);

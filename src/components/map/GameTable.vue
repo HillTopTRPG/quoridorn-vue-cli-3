@@ -134,26 +134,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     });
   }
 
-  getAngle(mouseOnTable: any, storeObj: any): number {
-    const rectObj = {
-      top: storeObj.top + storeObj.move.dragging.y,
-      left: storeObj.left + storeObj.move.dragging.x,
-      width: storeObj.columns * this.gridSize,
-      height: storeObj.rows * this.gridSize
-    };
-    const center = {
-      x: rectObj.left + rectObj.width / 2,
-      y: rectObj.top + rectObj.height / 2
-    };
-    // 中心座標を基準としたマウス座標
-    const loc = {
-      x: mouseOnTable.x - center.x,
-      y: mouseOnTable.y - center.y
-    };
-    // 中心点と指定された座標とを結ぶ線の角度を求める
-    return (Math.atan2(loc.y, loc.x) * 180) / Math.PI;
-  }
-
   leftDown(this: any): void {
     // window.console.log(`  [methods] mousedown left on GameTable`)
     const obj = {
@@ -423,7 +403,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.currentImageTag = currentImageTag;
       pieceObj.fontColorType = 0;
       pieceObj.fontColor = "";
-      const useImage = useImageList.split("|")[useImageIndex];
       pieceObj.statusList = [
         {
           name: "◆",
@@ -553,7 +532,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       (resolve: Function, reject: Function) => {
         try {
           const reader: any = new FileReader();
-          reader.onload = function(event: any) {
+          reader.onload = () => {
             // サムネイル画像でない場合はプレーンな画像データからBase64データを取得する
             resolve(reader.result);
           };
@@ -587,9 +566,9 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
               }
 
               // 画像を描画してデータを取り出す（Base64変換の実装）
-              const canvas: HTMLCanvasElement = <HTMLCanvasElement>(
-                document.createElement("canvas")
-              );
+              const canvas: HTMLCanvasElement = document.createElement(
+                "canvas"
+              ) as HTMLCanvasElement;
               const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
               canvas.width = w;
               canvas.height = h;
