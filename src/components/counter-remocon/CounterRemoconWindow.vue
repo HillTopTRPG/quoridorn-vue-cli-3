@@ -57,25 +57,31 @@
 <script lang="ts">
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
-import Divider from "../parts/Divider.vue";
-import ColorCheckBox from "@/components/parts/ColorCheckBox.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
-import { sum } from "@/components/common/Utility";
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<CounterRemoconWindow>({
+@Component({
   name: "counterRemoconWindow",
-  mixins: [WindowMixin],
   components: {
     WindowFrame
   }
 })
-export default class CounterRemoconWindow extends Vue {
+export default class CounterRemoconWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
   @Action("windowOpen") windowOpen: any;
+  @Getter("publicCounterRemoconList") publicCounterRemoconList: any;
 
-  private publicCounterRemoconList: any[] = [];
   private useCharacterList: any[] = [];
+
+  doSave() {
+    // TODO
+  }
+
+  doLoad() {
+    // TODO
+  }
 
   doChange(remoconObj: any, targetKey: string | null = null) {
     const messageFormat = remoconObj.messageFormat;

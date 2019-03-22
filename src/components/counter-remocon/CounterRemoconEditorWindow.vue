@@ -3,65 +3,140 @@
     titleText="カウンターリモコンエディター"
     display-property="private.display.counterRemoconEditorWindow"
     align="left-top"
-    fixSize="300, 300"
+    fixSize="340, 200"
     ref="window"
     @open="initWindow"
   >
     <div class="contents" @contextmenu.prevent>
       <label>
-        <span class="label">ボタン名</span>
+        <span class="label">ボタン名:</span>
         <input type="text" v-model="buttonName">
       </label>
       <label>
-        <span class="label">カウンター名{1}</span>
-        <input type="text" v-model="counterName">
+        <span class="label">カウンター名{1}:</span>
+        <counter-select v-model="counterName" class="full"/>
       </label>
       <label>
-        <span class="label">修正値{2}</span>
+        <span class="label">修正値{2}:</span>
         <select v-model="modifyType">
-          <option :value="CounterRemoconEditorWindow.MODIFY_PLUS">＋</option>
-          <option :value="CounterRemoconEditorWindow.MODIFY_MINUS">−</option>
-          <option :value="CounterRemoconEditorWindow.MODIFY_EQUALS">＝</option>
+          <option :value="COUNTER_REMOCON_TYPE.PLUS">＋</option>
+          <option :value="COUNTER_REMOCON_TYPE.MINUS">ー</option>
+          <option :value="COUNTER_REMOCON_TYPE.EQUALS">＝</option>
+          <option :value="COUNTER_REMOCON_TYPE.PLUS_MINUS">±</option>
         </select>
         <input type="text" v-model="modifyValue">
       </label>
       <label>
-        <span class="label">表示メッセージ</span>
+        <span class="label">表示メッセージ:</span>
         <input type="text" v-model="message">
       </label>
+      <label>
+        <span class="label">例:</span>
+        <span class="label">{{exampleText}}</span>
+      </label>
+      <div class="operationArea">
+        <button @click="commit">設定</button>
+        <button>キャンセル</button>
+      </div>
     </div>
   </window-frame>
 </template>
 
 <script lang="ts">
+import CounterSelect from "@/components/parts/select/CounterSelect.vue";
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
-import Divider from "../parts/Divider.vue";
-import ColorCheckBox from "@/components/parts/ColorCheckBox.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
-import { sum } from "@/components/common/Utility";
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<CounterRemoconEditorWindow>({
+@Component({
   name: "counterRemoconEditorWindow",
-  mixins: [WindowMixin],
   components: {
+    CounterSelect,
     WindowFrame
   }
 })
-export default class CounterRemoconEditorWindow extends Vue {
-  public static MODIFY_PLUS = 1;
-  public static MODIFY_MINUS = -1;
-  public static MODIFY_EQUALS = 0;
+export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("changeListInfo") changeListInfo: any;
+  @Action("addCounterRemocon") addCounterRemocon: any;
+  @Action("windowClose") windowClose: any;
+  @Getter("propertyList") propertyList: any;
+  @Getter("counterRemoconEditorKey") counterRemoconEditorKey: any;
+  @Getter("getObj") getObj: any;
 
   private buttonName: string = "";
   private counterName: string = "";
-  private modifyType: number = CounterRemoconEditorWindow.MODIFY_PLUS;
+  private modifyType: number = 0;
   private modifyValue: string = "";
   private message: string = "{0}の{1}を{2}した";
+  private exampleText: string = "";
 
-  private initWindow() {}
+  /**
+   * ライフサイクルメソッド
+   */
+  private created() {
+    this.modifyType = this.COUNTER_REMOCON_TYPE.PLUS;
+  }
+
+  private initWindow() {
+    const counterRemocon = this.getObj(this.counterRemoconEditorKey);
+    if (counterRemocon) {
+      this.buttonName = counterRemocon.buttonName;
+      this.counterName = counterRemocon.counterName;
+      this.modifyType = counterRemocon.modifyType;
+      this.modifyValue = counterRemocon.modifyValue;
+      this.message = counterRemocon.message;
+      this.exampleText = counterRemocon.exampleText;
+    } else {
+      const firstProperty = this.propertyList[0];
+      this.buttonName = "";
+      this.counterName = firstProperty ? firstProperty.property : "";
+      this.modifyType = this.COUNTER_REMOCON_TYPE.PLUS;
+      this.modifyValue = "";
+      this.message = "{0}の{1}を{2}した";
+      this.exampleText = `の${this.counterName}をした`;
+    }
+  }
+
+  private commit() {
+    // 入力チェック
+    const messageList: string[] = [];
+    if (!this.buttonName) messageList.push("ボタン名は必須です。");
+    if (!this.counterName) messageList.push("カウンター名は必須です。");
+    if (!this.modifyValue) messageList.push("修正値は必須です。");
+    if (messageList.length) {
+      alert(messageList.join("\n"));
+      return;
+    }
+
+    // 情報更新
+    const counterRemocon = this.getObj(this.counterRemoconEditorKey);
+    if (counterRemocon) {
+      this.changeListInfo({
+        key: this.counterRemoconEditorKey,
+        isNotice: true,
+        buttonName: this.buttonName,
+        counterName: this.counterName,
+        modifyType: this.modifyType,
+        modifyValue: this.modifyValue,
+        message: this.message,
+        exampleText: this.exampleText
+      });
+    } else {
+      this.addCounterRemocon({
+        buttonName: this.buttonName,
+        counterName: this.counterName,
+        modifyType: this.modifyType,
+        modifyValue: this.modifyValue,
+        message: this.message,
+        exampleText: this.exampleText
+      });
+    }
+    this.windowClose("private.display.counterRemoconEditorWindow");
+  }
 }
 </script>
 
@@ -74,5 +149,41 @@ export default class CounterRemoconEditorWindow extends Vue {
   font-size: 12px;
   display: flex;
   flex-direction: column;
+
+  > label {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 2.2em;
+
+    > span:first-child {
+      width: 8em;
+      text-align: right;
+      padding-right: 1em;
+    }
+
+    > select {
+      /*height: 2em;*/
+    }
+
+    > input,
+    > .full {
+      flex: 1;
+    }
+  }
+
+  > .operationArea {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    > button {
+      &:not(:first-child) {
+        margin-left: 0.5em;
+      }
+    }
+  }
 }
 </style>

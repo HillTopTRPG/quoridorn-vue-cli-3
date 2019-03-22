@@ -257,7 +257,12 @@ export default {
         callback: null
       },
       counterRemoconWindow: { command: null, isDisplay: false, zIndex: 1 },
-      counterRemoconEditorWindow: { command: null, isDisplay: false, zIndex: 1 }
+      counterRemoconEditorWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: null
+      }
     }
   } /* end of state */,
   actions: {
@@ -444,6 +449,8 @@ export default {
       state.display.imageSelectorWindow.imageTag,
     imageSelectorCallback: (state: any) =>
       state.display.imageSelectorWindow.callback,
-    display: (state: any) => state.display
+    display: (state: any) => state.display,
+    counterRemoconEditorKey: (state: any) =>
+      state.display.counterRemoconEditorWindow.objKey
   }
 };

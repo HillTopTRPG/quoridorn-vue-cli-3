@@ -108,7 +108,7 @@ export default {
     },
 
     /** カウンターリモコン */
-    counterRemoCon: { list: [], maxKey: -1 },
+    counterRemocon: { list: [], maxKey: -1 },
 
     /** チャット */
     chat: {
@@ -570,7 +570,8 @@ export default {
     round: (state: any) => state.initiative.round,
     roundPlayerKey: (state: any) => state.initiative.roundPlayerKey,
     propertyList: (state: any) => state.initiative.propertyList,
-    publicCounterRemoConList: (state: any) => state.counterRemoCon.list,
+    publicCounterRemocon: (state: any) => state.counterRemocon,
+    publicCounterRemoconList: (state: any) => state.counterRemocon.list,
     roomSystem: (state: any) => state.room.system
   } /* end of getters */
 };

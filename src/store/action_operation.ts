@@ -626,6 +626,29 @@ export default {
       });
     },
     /** ========================================================================
+     * カウンターリモコンの追加
+     */
+    addCounterRemocon: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doAddCounterRemocon"
+      });
+    },
+    doAddCounterRemocon: (
+      { rootGetters }: { rootGetters: any },
+      payload: any
+    ) => {
+      rootGetters.publicCounterRemoconList.push({
+        key: `counterRemocon-${++rootGetters.publicCounterRemocon.maxKey}`,
+        buttonName: payload.buttonName,
+        counterName: payload.counterName,
+        modifyType: payload.modifyType,
+        modifyValue: payload.modifyValue,
+        message: payload.message,
+        exampleText: payload.exampleText
+      });
+    },
+    /** ========================================================================
      * チャットタブの構成を変更する
      */
     changeChatTab: ({ dispatch }: { dispatch: Function }, payload: any) => {
