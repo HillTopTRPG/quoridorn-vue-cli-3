@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="チャットタブ設定画面" display-property="private.display.settingChatTabWindow" align="center" fixSize="320, 432" @open="initWindow" @reset="initWindow">
+  <window-frame titleText="チャットタブ設定画面" display-property="private.display.settingChatTabWindow" align="center" fixSize="320, 432" @open="initWindow" @reset="initWindow">
     <div class="contents" @contextmenu.prevent>
       <draggable v-model="tabs">
         <template v-for="(tab, index) in tabs">
@@ -16,40 +16,41 @@
         <button type="button" @click="cancel">キャンセル</button>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import draggable from "vuedraggable";
-import { Component, Vue } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
 
-@Component<SettingChatTabWindow>({
-  name: "settingChatTabWindow",
-  mixins: [WindowMixin],
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+
+@Component({
   components: {
     WindowFrame,
     draggable
   }
 })
-export default class SettingChatTabWindow extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Action("addChatTab") addChatTab: any;
-  @Action("updateChatTab") updateChatTab: any;
-  @Action("deleteChatTab") deleteChatTab: any;
-  @Getter("chatTabs") chatTabs: any;
+export default class SettingChatTabWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("windowClose") private windowClose: any;
+  @Action("addChatTab") private addChatTab: any;
+  @Action("updateChatTab") private updateChatTab: any;
+  @Action("deleteChatTab") private deleteChatTab: any;
+  @Getter("chatTabs") private chatTabs: any;
 
   private tabs: any[] = [];
   private addIndex: number = -1;
   private delTabs: string[] = [];
 
-  public initWindow() {
+  private initWindow() {
     this.tabs = this.chatTabs.concat();
   }
 
-  public addTab() {
+  private addTab() {
     const key = `chatTabAdd-${++this.addIndex}`;
     this.tabs.push({
       key: key,
@@ -57,14 +58,14 @@ export default class SettingChatTabWindow extends Vue {
     });
   }
 
-  public delTab(key: string, index: number) {
+  private delTab(key: string, index: number) {
     this.tabs.splice(index, 1);
     if (!key.startsWith("chatTabAdd")) {
       this.delTabs.push(key);
     }
   }
 
-  public commit() {
+  private commit() {
     this.delTabs.forEach((key: string) => this.deleteChatTab(key));
     this.tabs.forEach((tab: any, index: number) => {
       if (tab.key.startsWith("chatTabAdd")) {
@@ -83,7 +84,7 @@ export default class SettingChatTabWindow extends Vue {
     this.windowClose("private.display.settingChatTabWindow");
   }
 
-  public cancel() {
+  private cancel() {
     this.windowClose("private.display.settingChatTabWindow");
   }
 }

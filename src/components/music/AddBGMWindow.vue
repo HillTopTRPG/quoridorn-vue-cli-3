@@ -79,23 +79,22 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import VolumeComponent from "./component/VolumeComponent.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<AddBGMWindow>({
-  name: "addBGMWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     VolumeComponent
   }
 })
-export default class AddBGMWindow extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("addBGM") addBGM: any;
-  @Getter("bgmList") bgmList: any;
-  @Getter("playerKey") playerKey: any;
+export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowClose") private windowClose: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("addBGM") private addBGM: any;
+  @Getter("bgmList") private bgmList: any;
+  @Getter("playerKey") private playerKey: any;
 
   private isYoutube: boolean = false;
   private url: string = "";

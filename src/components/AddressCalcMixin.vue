@@ -5,16 +5,16 @@ import { Getter } from "vuex-class";
 
 @Mixin
 export default class AddressCalcMixin extends Vue {
-  @Getter("columns") columns: any;
-  @Getter("rows") rows: any;
-  @Getter("gridSize") gridSize: any;
-  @Getter("borderWidth") borderWidth: any;
-  @Getter("marginGridSize") marginGridSize: any;
-  @Getter("wheel") wheel: any;
-  @Getter("mouseOnScreen") mouseOnScreen: any;
-  @Getter("mouseOnTable") mouseOnTable: any;
-  @Getter("mouseOnCanvas") mouseOnCanvas: any;
-  @Getter("mouseLocate") mouseLocate: any;
+  @Getter("columns") protected columns: any;
+  @Getter("rows") protected rows: any;
+  @Getter("gridSize") protected gridSize: any;
+  @Getter("borderWidth") protected borderWidth: any;
+  @Getter("marginGridSize") protected marginGridSize: any;
+  @Getter("wheel") protected wheel: any;
+  @Getter("mouseOnScreen") protected mouseOnScreen: any;
+  @Getter("mouseOnTable") protected mouseOnTable: any;
+  @Getter("mouseOnCanvas") protected mouseOnCanvas: any;
+  @Getter("mouseLocate") protected mouseLocate: any;
 
   arrangeAngle(angle: number): number {
     if (angle > 180) angle -= 360;

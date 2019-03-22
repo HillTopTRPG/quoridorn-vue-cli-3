@@ -17,7 +17,6 @@ import WindowFrame from "../../WindowFrame";
 import WindowMixin from "../../WindowMixin";
 
 export default {
-  name: "addCharacterWindow",
   mixins: [WindowMixin],
   components: {
     WindowFrame

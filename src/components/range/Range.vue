@@ -23,29 +23,37 @@ export default class Range extends Mixins<RangeMixins>(
   CanvasMixin,
   PieceMixin
 ) {
-  @Getter("getAllObstacle") getAllObstacle: any;
-  @Getter("marginGridSize") marginGridSize: any;
-  @Getter("columns") columns: any;
-  @Getter("rows") rows: any;
+  @Getter("getAllObstacle") protected getAllObstacle: any;
+  @Getter("marginGridSize") protected marginGridSize: any;
+  @Getter("columns") protected columns: any;
+  @Getter("rows") protected rows: any;
+
   @Prop({ type: Number, required: true })
   public distance!: number;
+
   @Prop({ type: Number, required: true })
   public distanceMode!: number;
+
   @Prop({ type: Boolean, required: true })
   public isVision!: boolean;
+
   @Prop({ type: String, required: true })
   public color!: string;
+
   @Prop({ type: String, required: true })
   public borderColor!: string;
+
   @Prop({ type: String, required: true })
   public targetColor!: string;
+
   @Prop({ type: Number, default: 1 })
   public lineWidth!: number;
 
-  mounted(): void {
+  private mounted(): void {
     this.paint();
   }
-  paint(this: any) {
+
+  private paint(this: any) {
     let canvas: HTMLCanvasElement = <HTMLCanvasElement>this.$refs.canvas;
     const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D>(
       canvas.getContext("2d")

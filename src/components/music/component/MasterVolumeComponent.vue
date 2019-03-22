@@ -19,18 +19,17 @@ import { Component, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 import VolumeComponent from "@/components/music/component/VolumeComponent.vue";
 
-@Component<MasterVolumeComponent>({
-  name: "masterVolumeComponent",
+@Component({
   components: {
     VolumeComponent
   }
 })
 export default class MasterVolumeComponent extends Vue {
   /** Vuexの action への参照 */
-  @Action("setProperty") setProperty: any;
+  @Action("setProperty") private setProperty: any;
   /** Vuexの getter への参照 */
-  @Getter("masterMute") masterMute: any;
-  @Getter("masterVolume") masterVolume: any;
+  @Getter("masterMute") private masterMute: any;
+  @Getter("masterVolume") private masterVolume: any;
 
   /**
    * ライフサイクルメソッド
@@ -117,4 +116,4 @@ export default class MasterVolumeComponent extends Vue {
   cursor: default;
   font-size: 10px;
 }
-</style>
+</style>()

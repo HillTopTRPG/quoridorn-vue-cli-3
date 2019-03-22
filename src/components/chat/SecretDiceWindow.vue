@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="隠しダイスロール結果" display-property="private.display.secretDiceWindow" align="center" fixSize="400, 200" :isBanClose="true">
+  <window-frame titleText="隠しダイスロール結果" display-property="private.display.secretDiceWindow" align="center" fixSize="400, 200" :isBanClose="true">
     <div class="contents" @contextmenu.prevent>
       <div class="secret-unit" v-for="(secretDiceObj, index) in secretDiceList" :key="index">
         <label><textarea :value="createTextAreaValue(secretDiceObj)"></textarea></label>
@@ -7,7 +7,7 @@
         <button type="button" @click="delSecretDice(index)">削除</button>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
@@ -16,22 +16,21 @@ import WindowMixin from "../WindowMixin.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Vue, Watch } from "vue-property-decorator";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<SecretDiceWindow>({
-  name: "secretDiceWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame
   }
 })
-export default class SecretDiceWindow extends Vue {
-  @Action("windowOpen") windowOpen: any;
-  @Action("windowClose") windowClose: any;
-  @Action("addChatLog") addChatLog: any;
-  @Mutation("addSecretDice") addSecretDice: any;
-  @Mutation("delSecretDice") delSecretDice: any;
-  @Getter("secretDiceList") secretDiceList: any;
+export default class SecretDiceWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowOpen") private windowOpen: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("addChatLog") private addChatLog: any;
+  @Mutation("addSecretDice") private addSecretDice: any;
+  @Mutation("delSecretDice") private delSecretDice: any;
+  @Getter("secretDiceList") private secretDiceList: any;
 
   publish(index: number): void {
     const secretDiceObj = this.secretDiceList[index];

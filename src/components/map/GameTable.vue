@@ -75,7 +75,6 @@ import { Action, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
 
 @Component({
-  name: "gameTable",
   components: {
     MapBoard,
     MapMask,
@@ -86,31 +85,31 @@ import { Watch } from "vue-property-decorator";
 export default class GameTable extends Mixins<AddressCalcMixin>(
   AddressCalcMixin
 ) {
-  @Action("addPieceInfo") addPieceInfo: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Action("windowClose") windowClose: any;
-  @Action("importStart") importStart: any;
-  @Getter("isFitGrid") isFitGrid: any;
-  @Getter("parseColor") parseColor: any;
-  @Getter("getBackgroundImage") getBackgroundImage: any;
-  @Getter("marginGridColor") marginGridColor: any;
-  @Getter("marginMaskColor") marginMaskColor: any;
-  @Getter("marginMaskAlpha") marginMaskAlpha: any;
-  @Getter("isUseGridColor") isUseGridColor: any;
-  @Getter("isUseImage") isUseImage: any;
-  @Getter("playerKey") playerKey: any;
-  @Getter("angle") angle: any;
-  @Getter("rollObj") rollObj: any;
-  @Getter("isDraggingLeft") isDraggingLeft: any;
-  @Getter("isMouseDownRight") isMouseDownRight: any;
-  @Getter("isOverEvent") isOverEvent: any;
-  @Getter("isDraggingRight") isDraggingRight: any;
-  @Getter("move") move: any;
-  @Getter("angleVolatile") angleVolatile: any;
-  @Getter("isModal") isModal: any;
-  @Getter("getMapObjectList") getMapObjectList: any;
-  @Getter("propertyList") propertyList: any;
+  @Action("addPieceInfo") private addPieceInfo: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("importStart") private importStart: any;
+  @Getter("isFitGrid") private isFitGrid: any;
+  @Getter("parseColor") private parseColor: any;
+  @Getter("getBackgroundImage") private getBackgroundImage: any;
+  @Getter("marginGridColor") private marginGridColor: any;
+  @Getter("marginMaskColor") private marginMaskColor: any;
+  @Getter("marginMaskAlpha") private marginMaskAlpha: any;
+  @Getter("isUseGridColor") private isUseGridColor: any;
+  @Getter("isUseImage") private isUseImage: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("angle") private angle: any;
+  @Getter("rollObj") private rollObj: any;
+  @Getter("isDraggingLeft") private isDraggingLeft: any;
+  @Getter("isMouseDownRight") private isMouseDownRight: any;
+  @Getter("isOverEvent") private isOverEvent: any;
+  @Getter("isDraggingRight") private isDraggingRight: any;
+  @Getter("move") private move: any;
+  @Getter("angleVolatile") private angleVolatile: any;
+  @Getter("isModal") private isModal: any;
+  @Getter("getMapObjectList") private getMapObjectList: any;
+  @Getter("propertyList") private propertyList: any;
 
   mounted(): void {
     document.addEventListener("mousemove", this.mouseMove);

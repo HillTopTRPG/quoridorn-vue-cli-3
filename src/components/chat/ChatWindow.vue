@@ -275,47 +275,47 @@ import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<ChatWindow>({
-  name: "chatWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     ActorStatusSelect,
     WindowFrame,
     DiceBotSelect
   }
 })
-export default class ChatWindow extends Vue {
-  @Action("addChatLog") addChatLog: any;
-  @Action("chatTabSelect") chatTabSelect: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Action("sendRoomData") sendRoomData: any;
-  @Action("sendBcdiceServer") sendBcdiceServer: any;
-  @Mutation("updateActorKey") updateActorKey: any;
-  @Mutation("addSecretDice") addSecretDice: any;
-  @Getter("getPeerActors") getPeerActors: any;
-  @Getter("getViewName") getViewName: any;
-  @Getter("getObj") getObj: any;
-  @Getter("chatLogList") chatLogList: any;
-  @Getter("chatTabs") chatTabs: any;
-  @Getter("playerList") playerList: any;
-  @Getter("groupTargetTabList") groupTargetTabList: any;
-  @Getter("members") members: any;
-  @Getter("inputting") inputting: any;
-  @Getter("createInputtingMsg") createInputtingMsg: any;
-  @Getter("fontColor") fontColor: any;
-  @Getter("chatTargetList") chatTargetList: any;
-  @Getter("activeTab") activeTab: any;
-  @Getter("hoverTab") hoverTab: any;
-  @Getter("playerKey") playerKey: any;
-  @Getter("chatOptionPagingSize") chatOptionPagingSize: any;
-  @Getter("isWait") isWait: any;
-  @Getter("chatActorKey") chatActorKey: any;
-  @Getter("roomSystem") roomSystem: any;
+export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("addChatLog") private addChatLog: any;
+  @Action("chatTabSelect") private chatTabSelect: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("sendRoomData") private sendRoomData: any;
+  @Action("sendBcdiceServer") private sendBcdiceServer: any;
+  @Mutation("updateActorKey") private updateActorKey: any;
+  @Mutation("addSecretDice") private addSecretDice: any;
+  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getViewName") private getViewName: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("chatLogList") private chatLogList: any;
+  @Getter("chatTabs") private chatTabs: any;
+  @Getter("playerList") private playerList: any;
+  @Getter("groupTargetTabList") private groupTargetTabList: any;
+  @Getter("members") private members: any;
+  @Getter("inputting") private inputting: any;
+  @Getter("createInputtingMsg") private createInputtingMsg: any;
+  @Getter("fontColor") private fontColor: any;
+  @Getter("chatTargetList") private chatTargetList: any;
+  @Getter("activeTab") private activeTab: any;
+  @Getter("hoverTab") private hoverTab: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("chatOptionPagingSize") private chatOptionPagingSize: any;
+  @Getter("isWait") private isWait: any;
+  @Getter("chatActorKey") private chatActorKey: any;
+  @Getter("roomSystem") private roomSystem: any;
 
+  /** Enterを押しているかどうか */
   private enterPressing: boolean = false;
   /** 入力されたチャット文字 */
   private currentMessage: string = "";
@@ -829,7 +829,7 @@ export default class ChatWindow extends Vue {
    * グループチャットタブの発言者の名前を取得する
    * @param tabObj グループチャットオブジェクト
    */
-  otherMatcherObj(tabObj: any): string {
+  private otherMatcherObj(tabObj: any): string {
     if (tabObj.isAll) return "";
     return tabObj.group
       .map((g: any) => this.getObj(g))
@@ -846,17 +846,17 @@ export default class ChatWindow extends Vue {
   }
 
   @Watch("roomSystem")
-  onChangeRoomSystem(roomSystem: string) {
+  private onChangeRoomSystem(roomSystem: string) {
     this.currentDiceBotSystem = roomSystem;
   }
 
   @Watch("currentDiceBotSystem")
-  onChangeCurrentDiceBotSystem(currentDiceBotSystem: any) {
+  private onChangeCurrentDiceBotSystem(currentDiceBotSystem: any) {
     window.console.log(`ダイスボットシステムを${currentDiceBotSystem}に変更`);
   }
 
   @Watch("chatLogList")
-  onChangeChatLogList(this: any, chatLogList: any) {
+  private onChangeChatLogList(this: any, chatLogList: any) {
     setTimeout(function() {
       const elm = document.getElementById("chatLog");
       if (elm) {
@@ -866,7 +866,7 @@ export default class ChatWindow extends Vue {
   }
 
   @Watch("inputting", { deep: true })
-  onChangeInputting(this: any, inputting: any) {
+  private onChangeInputting(this: any, inputting: any) {
     this.inputtingPeerIdList.splice(0, this.inputtingPeerIdList.length);
     for (const name in inputting) {
       if (!inputting.hasOwnProperty(name)) continue;
@@ -877,18 +877,18 @@ export default class ChatWindow extends Vue {
   }
 
   @Watch("secretTarget")
-  onChangeSecretTarget(this: any, secretTarget: any) {
+  private onChangeSecretTarget(this: any, secretTarget: any) {
     if (!secretTarget) return;
     window.console.log("selectSecretTalk", secretTarget);
     this.secretTarget = "";
   }
 
   @Watch("statusName")
-  onChangeStatusName(statusName: string) {
+  private onChangeStatusName(statusName: string) {
     if (!statusName) this.statusName = "◆";
   }
 
-  get useCommandActorList(): any[] {
+  private get useCommandActorList(): any[] {
     const resultList: any[] = [];
     this.getPeerActors.forEach((actor: any) => {
       const statusList: any[] = actor.statusList;
@@ -903,7 +903,7 @@ export default class ChatWindow extends Vue {
     return resultList;
   }
 
-  get chatOptionPageNum() {
+  private get chatOptionPageNum() {
     let index: number = -1;
     if (this.chatOptionSelectMode === "from") {
       index = this.useCommandActorList.findIndex(
@@ -925,7 +925,8 @@ export default class ChatWindow extends Vue {
     if (index === -1) return -1;
     return Math.floor(index / this.chatOptionPagingSize) + 1;
   }
-  get chatOptionPageMaxNum() {
+
+  private get chatOptionPageMaxNum() {
     let length: number = 0;
     if (this.chatOptionSelectMode === "from")
       length = this.useCommandActorList.length;
@@ -935,7 +936,8 @@ export default class ChatWindow extends Vue {
     if (length === 0) return 1;
     return Math.floor((length - 1) / this.chatOptionPagingSize) + 1;
   }
-  get chatOptionPagingList() {
+
+  private get chatOptionPagingList() {
     const pageNum = this.chatOptionPageNum;
     const startIndex = (pageNum - 1) * this.chatOptionPagingSize;
     let list: any[] = [];

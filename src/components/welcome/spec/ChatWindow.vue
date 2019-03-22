@@ -1,17 +1,17 @@
 <template>
-  <SpecFrame property="chatWindow" label-str="チャット画面" lastVersion="1.0.0b5" :isSpecFixed="true">
+  <spec-frame property="chatWindow" label-str="チャット画面" lastVersion="1.0.0b5" :isSpecFixed="true">
     <!----------------------
      ! 起動操作
      !--------------------->
-    <SpecItem class-str="operation" label-str="起動操作">
+    <spec-item class-str="operation" label-str="起動操作">
       <li>画面上部メニューの「表示」を選択</li>
       <li>「ウィンドウ」にカーソルをあてる</li>
       <li>「チャット表示」を選択</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
-    <SpecItem class-str="spec" label-str="仕様">
+    <spec-item class-str="spec" label-str="仕様">
       <li>名前の入力</li>
       <li>発言するタブの選択</li>
       <li>タブの編集</li>
@@ -62,17 +62,17 @@
           </li>
         </ol>
       </li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! ユーザ要望
      !--------------------->
-    <SpecItem class-str="request" label-str="ユーザ要望">
+    <spec-item class-str="request" label-str="ユーザ要望">
       <li>複数人を相手にした秘匿チャット</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 未実装事項
      !--------------------->
-    <SpecItem class-str="unImplemented" label-str="未実装事項">
+    <spec-item class-str="unImplemented" label-str="未実装事項">
       <li>ボイスチャット</li>
       <li>ダイスボットのヘルプを子画面で表示</li>
       <li>独自ダイスボットの登録</li>
@@ -101,22 +101,22 @@
           <li>json形式</li>
         </ol>
       </li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 実装しない機能
      !--------------------->
-    <SpecItem class-str="unSupport" label-str="実装しない機能">
+    <spec-item class-str="unSupport" label-str="実装しない機能">
       <li>機能メニューの「音音声」<br>→ マスターボリューム調整機能で代用可能</li>
       <li>簡易ファイルアップローダー<br>→ 不要と判断</li>
       <li>テキスト読み上げ<br>→ 実装方法がすぐに思いつかない。どうしても欲しいという意見があれば考える</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 関連項目
      !--------------------->
-    <SpecItem class-str="ref" label-str="関連項目">
-      <li><SpecLink property="menuBar" title-str="">メインメニュー</SpecLink></li>
-    </SpecItem>
-  </SpecFrame>
+    <spec-item class-str="ref" label-str="関連項目">
+      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+    </spec-item>
+  </spec-frame>
 </template>
 
 <script>

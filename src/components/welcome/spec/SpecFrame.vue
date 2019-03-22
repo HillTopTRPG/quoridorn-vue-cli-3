@@ -15,7 +15,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Component<SpecFrame>({ name: "specFrame" })
+@Component
 export default class SpecFrame extends Vue {
   @Prop({ type: String, required: true })
   private property!: string;

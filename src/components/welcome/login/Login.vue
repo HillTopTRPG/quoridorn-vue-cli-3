@@ -16,8 +16,7 @@ import PlayerInfo from "./PlayerInfo.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<Login>({
-  name: "login",
+@Component({
   components: {
     CreateRoomFromRoomData,
     CreateNewRoom,
@@ -26,8 +25,8 @@ import { Getter } from "vuex-class";
   }
 })
 export default class Login extends Vue {
-  @Getter("isRoomExist") isRoomExist: any;
-  @Getter("isRoomJoined") isRoomJoined: any;
+  @Getter("isRoomExist") private isRoomExist: any;
+  @Getter("isRoomJoined") private isRoomJoined: any;
 }
 </script>
 
@@ -42,4 +41,4 @@ export default class Login extends Vue {
 fieldset:not(:first-child) {
   margin-top: 1em;
 }
-</style>
+</style>()

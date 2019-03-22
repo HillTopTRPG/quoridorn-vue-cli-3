@@ -13,7 +13,7 @@
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { Action } from "vuex-class";
 
-@Component<Divider>({ name: "divider" })
+@Component
 export default class Divider extends Vue {
   @Prop({ type: Number, required: true })
   private index!: number;
@@ -21,7 +21,7 @@ export default class Divider extends Vue {
   @Prop({ type: String, required: true })
   private prop!: string;
 
-  @Action("setProperty") setProperty: any;
+  @Action("setProperty") private setProperty: any;
 
   hoverDev(index: number): void {
     if (this.movingIndex === -1) {

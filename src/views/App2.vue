@@ -12,7 +12,7 @@
     <loading-screen/>
     <loading/>
     <chat-window/>
-    <Menu/>
+    <menu/>
     <add-map-mask-window/>
     <edit-map-mask-window/>
     <map-mask-context/>
@@ -108,8 +108,7 @@ import CounterRemoconEditorWindow from "@/components/counter-remocon/CounterRemo
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 
-@Component<App2>({
-  name: "app2",
+@Component({
   components: {
     GameTable,
     ChatWindow,
@@ -160,9 +159,9 @@ import { Action, Getter, Mutation } from "vuex-class";
   }
 })
 export default class App2 extends Vue {
-  @Action("onMount") onMount: any;
-  @Action("exportStart") exportStart: any;
-  @Getter("backgroundColor") backgroundColor: any;
+  @Action("onMount") private onMount: any;
+  @Action("exportStart") private exportStart: any;
+  @Getter("backgroundColor") private backgroundColor: any;
 
   mounted() {
     // bcdiceの使用準備

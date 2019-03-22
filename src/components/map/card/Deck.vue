@@ -11,7 +11,7 @@
       <div class="deck" ref="deck" :style="deckStyle">
         <card :class="[card.key]" :index="index" :key="card.key" :objKey="card.key" :ref="card.key"
               v-for="(card, index) in deckCardList"></card>
-        <Card :index="deckHoverIndex" :isViewer="true" :objKey="deckHoverKey" ref="centerCard"></Card>
+        <card :index="deckHoverIndex" :isViewer="true" :objKey="deckHoverKey" ref="centerCard"/>
         カードなし
       </div>
     </fieldset>
@@ -24,20 +24,19 @@ import Card from "./Card.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<Deck>({
-  name: "deck",
+@Component({
   components: {
     Card
   }
 })
 export default class Deck extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Getter("deck") deck: any;
-  @Getter("deckCardList") deckCardList: any;
-  @Getter("deckCommand") deckCommand: any;
-  @Getter("deckHoverIndex") deckHoverIndex: any;
-  @Getter("deckHoverKey") deckHoverKey: any;
-  @Getter("isModal") isModal: any;
+  @Action("setProperty") private setProperty: any;
+  @Getter("deck") private deck: any;
+  @Getter("deckCardList") private deckCardList: any;
+  @Getter("deckCommand") private deckCommand: any;
+  @Getter("deckHoverIndex") private deckHoverIndex: any;
+  @Getter("deckHoverKey") private deckHoverKey: any;
+  @Getter("isModal") private isModal: any;
 
   createRefStr(
     { author, title }: { author: string; title: string },

@@ -32,24 +32,23 @@
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<DropImageWindow>({
-  name: "dropImageWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame
   }
 })
-export default class DropImageWindow extends Vue {
-  @Action("imageTagChange") imageTagChange: any;
-  @Action("addImage") addImage: any;
-  @Action("windowClose") windowClose: any;
-  @Action("emptyProperty") emptyProperty: any;
-  @Getter("dropImageList") dropImageList: any;
-  @Getter("imageTagList") imageTagList: any;
-  @Getter("playerKey") playerKey: any;
+export default class DropImageWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("imageTagChange") private imageTagChange: any;
+  @Action("addImage") private addImage: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("emptyProperty") private emptyProperty: any;
+  @Getter("dropImageList") private dropImageList: any;
+  @Getter("imageTagList") private imageTagList: any;
+  @Getter("playerKey") private playerKey: any;
 
   private imageList: any[] = [];
 

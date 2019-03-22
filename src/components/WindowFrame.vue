@@ -145,16 +145,15 @@ import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<WindowFrame>({
-  name: "windowFrame",
+@Component({
   components: { StandImageComponent }
 })
 export default class WindowFrame extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Action("setProperty") setProperty: any;
-  @Action("windowActive") windowActive: any;
-  @Getter("getStateValue") getStateValue: any;
-  @Getter("isModal") isModal: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("windowActive") private windowActive: any;
+  @Getter("getStateValue") private getStateValue: any;
+  @Getter("isModal") private isModal: any;
 
   @Prop({ type: String, required: true })
   private titleText!: string;

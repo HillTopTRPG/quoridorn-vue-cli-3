@@ -32,15 +32,14 @@ import { getUrlParam } from "../../common/Utility";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<BGMCoreComponent>({
-  name: "bgmCoreComponent",
+@Component({
   components: {
     VolumeComponent
   }
 })
 export default class BGMCoreComponent extends Vue {
-  @Getter("masterMute") masterMute: any;
-  @Getter("masterVolume") masterVolume: any;
+  @Getter("masterMute") private masterMute: any;
+  @Getter("masterVolume") private masterVolume: any;
 
   @Prop({ type: String, required: true })
   private tag!: string;

@@ -12,13 +12,11 @@
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<DiceBotSelect>({
-  name: "diceBotSelect"
-})
+@Component
 export default class DiceBotSelect extends Vue {
-  @Action("loading") loading: any;
-  @Action("getBcdiceSystemInfo") getBcdiceSystemInfo: any;
-  @Getter("diceSystemList") diceSystemList: any;
+  @Action("loading") private loading: any;
+  @Action("getBcdiceSystemInfo") private getBcdiceSystemInfo: any;
+  @Getter("diceSystemList") private diceSystemList: any;
   @Prop() public value!: string;
 
   /*

@@ -10,24 +10,22 @@
 import ContextFrame from "../../ContextFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<ChitContext>({
-  name: "chitContext",
-  mixins: [WindowMixin],
+@Component({
   components: {
     ContextFrame
   }
 })
-export default class ChitContext extends Vue {
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Action("deletePieceInfo") deletePieceInfo: any;
-  @Action("windowClose") windowClose: any;
-  @Getter("getObj") getObj: any;
-  @Getter("chitContextObjKey") chitContextObjKey: any;
-  @Getter("playerKey") playerKey: any;
+export default class ChitContext extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("deletePieceInfo") private deletePieceInfo: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("chitContextObjKey") private chitContextObjKey: any;
+  @Getter("playerKey") private playerKey: any;
 
   viewEditChit() {
     window.console.log(

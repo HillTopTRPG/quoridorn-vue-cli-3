@@ -17,20 +17,18 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import Logo from "./Logo.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<VersionWindow>({
-  name: "versionWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     Logo
   }
 })
-export default class VersionWindow extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Getter("version") version: any;
+export default class VersionWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowClose") private windowClose: any;
+  @Getter("version") private version: any;
 
   cancel(): void {
     this.windowClose("private.display.versionWindow");

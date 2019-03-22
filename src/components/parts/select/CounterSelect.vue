@@ -5,17 +5,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Getter } from "vuex-class";
 import SelectMixin from "./base/SelectMixin.vue";
 import SelectBase from "./base/SelectBase.vue";
 
-@Component<CounterSelect>({
-  name: "counterSelect",
-  mixins: [SelectMixin],
+import { Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+
+@Component({
   components: { SelectBase }
 })
-export default class CounterSelect extends Vue {
-  @Getter("propertyList") propertyList: any;
+export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
+  @Getter("propertyList") private propertyList: any;
 }
 </script>

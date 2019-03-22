@@ -18,16 +18,14 @@ import { Action, Getter } from "vuex-class";
 
 import { execCopy } from "../../common/Utility";
 
-@Component<RoomInfo>({
-  name: "roomInfo"
-})
+@Component
 export default class RoomInfo extends Vue {
-  @Action("getBcdiceSystemInfo") getBcdiceSystemInfo: any;
-  @Getter("roomName") roomName: any;
-  @Getter("roomPassword") roomPassword: any;
-  @Getter("inviteUrl") inviteUrl: any;
-  @Getter("isWait") isWait: any;
-  @Getter("roomSystem") roomSystem: any;
+  @Action("getBcdiceSystemInfo") private getBcdiceSystemInfo: any;
+  @Getter("roomName") private roomName: any;
+  @Getter("roomPassword") private roomPassword: any;
+  @Getter("inviteUrl") private inviteUrl: any;
+  @Getter("isWait") private isWait: any;
+  @Getter("roomSystem") private roomSystem: any;
 
   private systemName: string = "";
 
@@ -75,4 +73,4 @@ label {
     flex: 1;
   }
 }
-</style>
+</style>()

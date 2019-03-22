@@ -139,12 +139,10 @@ import Logo from "../simple/Logo.vue";
 import Source from "./source/Source.vue";
 import DevSupport from "./devSupport/DevSupport.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<WelcomeWindow>({
-  name: "welcomeWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     Logo,
@@ -184,9 +182,9 @@ import { Getter } from "vuex-class";
     DevSupport
   }
 })
-export default class WelcomeWindow extends Vue {
-  @Getter("isRoomJoined") isRoomJoined: any;
-  @Getter("version") version: any;
+export default class WelcomeWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Getter("isRoomJoined") private isRoomJoined: any;
+  @Getter("version") private version: any;
 
   private tabNum: string = "1";
 

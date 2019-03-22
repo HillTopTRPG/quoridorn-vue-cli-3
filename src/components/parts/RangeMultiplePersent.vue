@@ -28,8 +28,7 @@
 import vueSlider from "vue-slider-component";
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 
-@Component<RangeMultiplePersent>({
-  name: "rangeMultiplePersent",
+@Component({
   components: {
     vueSlider
   }

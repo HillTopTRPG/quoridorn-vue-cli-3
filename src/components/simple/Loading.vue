@@ -13,11 +13,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component({
-  name: "loading"
-})
+@Component
 export default class Loading extends Vue {
-  @Getter("isLoading") isLoading: any;
+  @Getter("isLoading") private isLoading: any;
 }
 </script>
 

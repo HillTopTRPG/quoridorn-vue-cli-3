@@ -25,8 +25,7 @@
 import BGMCoreComponent from "./BGMCoreComponent.vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Component<BGMFileComponent>({
-  name: "bgmFileComponent",
+@Component({
   components: {
     BGMCoreComponent
   }
@@ -117,4 +116,4 @@ export default class BGMFileComponent extends Vue {
     bgmCoreComponent.timeUpdate(this.jukeboxAudio.currentTime);
   }
 }
-</script>
+</script>()

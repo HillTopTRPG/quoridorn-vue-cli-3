@@ -18,24 +18,22 @@
 <script lang="ts">
 import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
-
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
 import ImageSelector from "@/components/parts/ImageSelector.vue";
 
-@Component<AddChitWindow>({
-  name: "addChitWindow",
-  mixins: [WindowMixin],
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+
+@Component({
   components: {
     WindowFrame,
     ImageSelector
   }
 })
-export default class AddChitWindow extends Vue {
-  @Action("windowOpen") windowOpen: any;
-  @Action("windowClose") windowClose: any;
-  @Getter("imageTagList") imageTagList: any;
-  @Getter("imageList") imageList: any;
+export default class AddChitWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowOpen") private windowOpen: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("imageTagList") private imageTagList: any;
+  @Getter("imageList") private imageList: any;
 
   private currentImageTag: string = "フロアタイル";
   private imageKey: string = "image-11";

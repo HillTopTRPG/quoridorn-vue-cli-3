@@ -6,11 +6,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component({
-  name: "modalScreen"
-})
+@Component
 export default class ModalScreen extends Vue {
-  @Getter("isModal") isModal: any;
+  @Getter("isModal") private isModal: any;
 }
 </script>
 

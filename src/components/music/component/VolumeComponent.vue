@@ -35,8 +35,7 @@
 import { Component, Emit, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<VolumeComponent>({
-  name: "volumeComponent",
+@Component({
   props: {
     initVolume: { type: Number, required: true },
     mutable: { type: Boolean, default: true }
@@ -44,7 +43,7 @@ import { Getter } from "vuex-class";
 })
 export default class VolumeComponent extends Vue {
   /** Vuexの getter への参照 */
-  @Getter("masterMute") masterMute: any;
+  @Getter("masterMute") private masterMute: any;
 
   private static FADE_NONE: number = 0;
   private static FADE_IN: number = 1;

@@ -12,25 +12,23 @@
 <script lang="ts">
 import CanvasMixin from "../CanvasMixin.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
+import { Watch } from "vue-property-decorator";
+import { Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<MapBoard>({
-  name: "mapBoard",
-  mixins: [CanvasMixin]
-})
-export default class MapBoard extends Vue {
-  @Getter("getBackgroundImage") getBackgroundImage: any;
-  @Getter("isDrawGridLine") isDrawGridLine: any;
-  @Getter("isDrawGridId") isDrawGridId: any;
-  @Getter("gridColor") gridColor: any;
-  @Getter("columns") columns: any;
-  @Getter("rows") rows: any;
-  @Getter("isReverse") isReverse: any;
-  @Getter("grid") grid: any;
-  @Getter("gridSize") gridSize: any;
-  @Getter("canvasSize") canvasSize: any;
-  @Getter("mouseOnCanvas") mouseOnCanvas: any;
+@Component
+export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
+  @Getter("getBackgroundImage") private getBackgroundImage: any;
+  @Getter("isDrawGridLine") private isDrawGridLine: any;
+  @Getter("isDrawGridId") private isDrawGridId: any;
+  @Getter("gridColor") private gridColor: any;
+  @Getter("columns") private columns: any;
+  @Getter("rows") private rows: any;
+  @Getter("isReverse") private isReverse: any;
+  @Getter("grid") private grid: any;
+  @Getter("gridSize") private gridSize: any;
+  @Getter("canvasSize") private canvasSize: any;
+  @Getter("mouseOnCanvas") private mouseOnCanvas: any;
   mounted(): void {
     this.paint();
   }

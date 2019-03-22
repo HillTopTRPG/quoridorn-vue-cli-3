@@ -5,17 +5,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 import SelectMixin from "./base/SelectMixin.vue";
 import SelectBase from "./base/SelectBase.vue";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<PlayerTypeSelect>({
-  name: "playerTypeSelect",
-  mixins: [SelectMixin],
+@Component({
   components: { SelectBase }
 })
-export default class PlayerTypeSelect extends Vue {
-  @Getter("roles") roles: any;
+export default class PlayerTypeSelect extends Mixins<SelectMixin>(SelectMixin) {
+  @Getter("roles") private roles: any;
 }
 </script>

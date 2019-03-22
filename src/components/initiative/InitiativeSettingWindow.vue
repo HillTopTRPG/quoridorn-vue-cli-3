@@ -33,20 +33,20 @@
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
 
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
+import { Action } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<InitiativeSettingWindow>({
-  name: "initiativeSettingWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame
   }
 })
-export default class InitiativeSettingWindow extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Action("windowClose") windowClose: any;
-  @Action("setInitiativeParams") setInitiativeParams: any;
+export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("setProperty") private setProperty: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("setInitiativeParams") private setInitiativeParams: any;
   private format: string = "";
 
   mounted() {

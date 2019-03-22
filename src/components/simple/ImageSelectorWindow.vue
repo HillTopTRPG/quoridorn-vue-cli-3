@@ -20,23 +20,24 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import ImageSelector from "@/components/parts/ImageSelector.vue";
 
-import { Component, Emit, Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<ImageSelectorWindow>({
-  name: "imageSelectorWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     ImageSelector
   }
 })
-export default class ImageSelectorWindow extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Getter("imageSelectorKey") imageSelectorKey: any;
-  @Getter("imageSelectorTag") imageSelectorTag: any;
-  @Getter("imageSelectorCallback") imageSelectorCallback: any;
-  @Getter("imageList") imageList: any;
+export default class ImageSelectorWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("windowClose") private windowClose: any;
+  @Getter("imageSelectorKey") private imageSelectorKey: any;
+  @Getter("imageSelectorTag") private imageSelectorTag: any;
+  @Getter("imageSelectorCallback") private imageSelectorCallback: any;
+  @Getter("imageList") private imageList: any;
 
   private imageKey: string = "";
   private imageTag: string = "";

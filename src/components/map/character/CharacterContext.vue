@@ -18,25 +18,23 @@
 import ContextFrame from "../../ContextFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<CharacterContext>({
-  name: "characterContext",
-  mixins: [WindowMixin],
+@Component({
   components: {
     ContextFrame
   }
 })
-export default class CharacterContext extends Vue {
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Action("changeListInfo") changeListInfo: any;
-  @Action("windowClose") windowClose: any;
-  @Getter("getObj") getObj: any;
-  @Getter("characterContextObjKey") characterContextObjKey: any;
-  @Getter("playerKey") playerKey: any;
-  @Getter("mapMaskIsLock") mapMaskIsLock: any;
+export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("changeListInfo") private changeListInfo: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("characterContextObjKey") private characterContextObjKey: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("mapMaskIsLock") private mapMaskIsLock: any;
 
   viewEditCharacter(): void {
     window.console.log(

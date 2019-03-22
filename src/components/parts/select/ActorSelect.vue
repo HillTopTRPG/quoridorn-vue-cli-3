@@ -8,16 +8,15 @@
 import SelectMixin from "./base/SelectMixin.vue";
 import SelectBase from "./base/SelectBase.vue";
 
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Prop } from "vue-property-decorator";
 import { Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<ActorSelect>({
-  name: "actorSelect",
-  mixins: [SelectMixin],
+@Component({
   components: { SelectBase }
 })
-export default class ActorSelect extends Vue {
-  @Getter("getPeerActors") getPeerActors: any;
+export default class ActorSelect extends Mixins<SelectMixin>(SelectMixin) {
+  @Getter("getPeerActors") private getPeerActors: any;
   @Prop({ type: Array, required: true })
   private selectedActorList!: any[];
 

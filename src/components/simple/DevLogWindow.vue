@@ -1,7 +1,7 @@
 <template>
-  <WindowFrame titleText="開発履歴 on Twitter   「みんなありがとう！！！！！」" display-property="private.display.devLogWindow" align="left-top" fixSize="385, 660">
+  <window-frame titleText="開発履歴 on Twitter   「みんなありがとう！！！！！」" display-property="private.display.devLogWindow" align="left-top" fixSize="385, 660">
     <iframe src="./static/DevelopHistory.html"></iframe>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>

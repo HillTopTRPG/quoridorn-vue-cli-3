@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="マスク変更" display-property="private.display.editMapMaskWindow" align="center" fixSize="285, 198" @open="initWindow" @reset="initWindow">
+  <window-frame titleText="マスク変更" display-property="private.display.editMapMaskWindow" align="center" fixSize="285, 198" @open="initWindow" @reset="initWindow">
     <table>
       <tbody>
         <tr>
@@ -28,7 +28,7 @@
         </tr>
       </tbody>
     </table>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>

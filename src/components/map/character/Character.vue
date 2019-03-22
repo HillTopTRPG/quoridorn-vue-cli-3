@@ -61,16 +61,15 @@ import Range from "../../range/Range.vue";
 import { Component, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<Character>({
-  name: "character",
+@Component({
   components: {
     Range
   }
 })
 export default class Character extends PieceMixin {
-  @Action("changeListInfo") changeListInfo: any;
-  @Getter("imageList") imageList: any;
-  @Getter("propertyList") propertyList: any;
+  @Action("changeListInfo") private changeListInfo: any;
+  @Getter("imageList") private imageList: any;
+  @Getter("propertyList") private propertyList: any;
 
   private checkPropertyList: any[] = [];
   private numberPropertyList: any[] = [];

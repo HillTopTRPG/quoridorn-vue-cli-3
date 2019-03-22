@@ -7,20 +7,22 @@ import { Mixin } from "vue-mixin-decorator";
 
 @Mixin
 export default class CanvasMixin extends AddressCalcMixin {
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Getter("isFitGrid") isFitGrid: any;
-  @Getter("getObj") getObj: any;
-  @Getter("isRolling") isRolling: any;
-  @Getter("rollObj") rollObj: any;
-  @Getter("gridSize") gridSize: any;
-  @Getter("marginGridSize") marginGridSize: any;
-  @Prop({ type: String, required: true })
-  type!: string;
-  @Prop({ type: String, required: true })
-  objKey!: string;
+  @Action("windowOpen") protected windowOpen: any;
+  @Action("setProperty") protected setProperty: any;
+  @Getter("isFitGrid") protected isFitGrid: any;
+  @Getter("getObj") protected getObj: any;
+  @Getter("isRolling") protected isRolling: any;
+  @Getter("rollObj") protected rollObj: any;
+  @Getter("gridSize") protected gridSize: any;
+  @Getter("marginGridSize") protected marginGridSize: any;
 
-  private isHover: boolean = false;
+  @Prop({ type: String, required: true })
+  protected type!: string;
+
+  @Prop({ type: String, required: true })
+  protected objKey!: string;
+
+  protected isHover: boolean = false;
 
   leftDown(this: any): void {
     if (this.storeObj.isLock || this.isRolling) {

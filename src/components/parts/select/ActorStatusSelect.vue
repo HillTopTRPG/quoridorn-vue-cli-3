@@ -8,19 +8,20 @@
 import SelectMixin from "./base/SelectMixin.vue";
 import SelectBase from "./base/SelectBase.vue";
 
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Prop } from "vue-property-decorator";
 import { Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<ActorStatusSelect>({
-  name: "actorStatusSelect",
-  mixins: [SelectMixin],
+@Component({
   components: { SelectBase }
 })
-export default class ActorStatusSelect extends Vue {
+export default class ActorStatusSelect extends Mixins<SelectMixin>(
+  SelectMixin
+) {
   @Prop({ type: String, required: true })
   private actorKey!: string;
 
-  @Getter("getObj") getObj: any;
+  @Getter("getObj") private getObj: any;
 
   private get statusList(): any[] {
     const actor = this.getObj(this.actorKey);

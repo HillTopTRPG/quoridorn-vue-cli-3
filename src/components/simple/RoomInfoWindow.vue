@@ -29,24 +29,22 @@ import DiceBotSelect from "@/components/parts/select/DiceBotSelect.vue";
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<RoomInfoWindow>({
-  name: "roomInfoWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     DiceBotSelect
   }
 })
-export default class RoomInfoWindow extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Getter("roomName") roomName: any;
-  @Getter("playerKey") playerKey: any;
-  @Getter("playerList") playerList: any;
-  @Getter("inviteUrl") inviteUrl: any;
-  @Getter("roomSystem") roomSystem: any;
+export default class RoomInfoWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("setProperty") private setProperty: any;
+  @Getter("roomName") private roomName: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("playerList") private playerList: any;
+  @Getter("inviteUrl") private inviteUrl: any;
+  @Getter("roomSystem") private roomSystem: any;
 
   get currentDiceBotSystem(): string {
     return this.roomSystem;

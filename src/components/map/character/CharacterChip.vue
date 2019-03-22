@@ -25,11 +25,9 @@ import PieceMixin from "../../PieceMixin.vue";
 import { Component } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<CharacterChip>({
-  name: "characterChip"
-})
+@Component
 export default class CharacterChip extends PieceMixin {
-  @Getter("imageList") imageList: any;
+  @Getter("imageList") private imageList: any;
 
   getKeyObj(list: any[], key: string) {
     const filteredList = list.filter(obj => obj.key === key);

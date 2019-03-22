@@ -1,44 +1,44 @@
 <template>
-  <SpecFrame property="waitingRoomWindow" label-str="キャラクター待合室" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame property="waitingRoomWindow" label-str="キャラクター待合室" lastVersion="1.0.0b1" :isSpecFixed="true">
     <!----------------------
      ! 起動操作
      !--------------------->
-    <SpecItem class-str="operation" label-str="起動操作">
+    <spec-item class-str="operation" label-str="起動操作">
       <li>画面上部メニューの「コマ」を選択</li>
       <li>「キャラクター待合室」を選択</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
-    <SpecItem class-str="spec" label-str="仕様">
+    <spec-item class-str="spec" label-str="仕様">
       <li>キャラクターのコマをドロップインすることでキャラクター待合室に移動</li>
       <li>キャラクター待合室からコマをドロップインすることでマップに再配置</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! ユーザ要望
      !--------------------->
-    <SpecItem class-str="request" label-str="ユーザ要望">
+    <spec-item class-str="request" label-str="ユーザ要望">
       <li>なし</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 未実装事項
      !--------------------->
-    <SpecItem class-str="unImplemented" label-str="未実装事項">
+    <spec-item class-str="unImplemented" label-str="未実装事項">
       <li>本機能自体が未実装<br>→ 初回リリースに含める</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 実装しない機能
      !--------------------->
-    <SpecItem class-str="unSupport" label-str="実装しない機能">
+    <spec-item class-str="unSupport" label-str="実装しない機能">
       <li>なし</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 関連項目
      !--------------------->
-    <SpecItem class-str="ref" label-str="関連項目">
-      <li><SpecLink property="menuBar" title-str="">メインメニュー</SpecLink></li>
-    </SpecItem>
-  </SpecFrame>
+    <spec-item class-str="ref" label-str="関連項目">
+      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+    </spec-item>
+  </spec-frame>
 </template>
 
 <script>

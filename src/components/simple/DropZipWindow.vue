@@ -28,22 +28,21 @@
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<DropZipWindow>({
-  name: "dropZipWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame
   }
 })
-export default class DropZipWindow extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("doImport") doImport: any;
-  @Getter("dropZipList") dropZipList: any;
-  @Getter("dropZipRoomCreate") dropZipRoomCreate: any;
+export default class DropZipWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowClose") private windowClose: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("doImport") private doImport: any;
+  @Getter("dropZipList") private dropZipList: any;
+  @Getter("dropZipRoomCreate") private dropZipRoomCreate: any;
 
   private saveDataList: any[] = [];
 

@@ -26,14 +26,13 @@ import BGMCoreComponent from "./BGMCoreComponent.vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Action } from "vuex-class";
 
-@Component<BGMYoutubeComponent>({
-  name: "bgmYoutubeComponent",
+@Component({
   components: {
     BGMCoreComponent
   }
 })
 export default class BGMYoutubeComponent extends Vue {
-  @Action("setProperty") setProperty: any;
+  @Action("setProperty") private setProperty: any;
 
   @Prop({ type: String, required: true })
   private bgmKey!: string;

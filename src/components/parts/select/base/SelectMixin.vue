@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Emit, Watch } from "vue-property-decorator";
 
-@Component<SelectMixin>({ name: "selectMixin" })
+@Component
 export default class SelectMixin extends Vue {
   @Prop() public value!: string;
   @Prop() public defaultLabel!: string;

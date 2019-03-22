@@ -34,27 +34,28 @@
 </template>
 
 <script lang="ts">
+import ImageSelector from "@/components/parts/ImageSelector.vue";
 import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
-import ImageSelector from "@/components/parts/ImageSelector.vue";
+import { Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<AddCharacterSettingWindow>({
-  name: "addCharacterSettingWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     ImageSelector
   }
 })
-export default class AddCharacterSettingWindow extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("windowClose") windowClose: any;
-  @Getter("parseColor") parseColor: any;
-  @Getter("imageList") imageList: any;
+export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("setProperty") private setProperty: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("parseColor") private parseColor: any;
+  @Getter("imageList") private imageList: any;
 
   private selectImage: string = "image-1";
 

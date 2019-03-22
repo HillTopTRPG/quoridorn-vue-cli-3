@@ -216,29 +216,28 @@ import WindowFrame from "../WindowFrame.vue";
 import Divider from "../parts/Divider.vue";
 import ColorCheckBox from "@/components/parts/ColorCheckBox.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 import { sum } from "@/components/common/Utility";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<InitiativeWindow>({
-  name: "initiativeWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     Divider,
     ColorCheckBox
   }
 })
-export default class InitiativeWindow extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("changeListInfo") changeListInfo: any;
-  @Mutation("updateActorKey") updateActorKey: any;
-  @Getter("getMapObjectList") getMapObjectList: any;
-  @Getter("getObj") getObj: any;
-  @Getter("round") round: any;
-  @Getter("roundPlayerKey") roundPlayerKey: any;
-  @Getter("propertyList") propertyList: any;
+export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("setProperty") private setProperty: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("changeListInfo") private changeListInfo: any;
+  @Mutation("updateActorKey") private updateActorKey: any;
+  @Getter("getMapObjectList") private getMapObjectList: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("round") private round: any;
+  @Getter("roundPlayerKey") private roundPlayerKey: any;
+  @Getter("propertyList") private propertyList: any;
 
   private windowWidth: number = 0;
   private windowPadding: number = 0;

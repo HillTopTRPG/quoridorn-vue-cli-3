@@ -20,15 +20,13 @@ import { Getter } from "vuex-class";
 
 import { execCopy } from "../../common/Utility";
 
-@Component<RoomInfo>({
-  name: "roomInfo"
-})
+@Component
 export default class RoomInfo extends Vue {
-  @Getter("playerList") playerList: any;
-  @Getter("inviteUrl") inviteUrl: any;
-  @Getter("getMembers") getMembers: any;
-  @Getter("playerKey") playerKey: any;
-  @Getter("isWait") isWait: any;
+  @Getter("playerList") private playerList: any;
+  @Getter("inviteUrl") private inviteUrl: any;
+  @Getter("getMembers") private getMembers: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("isWait") private isWait: any;
 
   createUrl(player: any): string {
     return `${this.inviteUrl}&playerName=${player.name}`;

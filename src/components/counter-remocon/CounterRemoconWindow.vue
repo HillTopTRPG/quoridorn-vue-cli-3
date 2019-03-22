@@ -62,7 +62,6 @@ import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
-  name: "counterRemoconWindow",
   components: {
     WindowFrame
   }
@@ -70,8 +69,8 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class CounterRemoconWindow extends Mixins<WindowMixin>(
   WindowMixin
 ) {
-  @Action("windowOpen") windowOpen: any;
-  @Getter("publicCounterRemoconList") publicCounterRemoconList: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Getter("publicCounterRemoconList") private publicCounterRemoconList: any;
 
   private useCharacterList: any[] = [];
 

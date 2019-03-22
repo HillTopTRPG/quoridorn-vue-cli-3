@@ -16,11 +16,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Action } from "vuex-class";
 
-@Component<CreateRoomFromRoomData>({
-  name: "createRoomFromRoomData"
-})
+@Component
 export default class CreateRoomFromRoomData extends Vue {
-  @Action("importStart") importStart: any;
+  @Action("importStart") private importStart: any;
 
   private files: File[] = [];
 

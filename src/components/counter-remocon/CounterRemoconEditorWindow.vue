@@ -51,7 +51,6 @@ import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
-  name: "counterRemoconEditorWindow",
   components: {
     CounterSelect,
     WindowFrame
@@ -60,12 +59,12 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
   WindowMixin
 ) {
-  @Action("changeListInfo") changeListInfo: any;
-  @Action("addCounterRemocon") addCounterRemocon: any;
-  @Action("windowClose") windowClose: any;
-  @Getter("propertyList") propertyList: any;
-  @Getter("counterRemoconEditorKey") counterRemoconEditorKey: any;
-  @Getter("getObj") getObj: any;
+  @Action("changeListInfo") private changeListInfo: any;
+  @Action("addCounterRemocon") private addCounterRemocon: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("propertyList") private propertyList: any;
+  @Getter("counterRemoconEditorKey") private counterRemoconEditorKey: any;
+  @Getter("getObj") private getObj: any;
 
   private buttonName: string = "";
   private counterName: string = "";

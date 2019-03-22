@@ -30,16 +30,15 @@ import ActorSelect from "@/components/parts/select/ActorSelect.vue";
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<ActorTabComponent>({
-  name: "actorTabComponent",
+@Component({
   components: {
     ActorSelect
   }
 })
 export default class ActorTabComponent extends Vue {
-  @Getter("getPeerActors") getPeerActors: any;
-  @Getter("getViewName") getViewName: any;
-  @Getter("getObj") getObj: any;
+  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getViewName") private getViewName: any;
+  @Getter("getObj") private getObj: any;
 
   private standActorList: any[] = [];
   private activeTabIndex: number = -1;

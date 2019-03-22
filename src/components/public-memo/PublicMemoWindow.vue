@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="共有メモ" display-property="private.display.publicMemoWindow" align="center" baseSize="300, 240" @open="open">
+  <window-frame titleText="共有メモ" display-property="private.display.publicMemoWindow" align="center" baseSize="300, 240" @open="open">
     <div class="tabs">
       <span class="tab" v-for="(textObj, index) in texts" :key="index" @click.prevent="selectTab(textObj.tab)">{{textObj.tab}}</span><!--
     --><span class="tab addButton" @click="addTab">＋</span>
@@ -9,7 +9,7 @@
       <textarea v-model="currentText"></textarea>
     </div>
     <button @click.prevent="clickAdd">追加</button><button @click.prevent="clickCancel">キャンセル</button>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>

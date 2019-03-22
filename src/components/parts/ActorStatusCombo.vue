@@ -21,11 +21,9 @@
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<ActorStatusCombo>({
-  name: "actorStatusSelect"
-})
+@Component
 export default class ActorStatusCombo extends Vue {
-  @Getter("getPeerActors") getPeerActors: any;
+  @Getter("getPeerActors") private getPeerActors: any;
 
   @Prop({ type: String, required: true })
   private value!: string;

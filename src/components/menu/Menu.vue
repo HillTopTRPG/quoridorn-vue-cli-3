@@ -122,22 +122,21 @@ import MenuBooleanItem from "./MenuBooleanItem.vue";
 import { Action, Getter } from "vuex-class";
 import { Component, Vue, Watch } from "vue-property-decorator";
 
-@Component<Menu>({
-  name: "menuComponent",
+@Component({
   components: {
     MenuBooleanItem
   }
 })
 export default class Menu extends Vue {
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Action("doResetWindowLocate") doResetWindowLocate: any;
-  @Action("exportStart") exportStart: any;
-  @Getter("roomName") roomName: any;
-  @Getter("isModal") isModal: any;
-  @Getter("peerId") peerId: any;
-  @Getter("members") members: any;
-  @Getter("isRoomJoined") isRoomJoined: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("doResetWindowLocate") private doResetWindowLocate: any;
+  @Action("exportStart") private exportStart: any;
+  @Getter("roomName") private roomName: any;
+  @Getter("isModal") private isModal: any;
+  @Getter("peerId") private peerId: any;
+  @Getter("members") private members: any;
+  @Getter("isRoomJoined") private isRoomJoined: any;
 
   private isConnectHover: boolean = false;
   private isSelecting: boolean = false;
