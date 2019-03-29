@@ -76,6 +76,3 @@ export default class DiceBotSelect extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

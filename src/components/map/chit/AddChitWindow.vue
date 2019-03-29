@@ -103,7 +103,7 @@ export default class AddChitWindow extends Mixins<WindowMixin>(WindowMixin) {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .container {
   display: grid;
   width: 100%;
@@ -115,7 +115,12 @@ export default class AddChitWindow extends Mixins<WindowMixin>(WindowMixin) {
     "viewImage viewImage  imageSelector"
     "viewImage viewImage  otherText"
     "rowsNum   columnsNum otherText";
+
+  > * {
+    padding: 1px 0;
+  }
 }
+
 .tagImages {
   display: flex;
   align-items: flex-start;
@@ -126,65 +131,78 @@ export default class AddChitWindow extends Mixins<WindowMixin>(WindowMixin) {
   min-height: calc(100% - 2px);
   box-sizing: border-box;
   border: solid gray 1px;
+
+  img {
+    width: 50px;
+    height: 50px;
+    border: solid rgba(0, 0, 0, 0) 1px;
+
+    &.active {
+      border: solid blue 1px;
+    }
+  }
 }
-.tagImages img {
-  width: 50px;
-  height: 50px;
-  border: solid rgba(0, 0, 0, 0) 1px;
-}
-.tagImages img.active {
-  border: solid blue 1px;
-}
+
 .isReverse {
   transform: scale(-1, 1);
 }
-.container > * {
-  padding: 1px 0;
-}
+
 .viewImage {
   grid-area: viewImage;
+
+  img {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+  }
 }
-.viewImage img {
-  display: inline-block;
-  width: 200px;
-  height: 200px;
-}
+
 .choseImage {
   grid-area: choseImage;
   overflow-y: scroll;
   height: 130px;
 }
+
 .imageInfo {
   grid-area: imageInfo;
   display: flex;
+
+  .selectedImage {
+    flex: 1;
+    display: flex;
+
+    > * {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    select {
+      flex: 1;
+    }
+  }
+
+  > button {
+    margin-left: 10px;
+  }
 }
-.imageInfo .selectedImage {
-  flex: 1;
-  display: flex;
-}
-.imageInfo .selectedImage > * {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.imageInfo .selectedImage select {
-  flex: 1;
-}
-.imageInfo > button {
-  margin-left: 10px;
-}
+
 .rowsNum {
   grid-area: rowsNum;
 }
+
 .columnsNum {
   grid-area: columnsNum;
 }
+
 .size {
   width: 33px;
 }
+
 .viewImage {
   grid-area: viewImage;
 }
+
 .otherText {
   grid-area: otherText;
   resize: none;
@@ -192,6 +210,7 @@ export default class AddChitWindow extends Mixins<WindowMixin>(WindowMixin) {
   height: 100%;
   box-sizing: border-box;
 }
+
 input {
   padding: 2px;
 }

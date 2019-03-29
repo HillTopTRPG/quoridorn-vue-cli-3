@@ -150,7 +150,7 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 canvas {
   position: absolute;
   left: 0;
@@ -159,12 +159,10 @@ canvas {
   bottom: 0;
   margin: auto;
   border: none;
-  /*
-  border: 1px solid gray;
-  */
   box-sizing: border-box;
   background-size: 100% 100%;
 }
+
 .isReverse {
   transform: scale(-1, 1);
 }

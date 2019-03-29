@@ -119,14 +119,25 @@ export default class DropImageWindow extends Mixins<WindowMixin>(WindowMixin) {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
   width: 100%;
   overflow-y: scroll;
   font-size: 12px;
+
+  input {
+    display: inline;
+  }
+
+  .operateArea {
+    vertical-align: middle;
+    text-align: center;
+    margin-top: 10px;
+  }
 }
+
 fieldset > div {
   display: grid;
   width: 100%;
@@ -140,42 +151,36 @@ fieldset > div {
     "tagLabel  tagLabel       tagLabel"
     "tagInput  tagInput       tagSelect";
 }
+
 button {
   font-size: 11px;
 }
-legend {
-}
-input {
-  display: inline;
-}
-.password {
-  width: 100px;
-}
+
 .image {
   grid-area: viewImage;
   width: 96px;
   height: 96px;
   border: solid gray 1px;
 }
+
 .passwordButton {
   grid-area: passwordButton;
 }
+
 .passwordLabel {
   grid-area: passwordLabel;
 }
+
 .tagLabel {
   grid-area: tagLabel;
 }
+
 .tagInput {
   margin-right: 5px;
   grid-area: tagInput;
 }
+
 .tagSelect {
   grid-area: tagSelect;
-}
-.operateArea {
-  vertical-align: middle;
-  text-align: center;
-  margin-top: 10px;
 }
 </style>

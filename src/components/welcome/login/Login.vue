@@ -31,7 +31,7 @@ export default class Login extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .loginContainer {
   border: 1px solid #777;
   background-color: white;

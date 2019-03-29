@@ -137,20 +137,20 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .container {
   display: block;
   width: 100%;
   height: 100%;
   font-size: 12px;
+
+  > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
-.container > * {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.name {
-}
+
 .image img {
   display: block;
   width: 96px;
@@ -159,15 +159,18 @@ export default {
   box-sizing: border-box;
   border: solid yellow 3px;
   background-color: rgba(0, 0, 0, 0);
+
+  &.reverse {
+    transform: scale(-1, 1);
+  }
 }
-.image img.reverse {
-  transform: scale(-1, 1);
-}
+
 label {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 input[type="number"] {
   width: 40px;
 }

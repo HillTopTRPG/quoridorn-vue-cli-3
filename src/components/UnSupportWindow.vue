@@ -33,17 +33,18 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: relative;
   height: 100%;
-}
-.contents > * {
-  display: block;
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
+
+  > * {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+  }
 }
 button {
   bottom: 0;

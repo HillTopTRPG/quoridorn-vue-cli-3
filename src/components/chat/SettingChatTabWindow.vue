@@ -91,7 +91,7 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
@@ -99,14 +99,17 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
   overflow-y: scroll;
   font-size: 12px;
 }
+
 label {
   display: flex;
   margin-top: 5px;
+
+  input {
+    flex: 1;
+    margin-left: 5px;
+  }
 }
-label input {
-  flex: 1;
-  margin-left: 5px;
-}
+
 .operateArea {
   margin-top: 5px;
   text-align: center;

@@ -188,7 +188,7 @@ export default class DropZipWindow extends Mixins<WindowMixin>(WindowMixin) {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
@@ -196,19 +196,10 @@ export default class DropZipWindow extends Mixins<WindowMixin>(WindowMixin) {
   overflow-y: auto;
   font-size: 12px;
 }
+
 fieldset > div {
   display: grid;
   width: 100%;
   height: 100%;
-  /*
-  grid-template-columns: auto 1fr auto;
-  grid-template-rows: auto auto 1fr auto auto;
-  grid-template-areas:
-      "viewImage passwordButton passwordButton"
-      "viewImage passwordLabel  passwordLabel"
-      "viewImage .............. .............."
-      "tagLabel  tagLabel       tagLabel"
-      "tagInput  tagInput       tagSelect";
-  */
 }
 </style>

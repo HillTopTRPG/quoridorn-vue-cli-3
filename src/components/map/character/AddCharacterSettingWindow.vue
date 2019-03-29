@@ -204,7 +204,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
+<style scoped lang="scss">
 .container {
   display: grid;
   width: 100%;

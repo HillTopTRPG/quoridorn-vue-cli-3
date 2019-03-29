@@ -48,7 +48,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 input {
   width: 100%;
   height: 100%;
@@ -57,7 +57,6 @@ input {
   border-style: solid;
   border-color: gray;
   padding: 0;
-  /* border: none; */
   background-color: transparent;
 }
 </style>

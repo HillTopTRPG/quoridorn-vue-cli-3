@@ -315,33 +315,37 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
   width: 100%;
-  /*overflow-y: scroll;*/
   font-size: 12px;
   display: flex;
   flex-direction: column;
 }
+
 .scrollArea {
   flex: 1;
   overflow-y: scroll;
 }
+
 .buttonArea {
   display: flex;
   justify-content: center;
   align-content: start;
 }
+
 label {
   display: flex;
   margin-top: 5px;
+
+  input[type="text"] {
+    flex: 1;
+    margin-left: 5px;
+  }
 }
-label input[type="text"] {
-  flex: 1;
-  margin-left: 5px;
-}
+
 /* Start 列幅可変テーブルのCSS */
 .tableContainer {
   flex: 1;
@@ -351,6 +355,7 @@ label input[type="text"] {
   font-size: 8px;
   box-sizing: border-box;
 }
+
 table {
   width: calc(100% - 19px);
   border-collapse: collapse;
@@ -364,19 +369,57 @@ table {
     rgb(247, 247, 247) 100%
   );
   background-size: 4em 4em;
+
+  input {
+    background: none;
+    border: none;
+  }
+
+  select {
+    width: 100%;
+    height: 100%;
+    background: none;
+    border: none;
+  }
+
+  td.dev {
+    background-color: rgb(183, 186, 188);
+    cursor: col-resize;
+    position: relative;
+    width: 1px;
+
+    &:after {
+      position: absolute;
+      height: 100%;
+      top: 0;
+      left: -2px;
+      content: "";
+      width: 5px;
+    }
+  }
+
+  td i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
+
 tr {
   height: 2em;
+
+  &.space {
+    height: auto;
+  }
 }
-tr.space {
-  height: auto;
-}
+
 th,
 td {
   padding: 0;
   white-space: nowrap;
   cursor: default;
 }
+
 th,
 td:not(.selectable) {
   user-select: none;
@@ -384,76 +427,63 @@ td:not(.selectable) {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
+
 th,
 td:not(.divider) {
   overflow: hidden;
 }
+
 table tbody {
   height: 100%;
+
+  tr {
+    height: 2em;
+
+    &:not(.space).isActive {
+      background-color: rgb(127, 206, 255) !important;
+    }
+  }
+
+  td {
+    &.target {
+      text-align: center;
+    }
+
+    &.name {
+      text-align: left;
+      padding-left: 0.5em;
+
+      &.character {
+        padding-left: 1.5em;
+      }
+    }
+  }
 }
+
 table thead {
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 1) 0%,
     rgba(234, 234, 234, 1) 100%
   );
-}
-table thead tr {
-  border-bottom: 1px solid rgb(183, 186, 188);
-}
-table tbody tr {
-  height: 2em;
-}
-table tbody tr:not(.space).isActive {
-  background-color: rgb(127, 206, 255) !important;
-}
-table thead tr th:hover {
-  background: rgb(178, 225, 255);
-}
-table tbody tr:not(.space):nth-child(odd):hover {
-  background: rgb(178, 225, 255);
-}
-table tbody tr:not(.space):nth-child(even):hover {
-  background: rgb(178, 225, 255);
-}
-table tbody td.target {
-  text-align: center;
-}
-table tbody td.name {
-  text-align: left;
-  padding-left: 0.5em;
-}
-table tbody td.name.character {
-  padding-left: 1.5em;
-}
-table td.dev {
-  background-color: rgb(183, 186, 188);
-  cursor: col-resize;
-  position: relative;
-  width: 1px;
-}
-table td.dev:after {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: -2px;
-  content: "";
-  width: 5px;
-}
-td i {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-table select {
-  width: 100%;
-  height: 100%;
-  background: none;
-  border: none;
-}
-table input {
-  background: none;
-  border: none;
+
+  tr {
+    border-bottom: 1px solid rgb(183, 186, 188);
+
+    th:hover {
+      background: rgb(178, 225, 255);
+    }
+
+    &:not(.space) {
+      &:nth-child(odd):hover {
+        background: rgb(178, 225, 255);
+      }
+
+      &:nth-child(even):hover {
+        background: rgb(178, 225, 255);
+      }
+    }
+  }
 }
 /* End 列幅可変テーブルのCSS */
 </style>

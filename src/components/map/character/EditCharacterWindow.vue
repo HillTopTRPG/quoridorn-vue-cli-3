@@ -237,7 +237,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .container {
   display: grid;
   width: 100%;
@@ -255,6 +255,7 @@ export default {
     "urlArea         urlArea         otherText"
     "buttonArea      buttonArea      buttonArea";
 }
+
 .tagImages {
   display: flex;
   align-items: flex-start;
@@ -265,108 +266,134 @@ export default {
   min-height: calc(100% - 2px);
   box-sizing: border-box;
   border: solid gray 1px;
+
+  img {
+    width: 50px;
+    height: 50px;
+    border: solid rgba(0, 0, 0, 0) 1px;
+
+    &.active {
+      border: solid blue 1px;
+    }
+  }
 }
-.tagImages img {
-  width: 50px;
-  height: 50px;
-  border: solid rgba(0, 0, 0, 0) 1px;
-}
-.tagImages img.active {
-  border: solid blue 1px;
-}
+
 .isReverse {
   transform: scale(-1, 1);
 }
+
 .container > * {
   padding: 1px 0;
 }
+
 .viewImage {
   grid-area: viewImage;
+
+  img {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+  }
 }
-.viewImage img {
-  display: inline-block;
-  width: 200px;
-  height: 200px;
-}
+
 .choseImage {
   grid-area: choseImage;
   overflow-y: scroll;
   max-height: 130px;
 }
+
 .imageInfo {
   grid-area: imageInfo;
   display: flex;
-}
-.imageInfo .selectedImage {
-  flex: 1;
-  display: flex;
-}
-.imageInfo .selectedImage > * {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.imageInfo .selectedImage select {
-  flex: 1;
-}
-.imageInfo > button {
-  margin-left: 10px;
+
+  .selectedImage {
+    flex: 1;
+    display: flex;
+
+    > * {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    select {
+      flex: 1;
+    }
+  }
+
+  > button {
+    margin-left: 10px;
+  }
 }
 .switchImageArea {
   grid-area: switchImageArea;
   display: flex;
+
+  .switchImage {
+    display: inline-block;
+    flex: 1;
+    height: 50px;
+
+    img {
+      width: 50px;
+      height: 50px;
+      border: solid rgba(0, 0, 0, 0) 1px;
+
+      &.active {
+        border: solid blue 1px;
+      }
+    }
+  }
+
+  button.switchButton {
+    height: 26px;
+  }
+
+  button:not(.switchButton) {
+    height: 50px;
+    display: inline-block;
+    margin-left: 10px;
+  }
 }
-.switchImageArea .switchImage {
-  display: inline-block;
-  flex: 1;
-  height: 50px;
-}
-.switchImageArea .switchImage img {
-  width: 50px;
-  height: 50px;
-  border: solid rgba(0, 0, 0, 0) 1px;
-}
-.switchImageArea .switchImage img.active {
-  border: solid blue 1px;
-}
-.switchImageArea button.switchButton {
-  height: 26px;
-}
-.switchImageArea button:not(.switchButton) {
-  height: 50px;
-  display: inline-block;
-  margin-left: 10px;
-}
+
 .initiativeTable {
   grid-area: initiativeTable;
 }
+
 .nameArea {
   grid-area: nameArea;
 }
+
 .viewImage {
   grid-area: viewImage;
 }
+
 .otherTextLabel {
   display: flex;
   grid-area: otherTextLabel;
   vertical-align: bottom;
+
+  span {
+    display: inline;
+    vertical-align: bottom;
+    flex: 1;
+  }
 }
-.otherTextLabel span {
-  display: inline;
-  vertical-align: bottom;
-  flex: 1;
-}
+
 .pieceOptions {
   grid-area: pieceOptions;
+
+  input[type="number"] {
+    width: 35px;
+  }
+
+  span {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
 }
-.pieceOptions input[type="number"] {
-  width: 35px;
-}
-.pieceOptions span {
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 10px;
-}
+
 .otherText {
   grid-area: otherText;
   resize: none;
@@ -374,35 +401,36 @@ export default {
   height: 100%;
   box-sizing: border-box;
 }
+
 .urlArea {
   grid-area: urlArea;
   display: flex;
   vertical-align: middle;
+
+  label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  input {
+    flex: 1;
+    margin-right: 7px;
+  }
 }
-.urlArea label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.urlArea input {
-  flex: 1;
-  margin-right: 7px;
-}
+
 .buttonArea {
   grid-area: buttonArea;
   text-align: center;
   padding-top: 15px;
   padding-bottom: 10px;
+
+  > div {
+    display: inline-block;
+  }
 }
-.buttonArea > div {
-  display: inline-block;
-}
+
 input {
   padding: 2px;
 }
-/*
-button {
-  border-radius: 5px;
-}
-*/
 </style>

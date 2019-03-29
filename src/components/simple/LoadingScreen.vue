@@ -16,7 +16,7 @@ export default class ModalScreen extends Vue {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .loadingScreen {
   position: fixed;
   top: 0;

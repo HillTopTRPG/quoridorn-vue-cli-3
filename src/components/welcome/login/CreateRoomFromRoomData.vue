@@ -49,24 +49,25 @@ export default class CreateRoomFromRoomData extends Vue {
 <style scoped src="./login.css">
 </style>
 
-<style scoped>
+<style scoped lang="scss">
 fieldset.root,
 fieldset.root > legend {
   background-color: #cee;
 }
+
 .input-room-data {
   display: flex;
+
+  > * {
+    display: flex;
+    align-items: center;
+
+    &:last-child {
+      flex: 1;
+    }
+  }
 }
-.input-room-data > *:last-child {
-  flex: 1;
-}
-.input-room-data > * {
-  display: flex;
-  /*justify-content: center;*/
-  align-items: center;
-  /*vertical-align: middle;*/
-  /*text-align: left;*/
-}
+
 .description {
   padding-left: 1em;
   overflow: hidden;

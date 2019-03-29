@@ -50,32 +50,31 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .mapMask {
   position: fixed;
-  cursor: default;
-  /*
-   box-sizing: border-box;
-  */
   display: flex;
   justify-content: center;
   align-items: center;
   border-style: solid;
-  border-width: 0px;
+  border-width: 0;
   border-color: rgba(0, 0, 0, 0);
   white-space: nowrap;
   font-size: 12px;
   cursor: crosshair;
   z-index: 200000000;
-}
-.mapMask.hover {
-  border-width: 2px;
-  z-index: 999999999;
-}
-.mapMask.isLock.hover {
-  border-color: blue;
-}
-.mapMask.isUnLock.hover {
-  border-color: yellow;
+
+  &.hover {
+    border-width: 2px;
+    z-index: 999999999;
+  }
+
+  &.isLock.hover {
+    border-color: blue;
+  }
+
+  &.isUnLock.hover {
+    border-color: yellow;
+  }
 }
 </style>

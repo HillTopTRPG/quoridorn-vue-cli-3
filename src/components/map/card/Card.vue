@@ -217,7 +217,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .card {
   position: absolute;
   display: inline-block;
@@ -231,39 +231,55 @@ export default {
 
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-}
-.card.isViewer {
-  opacity: 0;
-}
-.card > * {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 3px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  text-align: center;
-  background-size: cover;
 
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-/*.card .front { background-color: rgba(255, 255, 0, 1); }*/
-.card .back {
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
-  /*background-color: rgba(0, 255, 0, 1);*/
+  &.isViewer {
+    opacity: 0;
+  }
+
+  > * {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 3px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    background-size: cover;
+
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .back {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    /*background-color: rgba(0, 255, 0, 1);*/
+  }
+
+  &.turn-animation {
+    animation-name: turn-animation;
+    animation-duration: 1.3s;
+    animation-fill-mode: forwards;
+    transition-timing-function: linear;
+    -webkit-transition-timing-function: linear;
+    z-index: 1;
+  }
+
+  &.shuffle-animation {
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+
+    &.isOdd {
+      animation-name: shuffle-animation-odd;
+    }
+
+    &.isEven {
+      animation-name: shuffle-animation-even;
+    }
+  }
 }
 
-.card.turn-animation {
-  animation-name: turn-animation;
-  animation-duration: 1.3s;
-  animation-fill-mode: forwards;
-  transition-timing-function: linear;
-  -webkit-transition-timing-function: linear;
-  z-index: 1;
-}
 @keyframes turn-animation {
   0% {
     top: 0;
@@ -286,18 +302,7 @@ export default {
     -webkit-transform: translate(0, 0) rotate3D(0, 1, 0, 179deg) scale(1, 1);
   }
 }
-.card.shuffle-animation {
-  animation-duration: 0.4s;
-  animation-fill-mode: forwards;
-  /*transition-timing-function : linear;*/
-  /*transform-origin: 50% 0%;*/
-}
-.card.shuffle-animation.isOdd {
-  animation-name: shuffle-animation-odd;
-}
-.card.shuffle-animation.isEven {
-  animation-name: shuffle-animation-even;
-}
+
 @keyframes shuffle-animation-even {
   0% {
     transform: translate(-10%, -30%) scale(0.8, 0.8);
@@ -317,6 +322,7 @@ export default {
     z-index: 1;
   }
 }
+
 @keyframes shuffle-animation-odd {
   0% {
     transform: translate(-10%, -30%) scale(0.8, 0.8);

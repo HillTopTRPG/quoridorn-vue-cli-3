@@ -30,14 +30,15 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 a {
   text-decoration: none;
-}
-a:link,
-a:visited,
-a:hover,
-a:active {
-  color: rgb(53, 108, 165);
+
+  &:link,
+  &:visited,
+  &:hover,
+  &:active {
+    color: rgb(53, 108, 165);
+  }
 }
 </style>

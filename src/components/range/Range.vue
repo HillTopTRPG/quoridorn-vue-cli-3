@@ -585,7 +585,7 @@ export default class Range extends Mixins<RangeMixins>(
 </script>
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .range {
   pointer-events: none;
   position: fixed;

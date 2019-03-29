@@ -118,7 +118,7 @@ export default class SettingChatFontWindow extends Mixins<WindowMixin>(
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
@@ -142,10 +142,11 @@ label {
   -ms-user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
-}
-label input[type="color"] {
-  width: 30px;
-  margin-left: 5px;
+
+  input[type="color"] {
+    width: 30px;
+    margin-left: 5px;
+  }
 }
 .operateArea {
   margin-top: 5px;

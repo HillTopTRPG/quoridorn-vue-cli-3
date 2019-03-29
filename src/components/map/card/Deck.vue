@@ -123,7 +123,7 @@ export default class Deck extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .deckContainer {
   position: absolute;
   top: 130px;
