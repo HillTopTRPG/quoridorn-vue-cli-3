@@ -1,6 +1,6 @@
 <template>
   <select-base defaultLabel="カウンター名" v-model="localValue">
-    <option v-for="(property, index) in propertyList" :key="index" :value="property.property">{{property.property}}</option>
+    <option v-for="(property, index) in usePropertyList" :key="index" :value="property.property">{{property.property}}</option>
   </select-base>
 </template>
 
@@ -16,5 +16,24 @@ import { Component, Mixins } from "vue-mixin-decorator";
 })
 export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Getter("propertyList") private propertyList: any;
+
+  private get usePropertyList(): any[] {
+    const resultList = this.propertyList.filter((property: any) => {
+      window.console.log(property);
+      let result = true;
+      if (property.type === "checkbox") result = false;
+      return result;
+    });
+
+    resultList.unshift({
+      property: "修正（イニシアティブ同値時比較用）"
+    });
+
+    resultList.unshift({
+      property: "イニシアティブ"
+    });
+
+    return resultList;
+  }
 }
 </script>

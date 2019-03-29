@@ -103,7 +103,7 @@
       <menu-boolean-item property="private.display.resourceWindow">リソース表示</menu-boolean-item>
       <hr>
       <menu-boolean-item property="private.display.chatPaletteWindow">チャットパレット表示</menu-boolean-item>
-      <menu-boolean-item property="private.display.counterRemoConWindow">カウンターリモコン表示</menu-boolean-item>
+      <menu-boolean-item property="private.display.counterRemoconWindow">カウンターリモコン表示</menu-boolean-item>
     </div>
     <!--------------------------------------------------
      ! デモ

@@ -314,6 +314,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("isWait") private isWait: any;
   @Getter("chatActorKey") private chatActorKey: any;
   @Getter("roomSystem") private roomSystem: any;
+  @Getter("getChatColor") private getChatColor: any;
+  @Getter("getOwnerKey") private getOwnerKey: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;
@@ -685,22 +687,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
 
     // 文字色決定
-    const actor = this.getPeerActors.filter(
-      (actor: any) => actor.key === this.chatActorKey
-    )[0];
-    let color = "black";
-    if (actor) {
-      if (actor.key.split("-")[0] === "character") {
-        if (actor.fontColorType === 0) {
-          // プレイヤーと同じ色を使う
-          color = this.getPeerActors[0].color;
-        } else {
-          color = actor.fontColor;
-        }
-      } else {
-        color = actor.fontColor;
-      }
-    }
+    const color = this.getChatColor(this.chatActorKey);
 
     // 括弧をつけるオプション
     let text = this.currentMessage;
@@ -714,20 +701,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       outputTab = this.activeTab;
     }
 
-    let ownerKey: string | undefined = undefined;
-
-    if (this.chatActorKey) {
-      const kind = this.chatActorKey.split("-")[0];
-      if (kind === "player") {
-        ownerKey = this.playerKey;
-      } else if (kind === "character") {
-        ownerKey = this.getObj(this.chatActorKey).owner;
-      } else {
-        ownerKey = undefined;
-      }
-    } else {
-      ownerKey = undefined;
-    }
+    let ownerKey: string | undefined = this.getOwnerKey(this.chatActorKey);
 
     // -------------------
     // ダイスBot処理
@@ -745,17 +719,12 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
           // bcdiceとして結果が取れた
           const resultStr: string = json.result;
           isSecretDice = json.secret;
-          const diceList: any[] = json.dices;
           diceRollResult = resultStr.replace(/(^: )/g, "").replace(/＞/g, "→");
           isDiceRoll = true;
         } else {
           // bcdiceとして結果は取れなかった
         }
         this.currentMessage = "";
-
-        const currentActor = this.getPeerActors.filter(
-          (actor: any) => actor.key === this.chatActorKey
-        )[0];
 
         if (isDiceRoll && isSecretDice) {
           // -------------------
@@ -770,7 +739,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
             actorKey: this.chatActorKey,
             statusName: this.statusName,
             target: this.chatTarget,
-            owner: currentActor ? currentActor.key : null
+            owner: this.chatActorKey
           });
 
           // 隠しダイスロール結果画面に反映
@@ -785,7 +754,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
             actorKey: this.chatActorKey,
             statusName: this.statusName,
             target: this.chatTarget,
-            owner: currentActor ? currentActor.key : null
+            owner: this.chatActorKey
           });
         } else {
           // -------------------
@@ -800,7 +769,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
             actorKey: this.chatActorKey,
             statusName: this.statusName,
             target: this.chatTarget,
-            owner: currentActor ? currentActor.key : null
+            owner: this.chatActorKey
           });
           if (isDiceRoll) {
             // -------------------
@@ -815,7 +784,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
               actorKey: this.chatActorKey,
               statusName: this.statusName,
               target: this.chatTarget,
-              owner: currentActor ? currentActor.key : null
+              owner: this.chatActorKey
             });
           }
         }
@@ -958,7 +927,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .container {
   width: 100%;
   height: 100%;

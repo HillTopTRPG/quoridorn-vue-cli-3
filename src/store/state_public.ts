@@ -104,7 +104,8 @@ export default {
     initiative: {
       round: 0,
       roundPlayerKey: "",
-      propertyList: []
+      propertyList: [],
+      rowStr: ""
     },
 
     /** カウンターリモコン */
@@ -562,6 +563,40 @@ export default {
         w: getter.columns * getter.gridSize,
         h: getter.rows * getter.gridSize
       };
+    },
+    getChatColor: (state: any, getter: any) => (actorKey: string) => {
+      const actor = getter.getPeerActors.filter(
+        (actor: any) => actor.key === actorKey
+      )[0];
+      let color = "black";
+      if (actor) {
+        if (actor.key.split("-")[0] === "character") {
+          if (actor.fontColorType === 0) {
+            // プレイヤーと同じ色を使う
+            color = getter.getPeerActors[0].color;
+          } else {
+            color = actor.fontColor;
+          }
+        } else {
+          color = actor.fontColor;
+        }
+      }
+      return color;
+    },
+    getOwnerKey: (state: any, getter: any) => (actorKey: string) => {
+      let ownerKey: string | undefined = undefined;
+
+      if (actorKey) {
+        const kind = actorKey.split("-")[0];
+        if (kind === "player") {
+          ownerKey = actorKey;
+        } else if (kind === "character") {
+          ownerKey = getter.getObj(actorKey).owner;
+        } else {
+          ownerKey = undefined;
+        }
+      }
+      return ownerKey;
     },
     bgmList: (state: any) => state.bgm.list,
     imageTagList: (state: any) => state.image.tags.list,

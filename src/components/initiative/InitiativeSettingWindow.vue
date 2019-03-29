@@ -4,6 +4,7 @@
     display-property="private.display.initiativeSettingWindow"
     align="center"
     fixSize="510, 210"
+    @open="initWindow"
   >
     <div class="contents">
       <div class="message" @contextmenu.prevent>
@@ -49,13 +50,13 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
   @Action("setInitiativeParams") private setInitiativeParams: any;
   private format: string = "";
 
-  mounted() {
+  initWindow() {
     this.format = this.value;
   }
 
   commit() {
     this.setProperty({
-      property: "private.display.initiativeSettingWindow.value",
+      property: "public.initiative.rowStr",
       value: this.format,
       isNotice: true,
       logOff: true
@@ -69,13 +70,13 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
   }
 
   get value(): string {
-    return this.$store.state.private.display.initiativeSettingWindow.value;
+    return this.$store.state.public.initiative.rowStr;
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;

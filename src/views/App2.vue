@@ -12,7 +12,7 @@
     <loading-screen/>
     <loading/>
     <chat-window/>
-    <menu/>
+    <Menu/>
     <add-map-mask-window/>
     <edit-map-mask-window/>
     <map-mask-context/>
@@ -53,6 +53,7 @@
     <initiative-setting-window/>
     <counter-remocon-window/>
     <counter-remocon-editor-window/>
+    <counter-remocon-context/>
   </div>
 </template>
 
@@ -104,6 +105,7 @@ import InitiativeWindow from "../components/initiative/InitiativeWindow.vue";
 import InitiativeSettingWindow from "@/components/initiative/InitiativeSettingWindow.vue";
 import CounterRemoconWindow from "@/components/counter-remocon/CounterRemoconWindow.vue";
 import CounterRemoconEditorWindow from "@/components/counter-remocon/CounterRemoconEditorWindow.vue";
+import CounterRemoconContext from "@/components/counter-remocon/CounterRemoconContext.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
@@ -155,7 +157,8 @@ import { Action, Getter, Mutation } from "vuex-class";
     InitiativeWindow,
     InitiativeSettingWindow,
     CounterRemoconWindow,
-    CounterRemoconEditorWindow
+    CounterRemoconEditorWindow,
+    CounterRemoconContext
   }
 })
 export default class App2 extends Vue {

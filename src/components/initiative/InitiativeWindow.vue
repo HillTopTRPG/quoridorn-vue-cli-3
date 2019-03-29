@@ -336,37 +336,22 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (this.movedIndex > 3) {
       const formatIndex = this.movedIndex - 4;
       const prop = this.propertyList[formatIndex];
-      maxWidth = this.getWidth(prop.property) + TEXT_PADDING;
-      if (prop.type === "min") {
-        const nextProp = this.propertyList[formatIndex + 1];
-        this.characterList.forEach((character: any) => {
-          maxWidth = Math.max(
-            maxWidth,
-            this.getWidth(character.property[nextProp.property + "-min"]) +
-              NUMBER_PADDING
-          );
-        });
-      }
-      if (prop.type === "number") {
-        this.characterList.forEach((character: any) => {
-          maxWidth = Math.max(
-            maxWidth,
-            this.getWidth(character.property[prop.property]) + NUMBER_PADDING
-          );
-        });
-      }
-      if (prop.type === "max") {
-        const prevProp = this.propertyList[formatIndex - 1];
-        this.characterList.forEach((character: any) => {
-          maxWidth = Math.max(
-            maxWidth,
-            this.getWidth(character.property[prevProp.property + "-max"]) +
-              NUMBER_PADDING
-          );
-        });
-      }
-      if (prop.type === "checkbox") {
-        maxWidth = Math.max(maxWidth, CHECK_BOX_WIDTH);
+      switch (prop.type) {
+        case "min":
+        case "number":
+        case "max":
+          this.characterList.forEach((character: any) => {
+            maxWidth = Math.max(
+              maxWidth,
+              this.getWidth(character.property[prop.refStr]) + NUMBER_PADDING
+            );
+          });
+          break;
+        case "checkbox":
+          maxWidth = Math.max(maxWidth, CHECK_BOX_WIDTH);
+          break;
+        default:
+          maxWidth = this.getWidth(prop.property) + TEXT_PADDING;
       }
     }
     this.widthList.splice(this.movedIndex, 1, maxWidth);
@@ -457,23 +442,18 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.characterList.forEach((character: any) => {
       propertyList.forEach((prop: any, index: number) => {
         let newValue: any = null;
-        let propName: string = "";
+        let propName: string = prop.refStr;
         if (prop.type === "min") {
-          propName = propertyList[index + 1].property + "-min";
           newValue = 0;
         } else if (prop.type === "max") {
-          propName = propertyList[index - 1].property + "-max";
           newValue = 99;
         } else if (prop.type === "number") {
-          propName = prop.property;
           if (prop.min > 0) newValue = prop.min;
           else if (prop.max < 0) newValue = prop.max;
           else newValue = 0;
         } else if (prop.type === "checkbox") {
-          propName = prop.property;
           newValue = false;
         } else {
-          propName = prop.property;
           newValue = null;
         }
         if (character.property[propName] === undefined) {
@@ -555,9 +535,9 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   setMin(this: any, objKey: string, index: number, value: number) {
     window.console.log("setMin", index, value);
     const propertyObj: any = {};
-    propertyObj[this.propertyList[index + 1].property + "-min"] = value;
+    propertyObj[this.propertyList[index].refStr] = value;
     if (this.getPropValue(objKey, index + 1) < value)
-      propertyObj[this.propertyList[index + 1].property] = value;
+      propertyObj[this.propertyList[index].refStr] = value;
     this.changeListInfo({
       key: objKey,
       isNotice: true,
@@ -568,9 +548,9 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   setMax(this: any, objKey: string, index: number, value: number) {
     window.console.log("setMax", index, value);
     const propertyObj: any = {};
-    propertyObj[this.propertyList[index - 1].property + "-max"] = value;
+    propertyObj[this.propertyList[index].refStr] = value;
     if (value < this.getPropValue(objKey, index - 1))
-      propertyObj[this.propertyList[index - 1].property] = value;
+      propertyObj[this.propertyList[index].refStr] = value;
     this.changeListInfo({
       key: objKey,
       isNotice: true,
@@ -619,18 +599,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   getPropValue(objKey: string, index: number): number | boolean | null {
-    const prevProp: any = this.propertyList[index - 1];
-    const prop: any = this.propertyList[index];
-    const nextProp: any = this.propertyList[index + 1];
-
-    const character: any = this.getObj(objKey);
-
-    let propName = null;
-    if (prop.type === "min") propName = nextProp.property + "-min";
-    if (prop.type === "max") propName = prevProp.property + "-max";
-    if (prop.type === "number") propName = prop.property;
-    if (prop.type === "checkbox") propName = prop.property;
-    return propName ? character.property[propName] : null;
+    return this.getObj(objKey).property[this.propertyList[index].refStr];
   }
 
   get sortCharacterList(): any[] {
@@ -708,7 +677,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;

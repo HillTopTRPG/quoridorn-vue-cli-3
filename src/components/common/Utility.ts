@@ -208,6 +208,8 @@ export function toInitiativeObjList(
     const obj: any = {
       type: "number",
       property: str,
+      fromProperty: null,
+      refStr: str,
       min: null,
       max: null,
       color: "#000"
@@ -233,6 +235,8 @@ export function toInitiativeObjList(
         resultList.push({
           type: "min",
           property: fs[1] + "の最小値",
+          fromProperty: fs[1],
+          refStr: fs[1] + "-min",
           min: null,
           max: null
         });
@@ -248,6 +252,8 @@ export function toInitiativeObjList(
         resultList.push({
           type: "max",
           property: fs[1] + "の最大値",
+          fromProperty: fs[1],
+          refStr: fs[1] + "-max",
           min: null,
           max: null
         });
@@ -269,6 +275,8 @@ export function toInitiativeObjList(
           resultList.push({
             type: "min",
             property: fs[1] + "の最小値",
+            fromProperty: fs[1],
+            refStr: fs[1] + "-min",
             min: null,
             max: null
           });
@@ -286,6 +294,8 @@ export function toInitiativeObjList(
           resultList.push({
             type: "max",
             property: fs[0] + "の最大値",
+            fromProperty: fs[0],
+            refStr: fs[0] + "-max",
             min: null,
             max: null
           });
@@ -346,4 +356,18 @@ export function arrangeInitiativeWidthList(
   return newWidthList;
 }
 
-// qLog("aaaa -> bbb: val1", {rrr: 123, qqq: 432}, "bbb ccc: val2 ddd", {ppp: 222, fff: 4444})
+export function listDelete(
+  list: any[],
+  filterFunc: (item: any, index: number) => {}
+) {
+  const deleteList: any[] = list.filter(filterFunc);
+  const deleteIndexList: number[] = deleteList.map(deleteItem =>
+    list.indexOf(deleteItem)
+  );
+  deleteIndexList.sort((n1: number, n2: number) => {
+    if (n1 > n2) return -1;
+    if (n1 < n2) return 1;
+    return 0;
+  });
+  deleteIndexList.forEach(deleteIndex => list.splice(deleteIndex, 1));
+}

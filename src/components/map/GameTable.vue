@@ -427,17 +427,16 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       this.propertyList.forEach((prop: any, index: number) => {
         if (prop.type === "min") {
           const nextProp = this.propertyList[index + 1];
-          pieceObj.property[nextProp.property + "-min"] = 0;
+          pieceObj.property[prop.refStr] = 0;
         }
         if (prop.type === "number") {
-          pieceObj.property[prop.property] = 0;
+          pieceObj.property[prop.refStr] = 0;
         }
         if (prop.type === "max") {
-          const prevProp = this.propertyList[index - 1];
-          pieceObj.property[prevProp.property + "-max"] = 99;
+          pieceObj.property[prop.refStr] = 99;
         }
         if (prop.type === "checkbox") {
-          pieceObj.property[prop.property] = false;
+          pieceObj.property[prop.refStr] = false;
         }
       });
 
@@ -703,7 +702,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 #gameTable {
   position: fixed;
   display: block;
@@ -714,32 +713,29 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   background-size: 100% 100%;
   cursor: crosshair;
   z-index: -1;
-  /*
-  box-sizing: border-box;
-  */
   perspective: 1000px;
   border: ridge gray;
   overflow: hidden;
-}
 
-#gameTable:before {
-  content: "";
-  background: inherit; /*.bgImageで設定した背景画像を継承する*/
-  -webkit-filter: blur(10px);
-  -ms-filter: blur(10px);
-  filter: blur(10px);
-  position: absolute;
-  /*ブラー効果で画像の端がボヤけた分だけ位置を調整*/
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  z-index: -1; /*重なり順序を一番下にしておく*/
-}
+  &:before {
+    content: "";
+    background: inherit; /*.bgImageで設定した背景画像を継承する*/
+    -webkit-filter: blur(10px);
+    -ms-filter: blur(10px);
+    filter: blur(10px);
+    position: absolute;
+    /*ブラー効果で画像の端がボヤけた分だけ位置を調整*/
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    z-index: -1; /*重なり順序を一番下にしておく*/
+  }
 
-#gameTable > div {
-  background-position: 1px 1px;
-  background-size: 48px 48px;
+  > div {
+    background-position: 1px 1px;
+    background-size: 48px 48px;
+  }
 }
 
 #mapBoardFrame {

@@ -309,6 +309,10 @@ export default {
           value: publicData,
           isNotice: true,
           logOff: true
+        }).then(() => {
+          dispatch("setInitiativeParams", {
+            format: rootState.public.initiative.rowStr.trim()
+          });
         });
 
         delKeyList.forEach(delKey => {
@@ -372,8 +376,12 @@ export default {
               // マップオブジェクトのロード
               dispatch("addPieceInfo", addObj);
             });
+
+          // TODO delete test code.
+          window.console.log(rootState);
         });
       };
+
       const roomName = publicData.room.name;
       if (!dropZipRoomCreate) {
         // 部屋を作らないシンプルなロード

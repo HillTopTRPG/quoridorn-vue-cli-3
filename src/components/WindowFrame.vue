@@ -129,7 +129,7 @@
     <stand-image-component
       class="standImage"
       v-for="(standImage, index) in standImageList"
-      :key="standImage.statusName"
+      :key="index"
       :standImage="standImage.standImage"
       :drawDiff="true"
       @click="clickStandImage(standImage.standImage, index)"
@@ -636,6 +636,7 @@ export default class WindowFrame extends Vue {
   width: 100%;
   height: 100%;
   display: block;
+  z-index: 91;
 }
 
 .title {

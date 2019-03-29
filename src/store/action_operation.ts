@@ -18,6 +18,38 @@ Vue.use(Vuex);
 export default {
   actions: {
     /** ========================================================================
+     * 普通発言でチャットログを追加する
+     */
+    addSimpleChatLog: (
+      { dispatch, rootGetters }: { dispatch: Function; rootGetters: any },
+      {
+        actorKey = rootGetters.chatActorKey,
+        text,
+        tab = rootGetters.activeTab,
+        statusName = "◆",
+        target
+      }: {
+        actorKey: string;
+        text: string;
+        tab: string;
+        statusName: string;
+        target: string | undefined;
+      }
+    ) => {
+      const usePayload = {
+        name: rootGetters.getViewName(actorKey),
+        text,
+        color: rootGetters.getChatColor(actorKey),
+        tab,
+        from: rootGetters.getOwnerKey(actorKey),
+        actorKey,
+        statusName,
+        target,
+        owner: actorKey
+      };
+      dispatch("addChatLog", usePayload);
+    },
+    /** ========================================================================
      * チャットログを追加する
      */
     addChatLog: ({ dispatch }: { dispatch: Function }, payload: any) => {
@@ -53,18 +85,20 @@ export default {
           if (status) {
             const standImageList: any =
               rootGetters.display.chatWindow.standImageList;
-            const standImageObj = {
-              actorKey: actorKey,
-              statusName: statusName,
-              standImage: status.standImage
-            };
-            const index: number = standImageList.findIndex(
-              (standImageObj: any) => standImageObj.actorKey === actorKey
-            );
-            if (index < 0) {
-              standImageList.push(standImageObj);
-            } else {
-              standImageList.splice(index, 1, standImageObj);
+            if (status.standImage.base || status.standImage.diffList.length) {
+              const standImageObj = {
+                actorKey: actorKey,
+                statusName: statusName,
+                standImage: status.standImage
+              };
+              const index: number = standImageList.findIndex(
+                (standImageObj: any) => standImageObj.actorKey === actorKey
+              );
+              if (index < 0) {
+                standImageList.push(standImageObj);
+              } else {
+                standImageList.splice(index, 1, standImageObj);
+              }
             }
           }
         }

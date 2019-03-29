@@ -98,9 +98,10 @@ export default {
       { system, command }: { system: string; command: string }
     ) {
       return new Promise((resolve: Function, reject: Function) => {
-        const params: string = [`system=${system}`, `command=${command}`].join(
-          "&"
-        );
+        const params: string = [
+          `system=${system}`,
+          `command=${encodeURIComponent(command)}`
+        ].join("&");
         const url = `${state.connect.bcdiceServer}/v1/diceroll?${params}`;
         fetch(url)
           .then(response => response.json())

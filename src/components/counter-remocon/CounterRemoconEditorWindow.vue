@@ -3,9 +3,10 @@
     titleText="カウンターリモコンエディター"
     display-property="private.display.counterRemoconEditorWindow"
     align="left-top"
-    fixSize="340, 200"
+    fixSize="360, 200"
     ref="window"
     @open="initWindow"
+    @reset="initWindow"
   >
     <div class="contents" @contextmenu.prevent>
       <label>
@@ -82,6 +83,7 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
 
   private initWindow() {
     const counterRemocon = this.getObj(this.counterRemoconEditorKey);
+    window.console.log(this.counterRemoconEditorKey, counterRemocon);
     if (counterRemocon) {
       this.buttonName = counterRemocon.buttonName;
       this.counterName = counterRemocon.counterName;
@@ -92,7 +94,9 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
     } else {
       const firstProperty = this.propertyList[0];
       this.buttonName = "";
-      this.counterName = firstProperty ? firstProperty.property : "";
+      this.counterName = firstProperty
+        ? firstProperty.property
+        : "イニシアティブ";
       this.modifyType = this.COUNTER_REMOCON_TYPE.PLUS;
       this.modifyValue = "";
       this.message = "{0}の{1}を{2}した";
@@ -105,7 +109,6 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
     const messageList: string[] = [];
     if (!this.buttonName) messageList.push("ボタン名は必須です。");
     if (!this.counterName) messageList.push("カウンター名は必須です。");
-    if (!this.modifyValue) messageList.push("修正値は必須です。");
     if (messageList.length) {
       alert(messageList.join("\n"));
       return;
@@ -140,7 +143,7 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;

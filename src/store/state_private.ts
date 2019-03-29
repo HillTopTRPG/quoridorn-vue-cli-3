@@ -262,6 +262,13 @@ export default {
         isDisplay: false,
         zIndex: 1,
         objKey: null
+      },
+      counterRemoconContext: {
+        command: null,
+        isDisplay: false,
+        x: 0,
+        y: 0,
+        remoconKey: null
       }
     }
   } /* end of state */,
@@ -451,6 +458,8 @@ export default {
       state.display.imageSelectorWindow.callback,
     display: (state: any) => state.display,
     counterRemoconEditorKey: (state: any) =>
-      state.display.counterRemoconEditorWindow.objKey
+      state.display.counterRemoconEditorWindow.objKey,
+    remoconContextKey: (state: any) =>
+      state.display.counterRemoconContext.remoconKey
   }
 };
