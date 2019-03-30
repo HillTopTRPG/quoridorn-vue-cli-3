@@ -26,7 +26,7 @@ export default class CharacterSelect extends Mixins<SelectMixin>(SelectMixin) {
   private placeList!: string[];
 
   private get useCharacterList(): any[] {
-    const resultList = [];
+    const resultList: any = [];
 
     if (this.placeList.length) {
       this.placeList.forEach(place =>

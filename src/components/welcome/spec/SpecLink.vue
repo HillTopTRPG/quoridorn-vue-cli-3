@@ -17,9 +17,9 @@ export default class SpecLink extends Vue {
     const contentsElm: HTMLElement = document.getElementById(
       "welcomeWindowContents"
     )!;
-    const targetElm: HTMLInputElement = document
-      .getElementById("welcomeWindowContents")
-      .querySelector("#" + this.property);
+    const targetElm: HTMLInputElement | null = contentsElm!.querySelector(
+      `#${this.property}`
+    );
     if (!targetElm) {
       window.console.error(`Not found => #${this.property}`);
       return;
