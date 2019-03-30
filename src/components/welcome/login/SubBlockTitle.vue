@@ -7,19 +7,19 @@
 </template>
 
 <script lang="ts">
-  import { Getter } from "vuex-class";
-  import { Component, Emit, Vue } from "vue-property-decorator";
+import { Getter } from "vuex-class";
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 
-@Component<SubBlockTitle>({
-  name: "subBlockTitle",
-  props: {
-    text: {type: String, required: true},
-  }
-})
+@Component
 export default class SubBlockTitle extends Vue {
-  @Getter("paramRoomName") paramRoomName: any;
-  @Getter("isRoomExist") isRoomExist: any;
-  @Emit("open") onClickLink(): void {}
+  @Prop({ type: String, required: true })
+  private text!: string;
+
+  @Getter("paramRoomName") private paramRoomName: any;
+  @Getter("isRoomExist") private isRoomExist: any;
+
+  @Emit("open")
+  onClickLink(): void {}
 }
 </script>
 
@@ -31,10 +31,10 @@ export default class SubBlockTitle extends Vue {
   color: black;
 
   &.isRoomExist {
-    color: #3092F3;
+    color: #3092f3;
   }
 }
 a {
   color: inherit;
 }
-</style>
+</style>()

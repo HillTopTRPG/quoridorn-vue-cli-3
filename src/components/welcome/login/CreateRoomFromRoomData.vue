@@ -16,11 +16,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Action } from "vuex-class";
 
-@Component<CreateRoomFromRoomData>({
-  name: "createRoomFromRoomData"
-})
+@Component
 export default class CreateRoomFromRoomData extends Vue {
-  @Action("importStart") importStart: any;
+  @Action("importStart") private importStart: any;
 
   private files: File[] = [];
 
@@ -51,24 +49,25 @@ export default class CreateRoomFromRoomData extends Vue {
 <style scoped src="./login.css">
 </style>
 
-<style scoped>
+<style scoped lang="scss">
 fieldset.root,
 fieldset.root > legend {
   background-color: #cee;
 }
+
 .input-room-data {
   display: flex;
+
+  > * {
+    display: flex;
+    align-items: center;
+
+    &:last-child {
+      flex: 1;
+    }
+  }
 }
-.input-room-data > *:last-child {
-  flex: 1;
-}
-.input-room-data > * {
-  display: flex;
-  /*justify-content: center;*/
-  align-items: center;
-  /*vertical-align: middle;*/
-  /*text-align: left;*/
-}
+
 .description {
   padding-left: 1em;
   overflow: hidden;

@@ -1,6 +1,6 @@
 <template>
-  <window-frame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`" @open="initWindow" @reset="initWindow">
-    <div class="contents">
+  <window-frame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`">
+    <div class="contents" @contextmenu.prevent>
       <div>
         <button type="button" @click="add">追加</button>
         <button type="button" @click="add">削除</button>
@@ -72,173 +72,201 @@
   </window-frame>
 </template>
 
-<script>
-import { mapState, mapActions, mapGetters } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-import Divider from "../parts/Divider";
+<script lang="ts">
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
+import Divider from "../parts/Divider.vue";
 
-export default {
-  name: "settingChatTargetTabWindow",
-  mixins: [WindowMixin],
+import { Action, Getter, Mutation } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+
+@Component({
   components: {
     WindowFrame,
     Divider
-  },
-  data() {
-    return {
-      tabsStr: ""
-    };
-  },
-  methods: {
-    ...mapActions([
-      "windowClose",
-      "windowOpen",
-      "setProperty",
-      "addGroupTargetTab"
-    ]),
-    initWindow() {
-      this.tabsStr = this.storeTabs;
-    },
-    add() {
-      this.addGroupTargetTab({ ownerKey: this.getChatFromKey() });
-    },
-    edit(key) {
-      this.setProperty({
-        property: "private.display.editGroupChatWindow.key",
-        value: key,
-        logOff: true
-      });
-      this.windowOpen("private.display.editGroupChatWindow");
-    },
-    moveDev(event) {
-      if (this.movingIndex > -1) {
-        const diff = event.clientX - this.startX;
-        const afterLeftWidth = this.startLeftWidth + diff;
-        const afterRightWidth = this.startRightWidth - diff;
-        if (afterLeftWidth >= 10 && afterRightWidth >= 10) {
-          const paramObj = {};
-          paramObj[this.movingIndex] = afterLeftWidth;
-          paramObj[this.movingIndex + 1] = afterRightWidth;
-          this.setProperty({
-            property: "private.display.settingChatTargetTabWindow.widthList",
-            value: paramObj,
-            logOff: true
-          });
-        }
-      }
-    },
-    moveDevEnd() {
-      this.setProperty({
-        property: "private.display.settingChatTargetTabWindow",
-        value: {
-          hoverDevIndex: -1,
-          movingIndex: -1,
-          startX: -1,
-          startLeftWidth: -1,
-          startRightWidth: -1
-        },
-        logOff: true
-      });
-    },
-    selectLine(selectLineKey) {
-      this.setProperty({
-        property: "private.display.settingChatTargetTabWindow.selectLineKey",
-        value: selectLineKey,
-        logOff: true
-      });
-    },
-    isSelected(groupTargetTab, player) {
-      return !!groupTargetTab.group.filter(t => t === player.key)[0];
-    },
-    changeProp(groupTargetTab, prop, newValue) {
-      const target = this.groupTargetTabList.filter(
-        tab => tab.key === groupTargetTab.key
-      )[0];
-      if (!target) return;
-      const index = this.groupTargetTabList.indexOf(target);
+  }
+})
+export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("windowClose") private windowClose: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("addGroupTargetTab") private addGroupTargetTab: any;
+  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getViewName") private getViewName: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("chatActorKey") private chatActorKey: any;
 
-      const value = {};
-      value[prop] = newValue;
-      if (prop === "isAll" && newValue) {
-        value.group = [];
-      }
+  private add() {
+    this.addGroupTargetTab({ ownerKey: this.getChatFromKey() });
+  }
 
-      this.setProperty({
-        property: `public.chat.groupTargetTab.list.${index}`,
-        value: value,
-        isNotice: true,
-        logOff: true
-      });
-    },
-    changeGroupTargetMember(groupTargetTab, player, flg) {
-      const newArr = groupTargetTab.group.concat();
-      if (flg) {
-        // 追加の場合
-        newArr.push(player.key);
-      } else {
-        // 除外の場合
-        const index = groupTargetTab.group.indexOf(player.key);
-        newArr.splice(index, 1);
-      }
-      this.changeProp(groupTargetTab, "group", newArr);
-    },
-    getChatFromKey() {
-      const actor = this.getPeerActors.filter(
-        actor => actor.key === this.chatActorKey
-      )[0];
-      return actor ? actor.key : "";
-    },
-    getViewNames(tab) {
-      return tab.isAll
-        ? "全員"
-        : tab.group.map(g => this.getViewName(g)).join(", ");
-    }
-  },
-  computed: mapState({
-    ...mapGetters([
-      "getPeerActors",
-      "getViewName",
-      "getObj",
-      "playerKey",
-      "chatActorKey"
-    ]),
-    groupTargetTabList(state) {
-      return state.public.chat.groupTargetTab.list.filter(tab => {
-        if (tab.isAll) return true;
-        const targetList = tab.group.map(g => this.getObj(g)).filter(obj => {
-          const kind = obj.key.split("-")[0];
-          if (kind === "player") {
-            if (obj.key === this.playerKey) return true;
-          } else {
-            if (obj.owner === this.playerKey) return true;
-          }
-          return false;
+  private edit(key: string) {
+    this.setProperty({
+      property: "private.display.editGroupChatWindow.key",
+      value: key,
+      logOff: true
+    });
+    this.windowOpen("private.display.editGroupChatWindow");
+  }
+
+  private moveDev(event: any) {
+    if (this.movingIndex > -1) {
+      const diff = event.clientX - this.startX;
+      const afterLeftWidth = this.startLeftWidth + diff;
+      const afterRightWidth = this.startRightWidth - diff;
+      if (afterLeftWidth >= 10 && afterRightWidth >= 10) {
+        const paramObj: any = {};
+        paramObj[this.movingIndex] = afterLeftWidth;
+        paramObj[this.movingIndex + 1] = afterRightWidth;
+        this.setProperty({
+          property: "private.display.settingChatTargetTabWindow.widthList",
+          value: paramObj,
+          logOff: true
         });
-        return targetList.length > 0;
-      });
-    },
-    /* Start 列幅可変テーブルのプロパティ */
-    selectLineKey: state =>
-      state.private.display.settingChatTargetTabWindow.selectLineKey,
-    widthList: state =>
-      state.private.display.settingChatTargetTabWindow.widthList,
-    movingIndex: state =>
-      state.private.display.settingChatTargetTabWindow.movingIndex,
-    startX: state => state.private.display.settingChatTargetTabWindow.startX,
-    startLeftWidth: state =>
-      state.private.display.settingChatTargetTabWindow.startLeftWidth,
-    startRightWidth: state =>
-      state.private.display.settingChatTargetTabWindow.startRightWidth,
-    colStyle: () =>
-      function(index) {
-        return { width: `${this.widthList[index]}px` };
+      }
+    }
+  }
+
+  private moveDevEnd() {
+    this.setProperty({
+      property: "private.display.settingChatTargetTabWindow",
+      value: {
+        hoverDevIndex: -1,
+        movingIndex: -1,
+        startX: -1,
+        startLeftWidth: -1,
+        startRightWidth: -1
       },
-    /* End 列幅可変テーブルのプロパティ */
-    windowSize: state =>
-      state.private.display.settingChatTargetTabWindow.windowSize
-  })
-};
+      logOff: true
+    });
+  }
+
+  private selectLine(selectLineKey: string) {
+    this.setProperty({
+      property: "private.display.settingChatTargetTabWindow.selectLineKey",
+      value: selectLineKey,
+      logOff: true
+    });
+  }
+
+  private isSelected(groupTargetTab: any, player: any) {
+    return !!groupTargetTab.group.filter((t: string) => t === player.key)[0];
+  }
+
+  private changeProp(groupTargetTab: any, prop: string, newValue: any) {
+    const target = this.groupTargetTabList.filter(
+      (tab: any) => tab.key === groupTargetTab.key
+    )[0];
+    if (!target) return;
+    const index = this.groupTargetTabList.indexOf(target);
+
+    const value: any = {};
+    value[prop] = newValue;
+    if (prop === "isAll" && newValue) {
+      value.group = [];
+    }
+
+    this.setProperty({
+      property: `public.chat.groupTargetTab.list.${index}`,
+      value: value,
+      isNotice: true,
+      logOff: true
+    });
+  }
+
+  private changeGroupTargetMember(
+    groupTargetTab: any,
+    player: any,
+    flg: boolean
+  ) {
+    const newArr = groupTargetTab.group.concat();
+    if (flg) {
+      // 追加の場合
+      newArr.push(player.key);
+    } else {
+      // 除外の場合
+      const index = groupTargetTab.group.indexOf(player.key);
+      newArr.splice(index, 1);
+    }
+    this.changeProp(groupTargetTab, "group", newArr);
+  }
+
+  private getChatFromKey() {
+    const actor: any = this.getPeerActors.filter(
+      (actor: any) => actor.key === this.chatActorKey
+    )[0];
+    return actor ? actor.key : "";
+  }
+
+  private getViewNames(tab: any) {
+    return tab.isAll
+      ? "全員"
+      : tab.group.map((g: string) => this.getViewName(g)).join(", ");
+  }
+
+  private get groupTargetTabList() {
+    return this.$store.state.public.chat.groupTargetTab.list.filter(
+      (tab: any) => {
+        if (tab.isAll) return true;
+        const targetList = tab.group
+          .map((g: string) => this.getObj(g))
+          .filter((obj: any) => {
+            const kind = obj.key.split("-")[0];
+            if (kind === "player") {
+              if (obj.key === this.playerKey) return true;
+            } else {
+              if (obj.owner === this.playerKey) return true;
+            }
+            return false;
+          });
+        return targetList.length > 0;
+      }
+    );
+  }
+
+  /* Start 列幅可変テーブルのプロパティ */
+  private get selectLineKey() {
+    return this.$store.state.private.display.settingChatTargetTabWindow
+      .selectLineKey;
+  }
+
+  private get widthList() {
+    return this.$store.state.private.display.settingChatTargetTabWindow
+      .widthList;
+  }
+
+  private get movingIndex() {
+    return this.$store.state.private.display.settingChatTargetTabWindow
+      .movingIndex;
+  }
+
+  private get startX() {
+    return this.$store.state.private.display.settingChatTargetTabWindow.startX;
+  }
+
+  private get startLeftWidth() {
+    return this.$store.state.private.display.settingChatTargetTabWindow
+      .startLeftWidth;
+  }
+
+  private get startRightWidth() {
+    return this.$store.state.private.display.settingChatTargetTabWindow
+      .startRightWidth;
+  }
+
+  private get colStyle() {
+    return (index: number) => ({ width: `${this.widthList[index]}px` });
+  }
+  /* End 列幅可変テーブルのプロパティ */
+
+  private get windowSize() {
+    return this.$store.state.private.display.settingChatTargetTabWindow
+      .windowSize;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -1,8 +1,8 @@
 <template>
   <div class="item" @click="reverseProperty({property: property})" @mouseenter="mouseEnter">
     <span class="check"><i v-show="propValue" class="icon-checkmark"></i></span>
-    <!-- <img v-img="propValue ? checkImg : ''" class="check" alt=""> -->
-  <span><slot></slot></span></div>
+    <span><slot/></span>
+  </div>
 </template>
 
 <script>
@@ -32,27 +32,29 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .item {
   position: relative;
   white-space: nowrap;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-}
-.item > * {
-  display: inline;
-  vertical-align: middle;
-}
-.item .check {
-  width: 10px;
-  height: 10px;
-  min-width: 10px;
-  min-height: 10px;
-  margin-right: 5px;
-  border: none;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+
+  > * {
+    display: inline;
+    vertical-align: middle;
+  }
+
+  .check {
+    width: 10px;
+    height: 10px;
+    min-width: 10px;
+    min-height: 10px;
+    margin-right: 5px;
+    border: none;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame titleText="マップ変更" display-property="private.display.editMapWindow" align="center" fixSize="401, 435" @open="initWindow" @reset="initWindow" @cancel="cancel" @close="close">
-    <div class="container">
+  <window-frame titleText="マップ変更" display-property="private.display.editMapWindow" align="center" fixSize="401, 435" @open="initWindow" @reset="initWindow" @cancel="cancel" @close="close">
+    <div class="container" @contextmenu.prevent>
       <div class="choseImage">
         <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === edit.imageKey}" :key="image.key" v-img="image.data" @click="selectImage(image.key)" draggable="false" /></div>
       </div>
@@ -45,7 +45,7 @@
         <p>確定ボタンを押下しないとルームメンバーには反映されません。</p>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>
@@ -369,12 +369,13 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 p {
   margin: 0;
   padding: 0;
   font-size: 10px;
 }
+
 .container {
   display: flex;
   flex-direction: column;
@@ -392,6 +393,7 @@ p {
     "backgroundAreaSettings"
     "buttonArea";
 }
+
 .tagImages {
   display: flex;
   align-items: flex-start;
@@ -402,124 +404,139 @@ p {
   min-height: calc(100% - 2px);
   box-sizing: border-box;
   border: solid gray 1px;
+
+  img {
+    width: 50px;
+    height: 50px;
+    border: solid rgba(0, 0, 0, 0) 1px;
+
+    &.active {
+      border: solid blue 1px;
+    }
+  }
 }
-.tagImages img {
-  width: 50px;
-  height: 50px;
-  border: solid rgba(0, 0, 0, 0) 1px;
-}
-.tagImages img.active {
-  border: solid blue 1px;
-}
+
 .isReverse {
   transform: scale(-1, 1);
 }
+
 fieldset {
   padding: 0;
+
+  > div {
+    display: flex;
+    display: -moz-flex;
+    display: -o-flex;
+    display: -webkit-flex;
+    display: -ms-flex;
+    flex-direction: row;
+    -moz-flex-direction: row;
+    -o-flex-direction: row;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    height: 2.2em;
+    margin-bottom: 5px;
+
+    > div {
+      display: inline-block;
+      white-space: nowrap;
+      margin-left: 10px;
+
+      > label {
+        user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        display: flex;
+        display: -moz-flex;
+        display: -o-flex;
+        display: -webkit-flex;
+        display: -ms-flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
 }
+
 legend {
   margin-left: 10px;
 }
-fieldset > div {
-  display: flex;
-  display: -moz-flex;
-  display: -o-flex;
-  display: -webkit-flex;
-  display: -ms-flex;
-  flex-direction: row;
-  -moz-flex-direction: row;
-  -o-flex-direction: row;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  height: 2.2em;
-  margin-bottom: 5px;
-}
-fieldset > div > div {
-  display: inline-block;
-  white-space: nowrap;
-  margin-left: 10px;
-}
-fieldset > div > div > label {
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  display: flex;
-  display: -moz-flex;
-  display: -o-flex;
-  display: -webkit-flex;
-  display: -ms-flex;
-  align-items: center;
-  justify-content: center;
-}
+
 /* .container > * { padding: 1px 0; } */
 .viewImage {
   grid-area: viewImage;
+
+  img {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+  }
 }
-.viewImage img {
-  display: inline-block;
-  width: 200px;
-  height: 200px;
-}
+
 .choseImage {
   grid-area: choseImage;
   overflow-y: scroll;
   height: 130px;
 }
+
 .imageInfo {
   grid-area: imageInfo;
   display: flex;
+
+  .selectedImage {
+    flex: 1;
+    display: flex;
+
+    > * {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    select {
+      flex: 1;
+    }
+  }
+
+  > button {
+    margin-left: 10px;
+  }
 }
-.imageInfo .selectedImage {
-  flex: 1;
-  display: flex;
-}
-.imageInfo .selectedImage > * {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.imageInfo .selectedImage select {
-  flex: 1;
-}
-.imageInfo > button {
-  margin-left: 10px;
-}
+
 .initiativeTable {
   grid-area: initiativeTable;
 }
+
 .imageAreaSettings {
   grid-area: imageAreaSettings;
 }
+
 .marginAreaSettings {
   grid-area: marginAreaSettings;
 }
+
 .backgroundAreaSettings {
   grid-area: backgroundAreaSettings;
 }
-/*
-.totalRow { grid-area: totalRow; }
-.totalColumn { grid-area: totalColumn; }
-.marginGridSize { grid-area: marginGridSize; }
-.borderWidth { grid-area: borderWidth; }
-.marginGridColor { grid-area: marginGridColor; }
-.backgroundColor { grid-area: backgroundColor; }
-.gridColor { grid-area: gridColor; }
-*/
+
 .size {
   width: 33px;
 }
+
 .maskAlpha {
   width: 66px;
   background-color: red;
   border: 1px solid red;
 }
+
 .viewImage {
   grid-area: viewImage;
 }
+
 .otherText {
   grid-area: otherText;
   resize: none;
@@ -527,15 +544,18 @@ fieldset > div > div > label {
   height: 100%;
   box-sizing: border-box;
 }
+
 .buttonArea {
   grid-area: buttonArea;
   text-align: center;
   padding-top: 15px;
   padding-bottom: 10px;
+
+  > div {
+    display: inline-block;
+  }
 }
-.buttonArea > div {
-  display: inline-block;
-}
+
 input {
   padding: 2px;
   margin: 0;

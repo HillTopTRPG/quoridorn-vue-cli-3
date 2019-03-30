@@ -1,5 +1,5 @@
 <template>
-  <div :style="containerStyle" class="deckContainer" v-if="deck.name">
+  <div :style="containerStyle" class="deckContainer" v-if="deck.name" @contextmenu.prevent>
     <fieldset>
       <legend>{{deck.name}}</legend>
       <div class="refArea">
@@ -9,9 +9,9 @@
         <div class="refUrlContainer"><a v-for="(ref, index) in deck.refs" :key="index" :href="ref.url" target="_blank" :title="createRefStr(ref, index)">{{createRefStr(ref, index)}}</a></div>
       </div>
       <div class="deck" ref="deck" :style="deckStyle">
-        <Card :class="[card.key]" :index="index" :key="card.key" :objKey="card.key" :ref="card.key"
-              v-for="(card, index) in deckCardList"></Card>
-        <Card :index="deckHoverIndex" :isViewer="true" :objKey="deckHoverKey" ref="centerCard"></Card>
+        <card :class="[card.key]" :index="index" :key="card.key" :objKey="card.key" :ref="card.key"
+              v-for="(card, index) in deckCardList"></card>
+        <card :index="deckHoverIndex" :isViewer="true" :objKey="deckHoverKey" ref="centerCard"/>
         カードなし
       </div>
     </fieldset>
@@ -24,20 +24,19 @@ import Card from "./Card.vue";
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<Deck>({
-  name: "deck",
+@Component({
   components: {
     Card
   }
 })
 export default class Deck extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Getter("deck") deck: any;
-  @Getter("deckCardList") deckCardList: any;
-  @Getter("deckCommand") deckCommand: any;
-  @Getter("deckHoverIndex") deckHoverIndex: any;
-  @Getter("deckHoverKey") deckHoverKey: any;
-  @Getter("isModal") isModal: any;
+  @Action("setProperty") private setProperty: any;
+  @Getter("deck") private deck: any;
+  @Getter("deckCardList") private deckCardList: any;
+  @Getter("deckCommand") private deckCommand: any;
+  @Getter("deckHoverIndex") private deckHoverIndex: any;
+  @Getter("deckHoverKey") private deckHoverKey: any;
+  @Getter("isModal") private isModal: any;
 
   createRefStr(
     { author, title }: { author: string; title: string },
@@ -124,7 +123,7 @@ export default class Deck extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .deckContainer {
   position: absolute;
   top: 130px;
@@ -184,11 +183,5 @@ a {
   align-items: center;
   font-size: 20px;
   font-weight: bold;
-}
-button {
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
 }
 </style>

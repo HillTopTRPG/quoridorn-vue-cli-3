@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" @contextmenu.prevent>
 
     <!-- 画像 -->
     <div class="img-container">
@@ -16,7 +16,7 @@
     <!-- アニメーション周期 -->
     <div class="range">
       <label>表示時間{{viewTime}}</label>
-      <RangeMultiplePersent v-model="time"/>
+      <range-multiple-persent v-model="time"/>
     </div>
 
     <span
@@ -34,8 +34,7 @@ import RangeMultiplePersent from "../parts/RangeMultiplePersent.vue";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<DiffComponent>({
-  name: "diffComponent",
+@Component({
   components: {
     ActorSelect,
     RangeMultiplePersent
@@ -57,14 +56,14 @@ export default class DiffComponent extends Vue {
   @Prop({ type: Number, required: true })
   private animationLength!: number;
 
-  @Action("setProperty") setProperty: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("editStandImageDiff") editStandImageDiff: any;
-  @Action("deleteStandImageDiff") deleteStandImageDiff: any;
-  @Getter("getPeerActors") getPeerActors: any;
-  @Getter("getViewName") getViewName: any;
-  @Getter("getObj") getObj: any;
-  @Getter("imageList") imageList: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("editStandImageDiff") private editStandImageDiff: any;
+  @Action("deleteStandImageDiff") private deleteStandImageDiff: any;
+  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getViewName") private getViewName: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("imageList") private imageList: any;
 
   /**
    * 画像選択

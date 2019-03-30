@@ -1,15 +1,15 @@
 <template>
-  <SpecFrame property="roomInfoWindow" label-str="プレイルーム情報表示画面" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame property="roomInfoWindow" label-str="プレイルーム情報表示画面" lastVersion="1.0.0b1" :isSpecFixed="true">
     <!----------------------
      ! 起動操作
      !--------------------->
-    <SpecItem class-str="operation" label-str="起動操作">
+    <spec-item class-str="operation" label-str="起動操作">
       <li>画面上部メニューの「共有メモ」の左のボタンを選択</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
-    <SpecItem class-str="spec" label-str="仕様">
+    <spec-item class-str="spec" label-str="仕様">
       <li>部屋を建てていない場合は未接続の旨を起動ボタンと画面内部に表示</li>
       <li>ルーム名をタイトルに表示</li>
       <li>部屋に招待するためのURLを表示</li>
@@ -38,35 +38,35 @@
           <li>カード操作ログを表示</li>
         </ol>
       </li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! ユーザ要望
      !--------------------->
-    <SpecItem class-str="request" label-str="ユーザ要望">
+    <spec-item class-str="request" label-str="ユーザ要望">
       <li>なし</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 未実装事項
      !--------------------->
-    <SpecItem class-str="unImplemented" label-str="未実装事項">
+    <spec-item class-str="unImplemented" label-str="未実装事項">
       <li>ゲームシステムの変更<br>→ 初回リリースに含める機能。</li>
       <li>見学者の可否の選択<br>→ 初回リリースには含めない。運用でカバーお願いします。</li>
       <li>使用するチャットのタブを設定できる機能<br>→ チャット欄から設定できるので初回リリースには含めない。</li>
       <li>各種初期設定の設定<br>→ 初回リリースには含めない機能。</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 実装しない機能
      !--------------------->
-    <SpecItem class-str="unSupport" label-str="実装しない機能">
+    <spec-item class-str="unSupport" label-str="実装しない機能">
       <li>なし</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 関連項目
      !--------------------->
-    <SpecItem class-str="ref" label-str="関連項目">
-      <li><SpecLink property="menuBar" title-str="">メインメニュー</SpecLink></li>
-    </SpecItem>
-  </SpecFrame>
+    <spec-item class-str="ref" label-str="関連項目">
+      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+    </spec-item>
+  </spec-frame>
 </template>
 
 <script>

@@ -208,6 +208,8 @@ export function toInitiativeObjList(
     const obj: any = {
       type: "number",
       property: str,
+      fromProperty: null,
+      refStr: str,
       min: null,
       max: null,
       color: "#000"
@@ -233,13 +235,18 @@ export function toInitiativeObjList(
         resultList.push({
           type: "min",
           property: fs[1] + "の最小値",
+          fromProperty: fs[1],
+          refStr: fs[1] + "-min",
           min: null,
           max: null
         });
       } else {
         obj.min = fs[0];
       }
+
       obj.property = fs[1];
+      obj.refStr = fs[1];
+
       if (fs[2] !== "?") {
         obj.max = fs[2];
       }
@@ -248,6 +255,8 @@ export function toInitiativeObjList(
         resultList.push({
           type: "max",
           property: fs[1] + "の最大値",
+          fromProperty: fs[1],
+          refStr: fs[1] + "-max",
           min: null,
           max: null
         });
@@ -269,23 +278,32 @@ export function toInitiativeObjList(
           resultList.push({
             type: "min",
             property: fs[1] + "の最小値",
+            fromProperty: fs[1],
+            refStr: fs[1] + "-min",
             min: null,
             max: null
           });
         } else {
           obj.min = fs[0];
         }
+
         obj.property = fs[1];
+        obj.refStr = fs[1];
+
         resultList.push(obj);
       }
       if (check1 > 0) {
         obj.property = fs[0];
+        obj.refStr = fs[0];
+
         if (fs[1] !== "?") obj.max = fs[1];
         resultList.push(obj);
         if (fs[1] === "?") {
           resultList.push({
             type: "max",
             property: fs[0] + "の最大値",
+            fromProperty: fs[0],
+            refStr: fs[0] + "-max",
             min: null,
             max: null
           });
@@ -298,7 +316,10 @@ export function toInitiativeObjList(
       const checkMatchResult = fs[0].match(/^[*＊](.+)$/);
       if (checkMatchResult) {
         obj.type = "checkbox";
+
         obj.property = checkMatchResult[1];
+        obj.refStr = checkMatchResult[1];
+
         // TODO 色の設定
         const color: string = colorList[colorPickIndex++];
         if (colorPickIndex >= colorList.length) colorPickIndex = 0;
@@ -346,4 +367,18 @@ export function arrangeInitiativeWidthList(
   return newWidthList;
 }
 
-// qLog("aaaa -> bbb: val1", {rrr: 123, qqq: 432}, "bbb ccc: val2 ddd", {ppp: 222, fff: 4444})
+export function listDelete(
+  list: any[],
+  filterFunc: (item: any, index: number) => {}
+) {
+  const deleteList: any[] = list.filter(filterFunc);
+  const deleteIndexList: number[] = deleteList.map(deleteItem =>
+    list.indexOf(deleteItem)
+  );
+  deleteIndexList.sort((n1: number, n2: number) => {
+    if (n1 > n2) return -1;
+    if (n1 < n2) return 1;
+    return 0;
+  });
+  deleteIndexList.forEach(deleteIndex => list.splice(deleteIndex, 1));
+}

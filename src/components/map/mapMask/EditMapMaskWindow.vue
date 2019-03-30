@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="マスク変更" display-property="private.display.editMapMaskWindow" align="center" fixSize="285, 198" @open="initWindow" @reset="initWindow">
+  <window-frame titleText="マスク変更" display-property="private.display.editMapMaskWindow" align="center" fixSize="285, 198" @open="initWindow" @reset="initWindow">
     <table>
       <tbody>
         <tr>
@@ -28,7 +28,7 @@
         </tr>
       </tbody>
     </table>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>
@@ -52,9 +52,9 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["windowClose", "changeListInfo"]),
+    ...mapActions(["windowClose", "changeListObj"]),
     commitEdit() {
-      this.changeListInfo({
+      this.changeListObj({
         key: this.key,
         name: this.name,
         columns: this.width,
@@ -119,27 +119,28 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 table {
   font-size: 12px;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   border-collapse: collapse;
 }
+
 th,
 td {
   padding: 0;
   border: none;
 }
+
 th {
   text-align: right;
   font-weight: normal;
 }
+
 td.multi {
   text-align: center;
 }
+
 td.mapMaskGrid {
   width: 161px;
   height: 161px;
@@ -148,6 +149,7 @@ td.mapMaskGrid {
   text-align: center;
   border: none;
 }
+
 .mapMask {
   max-width: 157px;
   max-height: 157px;
@@ -158,12 +160,15 @@ td.mapMaskGrid {
   font-size: 12px;
   border: solid yellow 2px;
 }
+
 input[type="number"] {
   width: 46px;
 }
+
 input[type="text"] {
   width: 60px;
 }
+
 input[type="range"] {
   width: 60px;
 }

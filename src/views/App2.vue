@@ -1,5 +1,5 @@
   <template>
-  <div id="app2" @wheel.passive="onWheel" @contextmenu.prevent>
+  <div id="app2" @wheel.passive="onWheel">
     <game-table ref="gameTable"/>
     <div id="YoutubePlayerContainer">
       <div class="unUse"><div id="YoutubePlayer001"></div></div>
@@ -51,6 +51,9 @@
     <image-selector-window/>
     <initiative-window/>
     <initiative-setting-window/>
+    <counter-remocon-window/>
+    <counter-remocon-editor-window/>
+    <counter-remocon-context/>
   </div>
 </template>
 
@@ -100,12 +103,14 @@ import StandImageSettingWindow from "../components/stand-image/StandImageSetting
 import ImageSelectorWindow from "../components/simple/ImageSelectorWindow.vue";
 import InitiativeWindow from "../components/initiative/InitiativeWindow.vue";
 import InitiativeSettingWindow from "@/components/initiative/InitiativeSettingWindow.vue";
+import CounterRemoconWindow from "@/components/counter-remocon/CounterRemoconWindow.vue";
+import CounterRemoconEditorWindow from "@/components/counter-remocon/CounterRemoconEditorWindow.vue";
+import CounterRemoconContext from "@/components/counter-remocon/CounterRemoconContext.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 
-@Component<App2>({
-  name: "app2",
+@Component({
   components: {
     GameTable,
     ChatWindow,
@@ -150,13 +155,16 @@ import { Action, Getter, Mutation } from "vuex-class";
     StandImageSettingWindow,
     ImageSelectorWindow,
     InitiativeWindow,
-    InitiativeSettingWindow
+    InitiativeSettingWindow,
+    CounterRemoconWindow,
+    CounterRemoconEditorWindow,
+    CounterRemoconContext
   }
 })
 export default class App2 extends Vue {
-  @Action("onMount") onMount: any;
-  @Action("exportStart") exportStart: any;
-  @Getter("backgroundColor") backgroundColor: any;
+  @Action("onMount") private onMount: any;
+  @Action("exportStart") private exportStart: any;
+  @Getter("backgroundColor") private backgroundColor: any;
 
   mounted() {
     // bcdiceの使用準備
@@ -243,16 +251,17 @@ hr {
   justify-content: center;
   align-items: center;
   white-space: nowrap;
+  user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
 }
 
-.unSelectable {
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
+.selectable {
+  user-select: text;
+  -ms-user-select: text;
+  -moz-user-select: text;
+  -webkit-user-select: text;
 }
 .flexCenter {
   display: flex;

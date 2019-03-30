@@ -31,15 +31,7 @@ fieldset {
   padding: 0.5em;
 }
 legend {
-  /*border: double #777;*/
-  /*border-radius: 3px;*/
-  /*border-right: 1px solid #777;*/
-  /*border-left: 1px solid #777;*/
   padding: 0.5em 1em 0;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
 }
 .operation,
 .operation legend {
@@ -72,8 +64,4 @@ legend {
   color: rgb(231, 50, 45);
   font-size: 80%;
   font-weight: bold;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
 }

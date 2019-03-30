@@ -14,14 +14,17 @@
     <!----------------------
      ! 部屋ができるのを待つ
      !--------------------->
-    <SubBlockTitle @open="openWaitRoom" text="部屋ができるのを待つ" v-if="!isRoomExist"/>
+    <sub-block-title @open="openWaitRoom" text="部屋ができるのを待つ" v-if="!isRoomExist"/>
     <div class="indentDescription description" v-if="paramRoomName && !isRoomExist">部屋が作られたら自動で入室します。それまでは仮部屋での待機となります。</div>
     <div class="subBlock waitRoom" v-if="isViewWait && !isRoomExist">
       <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword"/></label>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
-          <label><PlayerTypeSelect v-model="inputPlayerType"/><input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/></label>
+          <label>
+            <player-type-select v-model="inputPlayerType"/>
+            <input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/>
+          </label>
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！</div>
@@ -32,14 +35,14 @@
     <!----------------------
      ! この部屋に入る
      !--------------------->
-    <SubBlockTitle @open="openNewRoom" text="この部屋に入る" v-if="isRoomExist"/>
+    <sub-block-title @open="openNewRoom" text="この部屋に入る" v-if="isRoomExist"/>
     <div class="subBlock joinRoom isShow" v-if="isRoomExist">
       <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword" @keypress.enter="roomProcess(false)"/></label>
       <!--
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
-          <label>権限：<PlayerTypeSelect v-model="inputPlayerType"/><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="playerName"/></label>
+          <label>権限：<player-type-select v-model="inputPlayerType"/><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="playerName"/></label>
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
@@ -52,7 +55,7 @@
     <!----------------------
      ! 新しい部屋をつくる
      !--------------------->
-    <SubBlockTitle @open="openNewRoom" text="新しい部屋をつくる"/>
+    <sub-block-title @open="openNewRoom" text="新しい部屋をつくる"/>
     <div class="indentDescription description" v-if="paramRoomName && !isRoomExist">「{{paramRoomName}}」は作成可能です。</div>
     <div class="indentDescription description" v-if="paramRoomName && isRoomExist">「{{paramRoomName}}」はすでに作成済みです。<br>同じ名前の部屋はひとつのサーバでひとつしか作成できません。<br>部屋名を変更して、もう一度チェックしてください。
     </div>
@@ -64,7 +67,7 @@
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
-          <label><PlayerTypeSelect v-model="inputPlayerType"/><input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/></label>
+          <label><player-type-select v-model="inputPlayerType"/><input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/></label>
         </div>
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！</div>
@@ -84,8 +87,7 @@ import PlayerTypeSelect from "@/components/parts/select/PlayerTypeSelect.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
 
-@Component<CreateNewRoom>({
-  name: "createNewRoom",
+@Component({
   components: {
     SubBlockTitle,
     DiceBotSelect,
@@ -93,28 +95,28 @@ import { Action, Getter, Mutation } from "vuex-class";
   }
 })
 export default class CreateNewRoom extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Action("checkRoomName") checkRoomName: any;
-  @Action("emptyMember") emptyMember: any;
-  @Action("windowClose") windowClose: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("loading") loading: any;
-  @Action("simpleJoinRoom") simpleJoinRoom: any;
-  @Action("addChatLog") addChatLog: any;
-  @Action("doNewRoom") doNewRoom: any;
-  @Action("doJoinRoom") doJoinRoom: any;
-  @Mutation("updateIsWait") updateIsWait: any;
-  @Mutation("updateIsModal") updateIsModal: any;
-  @Mutation("updateIsJoined") updateIsJoined: any;
-  @Getter("paramRoomName") paramRoomName: any;
-  @Getter("paramRoomPassword") paramRoomPassword: any;
-  @Getter("paramPlayerName") paramPlayerName: any;
-  @Getter("paramPlayerPassword") paramPlayerPassword: any;
-  @Getter("paramPlayerType") paramPlayerType: any;
-  @Getter("isRoomExist") isRoomExist: any;
-  @Getter("peerId") peerId: any;
-  @Getter("roles") roles: any;
-  @Getter("systemLog") systemLog: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("checkRoomName") private checkRoomName: any;
+  @Action("emptyMember") private emptyMember: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("loading") private loading: any;
+  @Action("simpleJoinRoom") private simpleJoinRoom: any;
+  @Action("addChatLog") private addChatLog: any;
+  @Action("doNewRoom") private doNewRoom: any;
+  @Action("doJoinRoom") private doJoinRoom: any;
+  @Mutation("updateIsWait") private updateIsWait: any;
+  @Mutation("updateIsModal") private updateIsModal: any;
+  @Mutation("updateIsJoined") private updateIsJoined: any;
+  @Getter("paramRoomName") private paramRoomName: any;
+  @Getter("paramRoomPassword") private paramRoomPassword: any;
+  @Getter("paramPlayerName") private paramPlayerName: any;
+  @Getter("paramPlayerPassword") private paramPlayerPassword: any;
+  @Getter("paramPlayerType") private paramPlayerType: any;
+  @Getter("isRoomExist") private isRoomExist: any;
+  @Getter("peerId") private peerId: any;
+  @Getter("roles") private roles: any;
+  @Getter("systemLog") private systemLog: any;
 
   /*
    * data

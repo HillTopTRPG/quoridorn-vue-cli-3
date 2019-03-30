@@ -1,31 +1,63 @@
 <template>
   <div
     :style="gameTableStyle"
-    @contextmenu.prevent
     @dragover.prevent
     @drop.prevent="drop"
     dropzone="move"
-    id="gameTable">
-
-    <div :style="gridPaperStyle">
+    id="gameTable"
+  >
+    <div :style="gridPaperStyle" @contextmenu.prevent>
     </div>
 
-    <div @mousedown.left.prevent="leftDown"
-         @mousedown.right.prevent="rightDown" @mouseup.left.prevent="leftUp"
-         @mouseup.right.prevent="rightUp" @touchcancel.prevent="leftUp"
-         @touchend.prevent="leftUp" @touchstart.prevent="leftDown" id="mapBoardFrame">
-      <MapBoard/>
+    <div
+      id="mapBoardFrame"
+      @mousedown.left.prevent="leftDown"
+      @mousedown.right.prevent="rightDown"
+      @mouseup.left.prevent="leftUp"
+      @mouseup.right.prevent="rightUp"
+      @touchcancel.prevent="leftUp"
+      @touchend.prevent="leftUp"
+      @touchstart.prevent="leftDown"
+      @contextmenu.prevent
+    >
+      <map-board/>
     </div>
 
-    <MapMask v-for="obj in getMapObjectList({ kind: 'mapMask', place: 'field' })"
-             :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
-             @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="mapMask"/>
-    <Character v-for="obj in getMapObjectList({ kind: 'character', place: 'field' })"
-               :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
-               @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="character"/>
-    <Chit v-for="obj in getMapObjectList({ kind: 'chit', place: 'field' })"
-          :key="obj.key" :objKey="obj.key" @drag="dragging" @leftDown="leftDown"
-          @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" type="chit"/>
+    <map-mask
+      v-for="obj in getMapObjectList({ kind: 'mapMask', place: 'field' })"
+      :key="obj.key"
+      :objKey="obj.key"
+      @drag="dragging"
+      @leftDown="leftDown"
+      @leftUp="leftUp"
+      @rightDown="rightDown"
+      @rightUp="rightUp"
+      type="mapMask"
+    />
+
+    <character
+      v-for="obj in getMapObjectList({ kind: 'character', place: 'field' })"
+      :key="obj.key"
+      :objKey="obj.key"
+      @drag="dragging"
+      @leftDown="leftDown"
+      @leftUp="leftUp"
+      @rightDown="rightDown"
+      @rightUp="rightUp"
+      type="character"
+    />
+
+    <chit
+      v-for="obj in getMapObjectList({ kind: 'chit', place: 'field' })"
+      :key="obj.key"
+      :objKey="obj.key"
+      @drag="dragging"
+      @leftDown="leftDown"
+      @leftUp="leftUp"
+      @rightDown="rightDown"
+      @rightUp="rightUp"
+      type="chit"
+    />
 
   </div>
 </template>
@@ -43,7 +75,6 @@ import { Action, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
 
 @Component({
-  name: "gameTable",
   components: {
     MapBoard,
     MapMask,
@@ -54,31 +85,31 @@ import { Watch } from "vue-property-decorator";
 export default class GameTable extends Mixins<AddressCalcMixin>(
   AddressCalcMixin
 ) {
-  @Action("addPieceInfo") addPieceInfo: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Action("windowClose") windowClose: any;
-  @Action("importStart") importStart: any;
-  @Getter("isFitGrid") isFitGrid: any;
-  @Getter("parseColor") parseColor: any;
-  @Getter("getBackgroundImage") getBackgroundImage: any;
-  @Getter("marginGridColor") marginGridColor: any;
-  @Getter("marginMaskColor") marginMaskColor: any;
-  @Getter("marginMaskAlpha") marginMaskAlpha: any;
-  @Getter("isUseGridColor") isUseGridColor: any;
-  @Getter("isUseImage") isUseImage: any;
-  @Getter("playerKey") playerKey: any;
-  @Getter("angle") angle: any;
-  @Getter("rollObj") rollObj: any;
-  @Getter("isDraggingLeft") isDraggingLeft: any;
-  @Getter("isMouseDownRight") isMouseDownRight: any;
-  @Getter("isOverEvent") isOverEvent: any;
-  @Getter("isDraggingRight") isDraggingRight: any;
-  @Getter("move") move: any;
-  @Getter("angleVolatile") angleVolatile: any;
-  @Getter("isModal") isModal: any;
-  @Getter("getMapObjectList") getMapObjectList: any;
-  @Getter("propertyList") propertyList: any;
+  @Action("addListObj") private addListObj: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("importStart") private importStart: any;
+  @Getter("isFitGrid") private isFitGrid: any;
+  @Getter("parseColor") private parseColor: any;
+  @Getter("getBackgroundImage") private getBackgroundImage: any;
+  @Getter("marginGridColor") private marginGridColor: any;
+  @Getter("marginMaskColor") private marginMaskColor: any;
+  @Getter("marginMaskAlpha") private marginMaskAlpha: any;
+  @Getter("isUseGridColor") private isUseGridColor: any;
+  @Getter("isUseImage") private isUseImage: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("angle") private angle: any;
+  @Getter("rollObj") private rollObj: any;
+  @Getter("isDraggingLeft") private isDraggingLeft: any;
+  @Getter("isMouseDownRight") private isMouseDownRight: any;
+  @Getter("isOverEvent") private isOverEvent: any;
+  @Getter("isDraggingRight") private isDraggingRight: any;
+  @Getter("move") private move: any;
+  @Getter("angleVolatile") private angleVolatile: any;
+  @Getter("isModal") private isModal: any;
+  @Getter("getMapObjectList") private getMapObjectList: any;
+  @Getter("propertyList") private propertyList: any;
 
   mounted(): void {
     document.addEventListener("mousemove", this.mouseMove);
@@ -101,26 +132,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       value: wheel,
       logOff: true
     });
-  }
-
-  getAngle(mouseOnTable: any, storeObj: any): number {
-    const rectObj = {
-      top: storeObj.top + storeObj.move.dragging.y,
-      left: storeObj.left + storeObj.move.dragging.x,
-      width: storeObj.columns * this.gridSize,
-      height: storeObj.rows * this.gridSize
-    };
-    const center = {
-      x: rectObj.left + rectObj.width / 2,
-      y: rectObj.top + rectObj.height / 2
-    };
-    // 中心座標を基準としたマウス座標
-    const loc = {
-      x: mouseOnTable.x - center.x,
-      y: mouseOnTable.y - center.y
-    };
-    // 中心点と指定された座標とを結ぶ線の角度を求める
-    return (Math.atan2(loc.y, loc.x) * 180) / Math.PI;
   }
 
   leftDown(this: any): void {
@@ -342,7 +353,19 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       top: locateOnTable.y,
       isNotice: true,
       owner: this.playerKey,
-      place: "field"
+      place: "field",
+      isDraggingLeft: false,
+      move: {
+        from: { x: 0, y: 0 },
+        dragging: { x: 0, y: 0 },
+        gridOffset: { x: 0, y: 0 }
+      },
+      angle: {
+        total: 0,
+        dragging: 0,
+        dragStart: 0
+      },
+      isLock: false
     };
 
     // マップマスクの作成
@@ -361,7 +384,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.color = color;
       pieceObj.fontColor = fontColor;
 
-      this.addPieceInfo(pieceObj);
+      this.addListObj(pieceObj);
       return;
     }
 
@@ -392,7 +415,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.currentImageTag = currentImageTag;
       pieceObj.fontColorType = 0;
       pieceObj.fontColor = "";
-      const useImage = useImageList.split("|")[useImageIndex];
       pieceObj.statusList = [
         {
           name: "◆",
@@ -417,17 +439,16 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       this.propertyList.forEach((prop: any, index: number) => {
         if (prop.type === "min") {
           const nextProp = this.propertyList[index + 1];
-          pieceObj.property[nextProp.property + "-min"] = 0;
+          pieceObj.property[prop.refStr] = 0;
         }
         if (prop.type === "number") {
-          pieceObj.property[prop.property] = 0;
+          pieceObj.property[prop.refStr] = 0;
         }
         if (prop.type === "max") {
-          const prevProp = this.propertyList[index - 1];
-          pieceObj.property[prevProp.property + "-max"] = 99;
+          pieceObj.property[prop.refStr] = 99;
         }
         if (prop.type === "checkbox") {
-          pieceObj.property[prop.property] = false;
+          pieceObj.property[prop.refStr] = false;
         }
       });
 
@@ -448,7 +469,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         });
       }
 
-      this.addPieceInfo(pieceObj);
+      this.addListObj(pieceObj);
       return;
     }
 
@@ -470,7 +491,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.isReverse = isReverse;
       pieceObj.description = description;
 
-      this.addPieceInfo(pieceObj);
+      this.addListObj(pieceObj);
       return;
     }
 
@@ -522,10 +543,11 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       (resolve: Function, reject: Function) => {
         try {
           const reader: any = new FileReader();
-          reader.onload = function(event: any) {
+          reader.onload = () => {
             // サムネイル画像でない場合はプレーンな画像データからBase64データを取得する
             resolve(reader.result);
           };
+          reader.readAsDataURL(imageFile);
         } catch (error) {
           reject(error);
         }
@@ -555,9 +577,9 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
               }
 
               // 画像を描画してデータを取り出す（Base64変換の実装）
-              const canvas: HTMLCanvasElement = <HTMLCanvasElement>(
-                document.createElement("canvas")
-              );
+              const canvas: HTMLCanvasElement = document.createElement(
+                "canvas"
+              ) as HTMLCanvasElement;
               const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
               canvas.width = w;
               canvas.height = h;
@@ -582,8 +604,8 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       (values: String[]) => ({
         name: imageFile.name,
         imageArgList: getFileNameArgList(imageFile.name),
-        thumbnail: values[0],
-        image: values[1]
+        image: values[0],
+        thumbnail: values[1]
       })
     );
   }
@@ -692,7 +714,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 #gameTable {
   position: fixed;
   display: block;
@@ -703,32 +725,29 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   background-size: 100% 100%;
   cursor: crosshair;
   z-index: -1;
-  /*
-  box-sizing: border-box;
-  */
   perspective: 1000px;
   border: ridge gray;
   overflow: hidden;
-}
 
-#gameTable:before {
-  content: "";
-  background: inherit; /*.bgImageで設定した背景画像を継承する*/
-  -webkit-filter: blur(10px);
-  -ms-filter: blur(10px);
-  filter: blur(10px);
-  position: absolute;
-  /*ブラー効果で画像の端がボヤけた分だけ位置を調整*/
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  z-index: -1; /*重なり順序を一番下にしておく*/
-}
+  &:before {
+    content: "";
+    background: inherit; /*.bgImageで設定した背景画像を継承する*/
+    -webkit-filter: blur(10px);
+    -ms-filter: blur(10px);
+    filter: blur(10px);
+    position: absolute;
+    /*ブラー効果で画像の端がボヤけた分だけ位置を調整*/
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    z-index: -1; /*重なり順序を一番下にしておく*/
+  }
 
-#gameTable > div {
-  background-position: 1px 1px;
-  background-size: 48px 48px;
+  > div {
+    background-position: 1px 1px;
+    background-size: 48px 48px;
+  }
 }
 
 #mapBoardFrame {

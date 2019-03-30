@@ -1,5 +1,5 @@
 <template>
-  <label>
+  <label @contextmenu.prevent>
     <span v-if="label && labelSide === 'left'">{{label}}</span>
     <input
       type="checkbox"
@@ -16,9 +16,7 @@
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<ColorCheckBox>({
-  name: "colorCheckBox"
-})
+@Component
 export default class ColorCheckBox extends Vue {
   @Prop({ type: Boolean, default: false })
   private checked!: boolean;

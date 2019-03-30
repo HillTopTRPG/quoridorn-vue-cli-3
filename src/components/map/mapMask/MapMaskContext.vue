@@ -11,25 +11,23 @@
 import ContextFrame from "../../ContextFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<MapMaskContext>({
-  name: "mapMaskContext",
-  mixins: [WindowMixin],
+@Component({
   components: {
     ContextFrame
   }
 })
-export default class MapMaskContext extends Vue {
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Action("changeListInfo") changeListInfo: any;
-  @Action("deletePieceInfo") deletePieceInfo: any;
-  @Action("windowClose") windowClose: any;
-  @Getter("mapMaskContextObjKey") mapMaskContextObjKey: any;
-  @Getter("playerKey") playerKey: any;
-  @Getter("mapMaskIsLock") mapMaskIsLock: any;
+export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("changeListObj") private changeListObj: any;
+  @Action("deleteListObj") private deleteListObj: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("mapMaskContextObjKey") private mapMaskContextObjKey: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("mapMaskIsLock") private mapMaskIsLock: any;
 
   viewEditMapMask() {
     window.console.log(
@@ -51,7 +49,7 @@ export default class MapMaskContext extends Vue {
         this.mapMaskContextObjKey
       }).changeMapMaskLock`
     );
-    this.changeListInfo({
+    this.changeListObj({
       key: this.mapMaskContextObjKey,
       isLock: !this.mapMaskIsLock,
       isNotice: true
@@ -64,7 +62,7 @@ export default class MapMaskContext extends Vue {
         this.mapMaskContextObjKey
       }).deleteMapMask`
     );
-    this.deletePieceInfo({
+    this.deleteListObj({
       propName: "mapMask",
       key: this.mapMaskContextObjKey,
       owner: this.playerKey,

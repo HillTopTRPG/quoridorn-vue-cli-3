@@ -8,7 +8,7 @@
     ref="window"
   >
     <div class="contents">
-      <div class="playOperationArea">
+      <div class="playOperationArea" @contextmenu.prevent>
         <!-- 拡大ボタン -->
         <button
           @click="arrangeWindowSize(true)"
@@ -28,7 +28,7 @@
         <!-- 設定ボタン -->
         <button class="setting" @click="openSettingWindow">設定</button>
       </div>
-      <div class="playOperationArea">
+      <div class="playOperationArea" @contextmenu.prevent>
         <!-- 戻るボタン -->
         <button
           class="back"
@@ -62,7 +62,7 @@
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
-          <thead>
+          <thead @contextmenu.prevent>
           <tr>
             <!-- 順番 -->
             <th :style="colStyle(0)">順番</th>
@@ -124,7 +124,7 @@
 
             <!-- 名前 -->
             <divider :index="2" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(3)">{{character.name}}</td>
+            <td :style="colStyle(3)" class="selectable">{{character.name}}</td>
 
             <!-- 追加パラメータ -->
             <template v-for="(property, index) in propertyList">
@@ -135,7 +135,9 @@
                     type="number"
                     :value="getPropValue(character.key, index)"
                     :max="getMax(character.key, index + 1)"
-                    @change="event => setMin(character.key, index, parseInt(event.target.value, 10))"
+                    @input="event => setMin(character.key, index, parseInt(event.target.value, 10))"
+                    @change="event => arrangeMin(character.key, index, parseInt(event.target.value, 10))"
+                    :class="{ isError: getMax(character.key, index + 1) < getPropValue(character.key, index) }"
                   >
                 </label>
                 <label v-if="property.type === 'number'">
@@ -144,7 +146,8 @@
                     :min="getMin(character.key, index)"
                     :value="getPropValue(character.key, index)"
                     :max="getMax(character.key, index)"
-                    @change="event => setPropValue(character.key, index, parseInt(event.target.value, 10))"
+                    @input="event => setPropValue(character.key, index, parseInt(event.target.value, 10))"
+                    :class="{ isError: getPropValue(character.key, index) < getMin(character.key, index) || getMax(character.key, index) < getPropValue(character.key, index) }"
                   >
                 </label>
                 <label v-if="property.type === 'max'">
@@ -152,7 +155,9 @@
                     type="number"
                     :min="getMin(character.key, index - 1)"
                     :value="getPropValue(character.key, index)"
-                    @change="event => setMax(character.key, index, parseInt(event.target.value, 10))"
+                    @input="event => setMax(character.key, index, parseInt(event.target.value, 10))"
+                    @change="event => arrangeMax(character.key, index, parseInt(event.target.value, 10))"
+                    :class="{ isError: getPropValue(character.key, index) < getMin(character.key, index - 1) }"
                   >
                 </label>
                 <color-check-box
@@ -216,29 +221,28 @@ import WindowFrame from "../WindowFrame.vue";
 import Divider from "../parts/Divider.vue";
 import ColorCheckBox from "@/components/parts/ColorCheckBox.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 import { sum } from "@/components/common/Utility";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<InitiativeWindow>({
-  name: "initiativeWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     Divider,
     ColorCheckBox
   }
 })
-export default class InitiativeWindow extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("changeListInfo") changeListInfo: any;
-  @Mutation("updateActorKey") updateActorKey: any;
-  @Getter("getMapObjectList") getMapObjectList: any;
-  @Getter("getObj") getObj: any;
-  @Getter("round") round: any;
-  @Getter("roundPlayerKey") roundPlayerKey: any;
-  @Getter("propertyList") propertyList: any;
+export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("setProperty") private setProperty: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("changeListObj") private changeListObj: any;
+  @Mutation("updateActorKey") private updateActorKey: any;
+  @Getter("getMapObjectList") private getMapObjectList: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("round") private round: any;
+  @Getter("roundPlayerKey") private roundPlayerKey: any;
+  @Getter("propertyList") private propertyList: any;
 
   private windowWidth: number = 0;
   private windowPadding: number = 0;
@@ -251,18 +255,18 @@ export default class InitiativeWindow extends Vue {
     return `ラウンド：${this.round}／イニシアティブ：${initiative}`;
   }
 
-  openSettingWindow() {
+  private openSettingWindow() {
     this.windowOpen("private.display.initiativeSettingWindow");
   }
 
-  selectLine(selectLineKey: string | null) {
+  private selectLine(selectLineKey: string | null) {
     this.setProperty({
       property: "private.display.initiativeWindow.selectLineKey",
       value: selectLineKey,
       logOff: true
     });
     if (selectLineKey) {
-      this.changeListInfo({
+      this.changeListObj({
         key: selectLineKey,
         isNotice: false,
         viewHighlight: true
@@ -270,7 +274,7 @@ export default class InitiativeWindow extends Vue {
     }
   }
 
-  moveDev(event: any) {
+  private moveDev(event: any) {
     if (this.movingIndex < 0) return;
     const diff = event.clientX - this.startX;
     const afterLeftWidth = this.startLeftWidth + diff;
@@ -292,7 +296,7 @@ export default class InitiativeWindow extends Vue {
     );
   }
 
-  doubleClick() {
+  private doubleClick() {
     window.console.log("doubleClick", this.movedIndex);
 
     const TEXT_PADDING = 8;
@@ -337,37 +341,22 @@ export default class InitiativeWindow extends Vue {
     if (this.movedIndex > 3) {
       const formatIndex = this.movedIndex - 4;
       const prop = this.propertyList[formatIndex];
-      maxWidth = this.getWidth(prop.property) + TEXT_PADDING;
-      if (prop.type === "min") {
-        const nextProp = this.propertyList[formatIndex + 1];
-        this.characterList.forEach((character: any) => {
-          maxWidth = Math.max(
-            maxWidth,
-            this.getWidth(character.property[nextProp.property + "-min"]) +
-              NUMBER_PADDING
-          );
-        });
-      }
-      if (prop.type === "number") {
-        this.characterList.forEach((character: any) => {
-          maxWidth = Math.max(
-            maxWidth,
-            this.getWidth(character.property[prop.property]) + NUMBER_PADDING
-          );
-        });
-      }
-      if (prop.type === "max") {
-        const prevProp = this.propertyList[formatIndex - 1];
-        this.characterList.forEach((character: any) => {
-          maxWidth = Math.max(
-            maxWidth,
-            this.getWidth(character.property[prevProp.property + "-max"]) +
-              NUMBER_PADDING
-          );
-        });
-      }
-      if (prop.type === "checkbox") {
-        maxWidth = Math.max(maxWidth, CHECK_BOX_WIDTH);
+      switch (prop.type) {
+        case "min":
+        case "number":
+        case "max":
+          this.characterList.forEach((character: any) => {
+            maxWidth = Math.max(
+              maxWidth,
+              this.getWidth(character.property[prop.refStr]) + NUMBER_PADDING
+            );
+          });
+          break;
+        case "checkbox":
+          maxWidth = Math.max(maxWidth, CHECK_BOX_WIDTH);
+          break;
+        default:
+          maxWidth = this.getWidth(prop.property) + TEXT_PADDING;
       }
     }
     this.widthList.splice(this.movedIndex, 1, maxWidth);
@@ -385,7 +374,7 @@ export default class InitiativeWindow extends Vue {
     this.moveDevEnd();
   }
 
-  moveDevEnd() {
+  private moveDevEnd() {
     this.setProperty({
       property: "private.display.initiativeWindow",
       value: {
@@ -399,40 +388,44 @@ export default class InitiativeWindow extends Vue {
     });
   }
 
-  get characterList() {
+  private get characterList() {
     return this.getMapObjectList({ kind: "character" });
   }
 
   /* Start 列幅可変テーブルのプロパティ */
-  get selectLineKey(this: any) {
+  private get selectLineKey(this: any) {
     return this.$store.state.private.display.initiativeWindow.selectLineKey;
   }
 
-  get widthList(this: any) {
+  private get widthList(this: any) {
     return this.$store.state.private.display.initiativeWindow.widthList;
   }
 
-  get movingIndex(this: any) {
+  private get movingIndex(this: any) {
     return this.$store.state.private.display.initiativeWindow.movingIndex;
   }
-  get movedIndex(this: any) {
+
+  private get movedIndex(this: any) {
     return this.$store.state.private.display.initiativeWindow.movedIndex;
   }
-  get startX(this: any) {
+
+  private get startX(this: any) {
     return this.$store.state.private.display.initiativeWindow.startX;
   }
-  get startLeftWidth(this: any) {
+
+  private get startLeftWidth(this: any) {
     return this.$store.state.private.display.initiativeWindow.startLeftWidth;
   }
-  get baseWindowWidth(this: any) {
+
+  private get baseWindowWidth(this: any) {
     return this.$store.state.private.display.initiativeWindow.baseWindowWidth;
   }
 
-  get startRightWidth(this: any) {
+  private get startRightWidth(this: any) {
     return this.$store.state.private.display.initiativeWindow.startRightWidth;
   }
 
-  get colStyle() {
+  private get colStyle() {
     return (index: number) => ({
       width: `${this.widthList[index]}px`
       // display: "inline-block"
@@ -444,8 +437,9 @@ export default class InitiativeWindow extends Vue {
    * 指定された文字列の表示幅を取得する
    * @param text
    */
-  getWidth(text: string): number {
-    const widthScale: HTMLSpanElement = <HTMLSpanElement>this.$refs.widthScale!;
+  private getWidth(text: string): number {
+    const widthScale: HTMLSpanElement = this.$refs
+      .widthScale! as HTMLSpanElement;
     widthScale.innerText = text;
     const width: number = widthScale.offsetWidth;
     widthScale.innerText = "";
@@ -453,27 +447,22 @@ export default class InitiativeWindow extends Vue {
   }
 
   @Watch("propertyList", { deep: true })
-  onChangeDataLabels(propertyList: any[]) {
+  private onChangeDataLabels(propertyList: any[]) {
     this.characterList.forEach((character: any) => {
       propertyList.forEach((prop: any, index: number) => {
         let newValue: any = null;
-        let propName: string = "";
+        let propName: string = prop.refStr;
         if (prop.type === "min") {
-          propName = propertyList[index + 1].property + "-min";
           newValue = 0;
         } else if (prop.type === "max") {
-          propName = propertyList[index - 1].property + "-max";
           newValue = 99;
         } else if (prop.type === "number") {
-          propName = prop.property;
           if (prop.min > 0) newValue = prop.min;
           else if (prop.max < 0) newValue = prop.max;
           else newValue = 0;
         } else if (prop.type === "checkbox") {
-          propName = prop.property;
           newValue = false;
         } else {
-          propName = prop.property;
           newValue = null;
         }
         if (character.property[propName] === undefined) {
@@ -485,7 +474,7 @@ export default class InitiativeWindow extends Vue {
   }
 
   @Watch("windowWidth", { immediate: true })
-  onChangeWindowWidth(windowWidth: number, oldWidth: number) {
+  private onChangeWindowWidth(windowWidth: number, oldWidth: number) {
     const sumWidth = sum(this.widthList) + this.widthList.length - 1;
     if (oldWidth === 0 && !this.windowPadding) {
       this.windowPadding = windowWidth - sumWidth;
@@ -505,15 +494,15 @@ export default class InitiativeWindow extends Vue {
     );
   }
 
-  onChangeWindowStyle(windowStyle: any) {
-    const widthMatchResult = windowStyle.width.match(/^[0-9]+/);
+  private onChangeWindowStyle(windowStyle: any) {
+    const widthMatchResult: string[] = windowStyle.width.match(/^[0-9]+/);
     if (widthMatchResult) {
       this.windowWidth = parseInt(widthMatchResult[0], 10);
     }
   }
 
-  arrangeWindowSize(isWide: boolean) {
-    const windowFrame: WindowFrame = <WindowFrame>this.$refs.window;
+  private arrangeWindowSize(isWide: boolean) {
+    const windowFrame: WindowFrame = this.$refs.window as WindowFrame;
     const width = this.windowWidth;
     if (!isWide) {
       const newWidth: number = this.baseWindowWidth;
@@ -532,8 +521,8 @@ export default class InitiativeWindow extends Vue {
     }
   }
 
-  setInitiative(objKey: string, value: number) {
-    this.changeListInfo({
+  private setInitiative(objKey: string, value: number) {
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: {
@@ -542,8 +531,8 @@ export default class InitiativeWindow extends Vue {
     });
   }
 
-  setSubInitiative(objKey: string, value: number) {
-    this.changeListInfo({
+  private setSubInitiative(objKey: string, value: number) {
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: {
@@ -552,45 +541,67 @@ export default class InitiativeWindow extends Vue {
     });
   }
 
-  setMin(this: any, objKey: string, index: number, value: number) {
+  private setMin(objKey: string, index: number, value: number) {
     window.console.log("setMin", index, value);
     const propertyObj: any = {};
-    propertyObj[this.propertyList[index + 1].property + "-min"] = value;
-    if (this.getPropValue(objKey, index + 1) < value)
-      propertyObj[this.propertyList[index + 1].property] = value;
-    this.changeListInfo({
+    propertyObj[this.propertyList[index].refStr] = value;
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: propertyObj
     });
   }
 
-  setMax(this: any, objKey: string, index: number, value: number) {
+  private arrangeMin(this: any, objKey: string, index: number, value: number) {
+    window.console.log("arrangeMin", index, value);
+    if (this.getPropValue(objKey, index + 1) < value) {
+      const propertyObj: any = {};
+      propertyObj[this.propertyList[index + 1].refStr] = value;
+      this.changeListObj({
+        key: objKey,
+        isNotice: true,
+        property: propertyObj
+      });
+    }
+  }
+
+  private setMax(objKey: string, index: number, value: number) {
     window.console.log("setMax", index, value);
     const propertyObj: any = {};
-    propertyObj[this.propertyList[index - 1].property + "-max"] = value;
-    if (value < this.getPropValue(objKey, index - 1))
-      propertyObj[this.propertyList[index - 1].property] = value;
-    this.changeListInfo({
+    propertyObj[this.propertyList[index].refStr] = value;
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: propertyObj
     });
   }
 
-  setPropValue(objKey: string, index: number, value: any) {
+  private arrangeMax(this: any, objKey: string, index: number, value: number) {
+    window.console.log("arrangeMax", index, value);
+    if (value < this.getPropValue(objKey, index - 1)) {
+      const propertyObj: any = {};
+      propertyObj[this.propertyList[index - 1].refStr] = value;
+      this.changeListObj({
+        key: objKey,
+        isNotice: true,
+        property: propertyObj
+      });
+    }
+  }
+
+  private setPropValue(objKey: string, index: number, value: any) {
     const prop: any = this.propertyList[index];
 
     const propertyObj: any = {};
     propertyObj[prop.property] = value;
-    this.changeListInfo({
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: propertyObj
     });
   }
 
-  getMin(objKey: string, index: number): number | null {
+  private getMin(objKey: string, index: number): number | null {
     const prevProp: any = this.propertyList[index - 1];
     if (!prevProp || prevProp.type !== "min") {
       return this.propertyList[index].min || 0;
@@ -600,7 +611,7 @@ export default class InitiativeWindow extends Vue {
     }
   }
 
-  getMax(objKey: string, index: number): number | null {
+  private getMax(objKey: string, index: number): number | null {
     const nextProp: any = this.propertyList[index + 1];
     if (!nextProp || nextProp.type !== "max") {
       return this.propertyList[index].max || 99;
@@ -610,30 +621,19 @@ export default class InitiativeWindow extends Vue {
     }
   }
 
-  getInitiative(objKey: string) {
+  private getInitiative(objKey: string) {
     return this.getObj(objKey).property.initiative;
   }
 
-  getSubInitiative(objKey: string) {
+  private getSubInitiative(objKey: string) {
     return this.getObj(objKey).property.subInitiative;
   }
 
-  getPropValue(objKey: string, index: number): number | boolean | null {
-    const prevProp: any = this.propertyList[index - 1];
-    const prop: any = this.propertyList[index];
-    const nextProp: any = this.propertyList[index + 1];
-
-    const character: any = this.getObj(objKey);
-
-    let propName = null;
-    if (prop.type === "min") propName = nextProp.property + "-min";
-    if (prop.type === "max") propName = prevProp.property + "-max";
-    if (prop.type === "number") propName = prop.property;
-    if (prop.type === "checkbox") propName = prop.property;
-    return propName ? character.property[propName] : null;
+  private getPropValue(objKey: string, index: number): number | boolean | null {
+    return this.getObj(objKey).property[this.propertyList[index].refStr];
   }
 
-  get sortCharacterList(): any[] {
+  private get sortCharacterList(): any[] {
     return this.characterList
       .concat()
       .filter((character: any) => character.place === "field")
@@ -649,14 +649,14 @@ export default class InitiativeWindow extends Vue {
       });
   }
 
-  get backDisabled(): boolean {
+  private get backDisabled(): boolean {
     const index: number = this.sortCharacterList.findIndex(
       (character: any) => character.key === this.roundPlayerKey
     );
     return index === 0 && this.round === 1;
   }
 
-  roundBack() {
+  private roundBack() {
     if (!this.roundPlayerKey) return;
     const index: number = this.sortCharacterList.findIndex(
       (character: any) => character.key === this.roundPlayerKey
@@ -670,7 +670,7 @@ export default class InitiativeWindow extends Vue {
     );
   }
 
-  roundNext() {
+  private roundNext() {
     if (!this.roundPlayerKey) return;
     const index: number = this.sortCharacterList.findIndex(
       (character: any) => character.key === this.roundPlayerKey
@@ -682,12 +682,12 @@ export default class InitiativeWindow extends Vue {
     );
   }
 
-  battleStart() {
+  private battleStart() {
     const character = this.sortCharacterList[0];
     this.updateInitiative(character ? 1 : 0, character ? character.key : null);
   }
 
-  battleEnd() {
+  private battleEnd() {
     this.updateInitiative(0, null);
   }
 
@@ -708,7 +708,7 @@ export default class InitiativeWindow extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
@@ -743,6 +743,10 @@ export default class InitiativeWindow extends Vue {
     flex-direction: row;
     justify-content: center;
   }
+}
+
+.isError {
+  background-color: orange !important;
 }
 
 button {

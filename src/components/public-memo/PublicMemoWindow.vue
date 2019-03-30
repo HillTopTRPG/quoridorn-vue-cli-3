@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="共有メモ" display-property="private.display.publicMemoWindow" align="center" baseSize="300, 240" @open="open">
+  <window-frame titleText="共有メモ" display-property="private.display.publicMemoWindow" align="center" baseSize="300, 240" @open="open">
     <div class="tabs">
       <span class="tab" v-for="(textObj, index) in texts" :key="index" @click.prevent="selectTab(textObj.tab)">{{textObj.tab}}</span><!--
     --><span class="tab addButton" @click="addTab">＋</span>
@@ -9,7 +9,7 @@
       <textarea v-model="currentText"></textarea>
     </div>
     <button @click.prevent="clickAdd">追加</button><button @click.prevent="clickCancel">キャンセル</button>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>
@@ -81,10 +81,11 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .tabs {
   display: inline-block;
 }
+
 .tab {
   position: relative;
   display: inline;
@@ -100,19 +101,23 @@ export default {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+
+  &.addButton {
+    margin-left: 100px;
+    cursor: pointer;
+  }
+
+  &.active,
+  &:active {
+    background-color: white;
+  }
+
+  &:hover {
+    border-color: #0092ed;
+    z-index: 100;
+  }
 }
-.tab.addButton {
-  margin-left: 100px;
-  cursor: pointer;
-}
-.tab.active,
-.tab:active {
-  background-color: white;
-}
-.tab:hover {
-  border-color: #0092ed;
-  z-index: 100;
-}
+
 .log {
   display: block;
   background-color: white;
@@ -129,10 +134,12 @@ export default {
   min-height: 70px;
   position: relative;
   z-index: 0;
+
+  li:last-child {
+    margin-bottom: 100px;
+  }
 }
-.log li:last-child {
-  margin-bottom: 100px;
-}
+
 .label {
   font-size: 10px;
   white-space: nowrap;
@@ -140,26 +147,29 @@ export default {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
+
 .oneLine {
   height: 26px;
   min-height: 26px;
   padding: 3px 0;
+
+  * {
+    vertical-align: middle;
+  }
 }
-.oneLine * {
-  vertical-align: middle;
-}
-.sendLine {
-}
+
 .sendLine * {
   display: inline;
   height: 42px;
   min-height: 42px;
   vertical-align: middle;
 }
+
 textarea {
   width: calc(100% - 85px);
   resize: none;
 }
+
 img {
   width: auto;
   height: auto;
@@ -168,8 +178,9 @@ img {
   cursor: pointer;
   margin: 0 10px;
   border: solid rgba(0, 0, 0, 0) 1px;
-}
-img:hover {
-  border-color: #0092ed;
+
+  &:hover {
+    border-color: #0092ed;
+  }
 }
 </style>

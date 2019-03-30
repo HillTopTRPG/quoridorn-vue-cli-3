@@ -10,7 +10,7 @@ export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.0b7",
+    version: "1.0.0b8",
     /** 接続情報 */
     connect: {
       skywayKey: "",
@@ -98,9 +98,10 @@ export default {
       { system, command }: { system: string; command: string }
     ) {
       return new Promise((resolve: Function, reject: Function) => {
-        const params: string = [`system=${system}`, `command=${command}`].join(
-          "&"
-        );
+        const params: string = [
+          `system=${system}`,
+          `command=${encodeURIComponent(command)}`
+        ].join("&");
         const url = `${state.connect.bcdiceServer}/v1/diceroll?${params}`;
         fetch(url)
           .then(response => response.json())

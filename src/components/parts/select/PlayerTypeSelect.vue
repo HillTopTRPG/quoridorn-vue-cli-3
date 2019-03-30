@@ -1,21 +1,19 @@
 <template>
-  <SelectBase defaultLabel="権限" v-model="localValue">
+  <select-base defaultLabel="権限" v-model="localValue">
     <option :key="role.value" :value="role.value" v-for="role in roles">{{role.label}}</option>
-  </SelectBase>
+  </select-base>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 import SelectMixin from "./base/SelectMixin.vue";
 import SelectBase from "./base/SelectBase.vue";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<PlayerTypeSelect>({
-  name: "playerTypeSelect",
-  mixins: [SelectMixin],
+@Component({
   components: { SelectBase }
 })
-export default class PlayerTypeSelect extends Vue {
-  @Getter("roles") roles: any;
+export default class PlayerTypeSelect extends Mixins<SelectMixin>(SelectMixin) {
+  @Getter("roles") private roles: any;
 }
 </script>

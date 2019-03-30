@@ -27,7 +27,7 @@
         <input id="welcomeWindow-tab3" type="radio" name="tab_btn" value="3" v-model="tabNum">
         <input id="welcomeWindow-tab4" type="radio" name="tab_btn" value="4" v-model="tabNum">
 
-        <div class="tab_area">
+        <div class="tab_area" @contextmenu.prevent>
           <label class="tab1_label" for="welcomeWindow-tab1">ログイン</label>
           <label class="tab2_label" for="welcomeWindow-tab2">仕様一覧</label>
           <label class="tab3_label" for="welcomeWindow-tab3">出典元情報</label>
@@ -38,7 +38,7 @@
            ! タブ１ - ログイン
            !------------------------------->
           <div id="panel1" class="tab_panel">
-            <Login/>
+            <login/>
           </div>
           <!--------------------------------
            ! タブ２ - 仕様一覧
@@ -57,6 +57,7 @@
               <dice-window/><!-- ダイス画面 -->
               <player-box-window/><!-- プレイヤーボックス画面 -->
               <initiative-window/><!-- イニシアティブ画面 -->
+              <counter-remocon-window-spec/><!-- カウンターリモコン画面 -->
               <change-font-size-window/><!-- フォントサイズ調整画面 -->
               <reset-all-window/><!-- ウィンドウ配置初期化機能 -->
               <add-character-window/><!-- キャラクター追加画面 -->
@@ -86,11 +87,11 @@
           <!--------------------------------
            ! タブ３ - 出典元情報
            !------------------------------->
-          <div id="panel3" class="tab_panel"><Source/></div>
+          <div id="panel3" class="tab_panel"><source/></div>
           <!--------------------------------
            ! タブ４ - 開発支援
            !------------------------------->
-          <div id="panel4" class="tab_panel"><DevSupport/></div>
+          <div id="panel4" class="tab_panel"><dev-support/></div>
         </div>
       </div>
       <!-- tab_wrap -->
@@ -139,13 +140,13 @@ import Logo from "../simple/Logo.vue";
 import Source from "./source/Source.vue";
 import DevSupport from "./devSupport/DevSupport.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+import CounterRemoconWindowSpec from "@/components/welcome/spec/CounterRemoconWindowSpec.vue";
 
-@Component<WelcomeWindow>({
-  name: "welcomeWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
+    CounterRemoconWindowSpec,
     WindowFrame,
     Logo,
     Login,
@@ -184,9 +185,9 @@ import { Getter } from "vuex-class";
     DevSupport
   }
 })
-export default class WelcomeWindow extends Vue {
-  @Getter("isRoomJoined") isRoomJoined: any;
-  @Getter("version") version: any;
+export default class WelcomeWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Getter("isRoomJoined") private isRoomJoined: any;
+  @Getter("version") private version: any;
 
   private tabNum: string = "1";
 

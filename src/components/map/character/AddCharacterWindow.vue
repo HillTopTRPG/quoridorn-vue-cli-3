@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame titleText="キャラクター置き場" display-property="private.display.addCharacterWindow" align="center" fixSize="200, 200" @open="open">
-    <div class="container">
+  <window-frame titleText="キャラクター置き場" display-property="private.display.addCharacterWindow" align="center" fixSize="200, 200" @open="open">
+    <div class="container" @contextmenu.prevent>
       <div class="name">{{name}}</div>
       <div class="image"><img class="img" v-img="imageObj.data" @dragstart="dragStart" draggable="true" :class="{reverse : imageObj.isReverse}" @mousedown.stop/></div>
       <div class="controlArea">
@@ -8,7 +8,7 @@
         <span>連番：</span><input type="number" min="0" v-model="continuous_Num" :disabled="!isContinuous"/>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>
@@ -17,7 +17,6 @@ import WindowFrame from "../../WindowFrame";
 import WindowMixin from "../../WindowMixin";
 
 export default {
-  name: "addCharacterWindow",
   mixins: [WindowMixin],
   components: {
     WindowFrame
@@ -138,20 +137,20 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .container {
   display: block;
   width: 100%;
   height: 100%;
   font-size: 12px;
+
+  > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
-.container > * {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.name {
-}
+
 .image img {
   display: block;
   width: 96px;
@@ -160,15 +159,18 @@ export default {
   box-sizing: border-box;
   border: solid yellow 3px;
   background-color: rgba(0, 0, 0, 0);
+
+  &.reverse {
+    transform: scale(-1, 1);
+  }
 }
-.image img.reverse {
-  transform: scale(-1, 1);
-}
+
 label {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 input[type="number"] {
   width: 40px;
 }

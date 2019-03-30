@@ -1,13 +1,20 @@
 <template>
-  <div class="character-chip"
+  <div
+    class="character-chip"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
     @click.right.prevent="(e) => openContext(e, 'private.display.characterContext')"
-    @mouseover="mouseover" @mouseout="mouseout"
-    @contextmenu.prevent>
+    @mouseover="mouseover"
+    @mouseout="mouseout"
+    @contextmenu.prevent
+  >
     <div class="border"></div>
-    <img class="image" v-img="imageObj.data" :class="{reverse : imageObj.isReverse}" draggable="false"/>
+    <img
+      class="image" v-img="imageObj.data"
+      :class="{reverse : imageObj.isReverse}"
+      draggable="false"
+    />
     <div class="name">{{name}}</div>
   </div>
 </template>
@@ -18,11 +25,9 @@ import PieceMixin from "../../PieceMixin.vue";
 import { Component } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<CharacterChip>({
-  name: "characterChip"
-})
+@Component
 export default class CharacterChip extends PieceMixin {
-  @Getter("imageList") imageList: any;
+  @Getter("imageList") private imageList: any;
 
   getKeyObj(list: any[], key: string) {
     const filteredList = list.filter(obj => obj.key === key);
@@ -80,9 +85,6 @@ export default class CharacterChip extends PieceMixin {
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;

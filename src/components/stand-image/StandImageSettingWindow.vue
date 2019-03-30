@@ -116,12 +116,9 @@ import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 import { removeExt } from "@/components/common/Utility";
 
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-import { Component, Vue } from "vue-property-decorator";
-
-@Component<StandImageSettingWindow>({
-  name: "standImageSettingWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     ActorOtherStatusSelect,
     WindowFrame,
@@ -131,14 +128,16 @@ import { Component, Vue } from "vue-property-decorator";
     StandImageComponent
   }
 })
-export default class StandImageSettingWindow extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("addStandImageDiff") addStandImageDiff: any;
-  @Action("deleteActorStatus") deleteActorStatus: any;
-  @Action("changeListInfo") changeListInfo: any;
-  @Getter("imageList") imageList: any;
-  @Getter("getObj") getObj: any;
+export default class StandImageSettingWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("setProperty") private setProperty: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("addStandImageDiff") private addStandImageDiff: any;
+  @Action("deleteActorStatus") private deleteActorStatus: any;
+  @Action("changeListObj") private changeListObj: any;
+  @Getter("imageList") private imageList: any;
+  @Getter("getObj") private getObj: any;
 
   private actorKey: string = "";
   private statusName: string | null = "";
@@ -150,9 +149,8 @@ export default class StandImageSettingWindow extends Vue {
   }
 
   doDeleteActorStatus(key: string, statusName: string) {
-    const comp: ActorStatusTabComponent = <ActorStatusTabComponent>(
-      this.$refs.actorStatusTabComponent
-    );
+    const comp: ActorStatusTabComponent = this.$refs
+      .actorStatusTabComponent as ActorStatusTabComponent;
     this.statusName = comp.deleteTab();
     this.deleteActorStatus(key, statusName);
   }
@@ -175,7 +173,7 @@ export default class StandImageSettingWindow extends Vue {
     };
 
     setTimeout(() =>
-      this.changeListInfo({
+      this.changeListObj({
         key: this.actorKey,
         statusList: updateStatusList
       })

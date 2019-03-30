@@ -1,16 +1,23 @@
 <script lang="ts">
 import Vue from "vue";
 import { Mixin } from "vue-mixin-decorator";
-import { Getter } from "vuex-class";
+
+interface COUNTER_REMOCON_TYPE_INTERFACE {
+  PLUS: number;
+  MINUS: number;
+  EQUALS: number;
+  PLUS_MINUS: number;
+}
+
+const COUNTER_REMOCON_TYPE_DATA: any = {
+  PLUS: 1,
+  MINUS: -1,
+  EQUALS: 0,
+  PLUS_MINUS: 2
+};
 
 @Mixin
 export default class WindowMixin extends Vue {
-  @Getter("getWindowParam") getWindowParam: any;
-
-  windowParam(instance: any): any {
-    const className = instance.constructor.name;
-    const propName = className.charAt(0).toLowerCase() + className.substring(1);
-    return this.getWindowParam(propName);
-  }
+  COUNTER_REMOCON_TYPE: COUNTER_REMOCON_TYPE_INTERFACE = COUNTER_REMOCON_TYPE_DATA;
 }
 </script>

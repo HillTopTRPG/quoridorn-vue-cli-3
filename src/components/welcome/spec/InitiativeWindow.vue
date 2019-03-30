@@ -48,7 +48,7 @@
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><SpecLink property="menuBar" title-str="">メインメニュー</SpecLink></li>
+      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
     </spec-item>
   </spec-frame>
 </template>

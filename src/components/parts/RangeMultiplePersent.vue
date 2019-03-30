@@ -14,6 +14,7 @@
     mergeFormatter="{value1}% ~ {value2}%"
     :tooltipStyle='{ "backgroundColor": "#666", "borderColor": "#666", "fontSize": "1em" }'
     :bgStyle='{ "backgroundColor": "#add", "borderTop": "1px solid #666", "borderBottom": "1px solid #666", borderRadius: 0 }'
+    @contextmenu.prevent
   >
     <template slot="label" slot-scope="{ label, active, index }">
       <span :class="['custom-label', { active }, { 'line': index % 50 !== 0 }]" v-if="index % 10 === 0">
@@ -27,8 +28,7 @@
 import vueSlider from "vue-slider-component";
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 
-@Component<RangeMultiplePersent>({
-  name: "rangeMultiplePersent",
+@Component({
   components: {
     vueSlider
   }

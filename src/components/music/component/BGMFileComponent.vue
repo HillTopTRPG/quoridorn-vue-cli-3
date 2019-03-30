@@ -25,8 +25,7 @@
 import BGMCoreComponent from "./BGMCoreComponent.vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Component<BGMFileComponent>({
-  name: "bgmFileComponent",
+@Component({
   components: {
     BGMCoreComponent
   }
@@ -68,9 +67,8 @@ export default class BGMFileComponent extends Vue {
     this.jukeboxAudio.addEventListener("timeupdate", this.onTimeUpdate);
     this.jukeboxAudio.addEventListener("play", () => {
       if (!this.jukeboxAudio) return;
-      const bgmCoreComponent: BGMCoreComponent = <BGMCoreComponent>(
-        this.$refs.core
-      );
+      const bgmCoreComponent: BGMCoreComponent = this.$refs
+        .core as BGMCoreComponent;
       bgmCoreComponent.setDuration(this.jukeboxAudio.duration);
       bgmCoreComponent.play();
     });
@@ -117,4 +115,4 @@ export default class BGMFileComponent extends Vue {
     bgmCoreComponent.timeUpdate(this.jukeboxAudio.currentTime);
   }
 }
-</script>
+</script>()

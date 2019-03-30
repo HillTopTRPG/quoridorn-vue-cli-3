@@ -1,13 +1,30 @@
 <template>
-  <div :style="windowStyle" @mousedown="windowActive({ property: displayProperty, isClose: false })" @mouseup="mouseUp"
-       @touchcancel="mouseUp" @touchend="mouseUp" @touchstart="deckHoverKey(displayProperty)" class="window"
-       v-if="isDisplay">
-    <div class="_contents" :style="{ fontSize: fontSize + 'px' }" @wheel.stop @contextmenu.prevent>
+  <div
+    :style="windowStyle"
+    @mousedown="windowActive({ property: displayProperty, isClose: false })"
+    @mouseup="mouseUp"
+    @touchcancel="mouseUp"
+    @touchend="mouseUp"
+    @touchstart="deckHoverKey(displayProperty)"
+    class="window"
+    v-if="isDisplay"
+  >
+    <!-- コンテンツ -->
+    <div class="_contents" :style="{ fontSize: fontSize + 'px' }" @wheel.stop>
       <slot></slot>
     </div>
-    <div class="title" :class="{fix : isFix}"
-      @mousedown.left.prevent="(e) => move(e, true)" @mouseup.left.prevent="(e) => move(e, false)"
-      @touchstart.prevent="(e) => move(e, true, true)" @touchend.prevent="(e) => move(e, false, true)" @touchcancel.prevent="(e) => move(e, false, true)">
+
+    <!-- タイトルバー -->
+    <div
+      class="title"
+      :class="{fix : isFix}"
+      @mousedown.left.prevent="(e) => move(e, true)"
+      @mouseup.left.prevent="(e) => move(e, false)"
+      @touchstart.prevent="(e) => move(e, true, true)"
+      @touchend.prevent="(e) => move(e, false, true)"
+      @touchcancel.prevent="(e) => move(e, false, true)"
+      @contextmenu.prevent
+    >
       <div>
         <span>{{titleText}}</span>
         <span class="message" v-if="message">{{message}}</span>
@@ -18,41 +35,106 @@
       >文字サイズ{{fontSize}}px<input type="range" min="10" max="18" v-model="fontSize" @mousedown.stop>
       </label>
     </div>
-    <div class="corner-left-top" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'corner-left-top', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-left-top', false)"
-      @touchstart.prevent="(e) => resize(e, 'corner-left-top', true, true)" @touchend.prevent="(e) => resize(e, 'corner-left-top', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-left-top', false, true)"></div>
-    <div class="corner-left-bottom" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'corner-left-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-left-bottom', false)"
-      @touchstart.prevent="(e) => resize(e, 'corner-left-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'corner-left-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-left-bottom', false, true)"></div>
-    <div class="corner-right-top" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'corner-right-top', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-right-top', false)"
-      @touchstart.prevent="(e) => resize(e, 'corner-right-top', true, true)" @touchend.prevent="(e) => resize(e, 'corner-right-top', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-right-top', false, true)"></div>
-    <div class="corner-right-bottom" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'corner-right-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-right-bottom', false)"
-      @touchstart.prevent="(e) => resize(e, 'corner-right-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'corner-right-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-right-bottom', false, true)"></div>
-    <div class="side-top" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'side-top', true)" @mouseup.left.prevent="(e) => resize(e, 'side-top', false)"
-      @touchstart.prevent="(e) => resize(e, 'side-top', true, true)" @touchend.prevent="(e) => resize(e, 'side-top', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-top', false, true)"></div>
-    <div class="side-left" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'side-left', true)" @mouseup.left.prevent="(e) => resize(e, 'side-left', false)"
-      @touchstart.prevent="(e) => resize(e, 'side-left', true, true)" @touchend.prevent="(e) => resize(e, 'side-left', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-left', false, true)"></div>
-    <div class="side-right" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'side-right', true)" @mouseup.left.prevent="(e) => resize(e, 'side-right', false)"
-      @touchstart.prevent="(e) => resize(e, 'side-right', true, true)" @touchend.prevent="(e) => resize(e, 'side-right', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-right', false, true)"></div>
-    <div class="side-bottom" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
-      @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"></div>
-    <span v-if="!isBanClose"><i class="icon-cross window-close" @click.left.prevent="closeWindow"></i></span>
+
+    <!-- サイズ変更つまみ -->
+    <div
+      class="corner-left-top"
+      v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'corner-left-top', true)"
+      @mouseup.left.prevent="(e) => resize(e, 'corner-left-top', false)"
+      @touchstart.prevent="(e) => resize(e, 'corner-left-top', true, true)"
+      @touchend.prevent="(e) => resize(e, 'corner-left-top', false, true)"
+      @touchcancel.prevent="(e) => resize(e, 'corner-left-top', false, true)"
+      @contextmenu.prevent
+    ></div>
+    <div
+      class="corner-left-bottom"
+      v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'corner-left-bottom', true)"
+      @mouseup.left.prevent="(e) => resize(e, 'corner-left-bottom', false)"
+      @touchstart.prevent="(e) => resize(e, 'corner-left-bottom', true, true)"
+      @touchend.prevent="(e) => resize(e, 'corner-left-bottom', false, true)"
+      @touchcancel.prevent="(e) => resize(e, 'corner-left-bottom', false, true)"
+      @contextmenu.prevent
+    ></div>
+    <div
+      class="corner-right-top"
+      v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'corner-right-top', true)"
+      @mouseup.left.prevent="(e) => resize(e, 'corner-right-top', false)"
+      @touchstart.prevent="(e) => resize(e, 'corner-right-top', true, true)"
+      @touchend.prevent="(e) => resize(e, 'corner-right-top', false, true)"
+      @touchcancel.prevent="(e) => resize(e, 'corner-right-top', false, true)"
+      @contextmenu.prevent
+    ></div>
+    <div
+      class="corner-right-bottom" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'corner-right-bottom', true)"
+      @mouseup.left.prevent="(e) => resize(e, 'corner-right-bottom', false)"
+      @touchstart.prevent="(e) => resize(e, 'corner-right-bottom', true, true)"
+      @touchend.prevent="(e) => resize(e, 'corner-right-bottom', false, true)"
+      @touchcancel.prevent="(e) => resize(e, 'corner-right-bottom', false, true)"
+      @contextmenu.prevent
+    ></div>
+    <div
+      class="side-top"
+      v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'side-top', true)"
+      @mouseup.left.prevent="(e) => resize(e, 'side-top', false)"
+      @touchstart.prevent="(e) => resize(e, 'side-top', true, true)"
+      @touchend.prevent="(e) => resize(e, 'side-top', false, true)"
+      @touchcancel.prevent="(e) => resize(e, 'side-top', false, true)"
+      @contextmenu.prevent
+    ></div>
+    <div
+      class="side-left"
+      v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'side-left', true)"
+      @mouseup.left.prevent="(e) => resize(e, 'side-left', false)"
+      @touchstart.prevent="(e) => resize(e, 'side-left', true, true)"
+      @touchend.prevent="(e) => resize(e, 'side-left', false, true)"
+      @touchcancel.prevent="(e) => resize(e, 'side-left', false, true)"
+      @contextmenu.prevent
+    ></div>
+    <div
+      class="side-right"
+      v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'side-right', true)"
+      @mouseup.left.prevent="(e) => resize(e, 'side-right', false)"
+      @touchstart.prevent="(e) => resize(e, 'side-right', true, true)"
+      @touchend.prevent="(e) => resize(e, 'side-right', false, true)"
+      @touchcancel.prevent="(e) => resize(e, 'side-right', false, true)"
+      @contextmenu.prevent
+    ></div>
+    <div
+      class="side-bottom"
+      v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)"
+      @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
+      @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)"
+      @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)"
+      @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"
+      @contextmenu.prevent
+    ></div>
+
+    <!-- 閉じるボタン -->
+    <span v-if="!isBanClose" @contextmenu.prevent>
+      <i
+        class="icon-cross window-close"
+        @click.left.prevent="closeWindow"
+      ></i>
+    </span>
 
     <!-- 立ち絵 -->
     <stand-image-component
       class="standImage"
       v-for="(standImage, index) in standImageList"
-      :key="standImage.statusName"
+      :key="index"
       :standImage="standImage.standImage"
       :drawDiff="true"
       @click="clickStandImage(standImage.standImage, index)"
       :style="standImageStyle(standImage.standImage)"
+      @contextmenu.prevent
     />
   </div>
 </template>
@@ -63,16 +145,15 @@ import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<WindowFrame>({
-  name: "windowFrame",
+@Component({
   components: { StandImageComponent }
 })
 export default class WindowFrame extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Action("setProperty") setProperty: any;
-  @Action("windowActive") windowActive: any;
-  @Getter("getStateValue") getStateValue: any;
-  @Getter("isModal") isModal: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("windowActive") private windowActive: any;
+  @Getter("getStateValue") private getStateValue: any;
+  @Getter("isModal") private isModal: any;
 
   @Prop({ type: String, required: true })
   private titleText!: string;
@@ -555,6 +636,7 @@ export default class WindowFrame extends Vue {
   width: 100%;
   height: 100%;
   display: block;
+  z-index: 91;
 }
 
 .title {

@@ -1,16 +1,16 @@
 <template>
-  <SpecFrame property="import" label-str="ロード機能" lastVersion="1.0.0b5" :isSpecFixed="false">
+  <spec-frame property="import" label-str="ロード機能" lastVersion="1.0.0b5" :isSpecFixed="false">
     <!----------------------
      ! 起動操作
      !--------------------->
-    <SpecItem class-str="operation" label-str="起動操作">
+    <spec-item class-str="operation" label-str="起動操作">
       <li>画面上部メニューの「ファイル」を選択</li>
       <li>「ロード」を選択</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
-    <SpecItem class-str="spec" label-str="仕様">
+    <spec-item class-str="spec" label-str="仕様">
       <li>読み込ませたファイルのどのデータを使うかを選択できるようにする</li>
       <li>
         データの取り込み方法は以下の通り
@@ -117,32 +117,32 @@
           </li>
         </ol>
       </li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! ユーザ要望
      !--------------------->
-    <SpecItem class-str="request" label-str="ユーザ要望">
+    <spec-item class-str="request" label-str="ユーザ要望">
       <li>なし</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 未実装事項
      !--------------------->
-    <SpecItem class-str="unImplemented" label-str="未実装事項">
+    <spec-item class-str="unImplemented" label-str="未実装事項">
       <li>取り込みデータを選んでのロードは初回リリースでは対象外とする。</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 実装しない機能
      !--------------------->
-    <SpecItem class-str="unSupport" label-str="実装しない機能">
+    <spec-item class-str="unSupport" label-str="実装しない機能">
       <li>なし</li>
-    </SpecItem>
+    </spec-item>
     <!----------------------
      ! 関連項目
      !--------------------->
-    <SpecItem class-str="ref" label-str="関連項目">
-      <li><SpecLink property="menuBar" title-str="">メインメニュー</SpecLink></li>
-    </SpecItem>
-  </SpecFrame>
+    <spec-item class-str="ref" label-str="関連項目">
+      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+    </spec-item>
+  </spec-frame>
 </template>
 
 <script>

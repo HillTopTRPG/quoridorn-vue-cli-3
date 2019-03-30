@@ -1,5 +1,5 @@
 <template>
-  <div class="bgmCoreComponent">
+  <div class="bgmCoreComponent" @contextmenu.prevent>
     <div class="thumbnail">
       <img v-img="thumbnailData" draggable="false" alt="Not Found" :title="thumbnailTitle" @click="thumbnailClick">
     </div>
@@ -32,15 +32,14 @@ import { getUrlParam } from "../../common/Utility";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<BGMCoreComponent>({
-  name: "bgmCoreComponent",
+@Component({
   components: {
     VolumeComponent
   }
 })
 export default class BGMCoreComponent extends Vue {
-  @Getter("masterMute") masterMute: any;
-  @Getter("masterVolume") masterVolume: any;
+  @Getter("masterMute") private masterMute: any;
+  @Getter("masterVolume") private masterVolume: any;
 
   @Prop({ type: String, required: true })
   private tag!: string;
@@ -86,9 +85,8 @@ export default class BGMCoreComponent extends Vue {
       this.url
     )}/default.jpg`;
 
-    const volumeComponent: VolumeComponent = <VolumeComponent>(
-      this.$refs.volumeComponent
-    );
+    const volumeComponent: VolumeComponent = this.$refs
+      .volumeComponent as VolumeComponent;
     volumeComponent.setVolume(this.initVolume);
     volumeComponent.setMute(false);
 
@@ -103,18 +101,16 @@ export default class BGMCoreComponent extends Vue {
     window.open(this.url, "_blank");
   }
   audioMute(this: any): void {
-    const volumeComponent: VolumeComponent = <VolumeComponent>(
-      this.$refs.volumeComponent
-    );
+    const volumeComponent: VolumeComponent = this.$refs
+      .volumeComponent as VolumeComponent;
     this.$emit(
       "mute",
       this.masterMute || (volumeComponent ? volumeComponent.mute : false)
     );
   }
   audioVolume(this: any): void {
-    const volumeComponent: VolumeComponent = <VolumeComponent>(
-      this.$refs.volumeComponent
-    );
+    const volumeComponent: VolumeComponent = this.$refs
+      .volumeComponent as VolumeComponent;
     this.$emit(
       "volume",
       this.masterVolume * (volumeComponent ? volumeComponent.volume : 0)

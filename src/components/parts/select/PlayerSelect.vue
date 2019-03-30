@@ -1,21 +1,20 @@
 <template>
-  <SelectBase defaultLabel="プレイヤー" v-model="localValue">
+  <select-base defaultLabel="プレイヤー" v-model="localValue">
     <option v-for="player in playerList" :key="player.key" :value="player.key">{{player.name}}</option>
-  </SelectBase>
+  </select-base>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Getter } from "vuex-class";
 import SelectMixin from "./base/SelectMixin.vue";
 import SelectBase from "./base/SelectBase.vue";
 
-@Component<PlayerSelect>({
-  name: "playerSelect",
-  mixins: [SelectMixin],
+import { Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+
+@Component({
   components: { SelectBase }
 })
-export default class PlayerSelect extends Vue {
-  @Getter("playerList") playerList: any;
+export default class PlayerSelect extends Mixins<SelectMixin>(SelectMixin) {
+  @Getter("playerList") private playerList: any;
 }
 </script>

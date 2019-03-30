@@ -1,43 +1,56 @@
 <template>
-  <a :href="refProp" @click="openLink(property)" :title="titleStr"><slot></slot></a>
+  <a :href="refProp" @click.prevent="openLink()" :title="titleStr"><slot></slot></a>
 </template>
 
-<script>
-import { mapState } from "vuex";
-export default {
-  props: {
-    property: { type: String, required: true },
-    titleStr: { type: String, required: true }
-  },
-  methods: {
-    openLink(id) {
-      const elm = document
-        .getElementById("welcomeWindowContents")
-        .querySelector("#" + id);
-      if (!elm) {
-        window.console.error(`Not found => #${id}`);
-        return;
-      }
-      if (!elm.checked) elm.click();
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-property-decorator";
+
+@Component
+export default class SpecLink extends Vue {
+  @Prop({ type: String, required: true })
+  private property!: string;
+
+  @Prop({ type: String, required: true })
+  private titleStr!: string;
+
+  openLink() {
+    const contentsElm: HTMLElement = document.getElementById(
+      "welcomeWindowContents"
+    )!;
+    const targetElm: HTMLInputElement | null = contentsElm!.querySelector(
+      `#${this.property}`
+    );
+    if (!targetElm) {
+      window.console.error(`Not found => #${this.property}`);
+      return;
     }
-  },
-  computed: mapState({
-    refProp() {
-      return "#ref_" + this.property;
+    if (targetElm) {
+      if (!targetElm.checked) targetElm.click();
+      setTimeout(() => {
+        const targetRect: any = (targetElm.parentNode as HTMLDivElement)!.getBoundingClientRect();
+        const contentsRect: any = contentsElm.getBoundingClientRect();
+        contentsElm.scrollTop =
+          targetRect.top + contentsElm.scrollTop - contentsRect.top;
+      }, 0);
     }
-  })
-};
+  }
+
+  get refProp() {
+    return "#ref_" + this.property;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 a {
   text-decoration: none;
-}
-a:link,
-a:visited,
-a:hover,
-a:active {
-  color: rgb(53, 108, 165);
+
+  &:link,
+  &:visited,
+  &:hover,
+  &:active {
+    color: rgb(53, 108, 165);
+  }
 }
 </style>

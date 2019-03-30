@@ -154,7 +154,7 @@ export default new Vuex.Store({
         dispatch("windowOpen", "private.display.initiativeWindow");
         // dispatch("windowOpen", "private.display.resourceWindow");
         // dispatch("windowOpen", "private.display.chatPaletteWindow");
-        // dispatch("windowOpen", "private.display.counterRemoConWindow");
+        // dispatch("windowOpen", "private.display.counterRemoconWindow");
         // dispatch("windowOpen", "private.display.functionListWindow");
         // dispatch("windowOpen", "private.display.playerBoxWindow");
         dispatch("windowOpen", "private.display.welcomeWindow");

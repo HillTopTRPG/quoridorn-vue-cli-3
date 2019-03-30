@@ -1,5 +1,5 @@
 <template>
-  <ContextFrame displayProperty="private.display.characterContext">
+  <context-frame displayProperty="private.display.characterContext">
     <div class="item" @click.left.prevent="viewEditCharacter">変更</div>
     <hr>
     <div class="item" v-if="place !== 'field'" @click.left.prevent="moveToField">マップに移動</div>
@@ -11,32 +11,30 @@
       <hr>
       <div class="item" @click.left.prevent="openRefURL">データ参照先URLを開く</div>
     </template>
-  </ContextFrame>
+  </context-frame>
 </template>
 
 <script lang="ts">
 import ContextFrame from "../../ContextFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<CharacterContext>({
-  name: "characterContext",
-  mixins: [WindowMixin],
+@Component({
   components: {
     ContextFrame
   }
 })
-export default class CharacterContext extends Vue {
-  @Action("windowOpen") windowOpen: any;
-  @Action("setProperty") setProperty: any;
-  @Action("changeListInfo") changeListInfo: any;
-  @Action("windowClose") windowClose: any;
-  @Getter("getObj") getObj: any;
-  @Getter("characterContextObjKey") characterContextObjKey: any;
-  @Getter("playerKey") playerKey: any;
-  @Getter("mapMaskIsLock") mapMaskIsLock: any;
+export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowOpen") private windowOpen: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("changeListObj") private changeListObj: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("characterContextObjKey") private characterContextObjKey: any;
+  @Getter("playerKey") private playerKey: any;
+  @Getter("mapMaskIsLock") private mapMaskIsLock: any;
 
   viewEditCharacter(): void {
     window.console.log(
@@ -61,7 +59,7 @@ export default class CharacterContext extends Vue {
     this.moveTo("graveyard");
   }
   private moveTo(place: string): void {
-    this.changeListInfo({
+    this.changeListObj({
       key: this.characterContextObjKey,
       place: place,
       isNotice: true

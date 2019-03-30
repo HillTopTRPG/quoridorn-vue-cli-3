@@ -1,7 +1,7 @@
 <template>
-  <WindowFrame titleText="現時点の仕様" display-property="private.display.functionListWindow" align="center" fixSize="500, 400">
+  <window-frame titleText="現時点の仕様" display-property="private.display.functionListWindow" align="center" fixSize="500, 400">
     <iframe src="./static/FunctionList.html"></iframe>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script>
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 iframe {
   width: 100%;
   height: 100%;

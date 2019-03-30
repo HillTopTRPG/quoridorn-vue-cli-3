@@ -2,7 +2,7 @@
   <div class="actor-status-tab-container">
 
     <!-- タブ -->
-    <div class="actor-status-tabs">
+    <div class="actor-status-tabs" @contextmenu.prevent>
       <label class="tab">
         <actor-status-combo
           :statusList="actor.statusList"
@@ -33,8 +33,7 @@ import ActorStatusCombo from "@/components/parts/ActorStatusCombo.vue";
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<ActorStatusTabComponent>({
-  name: "actorStatusTabComponent",
+@Component({
   components: {
     ActorStatusCombo
   }
@@ -43,10 +42,10 @@ export default class ActorStatusTabComponent extends Vue {
   @Prop({ type: Object, required: true })
   private actor!: any;
 
-  @Action("addActorStatus") addActorStatus: any;
-  @Getter("getPeerActors") getPeerActors: any;
-  @Getter("getViewName") getViewName: any;
-  @Getter("getObj") getObj: any;
+  @Action("addActorStatus") private addActorStatus: any;
+  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getViewName") private getViewName: any;
+  @Getter("getObj") private getObj: any;
 
   private statusList: any[] = [];
   private activeTabIndex: number = -1;

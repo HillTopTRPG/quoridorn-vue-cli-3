@@ -1,15 +1,21 @@
 <template>
-  <div class="character"
+  <div
+    class="character"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
     @click.right.prevent="(e) => openContext(e, 'private.display.characterContext')"
-    @mouseover="mouseover" @mouseout="mouseout"
+    @mouseover="mouseover"
+    @mouseout="mouseout"
     @dblclick="dblClick"
-    @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
-    @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
-    @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
-    @contextmenu.prevent>
+    @mousedown.left.stop="leftDown"
+    @mouseup.left.stop="leftUp"
+    @mousedown.right.stop="rightDown"
+    @mouseup.right.stop="rightUp"
+    @touchstart="leftDown" @touchend="leftUp"
+    @touchcancel="leftUp"
+    @contextmenu.prevent
+  >
     <range v-for="range in rangeList"
            :key="range.key"
            :type="type"
@@ -55,16 +61,15 @@ import Range from "../../range/Range.vue";
 import { Component, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component<Character>({
-  name: "character",
+@Component({
   components: {
     Range
   }
 })
 export default class Character extends PieceMixin {
-  @Action("changeListInfo") changeListInfo: any;
-  @Getter("imageList") imageList: any;
-  @Getter("propertyList") propertyList: any;
+  @Action("changeListObj") private changeListObj: any;
+  @Getter("imageList") private imageList: any;
+  @Getter("propertyList") private propertyList: any;
 
   private checkPropertyList: any[] = [];
   private numberPropertyList: any[] = [];
@@ -277,7 +282,7 @@ export default class Character extends PieceMixin {
       }
 
       // 値をすぐに戻す
-      this.changeListInfo({
+      this.changeListObj({
         key: this.objKey,
         isNotice: false,
         viewHighlight: false

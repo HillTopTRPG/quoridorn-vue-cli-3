@@ -3,8 +3,9 @@
     :style='rangeStyle'
     :width='width'
     :height='height'
-    ref='canvas'>
-  </canvas>
+    ref='canvas'
+    @contextmenu.prevent
+  ></canvas>
 </template>
 
 <script lang="ts">
@@ -22,33 +23,42 @@ export default class Range extends Mixins<RangeMixins>(
   CanvasMixin,
   PieceMixin
 ) {
-  @Getter("getAllObstacle") getAllObstacle: any;
-  @Getter("marginGridSize") marginGridSize: any;
-  @Getter("columns") columns: any;
-  @Getter("rows") rows: any;
+  @Getter("getAllObstacle") protected getAllObstacle: any;
+  @Getter("marginGridSize") protected marginGridSize: any;
+  @Getter("columns") protected columns: any;
+  @Getter("rows") protected rows: any;
+
   @Prop({ type: Number, required: true })
   public distance!: number;
+
   @Prop({ type: Number, required: true })
   public distanceMode!: number;
+
   @Prop({ type: Boolean, required: true })
   public isVision!: boolean;
+
   @Prop({ type: String, required: true })
   public color!: string;
+
   @Prop({ type: String, required: true })
   public borderColor!: string;
+
   @Prop({ type: String, required: true })
   public targetColor!: string;
+
   @Prop({ type: Number, default: 1 })
   public lineWidth!: number;
 
-  mounted(): void {
+  private mounted(): void {
     this.paint();
   }
-  paint(this: any) {
-    let canvas: HTMLCanvasElement = <HTMLCanvasElement>this.$refs.canvas;
-    const ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D>(
-      canvas.getContext("2d")
-    );
+
+  private paint(this: any) {
+    let canvas: HTMLCanvasElement = this.$refs.canvas as HTMLCanvasElement;
+    const ctx: CanvasRenderingContext2D = canvas.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
+
     // ctx.globalAlpha = 0.4
     ctx.lineJoin = "round";
     // ctx.lineCap = 'round'
@@ -575,7 +585,7 @@ export default class Range extends Mixins<RangeMixins>(
 </script>
 
 <!-- Add 'scoped' attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .range {
   pointer-events: none;
   position: fixed;

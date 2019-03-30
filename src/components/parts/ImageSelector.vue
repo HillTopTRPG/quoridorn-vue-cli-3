@@ -1,5 +1,5 @@
 <template>
-  <div class="imageSelector">
+  <div class="imageSelector" @contextmenu.prevent>
 
     <!-- 画像選択エリア -->
     <div class="choseImage">
@@ -38,10 +38,10 @@
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component<ImageSelector>({ name: "imageSelector" })
+@Component
 export default class ImageSelector extends Vue {
-  @Getter("imageTagList") imageTagList: any;
-  @Getter("imageList") imageList: any;
+  @Getter("imageTagList") private imageTagList: any;
+  @Getter("imageList") private imageList: any;
 
   @Prop({ type: String })
   public value!: string;

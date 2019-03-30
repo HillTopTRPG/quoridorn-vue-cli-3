@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame titleText="BGM追加画面" display-property="private.display.addBGMWindow" align="right-bottom" fixSize="300, 350" @open="initWindow">
-    <div class="contents">
+  <window-frame titleText="BGM追加画面" display-property="private.display.addBGMWindow" align="right-bottom" fixSize="300, 350" @open="initWindow">
+    <div class="contents" @contextmenu.prevent>
       <fieldset>
         <legend>読込</legend>
         <!-- URL -->
@@ -30,7 +30,7 @@
             <option v-for="tag in tags" :key="tag" :value="tag">{{tag}}</option>
           </datalist>
           <!-- 音量 -->
-          <VolumeComponent
+          <volume-component
             :initVolume="volume"
             @volume="setVolume"
             @mute="setIsMute"
@@ -71,7 +71,7 @@
         </div>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
@@ -79,23 +79,22 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import VolumeComponent from "./component/VolumeComponent.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<AddBGMWindow>({
-  name: "addBGMWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     VolumeComponent
   }
 })
-export default class AddBGMWindow extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("addBGM") addBGM: any;
-  @Getter("bgmList") bgmList: any;
-  @Getter("playerKey") playerKey: any;
+export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowClose") private windowClose: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("addListObj") private addListObj: any;
+  @Getter("bgmList") private bgmList: any;
+  @Getter("playerKey") private playerKey: any;
 
   private isYoutube: boolean = false;
   private url: string = "";
@@ -139,8 +138,11 @@ export default class AddBGMWindow extends Vue {
     const urlElm: HTMLElement = this.$refs.urlElm;
     setTimeout(() => urlElm.focus(), 0);
   }
+
   commit(): void {
-    const bgmObj = {
+    this.addListObj({
+      propName: "bgm",
+      kind: "bgm",
       url: this.url,
       title: this.title,
       creditUrl: this.creditUrl,
@@ -154,26 +156,30 @@ export default class AddBGMWindow extends Vue {
       chatLinkage: this.chatLinkage,
       chatLinkageSearch: this.chatLinkageSearch,
       owner: this.playerKey
-    };
-    this.addBGM(bgmObj);
-
+    });
     this.windowClose("private.display.addBGMWindow");
   }
+
   cancel(): void {
     this.windowClose("private.display.addBGMWindow");
   }
+
   getCredit(): void {
     this.creditUrl = this.url.replace(/^(https?:\/\/[^/]+).+$/, "$1");
   }
+
   preview() {
     alert("未実装の機能です");
   }
+
   change(this: any, param: string): void {
     this[param] = !this[param];
   }
+
   setIsMute(isMute: boolean): void {
     this.isMute = isMute;
   }
+
   setVolume(volume: string): void {
     this.volume = Math.floor(parseFloat(volume) * 100) / 100;
   }
@@ -186,7 +192,7 @@ export default class AddBGMWindow extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
@@ -200,83 +206,97 @@ fieldset {
   padding-left: 5px;
   padding-right: 5px;
   padding-bottom: 5px;
+
+  &:not(:last-child) {
+    margin-bottom: 5px;
+  }
+
+  > div {
+    display: flex;
+    justify-content: left;
+    align-content: center;
+
+    &:not(:last-child) {
+      margin-bottom: 5px;
+    }
+  }
 }
-fieldset:not(:last-child) {
-  margin-bottom: 5px;
-}
-fieldset > div {
-  display: flex;
-  justify-content: left;
-  align-content: center;
-}
-fieldset > div:not(:last-child) {
-  margin-bottom: 5px;
-}
+
 .icon {
   display: flex;
-}
-.icon i {
-  position: relative;
-  color: black;
-  border-radius: 50%;
-  font-size: 12px;
-  width: 1.4em;
-  height: 1.4em;
-  border: 2px solid black;
-  display: flex;
-  justify-content: center;
-  align-content: start;
-}
-.icon i:before {
-  display: flex;
-  justify-content: center;
-  align-content: start;
-  position: absolute;
-  top: 50%;
-  margin-top: calc(-12px / 2);
-}
-.icon:not(.active) i:hover {
-  background-color: lightyellow;
-}
-.icon.active.loop i {
-  font-weight: bold;
-  background-color: deepskyblue;
-}
-.icon.active.fadeIn i {
-  font-weight: bold;
-  background-color: deepskyblue;
-}
-.icon.active.fadeOut i {
-  font-weight: bold;
-  background-color: deepskyblue;
+
+  i {
+    position: relative;
+    color: black;
+    border-radius: 50%;
+    font-size: 12px;
+    width: 1.4em;
+    height: 1.4em;
+    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    align-content: start;
+
+    &:before {
+      display: flex;
+      justify-content: center;
+      align-content: start;
+      position: absolute;
+      top: 50%;
+      margin-top: calc(-12px / 2);
+    }
+  }
+
+  &:not(.active) i:hover {
+    background-color: lightyellow;
+  }
+
+  &.active {
+    &.loop i {
+      font-weight: bold;
+      background-color: deepskyblue;
+    }
+
+    &.fadeIn i {
+      font-weight: bold;
+      background-color: deepskyblue;
+    }
+
+    &.fadeOut i {
+      font-weight: bold;
+      background-color: deepskyblue;
+    }
+  }
 }
 
 fieldset > div i:not(:first-child) {
   margin-left: 7px;
 }
+
 .firstWide > :first-child {
   flex: 1;
 }
+
 .lastWide > :last-child {
   flex: 1;
 }
+
 input[type="text"] {
   width: 50px;
 }
+
 legend,
 label,
 button {
   font-size: 10px;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
 }
+
 select,
 input[type="text"],
 input[type="number"] {
   font-size: 11px;
 }
+
 label {
   display: flex;
   justify-content: left;
@@ -284,45 +304,55 @@ label {
   vertical-align: middle;
   white-space: nowrap;
   padding: auto;
+
+  span {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin: auto;
+  }
+
+  input,
+  .mask {
+    flex: 1;
+    padding: 2.5px 0;
+  }
+
+  .mask {
+    border: 1px solid black;
+    background-color: lightgray;
+    padding: 2px 0;
+  }
 }
-label span {
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  margin: auto;
-}
-label input,
-label .mask {
-  flex: 1;
-  padding: 2.5px 0;
-}
-label .mask {
-  border: 1px solid black;
-  background-color: lightgray;
-  padding: 2px 0;
-}
+
 .volumeComponent {
   flex: 1;
 }
+
 .tag input {
   width: 52px;
 }
+
 .playLength,
 .fadeIn,
 .fadeOut {
   flex: 1;
   margin-right: 5px;
 }
+
 .playLength input {
   width: 45px;
 }
+
 .fadeIn input,
 .fadeOut input {
   width: 32px;
 }
+
 .regexp input {
   width: 50px;
 }
+
 .buttonArea {
   display: flex;
   justify-content: center;

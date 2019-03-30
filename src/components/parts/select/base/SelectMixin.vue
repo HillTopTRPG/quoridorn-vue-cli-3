@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Emit, Watch } from "vue-property-decorator";
 
-@Component<SelectMixin>({ name: "selectMixin" })
+@Component
 export default class SelectMixin extends Vue {
   @Prop() public value!: string;
   @Prop() public defaultLabel!: string;
@@ -27,11 +27,11 @@ export default class SelectMixin extends Vue {
   }
 
   updated() {
-    const selectElm: HTMLSelectElement = <HTMLSelectElement>this.$refs.select;
+    const selectElm: HTMLSelectElement = this.$refs.select as HTMLSelectElement;
     if (selectElm) {
-      const options: HTMLOptionElement[] = <Array<HTMLOptionElement>>(
-        Array.prototype.slice.call(selectElm.querySelectorAll("option"))
-      );
+      const options: HTMLOptionElement[] = Array.prototype.slice.call(
+        selectElm.querySelectorAll("option")
+      ) as Array<HTMLOptionElement>;
       const index = options.findIndex(
         option => option.value === this.localValue
       );

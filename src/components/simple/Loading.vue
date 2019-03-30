@@ -1,16 +1,21 @@
 <template>
-  <div class="loading" v-show="isLoading"><span>お待ちください</span><span class="icon icon-spinner2"></span></div>
+  <div
+    class="loading"
+    v-show="isLoading"
+    @contextmenu.prevent
+  >
+    <span>お待ちください</span>
+    <span class="icon icon-spinner2"></span>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component({
-  name: "loading"
-})
+@Component
 export default class Loading extends Vue {
-  @Getter("isLoading") isLoading: any;
+  @Getter("isLoading") private isLoading: any;
 }
 </script>
 

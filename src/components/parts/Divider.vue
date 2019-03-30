@@ -4,14 +4,16 @@
     @dblclick.stop="doubleClick()"
     @mouseover="hoverDev(index)"
     @mouseout="hoverDev()"
-    @mousedown="event => moveDevStart(event, index)"></td>
+    @mousedown="event => moveDevStart(event, index)"
+    @contextmenu.prevent
+  ></td>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { Action } from "vuex-class";
 
-@Component<Divider>({ name: "divider" })
+@Component
 export default class Divider extends Vue {
   @Prop({ type: Number, required: true })
   private index!: number;
@@ -19,7 +21,7 @@ export default class Divider extends Vue {
   @Prop({ type: String, required: true })
   private prop!: string;
 
-  @Action("setProperty") setProperty: any;
+  @Action("setProperty") private setProperty: any;
 
   hoverDev(index: number): void {
     if (this.movingIndex === -1) {
@@ -60,20 +62,20 @@ export default class Divider extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .divider {
   background-color: rgb(183, 186, 188);
   cursor: col-resize;
   position: relative;
   width: 1px;
-}
-.divider:after {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: -3px;
-  content: "";
-  width: 7px;
-  /* background-color: red; */
+
+  &:after {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: -3px;
+    content: "";
+    width: 7px;
+  }
 }
 </style>

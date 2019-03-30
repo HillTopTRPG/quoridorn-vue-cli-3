@@ -24,9 +24,7 @@ interface Rectangle {
   h: number;
 }
 
-@Component<StandImageComponent>({
-  name: "standImageComponent"
-})
+@Component
 export default class StandImageComponent extends Vue {
   @Prop({ type: Object, required: true })
   private standImage!: any;
@@ -34,7 +32,7 @@ export default class StandImageComponent extends Vue {
   @Prop({ type: Boolean, default: true })
   private drawDiff!: boolean;
 
-  @Getter("imageList") imageList: any;
+  @Getter("imageList") private imageList: any;
 
   private baseImageElm: HTMLImageElement | null = null;
   private baseImageReverse: boolean = false;
@@ -189,9 +187,8 @@ export default class StandImageComponent extends Vue {
   paint(this: any): void {
     const time = this.timeList[this.timeIndex];
 
-    const canvasElm: HTMLCanvasElement = <HTMLCanvasElement>(
-      this.$refs.standImage
-    );
+    const canvasElm: HTMLCanvasElement = this.$refs
+      .standImage as HTMLCanvasElement;
 
     if (canvasElm) {
       const ctx: CanvasRenderingContext2D = canvasElm!.getContext("2d")!;

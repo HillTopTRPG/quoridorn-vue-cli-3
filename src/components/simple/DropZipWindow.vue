@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame titleText="部屋データ読込" display-property="private.display.dropZipWindow" align="center" fixSize="300, 100">
-    <div class="contents">
+  <window-frame titleText="部屋データ読込" display-property="private.display.dropZipWindow" align="center" fixSize="300, 100">
+    <div class="contents" @contextmenu.prevent>
       <div v-if="!saveDataList">部屋データを読み込んでいます...</div>
       <!-- TODO 初回リリース対応としては部分ロードはしない
       <div v-if="saveDataList">複数のセーブデータで同じ項目を読み込ませる場合、各セーブデータで順次上書きされていきます。</div>
@@ -21,29 +21,28 @@
         <button @click="cancel" :disabled="!saveDataList">キャンセル</button>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<DropZipWindow>({
-  name: "dropZipWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame
   }
 })
-export default class DropZipWindow extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("doImport") doImport: any;
-  @Getter("dropZipList") dropZipList: any;
-  @Getter("dropZipRoomCreate") dropZipRoomCreate: any;
+export default class DropZipWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowClose") private windowClose: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("doImport") private doImport: any;
+  @Getter("dropZipList") private dropZipList: any;
+  @Getter("dropZipRoomCreate") private dropZipRoomCreate: any;
 
   private saveDataList: any[] = [];
 
@@ -189,7 +188,7 @@ export default class DropZipWindow extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
@@ -197,19 +196,10 @@ export default class DropZipWindow extends Vue {
   overflow-y: auto;
   font-size: 12px;
 }
+
 fieldset > div {
   display: grid;
   width: 100%;
   height: 100%;
-  /*
-  grid-template-columns: auto 1fr auto;
-  grid-template-rows: auto auto 1fr auto auto;
-  grid-template-areas:
-      "viewImage passwordButton passwordButton"
-      "viewImage passwordLabel  passwordLabel"
-      "viewImage .............. .............."
-      "tagLabel  tagLabel       tagLabel"
-      "tagInput  tagInput       tagSelect";
-  */
 }
 </style>

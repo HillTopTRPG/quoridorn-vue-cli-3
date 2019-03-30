@@ -1,14 +1,20 @@
 <template>
-  <div class="chit"
+  <div
+    class="chit"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="chitStyle"
     :title="description"
     @click.right.prevent="(e) => openContext(e, 'private.display.chitContext')"
-    @mouseover="mouseover" @mouseout="mouseout"
-    @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
-    @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
-    @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
-    @contextmenu.prevent>
+    @mouseover="mouseover"
+    @mouseout="mouseout"
+    @mousedown.left.stop="leftDown"
+    @mouseup.left.stop="leftUp"
+    @mousedown.right.stop="rightDown"
+    @mouseup.right.stop="rightUp"
+    @touchstart="leftDown" @touchend="leftUp"
+    @touchcancel="leftUp"
+    @contextmenu.prevent
+  >
     <div class="border"></div>
     <img class="image" v-img="getKeyObj(imageList, imageKey).data" :class="{reverse : isReverse}" draggable="false"/>
   </div>
@@ -68,7 +74,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .chit {
   /*
   box-sizing: border-box;
@@ -78,26 +84,26 @@ export default {
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;
   z-index: 100000000;
+
+  &.hover,
+  &.rolling {
+    z-index: 999999999;
+  }
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    top: -2px;
+  }
 }
-.chit.hover,
-.chit.rolling {
-  z-index: 999999999;
-}
-.chit:before {
-  content: "";
-  position: absolute;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  top: -2px;
-}
+
 img.image {
   position: absolute;
   left: 0;
@@ -105,10 +111,12 @@ img.image {
   width: 100%;
   height: 100%;
   object-fit: contain;
+
+  &.reverse {
+    transform: scale(-1, 1);
+  }
 }
-img.image.reverse {
-  transform: scale(-1, 1);
-}
+
 img.rotate {
   position: absolute;
   left: -5px;
@@ -118,18 +126,21 @@ img.rotate {
   width: 15px;
   height: 15px;
   border-radius: 5px;
+
+  &:hover {
+    width: 19px;
+    height: 19px;
+    transform: translate(-2px, -2px);
+  }
 }
-img.rotate:hover {
-  width: 19px;
-  height: 19px;
-  transform: translate(-2px, -2px);
-}
+
 .name {
   position: absolute;
   top: calc(-1em - 4px);
   background-color: rgba(255, 255, 255, 0.3);
   padding: 0 3px;
 }
+
 .border {
   position: absolute;
   left: 0;

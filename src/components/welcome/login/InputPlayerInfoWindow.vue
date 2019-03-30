@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame
+  <window-frame
     titleText="入室情報入力画面"
     display-property="private.display.inputPlayerInfoWindow"
     align="center"
@@ -12,7 +12,7 @@
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <label>
-          <PlayerTypeSelect v-model="inputPlayerType" v-if="!isPlayerExist"/>
+          <player-type-select v-model="inputPlayerType" v-if="!isPlayerExist"/>
           <input ref="playerInput" placeholder="ユーザ名を入力（必須項目）" type="text" v-model="inputPlayerName" list="input-player-info-window-players"/>
           <datalist id="input-player-info-window-players">
             <option v-for="player in playerList" :key="player.key" :value="player.name">{{player.name}}</option>
@@ -27,40 +27,40 @@
         <button @click="commit" type="button"><i class="icon-home3"></i> 参加</button>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
+import PlayerTypeSelect from "@/components/parts/select/PlayerTypeSelect.vue";
 import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
-import PlayerTypeSelect from "@/components/parts/select/PlayerTypeSelect.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
+import { Watch } from "vue-property-decorator";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
-
-@Component<InputPlayerInfoWindow>({
-  name: "inputPlayerInfoWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     PlayerTypeSelect: PlayerTypeSelect
   }
 })
-export default class InputPlayerInfoWindow extends Vue {
-  @Action("setProperty") setProperty: any;
-  @Action("windowClose") windowClose: any;
-  @Action("loading") loading: any;
-  @Mutation("updateIsModal") updateIsModal: any;
-  @Getter("getObj") getObj: any;
-  @Getter("playerList") playerList: any;
-  @Getter("roles") roles: any;
-  @Getter("volatileRoomName") volatileRoomName: any;
-  @Getter("volatilePlayerName") volatilePlayerName: any;
-  @Getter("volatilePlayerPassword") volatilePlayerPassword: any;
-  @Getter("volatilePlayerType") volatilePlayerType: any;
-  @Getter("volatileFontColor") volatileFontColor: any;
-  @Getter("volatileResolve") volatileResolve: any;
+export default class InputPlayerInfoWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("setProperty") private setProperty: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("loading") private loading: any;
+  @Mutation("updateIsModal") private updateIsModal: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("playerList") private playerList: any;
+  @Getter("roles") private roles: any;
+  @Getter("volatileRoomName") private volatileRoomName: any;
+  @Getter("volatilePlayerName") private volatilePlayerName: any;
+  @Getter("volatilePlayerPassword") private volatilePlayerPassword: any;
+  @Getter("volatilePlayerType") private volatilePlayerType: any;
+  @Getter("volatileFontColor") private volatileFontColor: any;
+  @Getter("volatileResolve") private volatileResolve: any;
 
   private inputPlayerName: string = "";
   private inputPlayerPassword: string = "";

@@ -1,6 +1,11 @@
 <template>
-  <WindowFrame titleText="画像データ登録" display-property="private.display.dropImageWindow" align="center" fixSize="385, 660">
-    <div class="contents">
+  <window-frame
+    titleText="画像データ登録"
+    display-property="private.display.dropImageWindow"
+    align="center"
+    fixSize="385, 660"
+  >
+    <div class="contents" @contextmenu.prevent>
       <div v-if="!imageList">画像読込中...</div>
       <fieldset v-for="imageObj in imageList" :key="imageObj.key">
         <legend>{{imageObj.name}}</legend>
@@ -20,31 +25,30 @@
         <button @click="cancel" :disabled="!imageList">キャンセル</button>
       </div>
     </div>
-  </WindowFrame>
+  </window-frame>
 </template>
 
 <script lang="ts">
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<DropImageWindow>({
-  name: "dropImageWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame
   }
 })
-export default class DropImageWindow extends Vue {
-  @Action("imageTagChange") imageTagChange: any;
-  @Action("addImage") addImage: any;
-  @Action("windowClose") windowClose: any;
-  @Action("emptyProperty") emptyProperty: any;
-  @Getter("dropImageList") dropImageList: any;
-  @Getter("imageTagList") imageTagList: any;
-  @Getter("playerKey") playerKey: any;
+export default class DropImageWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("imageTagChange") private imageTagChange: any;
+  @Action("addImage") private addImage: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("emptyProperty") private emptyProperty: any;
+  @Getter("dropImageList") private dropImageList: any;
+  @Getter("imageTagList") private imageTagList: any;
+  @Getter("playerKey") private playerKey: any;
 
   private imageList: any[] = [];
 
@@ -55,6 +59,7 @@ export default class DropImageWindow extends Vue {
         tag: imageObj.currentTag,
         data: imageObj.image,
         thumbnail: imageObj.thumbnail,
+        imageArgList: imageObj.imageArgList,
         owner: this.playerKey
       });
     });
@@ -104,6 +109,7 @@ export default class DropImageWindow extends Vue {
       name: imgObj.name,
       image: imgObj.image,
       thumbnail: imgObj.thumbnail,
+      imageArgList: imgObj.imageArgList,
       currentTag: "キャラクター",
       selectTag: "キャラクター",
       password: ""
@@ -113,14 +119,25 @@ export default class DropImageWindow extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;
   width: 100%;
   overflow-y: scroll;
   font-size: 12px;
+
+  input {
+    display: inline;
+  }
+
+  .operateArea {
+    vertical-align: middle;
+    text-align: center;
+    margin-top: 10px;
+  }
 }
+
 fieldset > div {
   display: grid;
   width: 100%;
@@ -134,42 +151,36 @@ fieldset > div {
     "tagLabel  tagLabel       tagLabel"
     "tagInput  tagInput       tagSelect";
 }
+
 button {
   font-size: 11px;
 }
-legend {
-}
-input {
-  display: inline;
-}
-.password {
-  width: 100px;
-}
+
 .image {
   grid-area: viewImage;
   width: 96px;
   height: 96px;
   border: solid gray 1px;
 }
+
 .passwordButton {
   grid-area: passwordButton;
 }
+
 .passwordLabel {
   grid-area: passwordLabel;
 }
+
 .tagLabel {
   grid-area: tagLabel;
 }
+
 .tagInput {
   margin-right: 5px;
   grid-area: tagInput;
 }
+
 .tagSelect {
   grid-area: tagSelect;
-}
-.operateArea {
-  vertical-align: middle;
-  text-align: center;
-  margin-top: 10px;
 }
 </style>

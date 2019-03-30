@@ -1,6 +1,6 @@
 <template><!-- 150, 209 -->
   <window-frame titleText="再生中BGM一覧" fixSize="222, 274" display-property="private.display.jukeboxWindow" align="right-bottom" :isBanClose="true" @add="add">
-    <div class="contents">
+    <div class="contents" @contextmenu.prevent>
       <master-volume-component/>
       <template v-for="bgmObj in playList">
         <b-g-m-youtube-component
@@ -47,12 +47,10 @@ import BGMYoutubeComponent from "@/components/music/component/BGMYoutubeComponen
 import MasterVolumeComponent from "@/components/music/component/MasterVolumeComponent.vue";
 import BGMFileComponent from "@/components/music/component/BGMFileComponent.vue";
 
-import { Component, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<JukeboxWindow>({
-  name: "jukeboxWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     WindowFrame,
     BGMFileComponent,
@@ -60,10 +58,10 @@ import { Action, Getter } from "vuex-class";
     MasterVolumeComponent
   }
 })
-export default class JukeboxWindow extends Vue {
-  @Action("windowClose") windowClose: any;
-  @Action("windowOpen") windowOpen: any;
-  @Getter("bgmList") bgmList: any;
+export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowClose") private windowClose: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Getter("bgmList") private bgmList: any;
 
   private playList: any[] = [];
 
@@ -121,7 +119,7 @@ export default class JukeboxWindow extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .contents {
   position: absolute;
   height: 100%;

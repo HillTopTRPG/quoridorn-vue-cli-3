@@ -1,22 +1,22 @@
 <template>
-  <SelectBase defaultLabel="個別設定" :defaultSelectable="true" v-model="localValue">
+  <select-base defaultLabel="個別設定" :defaultSelectable="true" v-model="localValue">
     <option :key="status.name" :value="status.name" v-for="status in useStatusList">{{status.name}}</option>
-  </SelectBase>
+  </select-base>
 </template>
 
 <script lang="ts">
 import SelectMixin from "./base/SelectMixin.vue";
 import SelectBase from "./base/SelectBase.vue";
 
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { Getter } from "vuex-class";
+import { Prop } from "vue-property-decorator";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component<ActorOtherStatusSelect>({
-  name: "actorOtherStatusSelect",
-  mixins: [SelectMixin],
+@Component({
   components: { SelectBase }
 })
-export default class ActorOtherStatusSelect extends Vue {
+export default class ActorOtherStatusSelect extends Mixins<SelectMixin>(
+  SelectMixin
+) {
   @Prop({ type: Object, required: true })
   private actor!: any;
 

@@ -1,20 +1,18 @@
 <template>
-  <div v-if="isModal"></div>
+  <div v-if="isModal" @contextmenu.prevent></div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component({
-  name: "modalScreen"
-})
+@Component
 export default class ModalScreen extends Vue {
-  @Getter("isModal") isModal: any;
+  @Getter("isModal") private isModal: any;
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 div {
   position: fixed;
   top: 0;
