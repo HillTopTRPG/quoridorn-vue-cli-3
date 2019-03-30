@@ -49,6 +49,7 @@ export default {
       };
       dispatch("addChatLog", usePayload);
     },
+
     /** ========================================================================
      * チャットログを追加する
      */
@@ -138,6 +139,7 @@ export default {
       // チャット文字連携処理
       dispatch("chatLinkage", text);
     },
+
     /** ========================================================================
      * チャット文字色変更
      */
@@ -191,6 +193,7 @@ export default {
         logOff: true
       });
     },
+
     /** ========================================================================
      * チャット文字連携処理
      */
@@ -234,6 +237,7 @@ export default {
           });
         });
     },
+
     /** ========================================================================
      * 画像を追加する
      */
@@ -279,6 +283,7 @@ export default {
       }
       return key;
     },
+
     /** ========================================================================
      * イニシアティブ表のパラメータの設定を変更する
      */
@@ -318,27 +323,7 @@ export default {
         logOff: true
       });
     },
-    /** ========================================================================
-     * BGMを追加する
-     */
-    addBGM: ({ dispatch }: { dispatch: Function }, payload: any) => {
-      dispatch("sendNoticeOperation", { value: payload, method: "doAddBGM" });
-    },
-    doAddBGM: (
-      { rootState, rootGetters }: { rootState: any; rootGetters: any },
-      payload: any
-    ) => {
-      // 欠番を埋める方式は不採用
-      let maxKey = rootState.public.bgm.maxKey;
-      const key = `bgm-${++maxKey}`;
-      rootState.public.bgm.maxKey = maxKey;
-      payload.key = key;
-      delete payload.ownerPeerId;
-      rootState.public.bgm.list.push(payload);
-      if (rootGetters.playerKey === payload.owner) {
-        rootGetters.historyList.push({ type: "add", key: key });
-      }
-    },
+
     /** ========================================================================
      * アクター状態を追加する
      */
@@ -358,6 +343,7 @@ export default {
 
       actor.statusList.push(payload);
     },
+
     /** ========================================================================
      * アクター状態を削除する
      */
@@ -377,6 +363,7 @@ export default {
       );
       actor.statusList.splice(index, 1);
     },
+
     /** ========================================================================
      * 立ち絵差分を追加する
      */
@@ -400,6 +387,7 @@ export default {
 
       status.standImage.diffList.push(payload);
     },
+
     /** ========================================================================
      * 立ち絵差分を削除する
      */
@@ -423,6 +411,7 @@ export default {
       delete payload.statusName;
       status.standImage.diffList.splice(payload.index, 1);
     },
+
     /** ========================================================================
      * 立ち絵差分を編集する
      */
@@ -468,22 +457,29 @@ export default {
 
       // window.console.log("★★★", key, "★ statusList:", updateStatusList);
 
-      dispatch("changeListInfo", {
+      dispatch("changeListObj", {
         key: key,
         statusList: updateStatusList
       });
     },
+
     /** ========================================================================
-     * マップオブジェクトを追加する
+     * publicリストにオブジェクトを追加する
+     * @param dispatch
+     * @param payload
      */
-    addPieceInfo: ({ dispatch }: { dispatch: Function }, payload: any) => {
+    addListObj: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
-        method: "doAddPieceInfo"
+        method: "doAddListObj"
       });
     },
-    doAddPieceInfo: (
-      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+    doAddListObj: (
+      {
+        dispatch,
+        rootState,
+        rootGetters
+      }: { dispatch: Function; rootState: any; rootGetters: any },
       payload: any
     ) => {
       // 欠番を埋める方式は不採用
@@ -491,54 +487,28 @@ export default {
       const key = `${payload.kind}-${++maxKey}`;
       rootState.public[payload.propName].maxKey = maxKey;
 
-      const obj: any = {
-        key: key,
-        isDraggingLeft: false,
-        move: {
-          from: { x: 0, y: 0 },
-          dragging: { x: 0, y: 0 },
-          gridOffset: { x: 0, y: 0 }
-        },
-        angle: {
-          total: 0,
-          dragging: 0,
-          dragStart: 0
-        },
-        isLock: false
-      };
-
-      for (let prop in payload) {
-        if (!payload.hasOwnProperty(prop)) continue;
-        if (prop === "isNotice") continue;
-        obj[prop] = payload[prop];
-      }
-
-      const pList: string[] = [];
-      pList.push(`type: ${obj.type}`);
-      pList.push(`name: ${obj.name}`);
-      pList.push(`key: ${obj.key}`);
-      pList.push(`locate: (${obj.top}, ${obj.left})`);
-      pList.push(`rows: ${obj.rows}`);
-      pList.push(`cols: ${obj.columns}`);
-      pList.push(`bg: "${obj.color}`);
-      pList.push(`font: ${obj.fontColor}`);
-      qLog(`マップオブジェクト追加 => ${pList.join(", ")}`);
+      payload.key = key;
+      delete payload.ownerPeerId;
+      delete payload.isNotice;
 
       if (rootGetters.playerKey === payload.owner) {
-        rootGetters.historyList.push({ type: "add", key: key });
+        rootGetters.historyList.push({ type: "add", key });
       }
-      rootState.public[payload.propName].list.push(obj);
+      rootState.public[payload.propName].list.push(payload);
     },
+
     /** ========================================================================
-     * リスト情報を変更する
+     * publicリストの中の指定されたkeyのオブジェクト情報を変更する
+     * @param dispatch
+     * @param payload
      */
-    changeListInfo: ({ dispatch }: { dispatch: Function }, payload: any) => {
+    changeListObj: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
-        method: "doChangeListInfo"
+        method: "doChangeListObj"
       });
     },
-    doChangeListInfo: (
+    doChangeListObj: (
       {
         dispatch,
         rootState,
@@ -560,20 +530,22 @@ export default {
         logOff: true
       });
     },
+
     /** ========================================================================
-     * マップオブジェクトの削除
+     * publicリストの中の指定されたkeyのオブジェクトを削除する
+     * @param dispatch
+     * @param payload
      */
-    deletePieceInfo: ({ dispatch }: { dispatch: Function }, payload: any) => {
+    deleteListObj: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
-        method: "doDeletePieceInfo"
+        method: "doDeleteListObj"
       });
     },
-    doDeletePieceInfo: (
+    doDeleteListObj: (
       { rootState, rootGetters }: { rootState: any; rootGetters: any },
       payload: any
     ) => {
-      // window.console.log(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
       const obj = rootGetters.getObj(payload.key);
       rootState.public[payload.propName].list.splice(
         rootState.public[payload.propName].list.indexOf(obj),
@@ -589,6 +561,34 @@ export default {
         );
       }
     },
+
+    /** ========================================================================
+     * publicリストの中の指定されたkeyのオブジェクトをコピーする
+     * @param dispatch
+     * @param payload
+     */
+    copyListObj: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doCopyListObj"
+      });
+    },
+    doCopyListObj: (
+      {
+        dispatch,
+        rootState,
+        rootGetters
+      }: {
+        dispatch: Function;
+        rootState: any;
+        rootGetters: any;
+      },
+      payload: any
+    ) => {
+      const obj = rootGetters.getObj(payload.key);
+      dispatch("doAddListObj", obj);
+    },
+
     /** ========================================================================
      * デッキのシャッフル
      */
@@ -675,6 +675,7 @@ export default {
       rootGetters.publicCounterRemoconList.push({
         key: `counterRemocon-${++rootGetters.publicCounterRemocon.maxKey}`,
         buttonName: payload.buttonName,
+        target: payload.target,
         counterName: payload.counterName,
         modifyType: payload.modifyType,
         modifyValue: payload.modifyValue,

@@ -135,7 +135,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
   @Action("windowOpen") private windowOpen: any;
   @Action("addStandImageDiff") private addStandImageDiff: any;
   @Action("deleteActorStatus") private deleteActorStatus: any;
-  @Action("changeListInfo") private changeListInfo: any;
+  @Action("changeListObj") private changeListObj: any;
   @Getter("imageList") private imageList: any;
   @Getter("getObj") private getObj: any;
 
@@ -173,7 +173,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
     };
 
     setTimeout(() =>
-      this.changeListInfo({
+      this.changeListObj({
         key: this.actorKey,
         statusList: updateStatusList
       })

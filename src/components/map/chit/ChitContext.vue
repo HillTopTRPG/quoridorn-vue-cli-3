@@ -21,7 +21,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class ChitContext extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
-  @Action("deletePieceInfo") private deletePieceInfo: any;
+  @Action("deleteListObj") private deleteListObj: any;
   @Action("windowClose") private windowClose: any;
   @Getter("getObj") private getObj: any;
   @Getter("chitContextObjKey") private chitContextObjKey: any;
@@ -55,7 +55,7 @@ export default class ChitContext extends Mixins<WindowMixin>(WindowMixin) {
         this.chitContextObjKey
       }).deleteChit`
     );
-    this.deletePieceInfo({
+    this.deleteListObj({
       propName: "chit",
       key: this.chitContextObjKey,
       owner: this.playerKey,

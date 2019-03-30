@@ -3,7 +3,7 @@
     titleText="カウンターリモコンエディター"
     display-property="private.display.counterRemoconEditorWindow"
     align="left-top"
-    fixSize="360, 200"
+    fixSize="360, 220"
     ref="window"
     @open="initWindow"
     @reset="initWindow"
@@ -12,6 +12,10 @@
       <label>
         <span class="label">ボタン名:</span>
         <input type="text" v-model="buttonName">
+      </label>
+      <label>
+        <span class="label">キャラクター{0}:</span>
+        <character-select v-model="target" class="full" :placeList="[]"/>
       </label>
       <label>
         <span class="label">カウンター名{1}:</span>
@@ -33,11 +37,11 @@
       </label>
       <label>
         <span class="label">例:</span>
-        <span class="label">{{exampleText}}</span>
+        <span class="full example">{{exampleText}}</span>
       </label>
       <div class="operationArea">
-        <button @click="commit">設定</button>
-        <button>キャンセル</button>
+        <button @click="commitButtonOnClick">設定</button>
+        <button @click="cancelButtonOnClick">キャンセル</button>
       </div>
     </div>
   </window-frame>
@@ -45,47 +49,50 @@
 
 <script lang="ts">
 import CounterSelect from "@/components/parts/select/CounterSelect.vue";
+import CharacterSelect from "@/components/parts/select/CharacterSelect.vue";
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
+import { Watch } from "vue-property-decorator";
 
 @Component({
   components: {
+    WindowFrame,
     CounterSelect,
-    WindowFrame
+    CharacterSelect
   }
 })
 export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
   WindowMixin
 ) {
-  @Action("changeListInfo") private changeListInfo: any;
+  @Action("changeListObj") private changeListObj: any;
   @Action("addCounterRemocon") private addCounterRemocon: any;
   @Action("windowClose") private windowClose: any;
+  @Action("sendBcdiceServer") private sendBcdiceServer: any;
   @Getter("propertyList") private propertyList: any;
   @Getter("counterRemoconEditorKey") private counterRemoconEditorKey: any;
   @Getter("getObj") private getObj: any;
 
   private buttonName: string = "";
+  private target: string = "";
   private counterName: string = "";
   private modifyType: number = 0;
   private modifyValue: string = "";
-  private message: string = "{0}の{1}を{2}した";
+  private sampleValue: number = 0;
+  private sampleDiceValue: string = "";
+  private message: string = "{0}の{1}を{2}した{3}";
   private exampleText: string = "";
 
-  /**
-   * ライフサイクルメソッド
+  /*********************************************************************************************************************
+   * 子画面表示時
    */
-  private created() {
-    this.modifyType = this.COUNTER_REMOCON_TYPE.PLUS;
-  }
-
   private initWindow() {
     const counterRemocon = this.getObj(this.counterRemoconEditorKey);
-    window.console.log(this.counterRemoconEditorKey, counterRemocon);
     if (counterRemocon) {
       this.buttonName = counterRemocon.buttonName;
+      this.target = counterRemocon.target;
       this.counterName = counterRemocon.counterName;
       this.modifyType = counterRemocon.modifyType;
       this.modifyValue = counterRemocon.modifyValue;
@@ -94,6 +101,7 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
     } else {
       const firstProperty = this.propertyList[0];
       this.buttonName = "";
+      this.target = "";
       this.counterName = firstProperty
         ? firstProperty.property
         : "イニシアティブ";
@@ -104,11 +112,13 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
     }
   }
 
-  private commit() {
+  /*********************************************************************************************************************
+   * コミットボタン押下時
+   */
+  private commitButtonOnClick() {
     // 入力チェック
     const messageList: string[] = [];
     if (!this.buttonName) messageList.push("ボタン名は必須です。");
-    if (!this.counterName) messageList.push("カウンター名は必須です。");
     if (messageList.length) {
       alert(messageList.join("\n"));
       return;
@@ -117,10 +127,11 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
     // 情報更新
     const counterRemocon = this.getObj(this.counterRemoconEditorKey);
     if (counterRemocon) {
-      this.changeListInfo({
+      this.changeListObj({
         key: this.counterRemoconEditorKey,
         isNotice: true,
         buttonName: this.buttonName,
+        target: this.target,
         counterName: this.counterName,
         modifyType: this.modifyType,
         modifyValue: this.modifyValue,
@@ -130,6 +141,7 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
     } else {
       this.addCounterRemocon({
         buttonName: this.buttonName,
+        target: this.target,
         counterName: this.counterName,
         modifyType: this.modifyType,
         modifyValue: this.modifyValue,
@@ -138,6 +150,95 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
       });
     }
     this.windowClose("private.display.counterRemoconEditorWindow");
+  }
+
+  /*********************************************************************************************************************
+   * キャンセルボタン押下時
+   */
+  private cancelButtonOnClick() {
+    this.windowClose("private.display.counterRemoconEditorWindow");
+  }
+
+  /*********************************************************************************************************************
+   * 実行例の更新
+   */
+  @Watch("counterName")
+  @Watch("modifyType")
+  @Watch("sampleValue")
+  @Watch("message")
+  onChangeValues() {
+    const useSampleValue: number =
+      this.modifyType === this.COUNTER_REMOCON_TYPE.MINUS
+        ? -this.sampleValue
+        : this.sampleValue;
+
+    const afterValue: number =
+      this.modifyType === this.COUNTER_REMOCON_TYPE.EQUALS
+        ? useSampleValue
+        : 3 + useSampleValue;
+
+    const character: any = this.getObj(this.target);
+    const characterName: string = character ? character.name : "";
+
+    window.console.log(this.target, character);
+
+    this.exampleText = this.message
+      .replace("{0}", characterName || "[選択キャラ]")
+      .replace("{1}", this.counterName || "[選択項目]")
+      .replace(
+        "{2}",
+        `${
+          !(this.modifyType === this.COUNTER_REMOCON_TYPE.EQUALS) &&
+          useSampleValue > 0
+            ? "+"
+            : ""
+        }${useSampleValue}` +
+          (this.sampleDiceValue ? `（${this.sampleDiceValue}）` : "")
+      )
+      .replace(
+        "{3}",
+        `${useSampleValue}` +
+          (this.sampleDiceValue ? `（${this.sampleDiceValue}）` : "")
+      )
+      .replace(
+        "{4}",
+        `（${this.counterName || "[選択項目]"}：${3}->${afterValue}）`
+      );
+  }
+
+  /*********************************************************************************************************************
+   * 変更値の評価
+   */
+  @Watch("modifyValue")
+  onChangeModifyValue() {
+    if (/^-?[0-9]+$/.test(this.modifyValue)) {
+      this.sampleValue = parseInt(this.modifyValue, 10);
+      this.sampleDiceValue = "";
+    } else {
+      this.sendBcdiceServer({
+        system: "DiceBot",
+        command: this.modifyValue
+      }).then((json: any) => {
+        if (json.ok) {
+          // bcdiceとして結果が取れた場合
+          const resultValue = json.result.replace(/^.+＞ /, "");
+          if (/^-?[0-9]+$/.test(resultValue)) {
+            // 数値として応答された
+            const matchResult = json.result.match(/^.+＞ ([^＞]+) ＞ [^＞]+$/);
+            this.sampleValue = parseInt(resultValue, 10);
+            if (this.modifyType === this.COUNTER_REMOCON_TYPE.MINUS) {
+              this.sampleValue *= -1;
+            }
+            this.sampleDiceValue = `${this.modifyValue}=${matchResult[1]}`;
+            window.console.log(resultValue, this.sampleDiceValue);
+            return;
+          }
+        }
+        this.sampleValue = 0;
+        this.sampleDiceValue = "";
+        window.console.log(this.sampleDiceValue);
+      });
+    }
   }
 }
 </script>
@@ -154,10 +255,11 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
 
   > label {
     width: 100%;
-    display: flex;
+    display: inline-flex;
     flex-direction: row;
     align-items: center;
-    height: 2.2em;
+    /*height: 2.2em;*/
+    padding: 0.2em 0;
 
     > span:first-child {
       width: 8em;
@@ -172,6 +274,13 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
     > input,
     > .full {
       flex: 1;
+    }
+
+    > .example {
+      white-space: normal;
+      height: 3em;
+      display: flex;
+      align-items: center;
     }
   }
 

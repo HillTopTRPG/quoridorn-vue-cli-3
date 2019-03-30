@@ -5,7 +5,7 @@
     ref="select"
     @contextmenu.prevent
   >
-    <option :disabled="!defaultSelectable" value="" v-if="defaultLabel">{{defaultLabel}}</option>
+    <option :disabled="!defaultSelectable" value="" v-if="defaultLabel !== undefined">{{defaultLabel}}</option>
     <slot/>
   </select>
 </template>

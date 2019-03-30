@@ -67,7 +67,7 @@ import { Action, Getter } from "vuex-class";
   }
 })
 export default class Character extends PieceMixin {
-  @Action("changeListInfo") private changeListInfo: any;
+  @Action("changeListObj") private changeListObj: any;
   @Getter("imageList") private imageList: any;
   @Getter("propertyList") private propertyList: any;
 
@@ -282,7 +282,7 @@ export default class Character extends PieceMixin {
       }
 
       // 値をすぐに戻す
-      this.changeListInfo({
+      this.changeListObj({
         key: this.objKey,
         isNotice: false,
         viewHighlight: false

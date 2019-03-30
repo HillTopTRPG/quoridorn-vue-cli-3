@@ -85,7 +85,7 @@ import { Watch } from "vue-property-decorator";
 export default class GameTable extends Mixins<AddressCalcMixin>(
   AddressCalcMixin
 ) {
-  @Action("addPieceInfo") private addPieceInfo: any;
+  @Action("addListObj") private addListObj: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("windowClose") private windowClose: any;
@@ -353,7 +353,19 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       top: locateOnTable.y,
       isNotice: true,
       owner: this.playerKey,
-      place: "field"
+      place: "field",
+      isDraggingLeft: false,
+      move: {
+        from: { x: 0, y: 0 },
+        dragging: { x: 0, y: 0 },
+        gridOffset: { x: 0, y: 0 }
+      },
+      angle: {
+        total: 0,
+        dragging: 0,
+        dragStart: 0
+      },
+      isLock: false
     };
 
     // マップマスクの作成
@@ -372,7 +384,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.color = color;
       pieceObj.fontColor = fontColor;
 
-      this.addPieceInfo(pieceObj);
+      this.addListObj(pieceObj);
       return;
     }
 
@@ -457,7 +469,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         });
       }
 
-      this.addPieceInfo(pieceObj);
+      this.addListObj(pieceObj);
       return;
     }
 
@@ -479,7 +491,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.isReverse = isReverse;
       pieceObj.description = description;
 
-      this.addPieceInfo(pieceObj);
+      this.addListObj(pieceObj);
       return;
     }
 

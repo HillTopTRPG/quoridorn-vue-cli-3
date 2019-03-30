@@ -22,8 +22,8 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
-  @Action("changeListInfo") private changeListInfo: any;
-  @Action("deletePieceInfo") private deletePieceInfo: any;
+  @Action("changeListObj") private changeListObj: any;
+  @Action("deleteListObj") private deleteListObj: any;
   @Action("windowClose") private windowClose: any;
   @Getter("mapMaskContextObjKey") private mapMaskContextObjKey: any;
   @Getter("playerKey") private playerKey: any;
@@ -49,7 +49,7 @@ export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
         this.mapMaskContextObjKey
       }).changeMapMaskLock`
     );
-    this.changeListInfo({
+    this.changeListObj({
       key: this.mapMaskContextObjKey,
       isLock: !this.mapMaskIsLock,
       isNotice: true
@@ -62,7 +62,7 @@ export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
         this.mapMaskContextObjKey
       }).deleteMapMask`
     );
-    this.deletePieceInfo({
+    this.deleteListObj({
       propName: "mapMask",
       key: this.mapMaskContextObjKey,
       owner: this.playerKey,

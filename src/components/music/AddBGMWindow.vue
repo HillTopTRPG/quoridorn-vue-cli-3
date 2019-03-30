@@ -92,7 +92,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowClose") private windowClose: any;
   @Action("windowOpen") private windowOpen: any;
-  @Action("addBGM") private addBGM: any;
+  @Action("addListObj") private addListObj: any;
   @Getter("bgmList") private bgmList: any;
   @Getter("playerKey") private playerKey: any;
 
@@ -138,8 +138,11 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     const urlElm: HTMLElement = this.$refs.urlElm;
     setTimeout(() => urlElm.focus(), 0);
   }
+
   commit(): void {
-    const bgmObj = {
+    this.addListObj({
+      propName: "bgm",
+      kind: "bgm",
       url: this.url,
       title: this.title,
       creditUrl: this.creditUrl,
@@ -153,26 +156,30 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       chatLinkage: this.chatLinkage,
       chatLinkageSearch: this.chatLinkageSearch,
       owner: this.playerKey
-    };
-    this.addBGM(bgmObj);
-
+    });
     this.windowClose("private.display.addBGMWindow");
   }
+
   cancel(): void {
     this.windowClose("private.display.addBGMWindow");
   }
+
   getCredit(): void {
     this.creditUrl = this.url.replace(/^(https?:\/\/[^/]+).+$/, "$1");
   }
+
   preview() {
     alert("未実装の機能です");
   }
+
   change(this: any, param: string): void {
     this[param] = !this[param];
   }
+
   setIsMute(isMute: boolean): void {
     this.isMute = isMute;
   }
+
   setVolume(volume: string): void {
     this.volume = Math.floor(parseFloat(volume) * 100) / 100;
   }

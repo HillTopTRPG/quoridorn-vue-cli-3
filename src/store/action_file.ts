@@ -367,14 +367,8 @@ export default {
 
               delete addObj.key;
 
-              // BGMのロード
-              if (type === "bgm") {
-                dispatch("addBGM", addObj);
-                return;
-              }
-
-              // マップオブジェクトのロード
-              dispatch("addPieceInfo", addObj);
+              // リストに追加
+              dispatch("addListObj", addObj);
             });
 
           // TODO delete test code.

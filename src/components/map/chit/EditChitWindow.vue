@@ -55,10 +55,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["windowOpen", "windowClose", "changeListInfo"]),
+    ...mapActions(["windowOpen", "windowClose", "changeListObj"]),
     commit() {
       window.console.log(this.key);
-      this.changeListInfo({
+      this.changeListObj({
         key: this.key,
         currentImageTag: this.currentImageTag,
         imageKey: this.imageKey,

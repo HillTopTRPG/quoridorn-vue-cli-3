@@ -29,7 +29,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
-  @Action("changeListInfo") private changeListInfo: any;
+  @Action("changeListObj") private changeListObj: any;
   @Action("windowClose") private windowClose: any;
   @Getter("getObj") private getObj: any;
   @Getter("characterContextObjKey") private characterContextObjKey: any;
@@ -59,7 +59,7 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
     this.moveTo("graveyard");
   }
   private moveTo(place: string): void {
-    this.changeListInfo({
+    this.changeListObj({
       key: this.characterContextObjKey,
       place: place,
       isNotice: true

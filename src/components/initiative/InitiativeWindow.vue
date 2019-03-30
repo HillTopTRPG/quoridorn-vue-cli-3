@@ -135,7 +135,9 @@
                     type="number"
                     :value="getPropValue(character.key, index)"
                     :max="getMax(character.key, index + 1)"
-                    @change="event => setMin(character.key, index, parseInt(event.target.value, 10))"
+                    @input="event => setMin(character.key, index, parseInt(event.target.value, 10))"
+                    @change="event => arrangeMin(character.key, index, parseInt(event.target.value, 10))"
+                    :class="{ isError: getMax(character.key, index + 1) < getPropValue(character.key, index) }"
                   >
                 </label>
                 <label v-if="property.type === 'number'">
@@ -144,7 +146,8 @@
                     :min="getMin(character.key, index)"
                     :value="getPropValue(character.key, index)"
                     :max="getMax(character.key, index)"
-                    @change="event => setPropValue(character.key, index, parseInt(event.target.value, 10))"
+                    @input="event => setPropValue(character.key, index, parseInt(event.target.value, 10))"
+                    :class="{ isError: getPropValue(character.key, index) < getMin(character.key, index) || getMax(character.key, index) < getPropValue(character.key, index) }"
                   >
                 </label>
                 <label v-if="property.type === 'max'">
@@ -152,7 +155,9 @@
                     type="number"
                     :min="getMin(character.key, index - 1)"
                     :value="getPropValue(character.key, index)"
-                    @change="event => setMax(character.key, index, parseInt(event.target.value, 10))"
+                    @input="event => setMax(character.key, index, parseInt(event.target.value, 10))"
+                    @change="event => arrangeMax(character.key, index, parseInt(event.target.value, 10))"
+                    :class="{ isError: getPropValue(character.key, index) < getMin(character.key, index - 1) }"
                   >
                 </label>
                 <color-check-box
@@ -231,7 +236,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") private setProperty: any;
   @Action("windowOpen") private windowOpen: any;
-  @Action("changeListInfo") private changeListInfo: any;
+  @Action("changeListObj") private changeListObj: any;
   @Mutation("updateActorKey") private updateActorKey: any;
   @Getter("getMapObjectList") private getMapObjectList: any;
   @Getter("getObj") private getObj: any;
@@ -250,18 +255,18 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     return `ラウンド：${this.round}／イニシアティブ：${initiative}`;
   }
 
-  openSettingWindow() {
+  private openSettingWindow() {
     this.windowOpen("private.display.initiativeSettingWindow");
   }
 
-  selectLine(selectLineKey: string | null) {
+  private selectLine(selectLineKey: string | null) {
     this.setProperty({
       property: "private.display.initiativeWindow.selectLineKey",
       value: selectLineKey,
       logOff: true
     });
     if (selectLineKey) {
-      this.changeListInfo({
+      this.changeListObj({
         key: selectLineKey,
         isNotice: false,
         viewHighlight: true
@@ -269,7 +274,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
   }
 
-  moveDev(event: any) {
+  private moveDev(event: any) {
     if (this.movingIndex < 0) return;
     const diff = event.clientX - this.startX;
     const afterLeftWidth = this.startLeftWidth + diff;
@@ -291,7 +296,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     );
   }
 
-  doubleClick() {
+  private doubleClick() {
     window.console.log("doubleClick", this.movedIndex);
 
     const TEXT_PADDING = 8;
@@ -369,7 +374,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.moveDevEnd();
   }
 
-  moveDevEnd() {
+  private moveDevEnd() {
     this.setProperty({
       property: "private.display.initiativeWindow",
       value: {
@@ -383,40 +388,44 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
-  get characterList() {
+  private get characterList() {
     return this.getMapObjectList({ kind: "character" });
   }
 
   /* Start 列幅可変テーブルのプロパティ */
-  get selectLineKey(this: any) {
+  private get selectLineKey(this: any) {
     return this.$store.state.private.display.initiativeWindow.selectLineKey;
   }
 
-  get widthList(this: any) {
+  private get widthList(this: any) {
     return this.$store.state.private.display.initiativeWindow.widthList;
   }
 
-  get movingIndex(this: any) {
+  private get movingIndex(this: any) {
     return this.$store.state.private.display.initiativeWindow.movingIndex;
   }
-  get movedIndex(this: any) {
+
+  private get movedIndex(this: any) {
     return this.$store.state.private.display.initiativeWindow.movedIndex;
   }
-  get startX(this: any) {
+
+  private get startX(this: any) {
     return this.$store.state.private.display.initiativeWindow.startX;
   }
-  get startLeftWidth(this: any) {
+
+  private get startLeftWidth(this: any) {
     return this.$store.state.private.display.initiativeWindow.startLeftWidth;
   }
-  get baseWindowWidth(this: any) {
+
+  private get baseWindowWidth(this: any) {
     return this.$store.state.private.display.initiativeWindow.baseWindowWidth;
   }
 
-  get startRightWidth(this: any) {
+  private get startRightWidth(this: any) {
     return this.$store.state.private.display.initiativeWindow.startRightWidth;
   }
 
-  get colStyle() {
+  private get colStyle() {
     return (index: number) => ({
       width: `${this.widthList[index]}px`
       // display: "inline-block"
@@ -428,7 +437,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
    * 指定された文字列の表示幅を取得する
    * @param text
    */
-  getWidth(text: string): number {
+  private getWidth(text: string): number {
     const widthScale: HTMLSpanElement = this.$refs
       .widthScale! as HTMLSpanElement;
     widthScale.innerText = text;
@@ -438,7 +447,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   @Watch("propertyList", { deep: true })
-  onChangeDataLabels(propertyList: any[]) {
+  private onChangeDataLabels(propertyList: any[]) {
     this.characterList.forEach((character: any) => {
       propertyList.forEach((prop: any, index: number) => {
         let newValue: any = null;
@@ -465,7 +474,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   @Watch("windowWidth", { immediate: true })
-  onChangeWindowWidth(windowWidth: number, oldWidth: number) {
+  private onChangeWindowWidth(windowWidth: number, oldWidth: number) {
     const sumWidth = sum(this.widthList) + this.widthList.length - 1;
     if (oldWidth === 0 && !this.windowPadding) {
       this.windowPadding = windowWidth - sumWidth;
@@ -485,14 +494,14 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     );
   }
 
-  onChangeWindowStyle(windowStyle: any) {
-    const widthMatchResult = windowStyle.width.match(/^[0-9]+/);
+  private onChangeWindowStyle(windowStyle: any) {
+    const widthMatchResult: string[] = windowStyle.width.match(/^[0-9]+/);
     if (widthMatchResult) {
       this.windowWidth = parseInt(widthMatchResult[0], 10);
     }
   }
 
-  arrangeWindowSize(isWide: boolean) {
+  private arrangeWindowSize(isWide: boolean) {
     const windowFrame: WindowFrame = this.$refs.window as WindowFrame;
     const width = this.windowWidth;
     if (!isWide) {
@@ -512,8 +521,8 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
   }
 
-  setInitiative(objKey: string, value: number) {
-    this.changeListInfo({
+  private setInitiative(objKey: string, value: number) {
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: {
@@ -522,8 +531,8 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
-  setSubInitiative(objKey: string, value: number) {
-    this.changeListInfo({
+  private setSubInitiative(objKey: string, value: number) {
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: {
@@ -532,45 +541,67 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
-  setMin(this: any, objKey: string, index: number, value: number) {
+  private setMin(objKey: string, index: number, value: number) {
     window.console.log("setMin", index, value);
     const propertyObj: any = {};
     propertyObj[this.propertyList[index].refStr] = value;
-    if (this.getPropValue(objKey, index + 1) < value)
-      propertyObj[this.propertyList[index].refStr] = value;
-    this.changeListInfo({
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: propertyObj
     });
   }
 
-  setMax(this: any, objKey: string, index: number, value: number) {
+  private arrangeMin(this: any, objKey: string, index: number, value: number) {
+    window.console.log("arrangeMin", index, value);
+    if (this.getPropValue(objKey, index + 1) < value) {
+      const propertyObj: any = {};
+      propertyObj[this.propertyList[index + 1].refStr] = value;
+      this.changeListObj({
+        key: objKey,
+        isNotice: true,
+        property: propertyObj
+      });
+    }
+  }
+
+  private setMax(objKey: string, index: number, value: number) {
     window.console.log("setMax", index, value);
     const propertyObj: any = {};
     propertyObj[this.propertyList[index].refStr] = value;
-    if (value < this.getPropValue(objKey, index - 1))
-      propertyObj[this.propertyList[index].refStr] = value;
-    this.changeListInfo({
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: propertyObj
     });
   }
 
-  setPropValue(objKey: string, index: number, value: any) {
+  private arrangeMax(this: any, objKey: string, index: number, value: number) {
+    window.console.log("arrangeMax", index, value);
+    if (value < this.getPropValue(objKey, index - 1)) {
+      const propertyObj: any = {};
+      propertyObj[this.propertyList[index - 1].refStr] = value;
+      this.changeListObj({
+        key: objKey,
+        isNotice: true,
+        property: propertyObj
+      });
+    }
+  }
+
+  private setPropValue(objKey: string, index: number, value: any) {
     const prop: any = this.propertyList[index];
 
     const propertyObj: any = {};
     propertyObj[prop.property] = value;
-    this.changeListInfo({
+    this.changeListObj({
       key: objKey,
       isNotice: true,
       property: propertyObj
     });
   }
 
-  getMin(objKey: string, index: number): number | null {
+  private getMin(objKey: string, index: number): number | null {
     const prevProp: any = this.propertyList[index - 1];
     if (!prevProp || prevProp.type !== "min") {
       return this.propertyList[index].min || 0;
@@ -580,7 +611,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
   }
 
-  getMax(objKey: string, index: number): number | null {
+  private getMax(objKey: string, index: number): number | null {
     const nextProp: any = this.propertyList[index + 1];
     if (!nextProp || nextProp.type !== "max") {
       return this.propertyList[index].max || 99;
@@ -590,19 +621,19 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
   }
 
-  getInitiative(objKey: string) {
+  private getInitiative(objKey: string) {
     return this.getObj(objKey).property.initiative;
   }
 
-  getSubInitiative(objKey: string) {
+  private getSubInitiative(objKey: string) {
     return this.getObj(objKey).property.subInitiative;
   }
 
-  getPropValue(objKey: string, index: number): number | boolean | null {
+  private getPropValue(objKey: string, index: number): number | boolean | null {
     return this.getObj(objKey).property[this.propertyList[index].refStr];
   }
 
-  get sortCharacterList(): any[] {
+  private get sortCharacterList(): any[] {
     return this.characterList
       .concat()
       .filter((character: any) => character.place === "field")
@@ -618,14 +649,14 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
       });
   }
 
-  get backDisabled(): boolean {
+  private get backDisabled(): boolean {
     const index: number = this.sortCharacterList.findIndex(
       (character: any) => character.key === this.roundPlayerKey
     );
     return index === 0 && this.round === 1;
   }
 
-  roundBack() {
+  private roundBack() {
     if (!this.roundPlayerKey) return;
     const index: number = this.sortCharacterList.findIndex(
       (character: any) => character.key === this.roundPlayerKey
@@ -639,7 +670,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     );
   }
 
-  roundNext() {
+  private roundNext() {
     if (!this.roundPlayerKey) return;
     const index: number = this.sortCharacterList.findIndex(
       (character: any) => character.key === this.roundPlayerKey
@@ -651,12 +682,12 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     );
   }
 
-  battleStart() {
+  private battleStart() {
     const character = this.sortCharacterList[0];
     this.updateInitiative(character ? 1 : 0, character ? character.key : null);
   }
 
-  battleEnd() {
+  private battleEnd() {
     this.updateInitiative(0, null);
   }
 
@@ -712,6 +743,10 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
     flex-direction: row;
     justify-content: center;
   }
+}
+
+.isError {
+  background-color: orange !important;
 }
 
 button {

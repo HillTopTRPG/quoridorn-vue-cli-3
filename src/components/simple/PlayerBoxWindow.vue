@@ -106,7 +106,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class PlayerBoxWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") private setProperty: any;
   @Action("changeChatFontColor") private changeChatFontColor: any;
-  @Action("changeListInfo") private changeListInfo: any;
+  @Action("changeListObj") private changeListObj: any;
   @Getter("getObj") private getObj: any;
   @Getter("playerKey") private playerKey: any;
   @Getter("getMapObjectList") private getMapObjectList: any;

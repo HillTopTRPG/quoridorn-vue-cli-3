@@ -243,7 +243,10 @@ export function toInitiativeObjList(
       } else {
         obj.min = fs[0];
       }
+
       obj.property = fs[1];
+      obj.refStr = fs[1];
+
       if (fs[2] !== "?") {
         obj.max = fs[2];
       }
@@ -283,11 +286,16 @@ export function toInitiativeObjList(
         } else {
           obj.min = fs[0];
         }
+
         obj.property = fs[1];
+        obj.refStr = fs[1];
+
         resultList.push(obj);
       }
       if (check1 > 0) {
         obj.property = fs[0];
+        obj.refStr = fs[0];
+
         if (fs[1] !== "?") obj.max = fs[1];
         resultList.push(obj);
         if (fs[1] === "?") {
@@ -308,7 +316,10 @@ export function toInitiativeObjList(
       const checkMatchResult = fs[0].match(/^[*＊](.+)$/);
       if (checkMatchResult) {
         obj.type = "checkbox";
+
         obj.property = checkMatchResult[1];
+        obj.refStr = checkMatchResult[1];
+
         // TODO 色の設定
         const color: string = colorList[colorPickIndex++];
         if (colorPickIndex >= colorList.length) colorPickIndex = 0;

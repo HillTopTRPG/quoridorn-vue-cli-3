@@ -52,9 +52,9 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["windowClose", "changeListInfo"]),
+    ...mapActions(["windowClose", "changeListObj"]),
     commitEdit() {
-      this.changeListInfo({
+      this.changeListObj({
         key: this.key,
         name: this.name,
         columns: this.width,

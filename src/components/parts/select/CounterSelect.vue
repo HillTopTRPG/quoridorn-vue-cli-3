@@ -1,5 +1,5 @@
 <template>
-  <select-base defaultLabel="カウンター名" v-model="localValue">
+  <select-base defaultLabel="" :defaultSelectable="true" v-model="localValue">
     <option v-for="(property, index) in usePropertyList" :key="index" :value="property.property">{{property.property}}</option>
   </select-base>
 </template>
@@ -19,7 +19,6 @@ export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
 
   private get usePropertyList(): any[] {
     const resultList = this.propertyList.filter((property: any) => {
-      window.console.log(property);
       let result = true;
       if (property.type === "checkbox") result = false;
       return result;

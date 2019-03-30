@@ -25,32 +25,35 @@ export default class CounterRemoconContext extends Mixins<WindowMixin>(
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("windowClose") private windowClose: any;
+  @Action("deleteListObj") private deleteListObj: any;
+  @Action("copyListObj") private copyListObj: any;
   @Getter("getObj") private getObj: any;
   @Getter("remoconContextKey") private remoconContextKey: any;
 
   private changeOnClick(): void {
-    window.console.log("changeOnClick", this.remoconContextKey);
     this.setProperty({
       property: `private.display.counterRemoconEditorWindow.objKey`,
       value: this.remoconContextKey,
       isNotice: false,
-      logOff: false
+      logOff: true
     });
     this.windowClose("private.display.counterRemoconContext");
     this.windowOpen("private.display.counterRemoconEditorWindow");
   }
 
   private deleteOnClick(): void {
-    // TODO
-    window.console.log("deleteOnClick");
-    alert("未実装です");
+    this.deleteListObj({
+      propName: "counterRemocon",
+      key: this.remoconContextKey,
+      isNotice: true
+    });
     this.windowClose("private.display.counterRemoconContext");
   }
 
   private copyOnClick(): void {
-    // TODO
-    window.console.log("copyOnClick");
-    alert("未実装です");
+    this.copyListObj({
+      key: this.remoconContextKey
+    });
     this.windowClose("private.display.counterRemoconContext");
   }
 
@@ -69,7 +72,3 @@ export default class CounterRemoconContext extends Mixins<WindowMixin>(
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

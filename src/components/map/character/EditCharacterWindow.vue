@@ -71,7 +71,7 @@ export default {
       "setProperty",
       "windowOpen",
       "windowClose",
-      "changeListInfo"
+      "changeListObj"
     ]),
     addSwitch() {
       let nextKey = -1;
@@ -158,7 +158,7 @@ export default {
         alert(`名前を入力してください。`);
         return;
       }
-      this.changeListInfo({
+      this.changeListObj({
         key: this.key,
         isNotice: true,
         name: this.name,
