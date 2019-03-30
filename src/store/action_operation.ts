@@ -683,7 +683,7 @@ export default {
       }
       const obj = rootGetters.getObj(payload.key);
       const list = rootGetters.groupTargetTab.list;
-      list.splice(list.indexOf(obj),1);
+      list.splice(list.indexOf(obj), 1);
     },
 
     /** ========================================================================
