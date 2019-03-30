@@ -637,6 +637,7 @@ export default {
       // TODO 手札に加える処理
       rootState.private.self.cards.push(card);
     },
+
     /** ========================================================================
      * グループチャットの追加
      */
@@ -659,6 +660,32 @@ export default {
         group: [payload.ownerKey]
       });
     },
+
+    /** ========================================================================
+     * グループチャットの削除
+     */
+    deleteGroupTargetTab: (
+      { dispatch }: { dispatch: Function },
+      payload: any
+    ) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doDeleteGroupTargetTab"
+      });
+    },
+    doDeleteGroupTargetTab: (
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      if (payload.key === "groupTargetTab-0") {
+        alert("これは削除できません。");
+        return;
+      }
+      const obj = rootGetters.getObj(payload.key);
+      const list = rootGetters.groupTargetTab.list;
+      list.splice(list.indexOf(obj),1);
+    },
+
     /** ========================================================================
      * カウンターリモコンの追加
      */
@@ -683,6 +710,7 @@ export default {
         exampleText: payload.exampleText
       });
     },
+
     /** ========================================================================
      * チャットタブの構成を変更する
      */

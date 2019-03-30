@@ -2,8 +2,8 @@
   <window-frame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`">
     <div class="contents" @contextmenu.prevent>
       <div>
-        <button type="button" @click="add">追加</button>
-        <button type="button" @click="add">削除</button>
+        <button type="button" @click="addButtonOnClick">追加</button>
+        <button type="button" @click="delButtonOnClick">削除</button>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -93,14 +93,23 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("addGroupTargetTab") private addGroupTargetTab: any;
+  @Action("deleteGroupTargetTab") private deleteGroupTargetTab: any;
   @Getter("getPeerActors") private getPeerActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("playerKey") private playerKey: any;
   @Getter("chatActorKey") private chatActorKey: any;
 
-  private add() {
+  private addButtonOnClick() {
     this.addGroupTargetTab({ ownerKey: this.getChatFromKey() });
+  }
+
+  private delButtonOnClick() {
+    if (this.selectLineKey) {
+      this.deleteGroupTargetTab({ key: this.selectLineKey });
+    } else {
+      alert("削除対象を選択してください。");
+    }
   }
 
   private edit(key: string) {
