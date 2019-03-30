@@ -57,6 +57,7 @@
               <dice-window/><!-- ダイス画面 -->
               <player-box-window/><!-- プレイヤーボックス画面 -->
               <initiative-window/><!-- イニシアティブ画面 -->
+              <counter-remocon-window-spec/><!-- カウンターリモコン画面 -->
               <change-font-size-window/><!-- フォントサイズ調整画面 -->
               <reset-all-window/><!-- ウィンドウ配置初期化機能 -->
               <add-character-window/><!-- キャラクター追加画面 -->
@@ -141,9 +142,11 @@ import DevSupport from "./devSupport/DevSupport.vue";
 
 import { Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
+import CounterRemoconWindowSpec from "@/components/welcome/spec/CounterRemoconWindowSpec.vue";
 
 @Component({
   components: {
+    CounterRemoconWindowSpec,
     WindowFrame,
     Logo,
     Login,

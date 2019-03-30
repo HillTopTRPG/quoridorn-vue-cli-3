@@ -41,9 +41,8 @@ export default class SpecFrame extends Vue {
         "#" + this.refProp
       );
       if (targetElm) {
-        const offsetTop: number = targetElm.offsetTop;
         setTimeout(() => {
-          contentsElm.scrollTop = offsetTop;
+          contentsElm.scrollTop = targetElm.offsetTop;
         }, 0);
       }
     }
