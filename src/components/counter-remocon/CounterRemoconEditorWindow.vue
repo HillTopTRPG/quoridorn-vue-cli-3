@@ -82,7 +82,7 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
   private modifyValue: string = "";
   private sampleValue: number = 0;
   private sampleDiceValue: string = "";
-  private message: string = "{0}の{1}を{2}した{3}";
+  private message: string = "{0}の{1}を{2}した{4}";
   private exampleText: string = "";
 
   /*********************************************************************************************************************
@@ -107,7 +107,7 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
         : "イニシアティブ";
       this.modifyType = this.COUNTER_REMOCON_TYPE.PLUS;
       this.modifyValue = "";
-      this.message = "{0}の{1}を{2}した";
+      this.message = "{0}の{1}を{2}した{4}";
       this.exampleText = `の${this.counterName}をした`;
     }
   }
@@ -180,8 +180,6 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
     const character: any = this.getObj(this.target);
     const characterName: string = character ? character.name : "";
 
-    window.console.log(this.target, character);
-
     this.exampleText = this.message
       .replace("{0}", characterName || "[選択キャラ]")
       .replace("{1}", this.counterName || "[選択項目]")
@@ -226,17 +224,12 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
             // 数値として応答された
             const matchResult = json.result.match(/^.+＞ ([^＞]+) ＞ [^＞]+$/);
             this.sampleValue = parseInt(resultValue, 10);
-            if (this.modifyType === this.COUNTER_REMOCON_TYPE.MINUS) {
-              this.sampleValue *= -1;
-            }
             this.sampleDiceValue = `${this.modifyValue}=${matchResult[1]}`;
-            window.console.log(resultValue, this.sampleDiceValue);
             return;
           }
         }
         this.sampleValue = 0;
         this.sampleDiceValue = "";
-        window.console.log(this.sampleDiceValue);
       });
     }
   }

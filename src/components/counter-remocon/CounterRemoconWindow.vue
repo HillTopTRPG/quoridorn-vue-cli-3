@@ -225,9 +225,9 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
             .replace(
               "{2}",
               `${
-                !(remoconObj.modifyType === this.COUNTER_REMOCON_TYPE.EQUALS)
-                  ? plusMarkProc(useCommitValue)
-                  : useCommitValue
+                remoconObj.modifyType === this.COUNTER_REMOCON_TYPE.EQUALS
+                  ? useCommitValue
+                  : plusMarkProc(useCommitValue)
               }` + (command ? `（${command}）` : "")
             )
             .replace(
@@ -252,11 +252,11 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
 
       const beforeValue: number = parseInt(character.property[prop], 10);
       if (/^-?[0-9]+$/.test(value)) {
-        // カウンターリモコンに指定されていた変更値が数値だった場合
+        // カウンターリモコンに指定されていた変更値が数値だった場合、または値を選択された場合
         // 即更新 -------------------------------------------------------------------------------------------------------
         commit(beforeValue, parseInt(value, 10));
       } else {
-        // カウンターリモコンに指定されていた変更値が数値出なかった場合
+        // カウンターリモコンに指定されていた変更値が数値ではなかった場合
         // BCDice-apiで評価してもらい、その応答の値を利用する
         this.sendBcdiceServer({
           system: "DiceBot",
@@ -332,7 +332,13 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
             },
             onClick: () => {
               // カウンター更新処理
-              doChange(counterName, i, character);
+              doChange(
+                counterName,
+                remoconObj.modifyType === this.COUNTER_REMOCON_TYPE.MINUS
+                  ? -i
+                  : i,
+                character
+              );
             }
           });
         }
