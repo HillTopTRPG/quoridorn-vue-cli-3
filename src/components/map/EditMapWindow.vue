@@ -144,6 +144,7 @@ export default {
       });
     },
     commit() {
+      const peerId = this.peerId(this.isWait);
       if (this.storeMapObj.isEditing === peerId) {
         this.setProperty({
           property: "public.map",
