@@ -1,0 +1,25 @@
+@mixin flex-box(
+  $direction: row,
+  $horizontal: flex-start,
+  $vertical: flex-start,
+  $wrap: nowrap
+) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: if($direction == row, $horizontal, $vertical);
+  align-items: if($direction == row, $vertical, $horizontal);
+  flex-wrap: $wrap;
+}
+
+@mixin inline-flex-box(
+  $direction: row,
+  $horizontal: flex-start,
+  $vertical: flex-start,
+  $wrap: nowrap
+) {
+  display: inline-flex;
+  flex-direction: $direction;
+  justify-content: if($direction == row, $horizontal, $vertical);
+  align-items: if($direction == row, $vertical, $horizontal);
+  flex-wrap: $wrap;
+}

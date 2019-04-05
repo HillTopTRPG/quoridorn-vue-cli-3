@@ -258,28 +258,31 @@ export default class BGMCoreComponent extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
+@import "../../common.scss";
+
 .bgmCoreComponent {
-  display: flex;
-  flex-direction: row;
+  @include flex-box();
   min-height: 54px;
   margin-top: 4px;
   padding-top: 4px;
   border-top: 2px solid black;
 }
+
 .thumbnail {
   height: 54px;
   width: 72px;
   cursor: pointer;
+
+  > * {
+    width: 100%;
+    height: 100%;
+  }
 }
-.thumbnail > * {
-  width: 100%;
-  height: 100%;
-}
+
 .bgmComponent {
+  @include flex-box(column);
   flex: 1;
-  display: flex;
-  flex-direction: column;
   min-height: 54px;
 }
 
@@ -287,36 +290,44 @@ export default class BGMCoreComponent extends Vue {
   color: black;
   font-size: 10px;
   padding: 0;
-}
-.icon i {
-  box-sizing: border-box;
-  border: 2px solid black;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-.icon[disabled] i {
-  background-color: lightgray;
-}
-.icon:not([disabled]) i:hover {
-  border-color: #610b21;
-  color: #610b21;
-}
-.icon:not([disabled]) i:active {
-  border-color: #b40431;
-  color: #b40431;
-}
-.icon.play i {
-  border-radius: 50% 50% 0% 0%;
-  cursor: pointer;
-}
-.icon.play:not(.isPlay) i {
-  border-color: #8a084b;
-  background-color: #8a084b;
-  color: white;
+
+  i {
+    box-sizing: border-box;
+    border: 2px solid black;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    @include inline-flex-box(row, center, center);
+  }
+
+  &[disabled] i {
+    background-color: lightgray;
+  }
+
+  &:not([disabled]) {
+    i:hover {
+      border-color: #610b21;
+      color: #610b21;
+    }
+
+    i:active {
+      border-color: #b40431;
+      color: #b40431;
+    }
+  }
+
+  &.play {
+    i {
+      border-radius: 50% 50% 0 0;
+      cursor: pointer;
+    }
+
+    &:not(.isPlay) i {
+      border-color: #8a084b;
+      background-color: #8a084b;
+      color: white;
+    }
+  }
 }
 
 .bgmComponent > div {
@@ -327,7 +338,7 @@ export default class BGMCoreComponent extends Vue {
   height: 1.5em;
 }
 .bgmComponent > div:not(.attrArea) {
-  display: flex;
+  @include flex-box();
 }
 
 .bgmComponent > div > span {
@@ -391,10 +402,6 @@ export default class BGMCoreComponent extends Vue {
   transform: scale(0.7);
   color: white;
   pointer-events: none;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
 }
 
 input[type="range"] {

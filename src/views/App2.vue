@@ -6,7 +6,6 @@
       <div class="unUse"><div id="YoutubePlayer002"></div></div>
       <div class="unUse"><div id="YoutubePlayer003"></div></div>
       <div class="unUse"><div id="YoutubePlayer004"></div></div>
-      <div class="unUse"><div id="YoutubePlayer005"></div></div>
     </div>
     <modal-screen/>
     <loading-screen/>
@@ -54,6 +53,7 @@
     <counter-remocon-window/>
     <counter-remocon-editor-window/>
     <counter-remocon-context/>
+    <image-view-window/>
   </div>
 </template>
 
@@ -109,6 +109,7 @@ import CounterRemoconContext from "@/components/counter-remocon/CounterRemoconCo
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
+import ImageViewWindow from "@/components/public-memo/ImageViewWindow.vue";
 
 @Component({
   components: {
@@ -158,7 +159,8 @@ import { Action, Getter, Mutation } from "vuex-class";
     InitiativeSettingWindow,
     CounterRemoconWindow,
     CounterRemoconEditorWindow,
-    CounterRemoconContext
+    CounterRemoconContext,
+    ImageViewWindow
   }
 })
 export default class App2 extends Vue {

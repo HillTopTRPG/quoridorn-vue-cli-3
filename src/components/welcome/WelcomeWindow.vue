@@ -233,10 +233,6 @@ export default class WelcomeWindow extends Mixins<WindowMixin>(WindowMixin) {
   padding: 0.8em;
   font-size: 16px;
   pointer-events: none;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
 
   div {
     display: inline-flex;
@@ -280,10 +276,6 @@ input[type="radio"] {
     border-top-right-radius: 0.5em;
     -webkit-border-top-right-radius: 0.5em;
     -moz-border-top-right-radius: 0.5em;
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
   }
 }
 /*.tab_area label:hover { opacity:0.5; }*/

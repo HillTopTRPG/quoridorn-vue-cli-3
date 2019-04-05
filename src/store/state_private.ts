@@ -80,7 +80,6 @@ export default {
         key: -1
       },
       devLogWindow: { command: null, isDisplay: false, zIndex: 1 },
-      publicMemoWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
       secretDiceWindow: { command: null, isDisplay: false, zIndex: 1 },
       addCharacterSettingWindow: { command: null, isDisplay: false, zIndex: 1 },
       addCharacterWindow: {
@@ -269,6 +268,19 @@ export default {
         x: 0,
         y: 0,
         remoconKey: null
+      },
+      publicMemoWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: "publicMemo-0",
+        isEditMode: true
+      },
+      imageViewWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: ""
       }
     }
   } /* end of state */,

@@ -120,13 +120,14 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+@import "../common.scss";
+
 .contents {
+  @include flex-box(column);
   position: absolute;
   height: 100%;
   width: 100%;
   font-size: 12px;
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
 }
 

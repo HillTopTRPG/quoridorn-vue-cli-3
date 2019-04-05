@@ -426,15 +426,7 @@ fieldset {
 
   > div {
     display: flex;
-    display: -moz-flex;
-    display: -o-flex;
-    display: -webkit-flex;
-    display: -ms-flex;
     flex-direction: row;
-    -moz-flex-direction: row;
-    -o-flex-direction: row;
-    -webkit-flex-direction: row;
-    -ms-flex-direction: row;
     align-items: center;
     justify-content: flex-start;
     flex-wrap: wrap;
@@ -447,15 +439,7 @@ fieldset {
       margin-left: 10px;
 
       > label {
-        user-select: none;
-        -ms-user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
         display: flex;
-        display: -moz-flex;
-        display: -o-flex;
-        display: -webkit-flex;
-        display: -ms-flex;
         align-items: center;
         justify-content: center;
       }

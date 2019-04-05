@@ -51,10 +51,6 @@ export default class VersionWindow extends Mixins<WindowMixin>(WindowMixin) {
   padding: 1.3em;
   font-size: 16px;
   pointer-events: none;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
 }
 .footer {
   display: flex;

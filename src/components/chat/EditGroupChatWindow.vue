@@ -421,14 +421,6 @@ td {
 }
 
 th,
-td:not(.selectable) {
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
-
-th,
 td:not(.divider) {
   overflow: hidden;
 }

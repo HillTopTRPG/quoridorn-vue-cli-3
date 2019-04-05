@@ -6,7 +6,7 @@
       <span class="deco-new" v-if="lastVersion === version">[NEW]</span>
       <span class="deco-fixed" v-if="!isSpecFixed">[仕様未確定]</span>
     </label>
-    <div class="accordion">
+    <div class="accordion" v-if="isOpened">
       <slot></slot>
     </div>
   </div>
@@ -108,10 +108,6 @@ export default class SpecFrame extends Vue {
     color: rgb(53, 108, 165);
     font-weight: bold;
     cursor: pointer;
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
   }
 
   &:nth-child(odd) {

@@ -8,10 +8,6 @@ fieldset.root > * {
 }
 fieldset.root > legend {
     padding: 0.5em 1em 0;
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
 }
 fieldset.root > legend,
 fieldset.root fieldset {

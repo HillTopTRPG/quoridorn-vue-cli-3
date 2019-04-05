@@ -610,6 +610,8 @@ export default class WindowFrame extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+@import "./common.scss";
+
 .window {
   position: fixed;
   display: block;
@@ -625,9 +627,6 @@ export default class WindowFrame extends Vue {
 .window img,
 .window button {
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
 }
 
 ._contents {
@@ -640,6 +639,7 @@ export default class WindowFrame extends Vue {
 }
 
 .title {
+  @include flex-box(row, center, center);
   position: absolute;
   top: 0;
   left: 0;
@@ -651,12 +651,6 @@ export default class WindowFrame extends Vue {
   font-size: 12px;
   font-weight: bold;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
   &.fix {
     background: linear-gradient(
@@ -691,9 +685,6 @@ export default class WindowFrame extends Vue {
   transform: scale(0.8);
   cursor: pointer;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
 
   &:hover {
     border-color: black;
@@ -783,9 +774,7 @@ export default class WindowFrame extends Vue {
 }
 
 .fontSizeSlider {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-box(row, center, center);
   font-size: 10px;
 
   input[type="range"] {

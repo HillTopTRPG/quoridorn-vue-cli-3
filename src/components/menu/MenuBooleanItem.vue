@@ -36,9 +36,6 @@ export default {
 .item {
   position: relative;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
 
   > * {
     display: inline;

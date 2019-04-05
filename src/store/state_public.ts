@@ -164,12 +164,100 @@ export default {
 
     /** 共有メモ */
     publicMemo: {
-      /** TODO 内容は未実装につき未定 */
-      editTab: "",
-      contents: [
+      maxKey: 0,
+      list: [
         {
-          key: 0,
-          texts: [{ tab: "メイン", text: "これは共有メモでーす！" }]
+          key: "publicMemo-0",
+          targetList: [],
+          index: 1,
+          tabList: [
+            {
+              tabName: "memo1",
+              index: 1,
+              front: {
+                targetList: [],
+                contentsList: [
+                  {
+                    kind: "text",
+                    text: "これはテキスト！！！！！"
+                  },
+                  {
+                    kind: "images",
+                    imageKeyList: [
+                      { key: "image-0", tag: "(全て)" },
+                      { key: "image-1", tag: "(全て)" },
+                      { key: "image-2", tag: "(全て)" },
+                      { key: "image-3", tag: "(全て)" },
+                      { key: "image-4", tag: "(全て)" },
+                      { key: "image-5", tag: "(全て)" },
+                      { key: "image-6", tag: "(全て)" }
+                    ]
+                  },
+                  {
+                    kind: "title",
+                    text: "秘密"
+                  },
+                  {
+                    kind: "sub-title",
+                    text: "副題"
+                  },
+                  {
+                    kind: "text",
+                    text: "だあああああああ！"
+                  },
+                  {
+                    kind: "separator"
+                  },
+                  {
+                    kind: "text",
+                    text: "表面はここまで！"
+                  }
+                ]
+              },
+              back: {
+                targetList: [],
+                contentsList: [
+                  {
+                    kind: "text",
+                    text: "裏面だよーん"
+                  }
+                ]
+              }
+            },
+            {
+              tabName: "memo2",
+              index: 2,
+              front: {
+                targetList: [],
+                contentsList: [
+                  {
+                    kind: "text",
+                    text: "これはテキス\nト2！！！！！"
+                  },
+                  {
+                    kind: "images",
+                    imageKeyList: [
+                      { key: "image-7", tag: "(全て)" },
+                      { key: "image-8", tag: "(全て)" }
+                    ]
+                  },
+                  {
+                    kind: "text",
+                    text: "表面はここまで2！"
+                  }
+                ]
+              },
+              back: {
+                targetList: ["aaaaa"],
+                contentsList: [
+                  {
+                    kind: "text",
+                    text: "裏面だよーん2"
+                  }
+                ]
+              }
+            }
+          ]
         }
       ]
     }
@@ -224,12 +312,11 @@ export default {
         commit("updatePlayerKey", playerKey);
       }
 
-      if (peerId) {
-        rootGetters.members.push({
-          peerId: peerId,
-          playerKey: playerKey
-        });
-      }
+      rootGetters.members.push({
+        peerId: peerId,
+        playerKey: playerKey
+      });
+
       if (!player) {
         // window.console.log(`Add player key:${playerKey} name:${name}`);
         rootGetters.playerList.push({
@@ -621,6 +708,7 @@ export default {
     propertyList: (state: any) => state.initiative.propertyList,
     publicCounterRemocon: (state: any) => state.counterRemocon,
     publicCounterRemoconList: (state: any) => state.counterRemocon.list,
-    roomSystem: (state: any) => state.room.system
+    roomSystem: (state: any) => state.room.system,
+    publicMemo: (state: any) => state.publicMemo
   } /* end of getters */
 };

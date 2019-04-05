@@ -316,9 +316,6 @@ export default class Character extends PieceMixin {
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;

@@ -26,7 +26,7 @@
       <!----------------
        ! チャットログ
        !--------------->
-      <ul id="chatLog" @wheel.stop>
+      <ul id="chatLog" class="selectable" @wheel.stop>
         <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
       </ul>
 
@@ -938,6 +938,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   position: relative;
   overflow: visible;
 }
+
 .tabs {
   display: flex;
   padding-left: 1em;
@@ -946,19 +947,21 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   z-index: 10;
   margin-bottom: -1px;
 }
+
 .tab {
   position: relative;
-  display: inline;
-  /*font-size: 1em;*/
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(rgba(240, 240, 240, 1), rgba(0, 0, 0, 0.2));
-  padding: 0.2em 0.7em;
+  padding: 0 0.7em;
   height: 2em;
   box-sizing: border-box;
   border: 1px solid gray;
   border-bottom: none;
   border-radius: 5px 5px 0 0;
   margin-right: -1px;
-  margin-bottom: -1px;
   z-index: 10;
   white-space: nowrap;
   outline: none;
@@ -980,6 +983,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     background: white none;
   }
 }
+
 #chatLog {
   display: block;
   background-color: white;
@@ -998,17 +1002,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   z-index: 0;
   white-space: normal;
   word-break: break-all;
-  -moz-user-select: text;
-  -webkit-user-select: text;
-  -ms-user-select: text;
 }
-.label {
-  /*font-size: 10px;*/
-  white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
+
 .oneLine {
   display: flex;
   flex-direction: row;
@@ -1053,23 +1048,27 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
   }
 }
+
 .sendLine .textAreaContainer {
   height: 100%;
   flex: 1;
   position: relative;
   display: flex;
 }
+
 .sendLine > div > *:not(.chatOptionSelector) {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .chatInputArea {
   flex: 1;
   display: flex;
   width: 100%;
   font-size: 13px;
 }
+
 .chatOption {
   display: flex;
   height: 3.6em;
@@ -1100,9 +1099,11 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   color: black;
   font-weight: bold;
 }
+
 .diceBotSystem {
   margin-right: 10px;
 }
+
 textarea {
   resize: none;
   flex: 1;
@@ -1120,6 +1121,7 @@ textarea {
     color: #999;
   }
 }
+
 .inputtingArea {
   width: 100%;
   height: 20px;
@@ -1146,6 +1148,7 @@ img {
     border-color: #0092ed;
   }
 }
+
 span.icon {
   padding: 0;
   margin-right: 4px;
@@ -1163,6 +1166,7 @@ i[class^="icon-"] {
     color: white;
   }
 }
+
 i.icon-dice {
   color: rgb(0, 0, 150);
   &:hover,
@@ -1170,6 +1174,7 @@ i.icon-dice {
     background-color: rgb(0, 0, 150);
   }
 }
+
 i.icon-bin {
   color: rgb(150, 150, 150);
   &:hover,
@@ -1177,6 +1182,7 @@ i.icon-bin {
     background-color: rgb(150, 150, 150);
   }
 }
+
 i.icon-cloud-check,
 i.icon-bell {
   color: rgb(150, 150, 0);
@@ -1185,6 +1191,7 @@ i.icon-bell {
     background-color: rgb(150, 150, 0);
   }
 }
+
 i.icon-music,
 i.icon-film {
   color: rgb(0, 150, 150);
@@ -1193,6 +1200,7 @@ i.icon-film {
     background-color: rgb(0, 150, 150);
   }
 }
+
 i.icon-list2,
 i.icon-accessibility,
 i.icon-target {
@@ -1206,39 +1214,42 @@ i.icon-target {
 .dep {
   font-size: 11px;
 }
+
 .chatOptionSelector {
   padding: 0.5em;
   background-color: lightgreen;
   position: absolute;
   bottom: 100%;
   left: 0;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
   cursor: default;
   z-index: 1000;
   max-height: 22.8em;
   overflow-y: auto;
 }
+
 .chatOptionSelector .ope {
   color: #777;
 }
+
 .chatOptionSelector > span {
   line-height: 1.8em;
 }
+
 .chatOptionSelector ul {
   padding: 0;
   margin: 0.5em 0 0;
   list-style: none;
 }
+
 .chatOptionSelector li {
   padding: 0.2em 0.8em;
   line-height: 1.6em;
 }
+
 .chatOptionSelector .selected {
   background-color: rgba(255, 255, 255, 0.8);
 }
+
 .bracketOption {
   flex: 1;
   display: flex;

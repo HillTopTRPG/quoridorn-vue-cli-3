@@ -224,11 +224,6 @@ export default {
   line-height: 1.2em;
   font-size: 100%;
 
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
 

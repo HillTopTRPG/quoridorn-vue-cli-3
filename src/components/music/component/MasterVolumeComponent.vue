@@ -69,9 +69,10 @@ export default class MasterVolumeComponent extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+@import "../../common.scss";
+
 .masterVolumeComponent {
-  display: flex;
-  flex-direction: column;
+  @include flex-box(column);
   min-height: 38px;
 
   > div {
@@ -109,7 +110,7 @@ export default class MasterVolumeComponent extends Vue {
     }
 
     &:not(.attrArea) {
-      display: flex;
+      @include flex-box();
     }
 
     > span {

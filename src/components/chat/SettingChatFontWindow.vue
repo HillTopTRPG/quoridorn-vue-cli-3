@@ -126,22 +126,11 @@ export default class SettingChatFontWindow extends Mixins<WindowMixin>(
   overflow-y: scroll;
   font-size: 12px;
 }
-div,
-button {
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-}
 label {
   display: inline-flex;
   justify-content: center;
   align-items: center;
   margin-top: 5px;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
 
   input[type="color"] {
     width: 30px;

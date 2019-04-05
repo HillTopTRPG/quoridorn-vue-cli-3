@@ -329,90 +329,59 @@ export default {
               owner: addObj.owner
             })
           );
-        Promise.all([...imageAddPromiseList]).then((imageList: string[]) => {
-          // 画像を全て読み込み終えたら、他のオブジェクトの追加を処理する
-          addObjList
-            // 画像以外を処理対象とする
-            .filter(addObj => addObj.key.split("-")[0] !== "image")
-            .forEach(addObj => {
-              const type = addObj.key.split("-")[0];
 
-              // image参照の差分ロード
-              let useImageList: string = addObj.useImageList;
-              if (useImageList) {
-                useImageList.split("|").forEach(useImage => {
-                  const matchResult = useImage.match(/image-\$([0-9]+)/);
-                  if (matchResult) {
-                    useImageList = useImageList.replace(
-                      matchResult[0],
-                      imageList[parseInt(matchResult[1])]
-                    );
-                  }
-                });
-              }
-              addObj.useImageList = useImageList;
+        return Promise.all([...imageAddPromiseList]).then(
+          (imageList: string[]) => {
+            // 画像を全て読み込み終えたら、他のオブジェクトの追加を処理する
+            const otherObjectPromiseList = addObjList
+              // 画像以外を処理対象とする
+              .filter(addObj => addObj.key.split("-")[0] !== "image")
+              .map(addObj => {
+                const type = addObj.key.split("-")[0];
 
-              // グループチャットデータのロード
-              if (type === "groupTargetTab") {
-                rootGetters.groupTargetTab.list.push({
-                  key: `groupTargetTab-${++rootGetters.groupTargetTab.maxKey}`,
-                  isSecret: addObj.isSecret,
-                  name: addObj.name,
-                  targetTab: addObj.targetTab,
-                  isAll: addObj.isAll,
-                  group: addObj.group
-                });
-                return;
-              }
+                // image参照の差分ロード
+                let useImageList: string = addObj.useImageList;
+                if (useImageList) {
+                  useImageList.split("|").forEach(useImage => {
+                    const matchResult = useImage.match(/image-\$([0-9]+)/);
+                    if (matchResult) {
+                      useImageList = useImageList.replace(
+                        matchResult[0],
+                        imageList[parseInt(matchResult[1])]
+                      );
+                    }
+                  });
+                }
+                addObj.useImageList = useImageList;
 
-              delete addObj.key;
+                // グループチャットデータのロード
+                if (type === "groupTargetTab") {
+                  rootGetters.groupTargetTab.list.push({
+                    key: `groupTargetTab-${++rootGetters.groupTargetTab
+                      .maxKey}`,
+                    isSecret: addObj.isSecret,
+                    name: addObj.name,
+                    targetTab: addObj.targetTab,
+                    isAll: addObj.isAll,
+                    group: addObj.group
+                  });
+                  return;
+                }
 
-              // リストに追加
-              dispatch("addListObj", addObj);
-            });
+                delete addObj.key;
 
-          // TODO delete test code.
-          window.console.log(rootState);
-        });
+                // リストに追加
+                return dispatch("addListObj", addObj);
+              });
+            return Promise.all(otherObjectPromiseList);
+          }
+        );
       };
 
       const roomName = publicData.room.name;
       if (!dropZipRoomCreate) {
         // 部屋を作らないシンプルなロード
-        importFunc();
-        // Promise.resolve()
-        //   .then((payload: any) => {
-        //     dispatch("loading", false);
-        //     // モーダル状態の解除
-        //     commit("updateIsModal", false);
-        //     // 部屋情報以外のpublicデータはすでにセーブデータで上書きされている
-        //     // privateデータをセーブデータの内容にする
-        //     const newPlayerName = payload.playerName;
-        //     const player = rootGetters.getObj(rootGetters.playerKey);
-        //     if (newPlayerName === player.name) {
-        //       // 同じ名前を指定された場合
-        //       const peerId = rootGetters.peerId(false);
-        //       // 改めてプレイヤー追加を行うため、あらかじめメンバー一覧から自分を削除しておく
-        //       const memberIndex = rootGetters.members.findIndex((members: any) => members.peerId === peerId);
-        //       rootGetters.members.splice(memberIndex, 1);
-        //       window.console.log("同じ名前を指定しました。", peerId, rootGetters.members.concat());
-        //       // プレイヤー追加とprivateデータのインポート
-        //       dispatch("addPlayer", {
-        //         peerId: peerId,
-        //         name: payload.playerName,
-        //         password: payload.playerPassword,
-        //         type: payload.playerType,
-        //         fontColor: payload.fontColor,
-        //         isWait: false
-        //       }).then(() => {
-        //         window.console.log(rootGetters.members.concat(), rootGetters.playerList.concat());
-        //       });
-        //     } else {
-        //       // 違う名前を指定された場合
-        //       window.console.log("異なる名前を指定しました。");
-        //     }
-        //   })
-        //   .catch(() => dispatch("loading", false));
+        importFunc().then(() => {});
         return;
       }
       if (!publicData.room) {
@@ -458,9 +427,7 @@ export default {
             }
 
             // データインポート
-            importFunc();
-
-            Promise.resolve()
+            importFunc()
               .then(
                 () =>
                   new Promise((resolve: Function) => {
