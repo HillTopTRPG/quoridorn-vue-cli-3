@@ -25,9 +25,13 @@ export default class CharacterSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Prop({ type: Array, default: [], required: false })
   private placeList!: string[];
 
-  private get useCharacterList(): any[] {
-    const resultList: any = [];
+  @Prop({ type: Array, default: [], required: false })
+  private selectedList!: string[];
 
+  private get useCharacterList(): any[] {
+    const resultList: any[] = [];
+
+    // 配置場所の絞り込み
     if (this.placeList.length) {
       this.placeList.forEach(place =>
         Array.prototype.push.apply(
@@ -46,6 +50,16 @@ export default class CharacterSelect extends Mixins<SelectMixin>(SelectMixin) {
         })
       );
     }
+
+    // 選択済みの除外
+    this.selectedList.forEach(characterKey => {
+      const index = resultList.findIndex(
+        (character: any) => character.key === characterKey
+      );
+      if (index >= 0) {
+        resultList.splice(index, 1);
+      }
+    });
 
     return resultList;
   }

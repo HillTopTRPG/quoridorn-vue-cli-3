@@ -281,6 +281,13 @@ export default {
         isDisplay: false,
         zIndex: 1,
         objKey: ""
+      },
+      publicMemoContext: {
+        command: null,
+        isDisplay: false,
+        x: 0,
+        y: 0,
+        objKey: null
       }
     }
   } /* end of state */,

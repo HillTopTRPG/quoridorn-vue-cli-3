@@ -16,19 +16,23 @@
 
     <!-- タイトルバー -->
     <div
-      class="title"
+      class="window-title"
       :class="{fix : isFix}"
-      @mousedown.left.prevent="(e) => move(e, true)"
-      @mouseup.left.prevent="(e) => move(e, false)"
-      @touchstart.prevent="(e) => move(e, true, true)"
-      @touchend.prevent="(e) => move(e, false, true)"
-      @touchcancel.prevent="(e) => move(e, false, true)"
+      @mousedown.left.prevent="event => move(event, true)"
+      @mouseup.left.prevent="event => move(event, false)"
+      @touchstart.prevent="event => move(event, true, true)"
+      @touchend.prevent="event => move(event, false, true)"
+      @touchcancel.prevent="event => move(event, false, true)"
       @contextmenu.prevent
     >
+
+      <!-- タイトル文言 -->
       <div>
         <span>{{titleText}}</span>
         <span class="message" v-if="message">{{message}}</span>
       </div>
+
+      <!-- 文字サイズ変更 -->
       <label
         v-if="fontSizeBar"
         class="fontSizeSlider"
@@ -40,80 +44,80 @@
     <div
       class="corner-left-top"
       v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'corner-left-top', true)"
-      @mouseup.left.prevent="(e) => resize(e, 'corner-left-top', false)"
-      @touchstart.prevent="(e) => resize(e, 'corner-left-top', true, true)"
-      @touchend.prevent="(e) => resize(e, 'corner-left-top', false, true)"
-      @touchcancel.prevent="(e) => resize(e, 'corner-left-top', false, true)"
+      @mousedown.left.prevent="event => resize(event, 'corner-left-top', true)"
+      @mouseup.left.prevent="event => resize(event, 'corner-left-top', false)"
+      @touchstart.prevent="event => resize(event, 'corner-left-top', true, true)"
+      @touchend.prevent="event => resize(event, 'corner-left-top', false, true)"
+      @touchcancel.prevent="event => resize(event, 'corner-left-top', false, true)"
       @contextmenu.prevent
     ></div>
     <div
       class="corner-left-bottom"
       v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'corner-left-bottom', true)"
-      @mouseup.left.prevent="(e) => resize(e, 'corner-left-bottom', false)"
-      @touchstart.prevent="(e) => resize(e, 'corner-left-bottom', true, true)"
-      @touchend.prevent="(e) => resize(e, 'corner-left-bottom', false, true)"
-      @touchcancel.prevent="(e) => resize(e, 'corner-left-bottom', false, true)"
+      @mousedown.left.prevent="event => resize(event, 'corner-left-bottom', true)"
+      @mouseup.left.prevent="event => resize(event, 'corner-left-bottom', false)"
+      @touchstart.prevent="event => resize(event, 'corner-left-bottom', true, true)"
+      @touchend.prevent="event => resize(event, 'corner-left-bottom', false, true)"
+      @touchcancel.prevent="event => resize(event, 'corner-left-bottom', false, true)"
       @contextmenu.prevent
     ></div>
     <div
       class="corner-right-top"
       v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'corner-right-top', true)"
-      @mouseup.left.prevent="(e) => resize(e, 'corner-right-top', false)"
-      @touchstart.prevent="(e) => resize(e, 'corner-right-top', true, true)"
-      @touchend.prevent="(e) => resize(e, 'corner-right-top', false, true)"
-      @touchcancel.prevent="(e) => resize(e, 'corner-right-top', false, true)"
+      @mousedown.left.prevent="event => resize(event, 'corner-right-top', true)"
+      @mouseup.left.prevent="event => resize(event, 'corner-right-top', false)"
+      @touchstart.prevent="event => resize(event, 'corner-right-top', true, true)"
+      @touchend.prevent="event => resize(event, 'corner-right-top', false, true)"
+      @touchcancel.prevent="event => resize(event, 'corner-right-top', false, true)"
       @contextmenu.prevent
     ></div>
     <div
       class="corner-right-bottom" v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'corner-right-bottom', true)"
-      @mouseup.left.prevent="(e) => resize(e, 'corner-right-bottom', false)"
-      @touchstart.prevent="(e) => resize(e, 'corner-right-bottom', true, true)"
-      @touchend.prevent="(e) => resize(e, 'corner-right-bottom', false, true)"
-      @touchcancel.prevent="(e) => resize(e, 'corner-right-bottom', false, true)"
+      @mousedown.left.prevent="event => resize(event, 'corner-right-bottom', true)"
+      @mouseup.left.prevent="event => resize(event, 'corner-right-bottom', false)"
+      @touchstart.prevent="event => resize(event, 'corner-right-bottom', true, true)"
+      @touchend.prevent="event => resize(event, 'corner-right-bottom', false, true)"
+      @touchcancel.prevent="event => resize(event, 'corner-right-bottom', false, true)"
       @contextmenu.prevent
     ></div>
     <div
       class="side-top"
       v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'side-top', true)"
-      @mouseup.left.prevent="(e) => resize(e, 'side-top', false)"
-      @touchstart.prevent="(e) => resize(e, 'side-top', true, true)"
-      @touchend.prevent="(e) => resize(e, 'side-top', false, true)"
-      @touchcancel.prevent="(e) => resize(e, 'side-top', false, true)"
+      @mousedown.left.prevent="event => resize(event, 'side-top', true)"
+      @mouseup.left.prevent="event => resize(event, 'side-top', false)"
+      @touchstart.prevent="event => resize(event, 'side-top', true, true)"
+      @touchend.prevent="event => resize(event, 'side-top', false, true)"
+      @touchcancel.prevent="event => resize(event, 'side-top', false, true)"
       @contextmenu.prevent
     ></div>
     <div
       class="side-left"
       v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'side-left', true)"
-      @mouseup.left.prevent="(e) => resize(e, 'side-left', false)"
-      @touchstart.prevent="(e) => resize(e, 'side-left', true, true)"
-      @touchend.prevent="(e) => resize(e, 'side-left', false, true)"
-      @touchcancel.prevent="(e) => resize(e, 'side-left', false, true)"
+      @mousedown.left.prevent="event => resize(event, 'side-left', true)"
+      @mouseup.left.prevent="event => resize(event, 'side-left', false)"
+      @touchstart.prevent="event => resize(event, 'side-left', true, true)"
+      @touchend.prevent="event => resize(event, 'side-left', false, true)"
+      @touchcancel.prevent="event => resize(event, 'side-left', false, true)"
       @contextmenu.prevent
     ></div>
     <div
       class="side-right"
       v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'side-right', true)"
-      @mouseup.left.prevent="(e) => resize(e, 'side-right', false)"
-      @touchstart.prevent="(e) => resize(e, 'side-right', true, true)"
-      @touchend.prevent="(e) => resize(e, 'side-right', false, true)"
-      @touchcancel.prevent="(e) => resize(e, 'side-right', false, true)"
+      @mousedown.left.prevent="event => resize(event, 'side-right', true)"
+      @mouseup.left.prevent="event => resize(event, 'side-right', false)"
+      @touchstart.prevent="event => resize(event, 'side-right', true, true)"
+      @touchend.prevent="event => resize(event, 'side-right', false, true)"
+      @touchcancel.prevent="event => resize(event, 'side-right', false, true)"
       @contextmenu.prevent
     ></div>
     <div
       class="side-bottom"
       v-if="!isFix"
-      @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)"
-      @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
-      @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)"
-      @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)"
-      @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"
+      @mousedown.left.prevent="event => resize(event, 'side-bottom', true)"
+      @mouseup.left.prevent="event => resize(event, 'side-bottom', false)"
+      @touchstart.prevent="event => resize(event, 'side-bottom', true, true)"
+      @touchend.prevent="event => resize(event, 'side-bottom', false, true)"
+      @touchcancel.prevent="event => resize(event, 'side-bottom', false, true)"
       @contextmenu.prevent
     ></div>
 
@@ -638,7 +642,7 @@ export default class WindowFrame extends Vue {
   z-index: 91;
 }
 
-.title {
+.window-title {
   @include flex-box(row, center, center);
   position: absolute;
   top: 0;

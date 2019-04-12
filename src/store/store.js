@@ -104,6 +104,115 @@ export default new Vuex.Store({
      * @param rootGetters
      */
     onMount({ dispatch, state, rootState, rootGetters }) {
+      const addTestPublicMemo = (index, title) => {
+        const publicMemoObj = {
+          key: `publicMemo-${index}`,
+          targetList: [],
+          title: title,
+          tabList: []
+        };
+        const firstPcIndex = index * 3;
+        for (let i = firstPcIndex; i < firstPcIndex + 3; i++) {
+          publicMemoObj.tabList.push({
+            tabName: `PC${i + 1}`,
+            front: {
+              targetList: [],
+              contentsList: [
+                {
+                  kind: "images",
+                  imageKeyList: [
+                    {
+                      key: `image-${i + 3}`,
+                      tag: "(全て)"
+                    }
+                  ]
+                },
+                {
+                  kind: "title",
+                  text: "導入"
+                },
+                {
+                  kind: "text",
+                  text: `あなたはたまたま通りかかった、とあるシノビ${i +
+                    1}である`
+                },
+                {
+                  kind: "separator"
+                },
+                {
+                  kind: "title",
+                  text: "使命"
+                },
+                {
+                  kind: "text",
+                  text: "無事に帰宅すること"
+                }
+              ]
+            },
+            back: {
+              targetList: [],
+              contentsList: [
+                {
+                  kind: "title",
+                  text: "秘密"
+                },
+                {
+                  kind: "text",
+                  text:
+                    "実はあなたは眠くてしょうがない。\nそのことを他のPCに気取られてはいけない。"
+                },
+                {
+                  kind: "sub-title",
+                  text: "本当の使命"
+                },
+                {
+                  kind: "text",
+                  text: "眠気を悟られる前に他のPCを全て倒すこと。"
+                }
+              ]
+            }
+          });
+        }
+        rootState.public.publicMemo.list.push(publicMemoObj);
+        rootState.public.publicMemo.maxKey = index;
+      };
+      rootState.public.publicMemo.list = [];
+      addTestPublicMemo(0, "HO1");
+      addTestPublicMemo(1, "HO2");
+      addTestPublicMemo(2, "HO3");
+      addTestPublicMemo(3, "HO4");
+      addTestPublicMemo(4, "HO5");
+      rootState.public.publicMemo.list.push({
+        key: `publicMemo-${5}`,
+        targetList: [],
+        title: "ハウスルール",
+        index: 6,
+        tabList: [
+          {
+            tabName: `使用コマンド`,
+            index: 1,
+            front: {
+              targetList: [],
+              contentsList: [
+                {
+                  kind: "title",
+                  text: "コマンド"
+                },
+                {
+                  kind: "text",
+                  text: `KWT：変調表`
+                }
+              ]
+            },
+            back: {
+              targetList: [],
+              contentsList: []
+            }
+          }
+        ]
+      });
+      rootState.public.publicMemo.maxKey = 5;
+
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
@@ -154,7 +263,7 @@ export default new Vuex.Store({
         dispatch("windowOpen", "private.display.initiativeWindow");
         // dispatch("windowOpen", "private.display.resourceWindow");
         // dispatch("windowOpen", "private.display.chatPaletteWindow");
-        dispatch("windowOpen", "private.display.publicMemoWindow");
+        // dispatch("windowOpen", "private.display.publicMemoWindow");
         // dispatch("windowOpen", "private.display.playerBoxWindow");
         dispatch("windowOpen", "private.display.welcomeWindow");
       }, 0);

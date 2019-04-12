@@ -8,15 +8,39 @@
 
     <!-- 閲覧権限がある場合 -->
     <template v-if="isViewableSurface()">
-      <template v-for="(contents, itemIndex) in surface.contentsList">
-        <!-- タイトル -->
+      <div v-if="isEditMode" class="targetListArea">
+        <actor-select
+          v-model="selectedActorKey"
+          :selectedActorList="targetActorList"
+          defaultLabel="閲覧許可アクター"
+        />
+        <div
+          v-for="actor in targetActorList"
+          :key="actor.key"
+          class="actor"
+          @click="deleteTargetOnClick(actor.key)"
+        >
+          <span>{{actor.name}}</span>
+          <span class="icon-cross"></span>
+        </div>
+        <div class="list">
+        </div>
+      </div>
+
+      <div v-for="(contents, itemIndex) in surface.contentsList" :key="itemIndex">
+        <!-- 大見出し -->
         <div
           v-if="contents.kind === 'title'"
           class="item title selectable"
           :key="`contents-${itemIndex}`"
         >
-          <span v-html="contents.text.replace('\n', '<br>')" v-if="!isEditMode"></span>
-          <textarea v-model="contents.text" v-if="isEditMode" @input="textareaOnInput"></textarea>
+          <span v-html="contents.text.replace('\n', '<br>').replace(/^$/, '大見出し')" v-if="!isEditMode"></span>
+          <textarea
+            v-model="contents.text"
+            v-if="isEditMode"
+            @input="event => textareaOnInput(event, '大見出し', contents)"
+            placeholder="大見出し"
+          ></textarea>
           <span
             class="item-config icon-cog"
             @click="event => itemConfigOnClick(event, itemIndex)"
@@ -24,14 +48,19 @@
           ></span>
         </div>
 
-        <!-- サブタイトル -->
+        <!-- 小見出し -->
         <div
           v-if="contents.kind === 'sub-title'"
           class="item sub-title selectable"
           :key="`contents-${itemIndex}`"
         >
-          <span v-html="contents.text.replace('\n', '<br>')" v-if="!isEditMode"></span>
-          <textarea v-model="contents.text" v-if="isEditMode" @input="textareaOnInput"></textarea>
+          <span v-html="contents.text.replace('\n', '<br>').replace(/^$/, '小見出し')" v-if="!isEditMode"></span>
+          <textarea
+            v-model="contents.text"
+            v-if="isEditMode"
+            @input="event => textareaOnInput(event, '小見出し', contents)"
+            placeholder="小見出し"
+          ></textarea>
           <span
             class="item-config icon-cog"
             @click="event => itemConfigOnClick(event, itemIndex)"
@@ -45,8 +74,13 @@
           class="item text selectable"
           :key="`contents-${itemIndex}`"
         >
-          <span v-html="contents.text.replace('\n', '<br>')" v-if="!isEditMode"></span>
-          <textarea v-model="contents.text" v-if="isEditMode" @input="textareaOnInput"></textarea>
+          <span v-html="contents.text.replace('\n', '<br>').replace(/^$/, 'テキスト')" v-if="!isEditMode"></span>
+          <textarea
+            v-model="contents.text"
+            v-if="isEditMode"
+            @input="event => textareaOnInput(event, 'テキスト', contents)"
+            placeholder="テキスト"
+          ></textarea>
           <span
             class="item-config icon-cog"
             @click="event => itemConfigOnClick(event, itemIndex)"
@@ -105,19 +139,27 @@
           ></span>
         </div>
 
-      </template>
+      </div>
+
+      <span
+        class="last-config icon-cog"
+        @click="lastConfigOnClick"
+        v-if="isEditMode"
+      ></span>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import CharacterSelect from "@/components/parts/select/CharacterSelect.vue";
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import ActorSelect from "@/components/parts/select/ActorSelect.vue";
 
-@Component({})
+@Component({ components: { ActorSelect, CharacterSelect } })
 export default class SurfaceComponent extends Vue {
   @Prop({ type: Object, required: true })
-  private surface!: any;
+  public surface!: any;
 
   @Prop({ type: Boolean, required: true })
   private isEditMode!: boolean;
@@ -127,10 +169,22 @@ export default class SurfaceComponent extends Vue {
   @Getter("getObj") getObj: any;
   @Getter("playerKey") playerKey: any;
 
-  @Emit("openItemMenu")
+  private selectedActorKey: string = "";
+
+  @Watch("selectedActorKey")
+  private onChangeSelectedCharacter(selectedActorKey: string) {
+    if (!selectedActorKey) return;
+    this.surface.targetList.push(selectedActorKey);
+    this.selectedActorKey = "";
+  }
+
+  @Emit()
   private openItemMenu(index: number, hoverMenuX: number, hoverMenuY: number) {}
 
-  @Emit("openImageMenu")
+  @Emit()
+  private openLastMenu(hoverMenuX: number, hoverMenuY: number) {}
+
+  @Emit()
   private openImageMenu(
     itemIndex: number,
     imageIndex: number,
@@ -139,18 +193,10 @@ export default class SurfaceComponent extends Vue {
     hoverMenuY: number
   ) {}
 
-  @Emit("closeItemMenu")
-  private closeItemMenu() {}
-
-  @Emit("closeImageMenu")
-  private closeImageMenu() {
-    window.console.log("closeImageMenu");
-  }
-
   /**
    * テキストエリアに入力される度に、必要に応じてテキストエリアの表示サイズを拡張する
    */
-  private textareaOnInput(event: any) {
+  private textareaOnInput(event: any, defaultText: any, contents: any) {
     const textarea: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
     if (textarea.scrollHeight > textarea.offsetHeight) {
       textarea.style.height = textarea.scrollHeight + "px";
@@ -158,114 +204,42 @@ export default class SurfaceComponent extends Vue {
   }
 
   /**
-   * タイトルを挿入する
-   */
-  public insertTitleItem(index: number) {
-    this.surface.contentsList.splice(index, 0, {
-      kind: "title",
-      text: "タイトル"
-    });
-    this.closeItemMenu();
-  }
-
-  /**
-   * サブタイトルを挿入する
-   */
-  public insertSubTitleItem(index: number) {
-    window.console.log("insertSubTitleItem", index);
-    this.surface.contentsList.splice(index, 0, {
-      kind: "sub-title",
-      text: "サブタイトル"
-    });
-    this.closeItemMenu();
-  }
-
-  /**
-   * テキストを挿入する
-   */
-  public insertTextItem(index: number) {
-    window.console.log("insertTextItem", index);
-    this.surface.contentsList.splice(index, 0, {
-      kind: "text",
-      text: "テキスト"
-    });
-    this.closeItemMenu();
-  }
-
-  /**
-   * 仕切り線を挿入する
-   */
-  public insertHrItem(index: number) {
-    window.console.log("insertHrItem", index);
-    this.surface.contentsList.splice(index, 0, {
-      kind: "separator"
-    });
-    this.closeItemMenu();
-  }
-
-  /**
-   * 画像フレームを挿入する
-   */
-  public insertImageFrameItem(index: number) {
-    window.console.log("insertImageFrameItem", index);
-    this.surface.contentsList.splice(index, 0, {
-      kind: "images",
-      imageKeyList: [{ key: "image-0", tag: "(全て)" }]
-    });
-    this.closeItemMenu();
-  }
-
-  /**
-   * 項目を削除する
-   */
-  public deleteItem(index: number) {
-    this.surface.contentsList.splice(index, 1);
-    this.closeItemMenu();
-  }
-
-  /**
-   * 画像を挿入する
-   */
-  public insertImage(itemIndex: number, imageIndex: number) {
-    this.surface.contentsList[itemIndex].imageKeyList.splice(imageIndex, 0, {
-      key: "image-0",
-      tag: "(全て)"
-    });
-    this.closeImageMenu();
-  }
-
-  /**
-   * 画像を削除する
-   */
-  public deleteImage(itemIndex: number, imageIndex: number) {
-    this.surface.contentsList[itemIndex].imageKeyList.splice(imageIndex, 1);
-    this.closeImageMenu();
-  }
-
-  /**
    * この面の内容を表示して良いかどうかを調べる
    */
-  private isViewableSurface() {
-    return (
-      this.surface.targetList.length === 0 ||
-      this.surface.targetList.indexOf(this.playerKey) > -1
-    );
+  private isViewableSurface(): boolean {
+    // ターゲットが指定されていないなら公開情報
+    if (this.surface.targetList.length === 0) return true;
+
+    // ターゲットが指定されているので、許可されているか調べる
+    return this.targetActorList.filter(actor => {
+      const type: string = actor.key.split("-")[0];
+      if (type === "character") {
+        return actor.owner === this.playerKey;
+      } else {
+        return actor.key === this.playerKey;
+      }
+    })[0];
   }
 
-  /**
-   * 項目設定をクリックした時
-   */
-  private itemConfigOnClick(event: any, index: number) {
+  private static getMenuLocate(event: any): any {
     let contentsElm: HTMLElement = event.target;
     while (!contentsElm.classList.contains("contents")) {
       contentsElm = contentsElm.parentNode as HTMLElement;
     }
     const contentsRect = contentsElm.getBoundingClientRect();
 
-    const hoverMenuY = event.pageY - contentsRect.top + 5;
-    const hoverMenuX = event.pageX - contentsRect.left - 5;
+    return {
+      x: event.pageX - contentsRect.left - 5,
+      y: event.pageY - contentsRect.top + 5
+    };
+  }
 
-    this.openItemMenu(index, hoverMenuX, hoverMenuY);
+  /**
+   * 項目設定をクリックした時
+   */
+  private itemConfigOnClick(event: any, index: number) {
+    const locate: any = SurfaceComponent.getMenuLocate(event);
+    this.openItemMenu(index, locate.x, locate.y);
   }
 
   /**
@@ -277,22 +251,31 @@ export default class SurfaceComponent extends Vue {
     imageIndex: number,
     imageListSize: number
   ) {
-    let contentsElm: HTMLElement = event.target;
-    while (!contentsElm.classList.contains("contents")) {
-      contentsElm = contentsElm.parentNode as HTMLElement;
-    }
-    const contentsRect = contentsElm.getBoundingClientRect();
-
-    const hoverMenuY = event.pageY - contentsRect.top + 5;
-    const hoverMenuX = event.pageX - contentsRect.left - 5;
-
+    const locate: any = SurfaceComponent.getMenuLocate(event);
     this.openImageMenu(
       itemIndex,
       imageIndex,
       imageListSize,
-      hoverMenuX,
-      hoverMenuY
+      locate.x,
+      locate.y
     );
+  }
+
+  private deleteTargetOnClick(targetKey: string) {
+    this.surface.targetList.splice(
+      this.surface.targetList.findIndex(
+        (listKey: string) => listKey === targetKey
+      ),
+      1
+    );
+  }
+
+  /**
+   * 末尾メニューをクリックした時
+   */
+  private lastConfigOnClick(event: any) {
+    const locate: any = SurfaceComponent.getMenuLocate(event);
+    this.openLastMenu(locate.x, locate.y);
   }
 
   /**
@@ -366,17 +349,22 @@ export default class SurfaceComponent extends Vue {
       tag: imageTag
     });
   }
+
+  private get targetActorList(): any[] {
+    return this.surface.targetList.map((actorKey: string) =>
+      this.getObj(actorKey)
+    );
+  }
 }
 </script>
 
 <style scoped lang="scss">
 @import "../common.scss";
 
-$space-width: 0.5em;
+$space-width: 0.5rem;
 
 .surfaceComponent {
   border: solid 1px gray;
-  border-top-width: 0;
   background-color: white;
   overflow-y: auto;
   width: 100%;
@@ -392,6 +380,38 @@ $space-width: 0.5em;
   }
 }
 
+.targetListArea {
+  @include flex-box(row, flex-start, center, wrap);
+  margin-bottom: 0.5em;
+
+  .actor {
+    @include flex-box(row, flex-start, center);
+    border: solid 1px lightgray;
+    border-radius: 0.5em;
+    padding: 0 0.25em;
+
+    > span[class^="icon-"] {
+      @include flex-box(row, center, center);
+      font-size: 10px;
+      transform: scale(0.8);
+      transform-origin: center;
+      visibility: hidden;
+    }
+
+    &:not(:last-child) {
+      margin-right: 0.5em;
+    }
+
+    &:hover {
+      border-color: gray;
+
+      > span[class^="icon-"] {
+        visibility: visible;
+      }
+    }
+  }
+}
+
 .imageContainer {
   @include flex-box(row, flex-start, center, wrap);
   width: calc(100% - #{$space-width});
@@ -402,16 +422,16 @@ $space-width: 0.5em;
   .image-add {
     border: 2px solid black;
     border-radius: 50%;
-    font-size: 2em;
-    padding: 0.5em;
+    font-size: 2rem;
+    padding: 0.5rem;
     background-color: white;
   }
 
   .imageFrame {
     @include flex-box(column, center, center);
-    width: 5em;
-    height: 5em;
-    padding: 0.5em;
+    width: 4rem;
+    height: 4rem;
+    padding: 0.5rem;
     margin-left: $space-width;
     margin-bottom: $space-width;
     border: solid 1px black;
@@ -432,11 +452,16 @@ $space-width: 0.5em;
       right: 0;
       top: 0;
       @include flex-box(row, center, center);
-      width: 2em;
-      height: 2em;
+      width: 1.5rem;
+      height: 1.5rem;
       visibility: hidden;
       border-left: 1px solid black;
       border-bottom: 1px solid black;
+    }
+
+    img {
+      max-width: 4rem;
+      max-height: 4rem;
     }
   }
 }
@@ -476,6 +501,8 @@ $space-width: 0.5em;
   font-weight: bold;
   padding: 0.25em $space-width;
   width: calc(100% - #{$space-width} * 2);
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 .sub-title {
@@ -484,6 +511,8 @@ $space-width: 0.5em;
   border-left: solid 5px lightblue;
   border-bottom: solid 2px lightblue;
   width: calc(100% - #{$space-width} * 4 - 5px);
+  word-wrap: break-word;
+  white-space: normal;
 
   > .item-config {
     margin-right: -$space-width;
@@ -493,6 +522,8 @@ $space-width: 0.5em;
 .text {
   padding: 0 $space-width;
   width: calc(100% - #{$space-width} * 2);
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 hr {
@@ -501,8 +532,15 @@ hr {
   width: calc(100% - #{$space-width} * 2 - 2px);
 }
 
-img {
-  max-width: 5em;
-  max-height: 5em;
+.last-config {
+  @include flex-box(row, center, center);
+  width: 100%;
+  background-color: lightpink;
+  height: 2em;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 </style>

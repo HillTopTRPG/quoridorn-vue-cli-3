@@ -28,7 +28,6 @@ Vue.directive("img", (el: any, binding) => {
 Vue.directive("bg-img", (el: any, binding) => {
   const imgData = binding.value;
   const img = new Image();
-  img.src = imgData;
 
   img.onerror = () => {
     delete el.style.backgroundImage;
@@ -45,6 +44,7 @@ Vue.directive("bg-img", (el: any, binding) => {
       el.style.transition = "all 0.5s ease";
     }
   };
+  setTimeout(() => (img.src = imgData));
 });
 
 const app = new Vue({

@@ -2,7 +2,7 @@
   <canvas
     id="map-canvas"
     class="anime"
-    :class="{isReverse : isReverse}"
+    :class="{ isReverse : isReverse }"
     :width="canvasSize.w"
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"

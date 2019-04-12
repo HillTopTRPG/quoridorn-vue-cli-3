@@ -1,5 +1,11 @@
 <template>
-  <window-frame titleText="チャット" display-property="private.display.chatWindow" align="left-bottom" baseSize="-300, 260" :fontSizeBar="true">
+  <window-frame
+    titleText="チャット"
+    display-property="private.display.chatWindow"
+    align="left-bottom"
+    baseSize="-300, 260"
+    :fontSizeBar="true"
+  >
     <div class="container">
       <!----------------
        ! タブ

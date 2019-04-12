@@ -532,6 +532,38 @@ export default {
     },
 
     /** ========================================================================
+     * publicリストの中の指定されたkeyのオブジェクト情報を変更する
+     * @param dispatch
+     * @param payload
+     */
+    changePublicMemoObj: (
+      { dispatch }: { dispatch: Function },
+      payload: any
+    ) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doChangePublicMemoObj"
+      });
+    },
+    doChangePublicMemoObj: (
+      {
+        dispatch,
+        rootState,
+        rootGetters
+      }: { dispatch: Function; rootState: any; rootGetters: any },
+      payload: any
+    ) => {
+      const list = rootState.public.publicMemo.list;
+      const index = list.findIndex((obj: any) => obj.key === payload.key);
+      window.console.log("doChangePublicMemoObj", index, payload, list);
+      list.splice(
+        index,
+        1,
+        payload
+      );
+    },
+
+    /** ========================================================================
      * publicリストの中の指定されたkeyのオブジェクトを削除する
      * @param dispatch
      * @param payload
@@ -617,6 +649,7 @@ export default {
       rootState.public.deck.cards.list = cardList;
       // cardList.splice(0, 1, cardList[0])
     },
+
     /** ========================================================================
      * カードのドロー
      */

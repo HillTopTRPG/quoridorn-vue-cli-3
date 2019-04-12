@@ -54,6 +54,11 @@
     <counter-remocon-editor-window/>
     <counter-remocon-context/>
     <image-view-window/>
+    <template v-for="(publicMemoObj, index) in publicMemo.list">
+      <public-memo-tile :key="`${publicMemoObj.key}`" :publicMemoObj="publicMemoObj" :index="index"/>
+      <public-memo-fukidashi :key="`${publicMemoObj.key}-fukidashi`" :publicMemoObj="publicMemoObj" :index="index"/>
+    </template>
+    <public-memo-context/>
   </div>
 </template>
 
@@ -110,6 +115,9 @@ import CounterRemoconContext from "@/components/counter-remocon/CounterRemoconCo
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 import ImageViewWindow from "@/components/public-memo/ImageViewWindow.vue";
+import PublicMemoTile from "@/components/public-memo/PublicMemoTile.vue";
+import PublicMemoFukidashi from "@/components/public-memo/PublicMemoFukidashi.vue";
+import PublicMemoContext from "@/components/public-memo/PublicMemoContext.vue";
 
 @Component({
   components: {
@@ -160,13 +168,17 @@ import ImageViewWindow from "@/components/public-memo/ImageViewWindow.vue";
     CounterRemoconWindow,
     CounterRemoconEditorWindow,
     CounterRemoconContext,
-    ImageViewWindow
+    ImageViewWindow,
+    PublicMemoTile,
+    PublicMemoFukidashi,
+    PublicMemoContext
   }
 })
 export default class App2 extends Vue {
   @Action("onMount") private onMount: any;
   @Action("exportStart") private exportStart: any;
   @Getter("backgroundColor") private backgroundColor: any;
+  @Getter("publicMemo") private publicMemo: any;
 
   mounted() {
     // bcdiceの使用準備
@@ -213,7 +225,7 @@ export default class App2 extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss">
 html,
 body {
   padding: 0;
@@ -227,6 +239,7 @@ body {
 img {
   object-fit: contain;
 }
+
 div.img {
   opacity: 0;
   background-size: contain;
@@ -265,9 +278,14 @@ hr {
   -moz-user-select: text;
   -webkit-user-select: text;
 }
+
 .flexCenter {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.public-memo-tile:hover + .public-memo-fukidashi {
+  visibility: visible;
 }
 </style>
