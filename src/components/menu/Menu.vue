@@ -132,6 +132,7 @@ export default class Menu extends Vue {
   @Action("setProperty") private setProperty: any;
   @Action("doResetWindowLocate") private doResetWindowLocate: any;
   @Action("exportStart") private exportStart: any;
+  @Action("addListObj") private addListObj: any;
   @Getter("roomName") private roomName: any;
   @Getter("isModal") private isModal: any;
   @Getter("peerId") private peerId: any;
@@ -167,12 +168,13 @@ export default class Menu extends Vue {
 
   /** 共有メモボタン押下 */
   clickPublicMemo() {
-    this.setProperty({
-      property: "private.display.unSupportWindow.title",
-      value: "共有メモ",
-      logOff: true
+    this.addListObj({
+      propName: "publicMemo",
+      kind: "publicMemo",
+      targetList: [],
+      title: "共有メモ",
+      tabList: []
     });
-    this.windowOpen("private.display.unSupportWindow");
   }
 
   /** ログアウトボタン押下 */

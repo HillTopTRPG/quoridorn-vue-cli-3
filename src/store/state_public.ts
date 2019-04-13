@@ -435,7 +435,7 @@ export default {
       return imageObj ? imageObj.data : null;
     },
 
-    getPeerActors: (
+    getSelfActors: (
       state: any,
       getters: any,
       rootState: any,
@@ -454,6 +454,22 @@ export default {
       } else {
         return [{ name: "名無し", type: "PL" }, ...state.character.list];
       }
+    },
+
+    getAllActors: (state: any, getters: any) => {
+      const actorList: any[] = [];
+
+      getters.playerList.forEach((player: any) => {
+        actorList.push(player);
+        Array.prototype.push.apply(
+          actorList,
+          state.character.list.filter(
+            (character: any) => character.owner === player.key
+          )
+        );
+      });
+
+      return actorList;
     },
 
     getObj: (state: any) => (key: string): any => {
@@ -572,7 +588,7 @@ export default {
       };
     },
     getChatColor: (state: any, getter: any) => (actorKey: string) => {
-      const actor = getter.getPeerActors.filter(
+      const actor = getter.getSelfActors.filter(
         (actor: any) => actor.key === actorKey
       )[0];
       let color = "black";
@@ -580,7 +596,7 @@ export default {
         if (actor.key.split("-")[0] === "character") {
           if (actor.fontColorType === 0) {
             // プレイヤーと同じ色を使う
-            color = getter.getPeerActors[0].color;
+            color = getter.getSelfActors[0].color;
           } else {
             color = actor.fontColor;
           }

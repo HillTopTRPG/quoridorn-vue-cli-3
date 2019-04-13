@@ -556,11 +556,7 @@ export default {
       const list = rootState.public.publicMemo.list;
       const index = list.findIndex((obj: any) => obj.key === payload.key);
       window.console.log("doChangePublicMemoObj", index, payload, list);
-      list.splice(
-        index,
-        1,
-        payload
-      );
+      list.splice(index, 1, payload);
     },
 
     /** ========================================================================

@@ -49,7 +49,7 @@
           @change="event => updateActorKey(event.target.value)" title=""
         >
           <option
-            v-for="actor in getPeerActors"
+            v-for="actor in getSelfActors"
             :key="actor.key"
             :value="actor.key"
           >{{getViewName(actor.key)}}</option>
@@ -301,7 +301,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("sendBcdiceServer") private sendBcdiceServer: any;
   @Mutation("updateActorKey") private updateActorKey: any;
   @Mutation("addSecretDice") private addSecretDice: any;
-  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("chatLogList") private chatLogList: any;
@@ -362,7 +362,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       if (useText.length === 0) {
         selectFrom = this.chatActorKey;
       }
-      this.getPeerActors.forEach((target: any) => {
+      this.getSelfActors.forEach((target: any) => {
         if (selectFrom) return;
         if (this.getViewName(target.key).startsWith(useText)) {
           selectFrom = target.key;
@@ -865,7 +865,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private get useCommandActorList(): any[] {
     const resultList: any[] = [];
-    this.getPeerActors.forEach((actor: any) => {
+    this.getSelfActors.forEach((actor: any) => {
       const statusList: any[] = actor.statusList;
       statusList.forEach((status: any) => {
         resultList.push({

@@ -16,7 +16,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
   components: { SelectBase }
 })
 export default class SelfActorSelect extends Mixins<SelectMixin>(SelectMixin) {
-  @Getter("getAllActors") private getAllActors: any;
+  @Getter("getSelfActors") private getSelfActors: any;
 
   @Prop({ type: String, default: "アクター" })
   protected defaultLabel!: string;
@@ -25,7 +25,7 @@ export default class SelfActorSelect extends Mixins<SelectMixin>(SelectMixin) {
   private selectedActorList!: any[];
 
   get selectActors(): any[] {
-    return this.getAllActors.filter(
+    return this.getSelfActors.filter(
       (actor: any) =>
         this.selectedActorList.findIndex(
           standActor => standActor.key === actor.key

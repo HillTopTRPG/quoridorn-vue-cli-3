@@ -140,6 +140,16 @@ export default new Vuex.Store({
                   kind: "separator"
                 },
                 {
+                  kind: "checkbox",
+                  text: "あなたの選択肢１",
+                  checked: false
+                },
+                {
+                  kind: "checkbox",
+                  text: "あなたの選択肢２",
+                  checked: false
+                },
+                {
                   kind: "title",
                   text: "使命"
                 },

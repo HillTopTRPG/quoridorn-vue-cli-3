@@ -1,7 +1,7 @@
 @mixin flex-box(
   $direction: row,
-  $horizontal: flex-start,
-  $vertical: flex-start,
+  $horizontal: normal,
+  $vertical: normal,
   $wrap: nowrap
 ) {
   display: flex;

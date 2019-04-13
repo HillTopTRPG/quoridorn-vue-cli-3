@@ -94,7 +94,7 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   @Action("setProperty") private setProperty: any;
   @Action("addGroupTargetTab") private addGroupTargetTab: any;
   @Action("deleteGroupTargetTab") private deleteGroupTargetTab: any;
-  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("playerKey") private playerKey: any;
@@ -204,7 +204,7 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   }
 
   private getChatFromKey() {
-    const actor: any = this.getPeerActors.filter(
+    const actor: any = this.getSelfActors.filter(
       (actor: any) => actor.key === this.chatActorKey
     )[0];
     return actor ? actor.key : "";

@@ -28,7 +28,6 @@
 </template>
 
 <script lang="ts">
-import ActorSelect from "../parts/select/ActorSelect.vue";
 import RangeMultiplePersent from "../parts/RangeMultiplePersent.vue";
 
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
@@ -36,7 +35,6 @@ import { Action, Getter } from "vuex-class";
 
 @Component({
   components: {
-    ActorSelect,
     RangeMultiplePersent
   }
 })
@@ -60,7 +58,7 @@ export default class DiffComponent extends Vue {
   @Action("windowOpen") private windowOpen: any;
   @Action("editStandImageDiff") private editStandImageDiff: any;
   @Action("deleteStandImageDiff") private deleteStandImageDiff: any;
-  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("imageList") private imageList: any;

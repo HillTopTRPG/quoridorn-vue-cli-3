@@ -6,11 +6,12 @@
     baseSize="350, 310"
     @open="initWindow"
     @reset="initWindow"
-    :fontSizeBar="true"
+    :fontSizeBar="!isEditMode || isPreview"
+    :message="isEditMode && !isPreview ? '確定ボタンを押すと反映' : ''"
   >
     <div class="contents">
       <div class="title" v-if="usePublicMemoObj">
-        <span v-if="!isEditMode || isPreview">{{usePublicMemoObj.title}}</span>
+        <span v-if="!isEditMode || isPreview" v-html="usePublicMemoObj.title.replace(/\n/g, '<br>')"></span>
         <textarea v-model="usePublicMemoObj.title" v-if="isEditMode && !isPreview" @input="textareaOnInput" placeholder="タイトル"></textarea>
       </div>
 
@@ -22,12 +23,16 @@
           class="tab"
           :class="{ active: index === currentTabIndex }"
           @click.prevent="tabOnClick(index)"
-        >{{tabObj.tabName}}</span>
+        >
+          <span>{{tabObj.tabName}}</span>
+        </span>
         <span
-          class="tab addButton"
+          class="tab"
           @click="addButtonOnClick"
           v-if="isEditMode && !isPreview"
-        >＋</span>
+        >
+          <input type="text" @change="addTab" placeholder="追加タブの名前">
+        </span>
       </div>
 
       <!-- 表裏タブ -->
@@ -53,9 +58,15 @@
         :class="{ front: isFront, back: !isFront }"
         :surface="useSurfaceObj"
         :isEditMode="isEditMode && !isPreview"
+        :tabIndex="currentTabIndex"
+        :tabLength="usePublicMemoTabList.length"
+        :isFront="isFront"
+        v-model="usePublicMemoTabObj.tabName"
         @open-item-menu="surfaceItemConfigOnOpen"
-        @open-last-menu="surfaceLastConfigOnOpen"
         @open-image-menu="surfaceImageConfigOnOpen"
+        @check-on-change="checkOnChange"
+        @delete-tab="deleteTab"
+        @move-tab-on-click="moveTabOnClick"
         v-if="usePublicMemoTabObj"
         ref="surfaceElm"
       />
@@ -76,26 +87,13 @@
       :style="{ top: hoverMenuY + 'px', left: hoverMenuX + 'px' }"
       @mouseleave="configOnClose"
     >
-      <div @click.stop="insertTitleItemOnClick">上に大見出しを追加</div>
-      <div @click.stop="insertSubTitleItemOnClick">上に小見出しを追加</div>
-      <div @click.stop="insertTextItemOnClick">上にテキストを追加</div>
-      <div @click.stop="insertHrItemOnClick">上に区切り線を追加</div>
-      <div @click.stop="insertImageFrameItemOnClick">上に画像ブロックを追加</div>
-      <div @click.stop="deleteItemOnClick">削除</div>
-    </div>
-
-    <!-- 末尾操作メニュー -->
-    <div
-      class="hover-menu"
-      v-if="hoverMenuItemIndex === -2 && hoverMenuImageIndex === -1"
-      :style="{ top: hoverMenuY + 'px', left: hoverMenuX + 'px' }"
-      @mouseleave="configOnClose"
-    >
-      <div @click.stop="insertTitleItemOnClick">大見出しを追加</div>
-      <div @click.stop="insertSubTitleItemOnClick">小見出しを追加</div>
-      <div @click.stop="insertTextItemOnClick">テキストを追加</div>
-      <div @click.stop="insertHrItemOnClick">区切り線を追加</div>
-      <div @click.stop="insertImageFrameItemOnClick">画像ブロックを追加</div>
+      <div @click.stop="insertTitleItemOnClick">下に大見出しを追加</div>
+      <div @click.stop="insertSubTitleItemOnClick">下に小見出しを追加</div>
+      <div @click.stop="insertTextItemOnClick">下にテキストを追加</div>
+      <div @click.stop="insertCheckboxItemOnClick">下にチェックボックスを追加</div>
+      <div @click.stop="insertHrItemOnClick">下に区切り線を追加</div>
+      <div @click.stop="insertImageFrameItemOnClick">下に画像ブロックを追加</div>
+      <div @click.stop="deleteItemOnClick" v-if="hoverMenuItemIndex">削除</div>
     </div>
 
     <!-- 画像操作メニュー -->
@@ -156,6 +154,45 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
+  private deleteTab() {
+    const tabList: any[] = this.usePublicMemoObj.tabList;
+    const tabName: string = tabList[this.currentTabIndex].tabName;
+    const msg: string = `${tabName}を本当に削除しますか？`;
+    setTimeout(() => {
+      if (window.confirm(msg)) {
+        tabList.splice(this.currentTabIndex, 1);
+      }
+    });
+  }
+
+  private moveTabOnClick(isLeft: boolean) {
+    const tabList: any[] = this.usePublicMemoObj.tabList;
+    if (isLeft && this.currentTabIndex === 0) return;
+    if (!isLeft && this.currentTabIndex === tabList.length - 1) return;
+    const tabObj: any = tabList.splice(this.currentTabIndex, 1)[0];
+    const afterIndex = this.currentTabIndex + (isLeft ? -1 : 1);
+    tabList.splice(afterIndex, 0, tabObj);
+    this.currentTabIndex = afterIndex;
+  }
+
+  private addTab(event: any) {
+    this.usePublicMemoObj.tabList.push({
+      tabName: event.target.value,
+      front: {
+        targetList: [],
+        contentsList: []
+      },
+      back: {
+        targetList: [],
+        contentsList: []
+      }
+    });
+    event.target.value = "";
+    setTimeout(() => {
+      this.currentTabIndex = this.usePublicMemoObj.tabList.length - 1;
+    });
+  }
+
   /**
    * タブが押下された時
    * @param index
@@ -176,22 +213,37 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
     // TODO
   }
 
-  private commitButtonOnClick() {
-    // ルームメイトにも反映する
+  private checkOnChange(checked: boolean, itemIndex: number) {
+    window.console.log(checked, itemIndex);
     const tabList: any = {};
-    tabList[this.currentTabIndex] = this.usePublicMemoTabObj;
+    const tabObj: any = (tabList[this.currentTabIndex] = {});
+    const surfaceObj: any = (tabObj[this.isFront ? "front" : "back"] = {});
+    const contentsList: any = (surfaceObj.contentsList = {});
+    const checkObj: any = (contentsList[itemIndex] = {});
+    checkObj.checked = checked;
     this.changeListObj({
       key: this.objKey,
-      title: this.usePublicMemoObj.title,
       tabList
     });
-    // this.changePublicMemoObj(this.usePublicMemoObj);
+  }
+
+  private commitButtonOnClick() {
+    // ルームメイトにも反映する
+    this.changeListObj(this.usePublicMemoObj);
 
     // 画面を閉じる
     this.windowClose("private.display.publicMemoWindow");
   }
 
   private previewButtonOnClick() {
+    window.console.log(this.useSurfaceObj);
+    if (
+      !this.isFront &&
+      this.useSurfaceObj &&
+      this.useSurfaceObj.contentsList.length === 0
+    ) {
+      this.isFront = true;
+    }
     this.isPreview = true;
   }
 
@@ -293,6 +345,13 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
+  private insertCheckboxItemOnClick() {
+    this.insertContents({
+      kind: "checkbox",
+      text: "チェック項目"
+    });
+  }
+
   /**
    * 区切り線追加が押下された時
    */
@@ -333,7 +392,7 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
    */
   private deleteItemOnClick() {
     const contentsList: any[] = this.useSurfaceObj.contentsList;
-    contentsList.splice(this.hoverMenuItemIndex, 1);
+    contentsList.splice(this.hoverMenuItemIndex - 1, 1);
     this.configOnClose();
   }
 
@@ -419,6 +478,12 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
 .contents {
   @include flex-box(column);
   height: 100%;
+  overflow-y: auto;
+
+  > * {
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
 
   > .operationArea {
     @include flex-box(row, center, center);
@@ -441,29 +506,28 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
 
     > span {
       position: relative;
-      padding: 0.25rem 1rem;
-      border-left: solid 1px gray;
-      border-right: solid 1px #333;
+      display: inline-block;
+      padding: 0 0.8em;
 
       &:before,
       &:after {
-        content: "";
         position: absolute;
-        width: calc(100% - 0.25rem);
+        content: "";
+        top: 0;
+        width: 0.4rem;
+        height: 100%;
+        border: solid 1px black;
+        box-sizing: border-box;
       }
 
       &:before {
-        top: 0.2rem;
-        left: -0.5rem;
-        height: 1px;
-        background-color: gray;
+        right: 0;
+        border-left: none;
       }
 
       &:after {
-        bottom: 0.2rem;
-        right: -0.5rem;
-        height: 2px;
-        background-color: #333;
+        left: 0;
+        border-right: none;
       }
     }
     margin-bottom: 0.2rem;
@@ -552,11 +616,6 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
       border-color: #0092ed;
       z-index: 100;
     }
-  }
-
-  &.addButton {
-    margin-left: 100px;
-    cursor: pointer;
   }
 }
 </style>

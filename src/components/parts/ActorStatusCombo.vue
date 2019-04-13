@@ -23,7 +23,7 @@ import { Getter } from "vuex-class";
 
 @Component
 export default class ActorStatusCombo extends Vue {
-  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getSelfActors") private getSelfActors: any;
 
   @Prop({ type: String, required: true })
   private value!: string;

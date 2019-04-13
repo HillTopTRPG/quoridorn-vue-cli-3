@@ -4,7 +4,7 @@
     <!-- タブ -->
     <div class="actor-tabs" @contextmenu.prevent>
       <label class="tab">
-        <actor-select :selectedActorList="standActorList" v-model="selectActorKey"></actor-select>
+        <self-actor-select :selectedActorList="standActorList" v-model="selectActorKey"/>
       </label>
       <label
         class="tab"
@@ -26,17 +26,17 @@
 </template>
 
 <script lang="ts">
-import ActorSelect from "@/components/parts/select/ActorSelect.vue";
+import SelfActorSelect from "@/components/parts/select/SelfActorSelect.vue";
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
 @Component({
   components: {
-    ActorSelect
+    SelfActorSelect
   }
 })
 export default class ActorTabComponent extends Vue {
-  @Getter("getPeerActors") private getPeerActors: any;
+  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
 
