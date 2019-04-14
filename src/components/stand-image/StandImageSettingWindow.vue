@@ -414,7 +414,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
   $color2: #bebebe;
   .stand-image {
     margin-bottom: 0.5em;
-    border: 1px solid #666;
+    border: 1px solid #666666;
     background: $color1;
     background-image: linear-gradient(45deg, $color2 25%, transparent 0),
       linear-gradient(45deg, transparent 75%, $color2 0),
@@ -433,8 +433,8 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
 }
 .delete-button {
   border-radius: 3px;
-  border: solid 1px #666;
-  color: #666;
+  border: solid 1px #666666;
+  color: #666666;
   position: absolute;
   right: 2px;
   top: 2px;
@@ -452,7 +452,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
   height: 100%;
   background-color: white;
   margin: 0 0.5em 0.5em 1em;
-  border: 1px dotted #666;
+  border: 1px dotted #666666;
   position: relative;
 
   .disable-overlay {

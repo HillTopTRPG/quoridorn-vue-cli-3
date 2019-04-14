@@ -30,11 +30,6 @@ export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("mapMaskIsLock") private mapMaskIsLock: any;
 
   viewEditMapMask() {
-    window.console.log(
-      `  [methods] select context => item: MapMask(${
-        this.mapMaskContextObjKey
-      }).viewEditMapMask`
-    );
     this.setProperty({
       property: "private.display.editMapMaskWindow.key",
       value: this.mapMaskContextObjKey,
@@ -44,11 +39,6 @@ export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
     this.windowClose("private.display.mapMaskContext");
   }
   changeMapMaskLock() {
-    window.console.log(
-      `  [methods] select context => item: MapMask(${
-        this.mapMaskContextObjKey
-      }).changeMapMaskLock`
-    );
     this.changeListObj({
       key: this.mapMaskContextObjKey,
       isLock: !this.mapMaskIsLock,

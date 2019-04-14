@@ -59,12 +59,12 @@
           <!-- フェードイン -->
           <label class="fadeIn">
             <span>fadeIn</span>
-            <input type="number" min="0" step="0.1" max="10" v-model="fadeIn" placeholder="秒">
+            <input type="number" min="0" step="0.1" max="200" v-model="fadeIn" placeholder="秒">
           </label>
           <!-- フェードアウト -->
           <label class="fadeOut">
             <span>fadeOut</span>
-            <input type="number" min="0" step="0.1" max="10" v-model="fadeOut" placeholder="秒">
+            <input type="number" min="0" step="0.1" max="200" v-model="fadeOut" placeholder="秒">
           </label>
           <!-- 無限ループ -->
           <span class="icon loop" :class="{active: isLoop}" @click="change('isLoop')">
@@ -166,6 +166,8 @@ export default {
         creditUrl: this.creditUrl,
         tag: this.tag,
         isLoop: this.isLoop,
+        start: parseInt(this.start, 10),
+        end: parseInt(this.end, 10),
         fadeIn: Math.floor(parseFloat(this.fadeIn) * 10) / 10,
         fadeOut: Math.floor(parseFloat(this.fadeOut) * 10) / 10,
         playLength: Math.floor(parseFloat(this.playLength) * 10) / 10,
@@ -178,6 +180,7 @@ export default {
       this.setProperty({
         property: `public.bgm.list.${index}`,
         value: bgmObj,
+        isNotice: true,
         logOff: true
       });
       this.windowClose("private.display.editBGMWindow");
@@ -278,6 +281,7 @@ fieldset {
     border-width: 2px;
     border-radius: 0.5em;
     color: black;
+    font-size: 80%;
 
     &.active {
       border-color: black;

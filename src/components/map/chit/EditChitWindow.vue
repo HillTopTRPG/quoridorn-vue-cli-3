@@ -57,7 +57,6 @@ export default {
   methods: {
     ...mapActions(["windowOpen", "windowClose", "changeListObj"]),
     commit() {
-      window.console.log(this.key);
       this.changeListObj({
         key: this.key,
         currentImageTag: this.currentImageTag,

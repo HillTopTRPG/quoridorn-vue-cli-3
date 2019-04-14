@@ -28,11 +28,6 @@ export default class ChitContext extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("playerKey") private playerKey: any;
 
   viewEditChit() {
-    window.console.log(
-      `  [methods] select context => item: Chit(${
-        this.chitContextObjKey
-      }).viewEditChit`
-    );
     this.setProperty({
       property: "private.display.editChitWindow.key",
       value: this.chitContextObjKey
@@ -50,11 +45,6 @@ export default class ChitContext extends Mixins<WindowMixin>(WindowMixin) {
     this.windowClose("private.display.chitContext");
   }
   deleteChit() {
-    window.console.log(
-      `  [methods] select context => item: Chit(${
-        this.chitContextObjKey
-      }).deleteChit`
-    );
     this.deleteListObj({
       propName: "chit",
       key: this.chitContextObjKey,

@@ -1,8 +1,8 @@
 ul {
   padding-inline-start: 1.5em;
   -webkit-padding-start: 1.5em;
-  text-indent: 0;
-  padding-left: 0;
+  /*text-indent: 0;*/
+  /*padding-left: 0;*/
   margin: 0;
 }
 ol {
@@ -35,30 +35,30 @@ legend {
 }
 .operation,
 .operation legend {
-  background-color: #cee;
+  background-color: #cceeee;
 }
 .spec,
 .spec legend {
-  background-color: #cec;
+  background-color: #cceecc;
 }
 .request,
 .request legend {
-  background-color: #eec;
+  background-color: #eeeecc;
 }
 .unImplemented,
 .unImplemented legend {
-  background-color: #ecc;
+  background-color: #eecccc;
 }
 .unImplemented li:not(:first-child) {
   margin-top: 0.5em;
 }
 .unSupport,
 .unSupport legend {
-  background-color: #ccc;
+  background-color: #cccccc;
 }
 .ref,
 .ref legend {
-  background-color: #ece;
+  background-color: #eeccee;
 }
 .unFixed {
   color: rgb(231, 50, 45);

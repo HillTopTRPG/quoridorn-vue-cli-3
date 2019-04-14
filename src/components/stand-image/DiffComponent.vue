@@ -219,13 +219,13 @@ export default class DiffComponent extends Vue {
   overflow: visible;
 
   > div.range {
-    border-left: 1px dashed #666;
+    border-left: 1px dashed #666666;
   }
 }
 $color1: #f7f7f7;
 $color2: #bebebe;
 .img-container {
-  border: 1px solid #666;
+  border: 1px solid #666666;
   width: 5em;
   height: 5em;
   background: $color1;
@@ -244,8 +244,8 @@ $color2: #bebebe;
 }
 .delete-button {
   border-radius: 3px;
-  border: solid 1px #666;
-  color: #666;
+  border: solid 1px #666666;
+  color: #666666;
   position: absolute;
   right: 2px;
   top: 2px;

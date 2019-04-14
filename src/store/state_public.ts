@@ -26,6 +26,9 @@ export default {
       isFitGrid: true
     },
 
+    /** 操作履歴 */
+    historyList: [],
+
     /** BGM */
     bgm: {
       list: [],
@@ -292,7 +295,6 @@ export default {
       { commit, state }: { commit: Function; state: any },
       { key, target }: { key: string; target: any }
     ) => {
-      window.console.log("【noticeInput】target:", target);
       // 即時入力カウントアップ
       commit("inputPeerId", { key: key, add: 1 });
       // 少し経ったらカウントダウン
@@ -631,6 +633,7 @@ export default {
     publicCounterRemocon: (state: any) => state.counterRemocon,
     publicCounterRemoconList: (state: any) => state.counterRemocon.list,
     roomSystem: (state: any) => state.room.system,
-    publicMemo: (state: any) => state.publicMemo
+    publicMemo: (state: any) => state.publicMemo,
+    historyList: (state: any) => state.historyList
   } /* end of getters */
 };

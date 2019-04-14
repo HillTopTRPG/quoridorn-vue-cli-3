@@ -27,7 +27,7 @@ export default class ColorCheckBox extends Vue {
   @Prop({ type: String, default: "left" })
   private labelSide!: string;
 
-  @Prop({ type: String, default: "#000" })
+  @Prop({ type: String, default: "#000000" })
   private color!: string;
 
   mounted() {

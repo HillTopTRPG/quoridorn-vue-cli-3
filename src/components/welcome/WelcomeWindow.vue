@@ -81,6 +81,8 @@
               <room-info-window/><!-- プレイルーム情報表示画面 -->
               <add-public-memo-window/><!-- 共有メモ追加画面 -->
               <logout/><!-- ログアウト -->
+              <setting-b-g-m-window-spec/><!-- BGM設定画面 -->
+              <add-edit-b-g-m-window-spec/><!-- BGM追加・編集画面 -->
             </div>
             <span class="toTop" @click="scrollTo()"><span class="rotate90">＜</span><span>TOP</span></span>
           </div>
@@ -108,7 +110,7 @@ import Environment from "./spec/Environment.vue";
 import MenuBar from "./spec/MenuBar.vue";
 import Save from "./spec/Save.vue";
 import Load from "./spec/Load.vue";
-import ChatWindow from "./spec/ChatWindow.vue";
+import ChatWindow from "./spec/ChatWindowSpec.vue";
 import DiceWindow from "./spec/DiceWindow.vue";
 import PlayerBoxWindow from "./spec/PlayerBoxWindow.vue";
 import ChangeFontSizeWindow from "./spec/ChangeFontSizeWindow.vue";
@@ -132,7 +134,7 @@ import VersionWindow from "./spec/VersionWindow.vue";
 import ManualWindow from "./spec/ManualWindow.vue";
 import OfficialSiteLink from "./spec/OfficialSiteLink.vue";
 import RoomInfoWindow from "./spec/RoomInfoWindow.vue";
-import AddPublicMemoWindow from "./spec/AddPublicMemoWindow.vue";
+import AddPublicMemoWindow from "./spec/PublicMemoSpec.vue";
 import Logout from "./spec/Logout.vue";
 import InitiativeWindow from "./spec/InitiativeWindow.vue";
 
@@ -143,6 +145,8 @@ import DevSupport from "./devSupport/DevSupport.vue";
 import { Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import CounterRemoconWindowSpec from "@/components/welcome/spec/CounterRemoconWindowSpec.vue";
+import SettingBGMWindowSpec from "@/components/welcome/spec/SettingBGMWindowSpec.vue";
+import AddEditBGMWindowSpec from "@/components/welcome/spec/AddEditBGMWindowSpec.vue";
 
 @Component({
   components: {
@@ -182,7 +186,9 @@ import CounterRemoconWindowSpec from "@/components/welcome/spec/CounterRemoconWi
     AddPublicMemoWindow,
     Logout,
     Source,
-    DevSupport
+    DevSupport,
+    SettingBGMWindowSpec,
+    AddEditBGMWindowSpec
   }
 })
 export default class WelcomeWindow extends Mixins<WindowMixin>(WindowMixin) {

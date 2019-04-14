@@ -167,7 +167,7 @@ fieldset {
 }
 .description {
   font-size: 10px;
-  color: #444;
+  color: #444444;
 }
 .buttonArea {
   margin-top: 0.5em;

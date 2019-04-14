@@ -279,7 +279,7 @@ export default {
         owner
       });
       if (rootGetters.playerKey === owner) {
-        rootGetters.historyList.push({ type: "add", key: key });
+        rootGetters.historyList.push({ type: "add", key });
       }
       return key;
     },
@@ -466,9 +466,14 @@ export default {
     /** ========================================================================
      * publicリストにオブジェクトを追加する
      * @param dispatch
+     * @param rootGetters
      * @param payload
      */
-    addListObj: ({ dispatch }: { dispatch: Function }, payload: any) => {
+    addListObj: (
+      { dispatch, rootGetters }: { dispatch: Function; rootGetters: any },
+      payload: any
+    ) => {
+      payload.owner = rootGetters.playerKey;
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddListObj"
@@ -490,6 +495,8 @@ export default {
       payload.key = key;
       delete payload.ownerPeerId;
       delete payload.isNotice;
+
+      window.console.log(payload.owner);
 
       if (rootGetters.playerKey === payload.owner) {
         rootGetters.historyList.push({ type: "add", key });
@@ -555,7 +562,6 @@ export default {
     ) => {
       const list = rootState.public.publicMemo.list;
       const index = list.findIndex((obj: any) => obj.key === payload.key);
-      window.console.log("doChangePublicMemoObj", index, payload, list);
       list.splice(index, 1, payload);
     },
 
@@ -615,6 +621,38 @@ export default {
     ) => {
       const obj = rootGetters.getObj(payload.key);
       dispatch("doAddListObj", obj);
+    },
+
+    /** ========================================================================
+     * publicリストの中の指定されたkeyのオブジェクトの位置を変更する
+     * @param dispatch
+     * @param payload
+     */
+    moveListObj: ({ dispatch }: { dispatch: Function }, payload: any) => {
+      dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doMoveListObj"
+      });
+    },
+    doMoveListObj: (
+      {
+        dispatch,
+        rootState,
+        rootGetters
+      }: {
+        dispatch: Function;
+        rootState: any;
+        rootGetters: any;
+      },
+      payload: any
+    ) => {
+      const key = payload.key;
+      const afterIndex = payload.afterIndex;
+      const propName = key.split("-")[0];
+      const list = rootState.public[propName].list;
+      const index = list.findIndex((obj: any) => obj.key === key);
+      const obj = list.splice(index, 1)[0];
+      list.splice(afterIndex, 0, obj);
     },
 
     /** ========================================================================

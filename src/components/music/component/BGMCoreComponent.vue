@@ -56,6 +56,9 @@ export default class BGMCoreComponent extends Vue {
   @Prop({ type: String, required: true })
   private url!: string;
 
+  @Prop({ type: String, default: "" })
+  private creditUrl!: string;
+
   @Prop({ type: Number, required: true })
   private startSecond!: number;
 
@@ -98,7 +101,7 @@ export default class BGMCoreComponent extends Vue {
   }
 
   thumbnailClick(this: any): void {
-    window.open(this.url, "_blank");
+    window.open(this.creditUrl || this.url, "_blank");
   }
   audioMute(this: any): void {
     const volumeComponent: VolumeComponent = this.$refs

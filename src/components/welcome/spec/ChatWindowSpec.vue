@@ -1,5 +1,5 @@
 <template>
-  <spec-frame property="chatWindow" label-str="チャット画面" lastVersion="1.0.0b5" :isSpecFixed="true">
+  <spec-frame property="chatWindowSpec" label-str="チャット画面" lastVersion="1.0.0b5" :isSpecFixed="true">
     <!----------------------
      ! 起動操作
      !--------------------->

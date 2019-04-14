@@ -52,7 +52,7 @@ export default class RoomInfo extends Vue {
 <style scoped lang="scss">
 fieldset.root,
 fieldset.root > legend {
-  background-color: #eec;
+  background-color: #eeeecc;
 }
 .description {
   text-align: left;
@@ -69,10 +69,10 @@ dl {
   margin: 0;
 
   .isNotExits {
-    background-color: #ccc;
+    background-color: #cccccc;
   }
   .isMe {
-    background-color: #cee;
+    background-color: #cceeee;
   }
 }
 dt {

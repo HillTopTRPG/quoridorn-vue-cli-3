@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?whq7lj');
-  src:  url('fonts/icomoon.eot?whq7lj#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?whq7lj') format('truetype'),
-    url('fonts/icomoon.woff?whq7lj') format('woff'),
-    url('fonts/icomoon.svg?whq7lj#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?8ok8nw');
+  src:  url('fonts/icomoon.eot?8ok8nw#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?8ok8nw') format('truetype'),
+    url('fonts/icomoon.woff?8ok8nw') format('woff'),
+    url('fonts/icomoon.svg?8ok8nw#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -110,6 +110,9 @@
 }
 .icon-youtube2:before {
   content: "\ea9e";
+}
+.icon-dropbox:before {
+  content: "\eaae";
 }
 .icon-appleinc:before {
   content: "\eabe";

@@ -93,6 +93,11 @@ export default {
       // listに対する差分を取り扱う
       const addKeyList: string[] = [];
       const delKeyList: string[] = [];
+      saveData.public.historyList.forEach((history: any) => {
+        if (history.type === "add") addKeyList.push(history.key);
+        if (history.type === "del") delKeyList.push(history.key);
+      });
+
       for (const playerKey in rootGetters.volatilePrivateData) {
         if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
           continue;
@@ -105,14 +110,6 @@ export default {
           if (player.key !== playerPrivateObj.self.playerKey) return;
           player.private = playerPrivateObj;
         });
-
-        // ------------------------------------------------------------
-        // 各プレイヤーのデータの操作履歴をまとめる
-        playerPrivateObj.historyList.forEach((history: any) => {
-          if (history.type === "add") addKeyList.push(history.key);
-          if (history.type === "del") delKeyList.push(history.key);
-        });
-        delete playerPrivateObj.historyList;
       }
 
       // ------------------------------------------------------------

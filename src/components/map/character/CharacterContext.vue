@@ -37,11 +37,6 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("mapMaskIsLock") private mapMaskIsLock: any;
 
   viewEditCharacter(): void {
-    window.console.log(
-      `  [methods] select context => item: Character(${
-        this.characterContextObjKey
-      }).viewEditCharacter`
-    );
     this.setProperty({
       property: "private.display.editCharacterWindow.key",
       value: this.characterContextObjKey
@@ -67,11 +62,6 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
     this.windowClose("private.display.characterContext");
   }
   copyCharacter(): void {
-    window.console.log(
-      `  [methods] select context => item: Character(${
-        this.characterContextObjKey
-      }).copyCharacter`
-    );
     this.windowClose("private.display.characterContext");
     alert("未実装の機能です。");
   }

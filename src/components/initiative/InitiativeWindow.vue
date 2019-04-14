@@ -542,7 +542,6 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private setMin(objKey: string, index: number, value: number) {
-    window.console.log("setMin", index, value);
     const propertyObj: any = {};
     propertyObj[this.propertyList[index].refStr] = value;
     this.changeListObj({
@@ -553,7 +552,6 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private arrangeMin(this: any, objKey: string, index: number, value: number) {
-    window.console.log("arrangeMin", index, value);
     if (this.getPropValue(objKey, index + 1) < value) {
       const propertyObj: any = {};
       propertyObj[this.propertyList[index + 1].refStr] = value;
@@ -566,7 +564,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private setMax(objKey: string, index: number, value: number) {
-    window.console.log("setMax", index, value);
+    // window.console.log("setMax", index, value);
     const propertyObj: any = {};
     propertyObj[this.propertyList[index].refStr] = value;
     this.changeListObj({
@@ -577,7 +575,6 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private arrangeMax(this: any, objKey: string, index: number, value: number) {
-    window.console.log("arrangeMax", index, value);
     if (value < this.getPropValue(objKey, index - 1)) {
       const propertyObj: any = {};
       propertyObj[this.propertyList[index - 1].refStr] = value;

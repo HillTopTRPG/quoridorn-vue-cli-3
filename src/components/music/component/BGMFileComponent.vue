@@ -4,6 +4,7 @@
     :isLoop="isLoop"
     :title="title"
     :initVolume="initVolume"
+    :creditUrl="creditUrl"
     :url="url"
     :startSecond="startSecond"
     :endSecond="endSecond"
@@ -46,6 +47,9 @@ export default class BGMFileComponent extends Vue {
   @Prop({ required: true })
   private url!: string;
 
+  @Prop({ default: "" })
+  private creditUrl!: string;
+
   @Prop({ required: true })
   private startSecond!: number;
 
@@ -62,6 +66,7 @@ export default class BGMFileComponent extends Vue {
 
   onMounted(this: any): void {
     this.jukeboxAudio = new Audio();
+    // this.jukeboxAudio.crossOrigin = "anonymous";
     this.jukeboxAudio.autoplay = true;
     this.jukeboxAudio.loop = this.isLoop;
     this.jukeboxAudio.addEventListener("timeupdate", this.onTimeUpdate);
@@ -72,11 +77,8 @@ export default class BGMFileComponent extends Vue {
       bgmCoreComponent.setDuration(this.jukeboxAudio.duration);
       bgmCoreComponent.play();
     });
-    if (this.url.startsWith("..")) {
-      this.jukeboxAudio.src = this.url;
-    } else {
-      this.jukeboxAudio.src = this.url;
-    }
+    // DropBox共有リンク対応
+    this.jukeboxAudio.src = this.url.replace(/^(.+dropbox.+\?dl)=0$/, "$1=1");
   }
 
   onDestroyed(): void {

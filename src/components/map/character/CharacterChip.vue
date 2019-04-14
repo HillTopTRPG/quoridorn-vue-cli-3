@@ -31,14 +31,8 @@ export default class CharacterChip extends PieceMixin {
 
   getKeyObj(list: any[], key: string) {
     const filteredList = list.filter(obj => obj.key === key);
-    if (filteredList.length === 0) {
-      window.console.log(`key:"${key}" is not find.`);
-      return null;
-    }
-    if (filteredList.length > 1) {
-      window.console.log(`key:"(${key})" is duplicate.`);
-      return null;
-    }
+    if (filteredList.length === 0) return null;
+    if (filteredList.length > 1) return null;
     return filteredList[0];
   }
 

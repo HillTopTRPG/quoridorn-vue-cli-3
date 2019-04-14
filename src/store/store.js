@@ -9,9 +9,11 @@ import stateSetting from "./state_setting";
 import actionFile from "./action_file";
 import actionPeer from "./action_peer.ts";
 import actionOperation from "./action_operation.ts";
-import { getUrlParam, getFileNameArgList } from "../components/common/Utility";
+import { getFileNameArgList, getUrlParam } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
 import yaml from "js-yaml";
+import moment from "moment";
+// const moment = require("moment");
 
 Vue.use(Vuex);
 
@@ -186,42 +188,42 @@ export default new Vuex.Store({
         rootState.public.publicMemo.list.push(publicMemoObj);
         rootState.public.publicMemo.maxKey = index;
       };
-      rootState.public.publicMemo.list = [];
-      addTestPublicMemo(0, "HO1");
-      addTestPublicMemo(1, "HO2");
-      addTestPublicMemo(2, "HO3");
-      addTestPublicMemo(3, "HO4");
-      addTestPublicMemo(4, "HO5");
-      rootState.public.publicMemo.list.push({
-        key: `publicMemo-${5}`,
-        targetList: [],
-        title: "ハウスルール",
-        index: 6,
-        tabList: [
-          {
-            tabName: `使用コマンド`,
-            index: 1,
-            front: {
-              targetList: [],
-              contentsList: [
-                {
-                  kind: "title",
-                  text: "コマンド"
-                },
-                {
-                  kind: "text",
-                  text: `KWT：変調表`
-                }
-              ]
-            },
-            back: {
-              targetList: [],
-              contentsList: []
-            }
-          }
-        ]
-      });
-      rootState.public.publicMemo.maxKey = 5;
+      // rootState.public.publicMemo.list = [];
+      // addTestPublicMemo(0, "HO1");
+      // addTestPublicMemo(1, "HO2");
+      // addTestPublicMemo(2, "HO3");
+      // addTestPublicMemo(3, "HO4");
+      // addTestPublicMemo(4, "HO5");
+      // rootState.public.publicMemo.list.push({
+      //   key: `publicMemo-${5}`,
+      //   targetList: [],
+      //   title: "ハウスルール",
+      //   index: 6,
+      //   tabList: [
+      //     {
+      //       tabName: `使用コマンド`,
+      //       index: 1,
+      //       front: {
+      //         targetList: [],
+      //         contentsList: [
+      //           {
+      //             kind: "title",
+      //             text: "コマンド"
+      //           },
+      //           {
+      //             kind: "text",
+      //             text: `KWT：変調表`
+      //           }
+      //         ]
+      //       },
+      //       back: {
+      //         targetList: [],
+      //         contentsList: []
+      //       }
+      //     }
+      //   ]
+      // });
+      // rootState.public.publicMemo.maxKey = 5;
 
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
@@ -400,7 +402,8 @@ export default new Vuex.Store({
                   playerPassword: playerPassword,
                   playerType: playerType,
                   fontColor: "#000000",
-                  system: system
+                  system: system,
+                  isWait: false
                 };
                 // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
                 if (
@@ -450,15 +453,18 @@ export default new Vuex.Store({
       const isWait = rootGetters.isWait;
       if (rootGetters.members[0]) {
         value.ownerPeerId = rootGetters.peerId(isWait);
-        const isMe =
+        const isMaster =
           rootGetters.members[0].peerId === rootGetters.peerId(isWait);
+        if (isMaster) {
+          value.processTime = moment().format("YYYYMMDD hh:mm:ss");
+        }
         dispatch("sendRoomData", {
-          type: isMe ? "DO_METHOD" : "NOTICE_OPERATION",
+          type: isMaster ? "DO_METHOD" : "NOTICE_OPERATION",
           value: value,
           method: method,
           isWait: isWait
         });
-        if (isMe) return dispatch(method, value);
+        if (isMaster) return dispatch(method, value);
         return null;
       } else {
         value.ownerPeerId = null;

@@ -12,8 +12,8 @@
     :tooltipDir="'top'"
     formatter="{value}%"
     mergeFormatter="{value1}% ~ {value2}%"
-    :tooltipStyle='{ "backgroundColor": "#666", "borderColor": "#666", "fontSize": "1em" }'
-    :bgStyle='{ "backgroundColor": "#add", "borderTop": "1px solid #666", "borderBottom": "1px solid #666", borderRadius: 0 }'
+    :tooltipStyle='{ "backgroundColor": "#666666", "borderColor": "#666666", "fontSize": "1em" }'
+    :bgStyle='{ "backgroundColor": "#aadddd", "borderTop": "1px solid #666666", "borderBottom": "1px solid #666666", borderRadius: 0 }'
     @contextmenu.prevent
   >
     <template slot="label" slot-scope="{ label, active, index }">
@@ -62,7 +62,7 @@ export default class RangeMultiplePersent extends Vue {
   margin-left: 3px;
   overflow: visible;
   transform: translate(-50%, -1em);
-  color: #666;
+  color: #666666;
   font-weight: bold;
 
   &:after {
@@ -74,7 +74,7 @@ export default class RangeMultiplePersent extends Vue {
     margin-bottom: -1px;
     width: 2px;
     height: 1.6em;
-    background-color: #666;
+    background-color: #666666;
   }
 
   &.line:after {

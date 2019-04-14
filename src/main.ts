@@ -25,24 +25,28 @@ Vue.directive("img", (el: any, binding) => {
   };
 });
 
-Vue.directive("bg-img", (el: any, binding) => {
+Vue.directive("bg-img", (el: any, binding: any) => {
   const imgData = binding.value;
   const img = new Image();
 
   img.onerror = () => {
-    delete el.style.backgroundImage;
-    el.style.opacity = "0";
-    el.classList.remove("loaded");
-    delete el.style.transition;
+    setTimeout(() => {
+      delete el.style.backgroundImage;
+      el.style.opacity = "0";
+      el.classList.remove("loaded");
+      delete el.style.transition;
+    });
   };
 
   img.onload = () => {
-    el.style.backgroundImage = `url(${imgData})`;
-    el.style.opacity = "1";
-    el.classList.add("loaded");
-    if (el.className.indexOf("anime") >= 0) {
-      el.style.transition = "all 0.5s ease";
-    }
+    setTimeout(() => {
+      el.style.backgroundImage = `url(${imgData})`;
+      el.style.opacity = "1";
+      el.classList.add("loaded");
+      if (el.className.indexOf("anime") >= 0) {
+        el.style.transition = "all 0.5s ease";
+      }
+    }, 100);
   };
   setTimeout(() => (img.src = imgData));
 });

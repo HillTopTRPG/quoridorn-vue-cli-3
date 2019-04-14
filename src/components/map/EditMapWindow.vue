@@ -99,7 +99,6 @@ export default {
     ...mapActions(["setProperty", "windowOpen", "windowClose"]),
     initWindow() {
       const peerId = this.peerId(this.isWait);
-      window.console.log(this.storeMapObj.isEditing, peerId);
       if (this.storeMapObj.isEditing && this.storeMapObj.isEditing !== peerId) {
         alert(
           "他の画面とマップ変更操作が競合しますので、この操作はキャンセルします。"

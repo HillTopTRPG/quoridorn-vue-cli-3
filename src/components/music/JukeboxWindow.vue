@@ -27,6 +27,7 @@
           :isLoop="bgmObj.isLoop || false"
           :title="bgmObj.title || ''"
           :initVolume="bgmObj.volume || 0.5"
+          :creditUrl="bgmObj.creditUrl"
           :url="bgmObj.url || ''"
           @end="remove(bgmObj.key)"
           :startSecond="bgmObj.start || 0"

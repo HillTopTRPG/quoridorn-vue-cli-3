@@ -131,7 +131,7 @@ export default class SpecFrame extends Vue {
   }
 
   &:last-child .accordion {
-    border-bottom: 1px solid #777;
+    border-bottom: 1px solid #777777;
   }
 
   &:not(:last-child) input[type="checkbox"] ~ label {

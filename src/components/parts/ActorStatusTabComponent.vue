@@ -166,10 +166,10 @@ $backColor: rgba(230, 230, 255, 1);
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #777;
+    border: 1px solid #777777;
     border-radius: 5px 5px 0 0;
     padding: 0.2em 0.5em 0;
-    background-color: #ccc;
+    background-color: #cccccc;
     margin-top: 0.5em;
 
     span[class^="icon-"] {
@@ -194,7 +194,7 @@ $backColor: rgba(230, 230, 255, 1);
 }
 .actor-status-contents {
   background-color: $backColor;
-  border: 1px solid #777;
+  border: 1px solid #777777;
   height: 100px;
   z-index: 0;
   box-sizing: border-box;

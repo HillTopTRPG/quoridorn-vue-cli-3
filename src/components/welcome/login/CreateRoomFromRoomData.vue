@@ -52,7 +52,7 @@ export default class CreateRoomFromRoomData extends Vue {
 <style scoped lang="scss">
 fieldset.root,
 fieldset.root > legend {
-  background-color: #cee;
+  background-color: #cceeee;
 }
 
 .input-room-data {

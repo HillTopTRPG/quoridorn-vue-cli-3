@@ -5,6 +5,8 @@ import Vue from "vue";
 import Vuex from "vuex";
 import Peer from "skyway-js";
 import { qLog } from "@/components/common/Utility";
+import moment from "moment";
+// const moment = require("moment");
 
 Vue.use(Vuex);
 
@@ -34,7 +36,7 @@ export default {
       { roomName, isWait = false }: { roomName: string; isWait: boolean }
     ): Promise<any> {
       return new Promise((resolve: Function, reject: Function) => {
-        qLog(`Peer接続開始 => Non Info.`);
+        // qLog(`Peer接続開始 => Non Info.`);
 
         const connectFunc = () => {
           // peer接続作成
@@ -55,11 +57,11 @@ export default {
            * Peer接続成功時
            */
           peer.on("open", (peerId: string) => {
-            qLog(`Peer接続成功 => PeerId: ${peerId}`);
+            // qLog(`Peer接続成功 => PeerId: ${peerId}`);
             const isSfu =
               rootGetters && rootGetters.connectType.toUpperCase() === "SFU";
             const connectStr = isSfu ? "SFU方式" : "Mesh方式";
-            qLog(`Room接続開始 => Room: ${roomName}, 接続方式: ${connectStr}`);
+            // qLog(`Room接続開始 => Room: ${roomName}, 接続方式: ${connectStr}`);
             const room = peer.joinRoom(
               roomName,
               isSfu ? { mode: "sfu" } : undefined
@@ -71,7 +73,7 @@ export default {
              * Room接続成功時
              */
             room.on("open", () => {
-              qLog(`Room接続成功 => Room: ${roomName}`);
+              // qLog(`Room接続成功 => Room: ${roomName}`);
               resolve(peerId);
             });
           });
@@ -151,7 +153,7 @@ export default {
      * @param peerId
      */
     onJoinMember(payload: any, { peerId }: { peerId: string }) {
-      qLog(`入室を感知 => peerId: ${peerId}`);
+      // qLog(`入室を感知 => peerId: ${peerId}`);
     },
 
     /**========================================================================
@@ -283,7 +285,7 @@ export default {
         if (rootGetters.isWait) {
           commit("updateIsJoined", false);
         }
-        window.console.log("部屋パスワードエラー", rootGetters.isWait);
+        // window.console.log("部屋パスワードエラー", rootGetters.isWait);
         reject.call(null);
         return;
       } else {
@@ -298,7 +300,7 @@ export default {
         // プレイヤーパスワードチェック
         if (myPlayer.password !== (playerPassword || "")) {
           if (useAlert) alert(`プレイヤーパスワードの入力をお願いします。`);
-          window.console.log("プレイヤーパスワードエラー");
+          // window.console.log("プレイヤーパスワードエラー");
           isShowWindow = true;
           isError = true;
         } else {
@@ -399,6 +401,7 @@ export default {
     ) {
       // 自分が親だったら、この通知を処理して、ルームメンバーに土管する
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
+        value.processTime = moment().format("YYYYMMDD hh:mm:ss");
         dispatch("sendRoomData", {
           type: "DO_METHOD",
           value: value,
@@ -481,8 +484,8 @@ export default {
       }
 
       // ログ出力
-      const methodMsg = type === "DO_METHOD" ? `METHOD: ${method}, ` : "";
-      qLog(`RoomData受信 => TYPE: ${type}, ${methodMsg}VALUE:`, value);
+      // const methodMsg = type === "DO_METHOD" ? `METHOD: ${method}, ` : "";
+      // qLog(`RoomData受信 => TYPE: ${type}, ${methodMsg}VALUE:`, value);
 
       /*
        * 通信内容に従って処理する
@@ -545,9 +548,9 @@ export default {
       // privateデータの要求を受けたとき
       if (type === "REQUEST_PRIVATE_DATA") {
         // 同じプレイヤーの中で一番最初に入室した画面のみ、privateデータを送信する
-        const player = rootGetters.getPlayer(rootGetters.peerId);
+        const player = rootGetters.getPlayer(rootGetters.peerId(isWait));
         const members = rootGetters.getMembers(player.key);
-        if (members[0] === rootGetters.peerId) {
+        if (members[0].peerId === rootGetters.peerId(isWait)) {
           const privateData = JSON.parse(JSON.stringify(rootState.private));
           // 開いてないディスプレイ情報は送信データに含めない
           for (const key in privateData.display) {
@@ -753,12 +756,12 @@ export default {
             }
           });
           let isExist = peerIdList.length > 0;
-          qLog(
-            `Room存在確認 => name: ${roomName} 存在: ${
-              isExist ? "する" : "しない"
-            } peerId:`,
-            peerIdList
-          );
+          // qLog(
+          //   `Room存在確認 => name: ${roomName} 存在: ${
+          //     isExist ? "する" : "しない"
+          //   } peerId:`,
+          //   peerIdList
+          // );
           dispatch("setProperty", {
             property: `room.isExist`,
             value: isExist,
@@ -845,19 +848,19 @@ export default {
       const room = rootGetters.webRtcRoom(payload.isWait);
       if (!room) return;
       if (payload && payload.type !== "NOTICE_INPUT") {
-        const msgList: any[] = [];
-        msgList.push(`TYPE: ${payload.type}`);
-        if (payload.type === "DO_METHOD") {
-          msgList.push("METHOD:");
-          msgList.push(payload.method);
-        }
-        msgList.push("VALUE:");
-        msgList.push(payload.value);
-        msgList.push("targets:");
-        msgList.push(payload.targets);
-        msgList.push("this.peerId:");
-        msgList.push(rootGetters.peerId(payload.isWait));
-        qLog("RoomData送信 =>", ...msgList);
+        // const msgList: any[] = [];
+        // msgList.push(`TYPE: ${payload.type}`);
+        // if (payload.type === "DO_METHOD") {
+        //   msgList.push("METHOD:");
+        //   msgList.push(payload.method);
+        // }
+        // msgList.push("VALUE:");
+        // msgList.push(payload.value);
+        // msgList.push("targets:");
+        // msgList.push(payload.targets);
+        // msgList.push("this.peerId:");
+        // msgList.push(rootGetters.peerId(payload.isWait));
+        // qLog("RoomData送信 =>", ...msgList);
       }
       room.send(payload);
     },
@@ -1100,7 +1103,7 @@ export default {
         logOff: true
       });
 
-      qLog(`Room: ${roomName} のルームメンバーとして認識されました。`);
+      // qLog(`Room: ${roomName} のルームメンバーとして認識されました。`);
 
       // チャット追加
       dispatch("addChatLog", {

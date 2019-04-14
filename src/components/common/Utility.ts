@@ -212,7 +212,7 @@ export function toInitiativeObjList(
       refStr: str,
       min: null,
       max: null,
-      color: "#000"
+      color: "#000000"
     };
 
     // 想定外の多さ

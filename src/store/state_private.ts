@@ -51,9 +51,6 @@ export default {
       wheel: 0
     },
 
-    /** 操作履歴 */
-    historyList: [],
-
     /** 子画面 */
     display: {
       unSupportWindow: {
@@ -403,6 +400,7 @@ export default {
     },
 
     updatePlayerKey: (state: any, playerKey: string) => {
+      window.console.error(playerKey);
       state.self.playerKey = playerKey;
     },
 
@@ -459,7 +457,6 @@ export default {
       state.display.inputPlayerInfoWindow.fontColor,
     volatileResolve: (state: any) =>
       state.display.inputPlayerInfoWindow.resolve,
-    historyList: (state: any) => state.historyList,
     chatTabsOption: (state: any): any[] => state.chat.tab,
     dropZipList: (state: any) => state.display.dropZipWindow.zipList,
     dropZipRoomCreate: (state: any) => state.display.dropZipWindow.isRoomCreate,

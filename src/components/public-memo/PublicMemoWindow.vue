@@ -421,10 +421,6 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private get isEditMode(): boolean {
-    window.console.log(
-      "get isEditMode",
-      this.$store.state.private.display.publicMemoWindow.isEditMode
-    );
     return this.$store.state.private.display.publicMemoWindow.isEditMode;
   }
 
@@ -442,7 +438,6 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private get usePublicMemoObj(): any {
-    window.console.log("usePublicMemoObj", this.isEditMode);
     return this.isEditMode ? this.editingPublicMemoData : this.publicMemoObj;
   }
 

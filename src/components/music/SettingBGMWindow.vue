@@ -33,9 +33,10 @@
               <td :style="colStyle(0)" :title="linkageStr(bgmObj)">{{bgmObj.chatLinkage > 0 ? 'あり' : 'なし'}}</td><divider :index="0" prop="settingBGMWindow"/>
               <td :style="colStyle(1)">{{bgmObj.tag}}</td><divider :index="1" prop="settingBGMWindow"/>
               <td :style="colStyle(2)">
-                <i class="icon-youtube2" v-if="isYoutube(bgmObj.url)"></i>
                 <i class="icon-stop2" v-if="!bgmObj.url"></i>
-                <i class="icon-file-music" v-if="bgmObj.url && !isYoutube(bgmObj.url)"></i>
+                <i class="icon-youtube2" v-if="isYoutube(bgmObj.url)"></i>
+                <i class="icon-dropbox" v-if="isDropBox(bgmObj.url)"></i>
+                <i class="icon-file-music" v-if="bgmObj.url && !isYoutube(bgmObj.url) && !isDropBox(bgmObj.url)"></i>
               </td><divider :index="2" prop="settingBGMWindow"/>
               <td :style="colStyle(3)" class="selectable">{{bgmObj.title}}</td><divider :index="3" prop="settingBGMWindow"/>
               <td :style="colStyle(4)">{{bgmObj.url ? convertSecond(bgmObj.start, bgmObj.end) : '-'}}</td><divider :index="4" prop="settingBGMWindow"/>
@@ -59,148 +60,243 @@
       <div class="operateArea">
         <button @click="doAdd">追加</button>
         <button @click="doModify">変更</button>
+        <button @click="doCopy">コピー</button>
         <button @click="doDelete">削除</button>
-        <label><input type="checkbox" @change="changeSortMode" />並べ替え許可</label>
+        <button @click="doUp">↑</button>
+        <button @click="doDown">↓</button>
+        <!--<label><input type="checkbox" @change="changeSortMode" />並べ替え許可</label>-->
       </div>
     </div>
   </window-frame>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState, mapActions } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
 import Divider from "../parts/Divider";
 
-export default {
-  name: "settingBGMWindow",
-  mixins: [WindowMixin],
+import { Vue, Watch } from "vue-property-decorator";
+import { Action, Getter, Mutation } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+
+@Component({
   components: {
     WindowFrame,
     Divider
-  },
-  methods: {
-    ...mapActions(["setProperty", "windowOpen"]),
-    isYoutube(url) {
-      return /www\.youtube\.com/.test(url);
-    },
-    initWindow() {
-      this.setProperty({
-        property: "private.display.settingBGMWindow.selectLineKey",
-        value: -1,
-        logOff: true
-      });
-    },
-    doPlay() {
-      this.playBGM();
-    },
-    doPreview() {
-      this.playBGM(true);
-    },
-    doAdd() {
-      this.windowOpen("private.display.addBGMWindow");
-    },
-    doModify() {
-      if (this.selectLineKey < 0) {
-        alert("BGMを選択してください");
-        return;
-      }
-      this.setProperty({
-        property: "private.display.editBGMWindow.key",
-        value: this.selectLineKey,
-        logOff: true
-      });
-      this.windowOpen("private.display.editBGMWindow");
-    },
-    doDelete() {
-      window.console.log(`doDelete: ${this.selectLineKey}`);
-      alert("未実装の機能です。");
-    },
-    changeSortMode(event) {
-      const val = event.target.checked;
-      window.console.log(`changeSortMode: ${val}`);
-      if (val) {
-        setTimeout(() => {
-          alert("未実装の機能です。");
-        }, 20);
-      }
-    },
-    selectLine(bgmKey) {
-      this.setProperty({
-        property: "private.display.settingBGMWindow.selectLineKey",
-        value: bgmKey,
-        logOff: true
-      });
-    },
-    playBGM(isPreview = false) {
-      this.setProperty({
-        property: "private.display.jukeboxWindow.command",
-        logOff: true,
-        isNotice: !isPreview,
-        value: { command: "add", payload: this.selectLineKey }
-      });
-    },
-    moveDev(event) {
-      if (this.movingIndex > -1) {
-        const diff = event.clientX - this.startX;
-        const afterLeftWidth = this.startLeftWidth + diff;
-        const afterRightWidth = this.startRightWidth - diff;
-        if (afterLeftWidth >= 10 && afterRightWidth >= 10) {
-          const paramObj = {};
-          paramObj[this.movingIndex] = afterLeftWidth;
-          paramObj[this.movingIndex + 1] = afterRightWidth;
-          this.setProperty({
-            property: "private.display.settingBGMWindow.widthList",
-            value: paramObj,
-            logOff: true
-          });
-        }
-      }
-    },
-    moveDevEnd() {
-      this.setProperty({
-        property: "private.display.settingBGMWindow",
-        value: {
-          hoverDevIndex: -1,
-          movingIndex: -1,
-          startX: -1,
-          startLeftWidth: -1,
-          startRightWidth: -1
-        },
-        logOff: true
-      });
+  }
+})
+export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("setProperty") setProperty: any;
+  @Action("windowOpen") windowOpen: any;
+  @Action("addListObj") addListObj: any;
+  @Action("deleteListObj") deleteListObj: any;
+  @Action("moveListObj") moveListObj: any;
+  @Getter("bgmList") bgmList: any;
+
+  private isYoutube(url) {
+    return /www\.youtube\.com/.test(url);
+  }
+
+  private isDropBox(url) {
+    return /dropbox/.test(url);
+  }
+
+  private initWindow() {
+    this.setProperty({
+      property: "private.display.settingBGMWindow.selectLineKey",
+      value: -1,
+      logOff: true
+    });
+  }
+
+  private doPlay() {
+    this.playBGM();
+  }
+
+  private doPreview() {
+    this.playBGM(true);
+  }
+
+  private doAdd() {
+    this.windowOpen("private.display.addBGMWindow");
+  }
+
+  private doModify() {
+    if (this.selectLineKey < 0) {
+      alert("BGMを選択してください");
+      return;
     }
-  },
-  computed: mapState({
-    convertSecond: () => (start, end) => {
+    this.setProperty({
+      property: "private.display.editBGMWindow.key",
+      value: this.selectLineKey,
+      logOff: true
+    });
+    this.windowOpen("private.display.editBGMWindow");
+  }
+
+  private doCopy() {
+    if (this.selectLineKey < 0) {
+      alert("BGMを選択してください");
+      return;
+    }
+    const bgmObj = JSON.parse(
+      JSON.stringify(
+        this.bgmList.filter(bgmObj => bgmObj.key === this.selectLineKey)[0]
+      )
+    );
+    // const bgmObj = this.bgmList.filter(
+    //   bgmObj => bgmObj.key === this.selectLineKey
+    // )[0];
+    bgmObj.propName = "bgm";
+    bgmObj.kind = "bgm";
+    this.addListObj(bgmObj);
+  }
+
+  private doDelete() {
+    if (this.selectLineKey < 0) {
+      alert("BGMを選択してください");
+      return;
+    }
+    this.deleteListObj({
+      key: this.selectLineKey,
+      propName: "bgm"
+    });
+  }
+
+  private doUp() {
+    if (this.selectLineKey < 0) {
+      alert("BGMを選択してください");
+      return;
+    }
+    const index = this.bgmList.findIndex(bgm => bgm.key === this.selectLineKey);
+    this.moveListObj({
+      key: this.selectLineKey,
+      afterIndex: index - 1
+    });
+  }
+
+  private doDown() {
+    if (this.selectLineKey < 0) {
+      alert("BGMを選択してください");
+      return;
+    }
+    const index = this.bgmList.findIndex(bgm => bgm.key === this.selectLineKey);
+    this.moveListObj({
+      key: this.selectLineKey,
+      afterIndex: index + 1
+    });
+  }
+
+  // changeSortMode(event) {
+  //   const val = event.target.checked;
+  //   window.console.log(`changeSortMode: ${val}`);
+  //   if (val) {
+  //     setTimeout(() => {
+  //       alert("未実装の機能です。");
+  //     }, 20);
+  //   }
+  // }
+
+  private selectLine(bgmKey) {
+    this.setProperty({
+      property: "private.display.settingBGMWindow.selectLineKey",
+      value: bgmKey,
+      logOff: true
+    });
+  }
+
+  private playBGM(isPreview = false) {
+    this.setProperty({
+      property: "private.display.jukeboxWindow.command",
+      logOff: true,
+      isNotice: !isPreview,
+      value: { command: "add", payload: this.selectLineKey }
+    });
+  }
+
+  private moveDev(event) {
+    if (this.movingIndex > -1) {
+      const diff = event.clientX - this.startX;
+      const afterLeftWidth = this.startLeftWidth + diff;
+      const afterRightWidth = this.startRightWidth - diff;
+      if (afterLeftWidth >= 10 && afterRightWidth >= 10) {
+        const paramObj = {};
+        paramObj[this.movingIndex] = afterLeftWidth;
+        paramObj[this.movingIndex + 1] = afterRightWidth;
+        this.setProperty({
+          property: "private.display.settingBGMWindow.widthList",
+          value: paramObj,
+          logOff: true
+        });
+      }
+    }
+  }
+
+  private moveDevEnd() {
+    this.setProperty({
+      property: "private.display.settingBGMWindow",
+      value: {
+        hoverDevIndex: -1,
+        movingIndex: -1,
+        startX: -1,
+        startLeftWidth: -1,
+        startRightWidth: -1
+      },
+      logOff: true
+    });
+  }
+
+  private get convertSecond(): Function {
+    return (start, end): string => {
       if (start && end) return `${start}〜${end}`;
       if (start) return `${start}〜`;
       if (end) return `〜${end}`;
       return "All";
-    },
-    bgmList: state => state.public.bgm.list,
-    /* Start 列幅可変テーブルのプロパティ */
-    selectLineKey: state =>
-      state.private.display.settingBGMWindow.selectLineKey,
-    widthList: state => state.private.display.settingBGMWindow.widthList,
-    movingIndex: state => state.private.display.settingBGMWindow.movingIndex,
-    startX: state => state.private.display.settingBGMWindow.startX,
-    startLeftWidth: state =>
-      state.private.display.settingBGMWindow.startLeftWidth,
-    startRightWidth: state =>
-      state.private.display.settingBGMWindow.startRightWidth,
-    colStyle: () =>
-      function(index) {
-        return { width: `${this.widthList[index]}px` };
-      },
-    /* End 列幅可変テーブルのプロパティ */
-    fadeStr: () => bgmObj => {
+    };
+  }
+
+  /* Start 列幅可変テーブルのプロパティ */
+  private get selectLineKey(): string {
+    return this.$store.state.private.display.settingBGMWindow.selectLineKey;
+  }
+
+  private get widthList(): number[] {
+    return this.$store.state.private.display.settingBGMWindow.widthList;
+  }
+
+  private get movingIndex(): number {
+    return this.$store.state.private.display.settingBGMWindow.movingIndex;
+  }
+
+  private get startX(): number {
+    return this.$store.state.private.display.settingBGMWindow.startX;
+  }
+
+  private get startLeftWidth(): number {
+    return this.$store.state.private.display.settingBGMWindow.startLeftWidth;
+  }
+
+  private get startRightWidth(): number {
+    return this.$store.state.private.display.settingBGMWindow.startRightWidth;
+  }
+
+  private get colStyle(): any {
+    return (index: number) => ({ width: `${this.widthList[index]}px` });
+  }
+  /* End 列幅可変テーブルのプロパティ */
+
+  private get fadeStr(): Function {
+    return (bgmObj: any): string => {
       if (bgmObj.fadeIn > 0 && bgmObj.fadeOut > 0) return "in/out";
       if (bgmObj.fadeIn > 0 && bgmObj.fadeOut === 0) return "in";
       if (bgmObj.fadeIn === 0 && bgmObj.fadeOut > 0) return "out";
       return "-";
-    },
-    fadeTitle: () => bgmObj => {
+    };
+  }
+
+  private get fadeTitle(): Function {
+    return (bgmObj: any): string => {
       if (bgmObj.fadeIn > 0 && bgmObj.fadeOut > 0)
         return `in:${bgmObj.fadeIn}\nout:${bgmObj.fadeOut}`;
       if (bgmObj.fadeIn > 0 && bgmObj.fadeOut === 0)
@@ -208,16 +304,19 @@ export default {
       if (bgmObj.fadeIn === 0 && bgmObj.fadeOut > 0)
         return `out:${bgmObj.fadeOut}`;
       return "-";
-    },
-    linkageStr: () => bgmObj => {
+    };
+  }
+
+  private get linkageStr(): Function {
+    return (bgmObj: any): string => {
       if (bgmObj.chatLinkage === 1)
         return `【末尾文字】\n${bgmObj.chatLinkageSearch}`;
       if (bgmObj.chatLinkage === 2)
         return `【正規表現】\n${bgmObj.chatLinkageSearch}`;
       return "なし";
-    }
-  })
-};
+    };
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -243,6 +342,7 @@ export default {
 button {
   font-size: 10px;
   border-radius: 5px;
+  cursor: pointer;
 }
 .playOperationArea button {
   margin-bottom: 5px;

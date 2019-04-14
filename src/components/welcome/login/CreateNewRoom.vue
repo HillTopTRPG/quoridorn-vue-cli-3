@@ -439,7 +439,7 @@ export default class CreateNewRoom extends Vue {
 <style scoped lang="scss">
 fieldset.root,
 fieldset.root > legend {
-  background-color: #cec;
+  background-color: #cceecc;
 }
 
 .roomName {

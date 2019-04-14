@@ -94,7 +94,7 @@ export default class BGMYoutubeComponent extends Vue {
   }
 
   onError(event: any) {
-    window.console.log(event);
+    window.console.error(event);
   }
 
   onPaused(this: any) {
@@ -103,7 +103,7 @@ export default class BGMYoutubeComponent extends Vue {
   }
 
   onReject() {
-    window.console.log("youtube - onReject => reload");
+    window.console.error("youtube - onReject => reload");
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
       logOff: true,

@@ -30,7 +30,6 @@ export default class CanvasMixin extends AddressCalcMixin {
       return;
     }
     // window.console.log(`  [methods] mousedown left on ${this.type}`)
-    window.console.log("#leftDown");
     const rect = this.rect;
     const offset = {
       w: this.mouseOnTable.x - rect.left,
@@ -114,9 +113,6 @@ export default class CanvasMixin extends AddressCalcMixin {
       value: obj,
       logOff: true
     }).then(() => this.windowOpen(contextProperty));
-    window.console.log(
-      `  [methods] open context => ${contextProperty}(${this.objKey})`
-    );
   }
   mouseover(): void {
     this.isHover = true;
@@ -153,9 +149,6 @@ export default class CanvasMixin extends AddressCalcMixin {
       value: true,
       logOff: true
     });
-    window.console.log(
-      `  [methods] rolling start on ${this.type}(${this.objKey})`
-    );
     const angle = this.getAngle(this.mouseOnTable);
     const planeAngle = this.arrangeAngle(angle - this.angle.total);
     // window.console.log(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)

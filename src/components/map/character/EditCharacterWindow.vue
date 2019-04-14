@@ -99,11 +99,6 @@ export default {
         this.switchImageList,
         this.switchCurrentKey
       );
-      window.console.log(
-        `image(${this.switchCurrentKey}) isReverse: ${
-          switchImageObj.isReverse
-        } -> ${!switchImageObj.isReverse}`
-      );
       switchImageObj.isReverse = !switchImageObj.isReverse;
       const index = this.switchImageList.indexOf(switchImageObj);
       this.switchImageList.splice(index, 1, switchImageObj);
@@ -114,14 +109,8 @@ export default {
     },
     getKeyObj(list, key) {
       const filteredList = list.filter(obj => obj.key === key);
-      if (filteredList.length === 0) {
-        // window.console.log(`key:"${key}" is not find.`);
-        return null;
-      }
-      if (filteredList.length > 1) {
-        // window.console.log(`key:"(${key})" is duplicate.`);
-        return null;
-      }
+      if (filteredList.length === 0) return null;
+      if (filteredList.length > 1) return null;
       return filteredList[0];
     },
     selectSwitchImage(key) {
