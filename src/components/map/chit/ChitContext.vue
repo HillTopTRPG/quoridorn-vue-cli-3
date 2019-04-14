@@ -23,7 +23,6 @@ export default class ChitContext extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") private setProperty: any;
   @Action("deleteListObj") private deleteListObj: any;
   @Action("windowClose") private windowClose: any;
-  @Getter("getObj") private getObj: any;
   @Getter("chitContextObjKey") private chitContextObjKey: any;
   @Getter("playerKey") private playerKey: any;
 

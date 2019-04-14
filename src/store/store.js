@@ -33,7 +33,9 @@ export default new Vuex.Store({
   state: {
     // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）
     mouse: { x: 0, y: 0, drag: { from: { x: 0, y: 0 }, move: { x: 0, y: 0 } } },
+
     self: { webRtcPeer: null, webRtcPeerWait: null },
+
     param: {
       roomName: null,
       roomPassword: null,
@@ -42,17 +44,20 @@ export default new Vuex.Store({
       playerType: null,
       system: null
     },
+
     room: {
       webRtcRoom: null,
       webRtcRoomWait: null,
       isExist: false,
       isJoined: false
     },
+
     chat: {
       activeTab: "chatTab-0",
       actorKey: "",
       diceSystemList: []
     },
+
     map: {
       grid: { c: 0, r: 0 },
       mouse: {
@@ -79,6 +84,7 @@ export default new Vuex.Store({
         dragStart: 0
       }
     },
+
     deck: {
       viewMode: "normal",
       hoverIndex: -1,
@@ -86,10 +92,15 @@ export default new Vuex.Store({
       command: null,
       isReverse: false
     },
+
+    dice: {},
+
     operationQueue: [],
+
     volatileSaveData: {
       players: []
     },
+
     mode: {
       isModal: true,
       isLoading: 0,
@@ -291,6 +302,14 @@ export default new Vuex.Store({
           .then(responce => responce.text())
           .then(text => yaml.safeLoad(text));
       };
+
+      /* ----------------------------------------------------------------------
+       * ダイスの設定
+       */
+      loadYaml(process.env.BASE_URL + "/static/conf/dice.yaml").then(dice => {
+        window.console.log(dice);
+        state.dice = dice;
+      });
 
       /* ----------------------------------------------------------------------
        * カード情報の設定
@@ -878,6 +897,14 @@ export default new Vuex.Store({
       r: state.map.grid.r
     }),
     isRolling: state => state.map.rollObj.isRolling,
-    diceSystemList: state => state.chat.diceSystemList
+    diceSystemList: state => state.chat.diceSystemList,
+    dice: state => state.dice,
+    dicePipsImage: state => (faceNum, type, pips) => {
+      const diceSetList = state.dice[faceNum];
+      if (!diceSetList) return null;
+      const diceObj = diceSetList.filter(diceSet => diceSet.type === type)[0];
+      if (!diceObj) return null;
+      return diceObj.pips[pips];
+    }
   }
 });

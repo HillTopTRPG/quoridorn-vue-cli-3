@@ -52,13 +52,7 @@ export default {
       this.windowClose("private.display.gameTableContext");
     },
     addDiceSymbol() {
-      qLog(`  [methods] select context => item: GameTable.addDiceSymbol`);
-      this.setProperty({
-        property: "private.display.unSupportWindow.title",
-        value: "ダイスシンボル追加",
-        logOff: true
-      });
-      this.windowOpen("private.display.unSupportWindow");
+      this.windowOpen("private.display.addDiceSymbolWindow");
       this.windowClose("private.display.gameTableContext");
     },
     createHandCardArea() {

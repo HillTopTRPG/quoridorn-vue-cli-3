@@ -59,6 +59,18 @@
       type="chit"
     />
 
+    <dice-symbol
+      v-for="obj in getMapObjectList({ kind: 'diceSymbol' })"
+      :key="obj.key"
+      :objKey="obj.key"
+      @drag="dragging"
+      @leftDown="leftDown"
+      @leftUp="leftUp"
+      @rightDown="rightDown"
+      @rightUp="rightUp"
+      type="diceSymbol"
+    />
+
   </div>
 </template>
 
@@ -73,9 +85,11 @@ import { qLog, getFileNameArgList } from "../common/Utility";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { Action, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
+import DiceSymbol from "@/components/map/diceSymbol/DiceSymbol.vue";
 
 @Component({
   components: {
+    DiceSymbol,
     MapBoard,
     MapMask,
     Character,
@@ -120,7 +134,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     window.console.log(`★★★★ dragging ★★★★`);
   }
 
-  onWheel(delta: number): void {
+  onWheel(this: any, delta: number): void {
     const changeValue = 100;
     const add = delta > 0 ? changeValue : -changeValue;
     const wheel = this.wheel + add;
@@ -318,7 +332,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     this.setProperty({ property: "map", value: mapObj, logOff: true });
   }
 
-  drop(event: any): void {
+  drop(this: any, event: any): void {
     // ドロップされた物の種類
     const kind = event.dataTransfer.getData("kind");
 
@@ -495,6 +509,30 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       return;
     }
 
+    // ダイスシンボルの作成
+    if (kind === "diceSymbol") {
+      const faceNum = event.dataTransfer.getData("faceNum");
+      const type = event.dataTransfer.getData("type");
+      const label = event.dataTransfer.getData("label");
+      const pips = event.dataTransfer.getData("pips");
+      const isHide = event.dataTransfer.getData("isHide");
+
+      // 必須項目
+      pieceObj.columns = 1;
+      pieceObj.rows = 1;
+      // 個別部
+      pieceObj.faceNum = faceNum;
+      pieceObj.type = type;
+      pieceObj.label = label;
+      pieceObj.pips = pips;
+      pieceObj.isHide = isHide;
+
+      window.console.log(pieceObj);
+
+      this.addListObj(pieceObj);
+      return;
+    }
+
     // ファイルがドロップされてる
     const files = event.dataTransfer.files;
 
@@ -614,15 +652,15 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     return this.arrangeAngle(this.angle.total + this.angleVolatile.dragging);
   }
 
-  get sizeW(): number {
+  get sizeW(this: any): number {
     return (this.columns + this.marginGridSize * 2) * this.gridSize;
   }
 
-  get sizeH(): number {
+  get sizeH(this: any): number {
     return (this.rows + this.marginGridSize * 2) * this.gridSize;
   }
 
-  get gameTableStyle(): any {
+  get gameTableStyle(this: any): any {
     const translateZ = this.wheel;
     const zoom = (1000 - this.wheel) / 1000;
     const totalLeftX = (this.move.total.x + this.move.dragging.x) * zoom;

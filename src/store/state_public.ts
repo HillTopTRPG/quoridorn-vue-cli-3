@@ -103,6 +103,9 @@ export default {
     /** チット */
     chit: { list: [], maxKey: -1 },
 
+    /** ダイスシンボル */
+    diceSymbol: { list: [], maxKey: -1 },
+
     /** キャラクタープロパティ */
     initiative: {
       round: 0,

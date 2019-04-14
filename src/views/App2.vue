@@ -59,6 +59,8 @@
       <public-memo-fukidashi :key="`${publicMemoObj.key}-fukidashi`" :publicMemoObj="publicMemoObj" :index="index"/>
     </template>
     <public-memo-context/>
+    <add-dice-symbol-window/>
+    <dice-symbol-context/>
   </div>
 </template>
 
@@ -118,9 +120,12 @@ import ImageViewWindow from "@/components/public-memo/ImageViewWindow.vue";
 import PublicMemoTile from "@/components/public-memo/PublicMemoTile.vue";
 import PublicMemoFukidashi from "@/components/public-memo/PublicMemoFukidashi.vue";
 import PublicMemoContext from "@/components/public-memo/PublicMemoContext.vue";
+import AddDiceSymbolWindow from "@/components/map/diceSymbol/AddDiceSymbolWindow.vue";
+import DiceSymbolContext from "@/components/map/diceSymbol/DiceSymbolContext.vue";
 
 @Component({
   components: {
+    DiceSymbolContext,
     GameTable,
     ChatWindow,
     Menu,
@@ -171,7 +176,8 @@ import PublicMemoContext from "@/components/public-memo/PublicMemoContext.vue";
     ImageViewWindow,
     PublicMemoTile,
     PublicMemoFukidashi,
-    PublicMemoContext
+    PublicMemoContext,
+    AddDiceSymbolWindow
   }
 })
 export default class App2 extends Vue {

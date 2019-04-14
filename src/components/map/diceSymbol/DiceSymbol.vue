@@ -1,10 +1,9 @@
 <template>
   <div
-    class="chit"
+    class="diceSymbol"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="chitStyle"
-    :title="description"
-    @click.right.prevent="(e) => openContext(e, 'private.display.chitContext')"
+    @click.right.prevent="(e) => openContext(e, 'private.display.diceSymbolContext')"
     @mouseover="mouseover"
     @mouseout="mouseout"
     @mousedown.left.stop="leftDown"
@@ -16,16 +15,20 @@
     @contextmenu.prevent
   >
     <div class="border"></div>
-    <img class="image" v-img="getKeyObj(imageList, imageKey).data" :class="{reverse : isReverse}" draggable="false"/>
+    <img class="image" v-img="diceImage" draggable="false"/>
   </div>
 </template>
 
 <script lang="ts">
 import PieceMixin from "../../PieceMixin.vue";
-import { Component } from "vue-property-decorator";
+
+import { Component, Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
 
 @Component({})
-export default class Chit extends PieceMixin {
+export default class DiceSymbol extends PieceMixin {
+  @Getter("dicePipsImage") private dicePipsImage: any;
+
   getKeyObj(list, key) {
     const filteredList = list.filter(obj => obj.key === key);
     if (filteredList.length === 0) return null;
@@ -47,27 +50,31 @@ export default class Chit extends PieceMixin {
     return obj;
   }
 
-  get imageKey() {
-    return this.storeObj.imageKey;
+  get faceNum() {
+    return this.storeObj.faceNum;
   }
 
-  get isReverse() {
-    return this.storeObj.isReverse;
+  get diceType() {
+    return this.storeObj.type;
   }
 
-  get description() {
-    return this.storeObj.description;
+  get pips() {
+    return this.storeObj.pips;
   }
 
-  get imageList() {
-    return this.$store.state.public.image.list;
+  get isHide() {
+    return this.storeObj.isHide;
+  }
+
+  get diceImage() {
+    return this.dicePipsImage(this.faceNum, this.diceType, this.pips);
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.chit {
+.diceSymbol {
   /*
   box-sizing: border-box;
   */

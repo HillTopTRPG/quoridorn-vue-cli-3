@@ -285,6 +285,18 @@ export default {
         x: 0,
         y: 0,
         objKey: null
+      },
+      addDiceSymbolWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1
+      },
+      diceSymbolContext: {
+        command: null,
+        isDisplay: false,
+        x: 0,
+        y: 0,
+        objKey: null
       }
     }
   } /* end of state */,
