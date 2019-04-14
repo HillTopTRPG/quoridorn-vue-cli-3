@@ -71,21 +71,14 @@
 </template>
 
 <script lang="ts">
-import { mapState, mapActions } from "vuex";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-import Divider from "../parts/Divider";
+import Divider from "../parts/Divider.vue";
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
 
-import { Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component({
-  components: {
-    WindowFrame,
-    Divider
-  }
-})
+@Component({ components: { WindowFrame, Divider } })
 export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") setProperty: any;
   @Action("windowOpen") windowOpen: any;
@@ -94,15 +87,15 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("moveListObj") moveListObj: any;
   @Getter("bgmList") bgmList: any;
 
-  private isYoutube(url) {
+  private isYoutube(url: string) {
     return /www\.youtube\.com/.test(url);
   }
 
-  private isDropBox(url) {
+  private isDropBox(url: string) {
     return /dropbox/.test(url);
   }
 
-  private initWindow() {
+  private initWindow(): void {
     this.setProperty({
       property: "private.display.settingBGMWindow.selectLineKey",
       value: -1,
@@ -110,20 +103,20 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
-  private doPlay() {
+  private doPlay(): void {
     this.playBGM();
   }
 
-  private doPreview() {
+  private doPreview(): void {
     this.playBGM(true);
   }
 
-  private doAdd() {
+  private doAdd(): void {
     this.windowOpen("private.display.addBGMWindow");
   }
 
-  private doModify() {
-    if (this.selectLineKey < 0) {
+  private doModify(): void {
+    if (!this.selectLineKey) {
       alert("BGMを選択してください");
       return;
     }
@@ -135,14 +128,16 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.windowOpen("private.display.editBGMWindow");
   }
 
-  private doCopy() {
-    if (this.selectLineKey < 0) {
+  private doCopy(): void {
+    if (!this.selectLineKey) {
       alert("BGMを選択してください");
       return;
     }
     const bgmObj = JSON.parse(
       JSON.stringify(
-        this.bgmList.filter(bgmObj => bgmObj.key === this.selectLineKey)[0]
+        this.bgmList.filter(
+          (bgmObj: any) => bgmObj.key === this.selectLineKey
+        )[0]
       )
     );
     // const bgmObj = this.bgmList.filter(
@@ -153,8 +148,8 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.addListObj(bgmObj);
   }
 
-  private doDelete() {
-    if (this.selectLineKey < 0) {
+  private doDelete(): void {
+    if (!this.selectLineKey) {
       alert("BGMを選択してください");
       return;
     }
@@ -164,24 +159,28 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
-  private doUp() {
-    if (this.selectLineKey < 0) {
+  private doUp(): void {
+    if (!this.selectLineKey) {
       alert("BGMを選択してください");
       return;
     }
-    const index = this.bgmList.findIndex(bgm => bgm.key === this.selectLineKey);
+    const index = this.bgmList.findIndex(
+      (bgm: any) => bgm.key === this.selectLineKey
+    );
     this.moveListObj({
       key: this.selectLineKey,
       afterIndex: index - 1
     });
   }
 
-  private doDown() {
-    if (this.selectLineKey < 0) {
+  private doDown(): void {
+    if (!this.selectLineKey) {
       alert("BGMを選択してください");
       return;
     }
-    const index = this.bgmList.findIndex(bgm => bgm.key === this.selectLineKey);
+    const index = this.bgmList.findIndex(
+      (bgm: any) => bgm.key === this.selectLineKey
+    );
     this.moveListObj({
       key: this.selectLineKey,
       afterIndex: index + 1
@@ -198,7 +197,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   //   }
   // }
 
-  private selectLine(bgmKey) {
+  private selectLine(bgmKey: string): void {
     this.setProperty({
       property: "private.display.settingBGMWindow.selectLineKey",
       value: bgmKey,
@@ -206,7 +205,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
-  private playBGM(isPreview = false) {
+  private playBGM(isPreview: boolean = false): void {
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
       logOff: true,
@@ -215,13 +214,13 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
   }
 
-  private moveDev(event) {
+  private moveDev(event: any): void {
     if (this.movingIndex > -1) {
       const diff = event.clientX - this.startX;
       const afterLeftWidth = this.startLeftWidth + diff;
       const afterRightWidth = this.startRightWidth - diff;
       if (afterLeftWidth >= 10 && afterRightWidth >= 10) {
-        const paramObj = {};
+        const paramObj: any = {};
         paramObj[this.movingIndex] = afterLeftWidth;
         paramObj[this.movingIndex + 1] = afterRightWidth;
         this.setProperty({
@@ -233,7 +232,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
   }
 
-  private moveDevEnd() {
+  private moveDevEnd(): void {
     this.setProperty({
       property: "private.display.settingBGMWindow",
       value: {
@@ -248,7 +247,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private get convertSecond(): Function {
-    return (start, end): string => {
+    return (start: number, end: number): string => {
       if (start && end) return `${start}〜${end}`;
       if (start) return `${start}〜`;
       if (end) return `〜${end}`;
