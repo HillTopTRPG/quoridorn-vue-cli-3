@@ -140,7 +140,7 @@ img.rotate {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border: 3px solid rgb(187, 187, 0);
+  border: 4px solid rgb(187, 187, 0);
   border-radius: 1px;
 }
 </style>

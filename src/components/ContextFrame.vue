@@ -63,7 +63,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style lang="scss">
 .context {
   position: fixed;
   z-index: 90;
@@ -73,14 +73,20 @@ export default {
   border: solid gray 1px;
   box-sizing: border-box;
   cursor: default;
-}
-.context > * {
-  display: block;
-  min-width: 50px;
-  font-size: 14px;
-  padding: 0 5px;
-}
-.context > :hover {
-  background-color: lightblue;
+
+  > * {
+    display: block;
+    min-width: 50px;
+    font-size: 14px;
+    padding: 0 5px;
+
+    &:not(.disabled):hover {
+      background-color: lightblue;
+    }
+
+    &.disabled {
+      background-color: lightgrey;
+    }
+  }
 }
 </style>

@@ -22,11 +22,8 @@ import { Prop } from "vue-property-decorator";
 export default class CharacterSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Getter("getMapObjectList") private getMapObjectList: any;
 
-  @Prop({ type: Array, default: [], required: false })
+  @Prop({ type: Array, default: [] })
   private placeList!: string[];
-
-  @Prop({ type: Array, default: [], required: false })
-  private selectedList!: string[];
 
   private get useCharacterList(): any[] {
     const resultList: any[] = [];
@@ -50,16 +47,6 @@ export default class CharacterSelect extends Mixins<SelectMixin>(SelectMixin) {
         })
       );
     }
-
-    // 選択済みの除外
-    this.selectedList.forEach(characterKey => {
-      const index = resultList.findIndex(
-        (character: any) => character.key === characterKey
-      );
-      if (index >= 0) {
-        resultList.splice(index, 1);
-      }
-    });
 
     return resultList;
   }

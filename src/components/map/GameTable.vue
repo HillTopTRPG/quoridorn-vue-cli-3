@@ -521,11 +521,11 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.columns = 1;
       pieceObj.rows = 1;
       // 個別部
-      pieceObj.faceNum = faceNum;
+      pieceObj.faceNum = parseInt(faceNum, 10);
       pieceObj.type = type;
       pieceObj.label = label;
-      pieceObj.pips = pips;
-      pieceObj.isHide = isHide;
+      pieceObj.pips = parseInt(pips, 10);
+      pieceObj.isHide = isHide === "true";
 
       window.console.log(pieceObj);
 

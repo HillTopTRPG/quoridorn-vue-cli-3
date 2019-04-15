@@ -1,7 +1,7 @@
 <template>
   <div
     class="diceSymbol"
-    :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
+    :class="[ isHover ? 'hover' : '', isHide ? 'isHide' : '' ]"
     :style="chitStyle"
     @click.right.prevent="(e) => openContext(e, 'private.display.diceSymbolContext')"
     @mouseover="mouseover"
@@ -15,7 +15,11 @@
     @contextmenu.prevent
   >
     <div class="border"></div>
-    <img class="image" v-img="diceImage" draggable="false"/>
+    <img class="image" v-img="diceImage" draggable="false" v-if="!isAbsoluteHide"/>
+    <div class="balloon" v-if="isHover">
+      <span v-if="ownerPlayer">[{{ownerPlayer.name}}]のダイス</span>
+      <span>{{ isHide ? "非公開：" : "" }}{{isAbsoluteHide ? '' : `${pips} / D${faceNum}`}}</span>
+    </div>
   </div>
 </template>
 
@@ -28,15 +32,16 @@ import { Action, Getter } from "vuex-class";
 @Component({})
 export default class DiceSymbol extends PieceMixin {
   @Getter("dicePipsImage") private dicePipsImage: any;
+  @Getter("playerKey") private playerKey: any;
 
-  getKeyObj(list, key) {
+  private getKeyObj(list, key) {
     const filteredList = list.filter(obj => obj.key === key);
     if (filteredList.length === 0) return null;
     if (filteredList.length > 1) return null;
     return filteredList[0];
   }
 
-  get chitStyle() {
+  private get chitStyle() {
     let obj: any = this.style;
     if (this.storeObj.isDraggingLeft) {
       const plus = 1.5;
@@ -50,23 +55,37 @@ export default class DiceSymbol extends PieceMixin {
     return obj;
   }
 
-  get faceNum() {
+  private get faceNum() {
     return this.storeObj.faceNum;
   }
 
-  get diceType() {
+  private get diceType() {
     return this.storeObj.type;
   }
 
-  get pips() {
+  private get pips() {
     return this.storeObj.pips;
   }
 
-  get isHide() {
+  private get isHide() {
     return this.storeObj.isHide;
   }
 
-  get diceImage() {
+  private get isAbsoluteHide() {
+    if (!this.isHide) return false;
+    return this.owner !== this.playerKey;
+  }
+
+  private get owner() {
+    return this.storeObj.owner;
+  }
+
+  private get ownerPlayer() {
+    const player: any = this.getObj(this.owner);
+    return player;
+  }
+
+  private get diceImage() {
     return this.dicePipsImage(this.faceNum, this.diceType, this.pips);
   }
 }
@@ -74,10 +93,9 @@ export default class DiceSymbol extends PieceMixin {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+@import "../../common.scss";
+
 .diceSymbol {
-  /*
-  box-sizing: border-box;
-  */
   position: fixed;
   display: flex;
   justify-content: center;
@@ -93,6 +111,10 @@ export default class DiceSymbol extends PieceMixin {
     z-index: 999999999;
   }
 
+  &.isHide {
+    background-color: black;
+  }
+
   &:before {
     content: "";
     position: absolute;
@@ -100,6 +122,19 @@ export default class DiceSymbol extends PieceMixin {
     right: -2px;
     bottom: -2px;
     top: -2px;
+    border: 2px solid #99660f;
+    border-radius: 2px;
+  }
+
+  .balloon {
+    @include flex-box(column, flex-start);
+    position: absolute;
+    background-color: lightyellow;
+    border-radius: 5px;
+    padding: 0.5em;
+    font-size: 10px;
+    top: 80%;
+    left: 80%;
   }
 }
 
@@ -110,34 +145,6 @@ img.image {
   width: 100%;
   height: 100%;
   object-fit: contain;
-
-  &.reverse {
-    transform: scale(-1, 1);
-  }
-}
-
-img.rotate {
-  position: absolute;
-  left: -5px;
-  top: -5px;
-  object-fit: fill;
-  background-color: red;
-  width: 15px;
-  height: 15px;
-  border-radius: 5px;
-
-  &:hover {
-    width: 19px;
-    height: 19px;
-    transform: translate(-2px, -2px);
-  }
-}
-
-.name {
-  position: absolute;
-  top: calc(-1em - 4px);
-  background-color: rgba(255, 255, 255, 0.3);
-  padding: 0 3px;
 }
 
 .border {
@@ -147,7 +154,7 @@ img.rotate {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border: 3px solid rgb(187, 187, 0);
+  border: 4px solid rgb(187, 187, 0);
   border-radius: 1px;
 }
 </style>
