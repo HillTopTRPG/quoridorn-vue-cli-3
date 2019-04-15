@@ -159,12 +159,12 @@ export default class PlayerBoxWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   @Watch("currentPlayerKey")
   onChangeCurrentPlayerKey(currentPlayerKey: string) {
-    window.console.log("%%%%%%%%%%%%%%", currentPlayerKey);
+    // window.console.log("%%%%%%%%%%%%%%", currentPlayerKey);
   }
 
   @Watch("playerKey")
   onChangePlayerKey(playerKey: string) {
-    window.console.error(playerKey);
+    // window.console.error(playerKey);
     this.currentPlayerKey = playerKey;
   }
 

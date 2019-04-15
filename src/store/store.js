@@ -307,7 +307,6 @@ export default new Vuex.Store({
        * ダイスの設定
        */
       loadYaml(process.env.BASE_URL + "/static/conf/dice.yaml").then(dice => {
-        window.console.log(dice);
         state.dice = dice;
       });
 

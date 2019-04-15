@@ -26,7 +26,7 @@ import { Component } from "vue-property-decorator";
 
 @Component({})
 export default class Chit extends PieceMixin {
-  getKeyObj(list, key) {
+  getKeyObj(list: any[], key: string) {
     const filteredList = list.filter(obj => obj.key === key);
     if (filteredList.length === 0) return null;
     if (filteredList.length > 1) return null;

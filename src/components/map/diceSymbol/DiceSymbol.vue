@@ -34,7 +34,7 @@ export default class DiceSymbol extends PieceMixin {
   @Getter("dicePipsImage") private dicePipsImage: any;
   @Getter("playerKey") private playerKey: any;
 
-  private getKeyObj(list, key) {
+  private getKeyObj(list: any[], key: string) {
     const filteredList = list.filter(obj => obj.key === key);
     if (filteredList.length === 0) return null;
     if (filteredList.length > 1) return null;

@@ -89,7 +89,6 @@ export default class AddDiceSymbolWindow extends Mixins<WindowMixin>(
 
   @Watch("faceNum", { immediate: true })
   onChangeFaceNum(faceNum: number) {
-    window.console.log(faceNum);
     this.pips = 1;
     const diceSetList: any[] = this.dice[faceNum];
     this.type = diceSetList ? diceSetList[0].type : "";

@@ -212,7 +212,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   rightDown(this: any): void {
-    qLog(`  [methods] GameTableイベント => event: mousedown, mouse: right`);
+    // qLog(`  [methods] GameTableイベント => event: mousedown, mouse: right`);
     const obj = {
       angle: {
         dragStart: this.calcCoordinate(
@@ -227,7 +227,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   rightUp(event: any): void {
-    qLog(`  [methods] GameTableイベント => event: mouseup, mouse: right`);
+    // qLog(`  [methods] GameTableイベント => event: mouseup, mouse: right`);
     const isDraggingRight = this.isDraggingRight;
     this.setProperty({
       property: "map.isMouseDownRight",
@@ -272,7 +272,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
           logOff: true
         });
         this.windowOpen(`private.display.gameTableContext`);
-        qLog(`  [methods] open context => gameTableContext`);
+        // qLog(`  [methods] open context => gameTableContext`);
       }
     } else {
       this.setProperty({

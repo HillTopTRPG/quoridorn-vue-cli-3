@@ -412,7 +412,7 @@ export default {
     },
 
     updatePlayerKey: (state: any, playerKey: string) => {
-      window.console.error(playerKey);
+      // window.console.error(playerKey);
       state.self.playerKey = playerKey;
     },
 
