@@ -15,19 +15,6 @@
 # 面の数
 6:
 - # タイプ
-  type: black
-  # 選択肢の文言
-  label: 黒
-  # 出目
-  pips:
-    0: ./static/img/dice/6/black/dice_black_6_0.webp
-    1: ./static/img/dice/6/black/dice_black_6_1.webp
-    2: ./static/img/dice/6/black/dice_black_6_2.webp
-    3: ./static/img/dice/6/black/dice_black_6_3.webp
-    4: ./static/img/dice/6/black/dice_black_6_4.webp
-    5: ./static/img/dice/6/black/dice_black_6_5.webp
-    6: ./static/img/dice/6/black/dice_black_6_6.webp
-- # タイプ
   type: white
   # 選択肢の文言
   label: 白
@@ -40,6 +27,19 @@
     4: ./static/img/dice/6/white/dice_white_6_4.webp
     5: ./static/img/dice/6/white/dice_white_6_5.webp
     6: ./static/img/dice/6/white/dice_white_6_6.webp
+- # タイプ
+  type: black
+  # 選択肢の文言
+  label: 黒
+  # 出目
+  pips:
+    0: ./static/img/dice/6/black/dice_black_6_0.webp
+    1: ./static/img/dice/6/black/dice_black_6_1.webp
+    2: ./static/img/dice/6/black/dice_black_6_2.webp
+    3: ./static/img/dice/6/black/dice_black_6_3.webp
+    4: ./static/img/dice/6/black/dice_black_6_4.webp
+    5: ./static/img/dice/6/black/dice_black_6_5.webp
+    6: ./static/img/dice/6/black/dice_black_6_6.webp
 #=========#=========#=========#=========#=========#=========#
 # 面の数
 8:
