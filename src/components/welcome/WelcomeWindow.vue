@@ -83,6 +83,7 @@
               <logout/><!-- ログアウト -->
               <setting-b-g-m-window-spec/><!-- BGM設定画面 -->
               <add-edit-b-g-m-window-spec/><!-- BGM追加・編集画面 -->
+              <add-dice-symbol-window-spec/><!-- ダイスシンボル追加画面 -->
             </div>
             <span class="toTop" @click="scrollTo()"><span class="rotate90">＜</span><span>TOP</span></span>
           </div>
@@ -147,9 +148,11 @@ import { Component, Mixins } from "vue-mixin-decorator";
 import CounterRemoconWindowSpec from "@/components/welcome/spec/CounterRemoconWindowSpec.vue";
 import SettingBGMWindowSpec from "@/components/welcome/spec/SettingBGMWindowSpec.vue";
 import AddEditBGMWindowSpec from "@/components/welcome/spec/AddEditBGMWindowSpec.vue";
+import AddDiceSymbolWindowSpec from "@/components/welcome/spec/AddDiceSymbolWindowSpec.vue";
 
 @Component({
   components: {
+    AddDiceSymbolWindowSpec,
     CounterRemoconWindowSpec,
     WindowFrame,
     Logo,
