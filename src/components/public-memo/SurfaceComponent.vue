@@ -1,12 +1,12 @@
 <template>
   <div class="surfaceComponent">
     <template v-if="isEditMode">
+      <label>
+        タブの名前
+        <input type="text" v-model="localValue">
+      </label>
       <!-- タブの設定 -->
       <div class="tabSettingArea">
-        <label>
-          タブの名前
-          <input type="text" v-model="localValue">
-        </label>
         <button
           class="left"
           @click.stop="moveTabOnClick(true)"
@@ -17,7 +17,8 @@
           @click.stop="moveTabOnClick(false)"
           :class="{ disabled: tabIndex === tabLength - 1 }"
         >＞</button>
-        <span class="icon-cross" @click.stop="deleteTab()" v-if="isEditMode">タブを削除</span>
+        <span class="icon-cross" @click.stop="deleteTab()">タブを削除</span>
+        <span class="icon-copy" @click.stop="copyTab()">タブをコピー</span>
       </div>
 
       <!-- 閲覧権限の設定 -->
@@ -233,6 +234,9 @@ export default class SurfaceComponent extends Vue {
 
   @Emit()
   private deleteTab() {}
+
+  @Emit()
+  private copyTab() {}
 
   @Emit()
   private moveTabOnClick(isLeft: boolean) {}

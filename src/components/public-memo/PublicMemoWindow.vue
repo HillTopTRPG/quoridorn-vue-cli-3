@@ -66,6 +66,7 @@
         @open-image-menu="surfaceImageConfigOnOpen"
         @check-on-change="checkOnChange"
         @delete-tab="deleteTab"
+        @copy-tab="copyTab"
         @move-tab-on-click="moveTabOnClick"
         v-if="usePublicMemoTabObj"
         ref="surfaceElm"
@@ -163,6 +164,11 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
         tabList.splice(this.currentTabIndex, 1);
       }
     });
+  }
+
+  private copyTab() {
+    const tabList: any[] = this.usePublicMemoObj.tabList;
+    tabList.push(JSON.parse(JSON.stringify(tabList[this.currentTabIndex])));
   }
 
   private moveTabOnClick(isLeft: boolean) {

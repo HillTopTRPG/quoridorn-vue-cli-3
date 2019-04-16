@@ -22,6 +22,7 @@ export default class PublicMemoContext extends Mixins<WindowMixin>(
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("changeListObj") private changeListObj: any;
+  @Action("deleteListObj") private deleteListObj: any;
   @Action("windowClose") private windowClose: any;
   @Getter("getObj") private getObj: any;
   @Getter("characterContextObjKey") private characterContextObjKey: any;
@@ -51,7 +52,11 @@ export default class PublicMemoContext extends Mixins<WindowMixin>(
   }
 
   private deleteItemOnClick() {
-    alert("未実装です。");
+    this.deleteListObj({
+      propName: "publicMemo",
+      key: this.objKey
+    });
+    this.windowClose("private.display.publicMemoContext");
   }
 
   viewEditCharacter(): void {
