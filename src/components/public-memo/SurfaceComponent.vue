@@ -553,13 +553,13 @@ $space-width: 0.5rem;
     }
   }
 
-  .icon-cross {
+  [class^="icon-"] {
     @include inline-flex-box(row, center, center);
     border: 1px solid gray;
     border-radius: 0.2rem;
     padding: 0.1rem 0.2rem;
     height: 100%;
-    margin-left: auto;
+    margin-left: 1em;
     cursor: pointer;
 
     &:before {
