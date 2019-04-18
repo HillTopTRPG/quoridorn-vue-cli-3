@@ -101,6 +101,7 @@ export default class StandImageComponent extends Vue {
             isReverse: diff.image ? /:R/.test(diff.image) : false,
             start: diff.time[0],
             end: diff.time[1],
+            type: diff.type,
             rec: {
               x: diff.x,
               y: diff.y,
@@ -212,20 +213,26 @@ export default class StandImageComponent extends Vue {
           const start = this.animationLength * diff.start * 10;
           const end = this.animationLength * diff.end * 10;
           const isReverse = diff.isReverse;
+          const type = diff.type;
           if (start === 0 && end === this.animationLength * 1000) {
             StandImageComponent.drawTransparent(
               ctx,
               diff.image,
               diff.rec,
-              isReverse
+              isReverse,
+              type
             );
           } else {
-            if (start <= time && time < end) {
+            if (
+              (start <= time && time < end) ||
+              (time === end && end === this.animationLength * 1000)
+            ) {
               StandImageComponent.drawTransparent(
                 ctx,
                 diff.image,
                 diff.rec,
-                isReverse
+                isReverse,
+                type
               );
             }
           }
@@ -277,15 +284,18 @@ export default class StandImageComponent extends Vue {
     ctx: CanvasRenderingContext2D,
     image: HTMLImageElement,
     rec: Rectangle,
-    isReverse: boolean
+    isReverse: boolean,
+    type: number
   ) {
-    // 半透明色での塗りつぶし
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.fillStyle = "rgba(0, 0, 0, 1)";
-    ctx.fillRect(rec.x, rec.y, rec.w, rec.h);
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(0, 0, 0, 0)";
-    ctx.fillRect(rec.x, rec.y, rec.w, rec.h);
+    if (type === 1) {
+      // 半透明色での塗りつぶし
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = "rgba(0, 0, 0, 1)";
+      ctx.fillRect(rec.x, rec.y, rec.w, rec.h);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "rgba(0, 0, 0, 0)";
+      ctx.fillRect(rec.x, rec.y, rec.w, rec.h);
+    }
     // 画像の描画
     if (isReverse) {
       ctx.scale(-1, 1);

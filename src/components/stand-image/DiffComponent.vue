@@ -11,6 +11,10 @@
       <label>位置</label>
       <label>X：<input type="number" min="0" v-model="x"></label>
       <label>Y：<input type="number" min="0" v-model="y"></label>
+      <select v-model="type">
+        <option value="0">重ねる</option>
+        <option value="1">置換</option>
+      </select>
     </div>
 
     <!-- アニメーション周期 -->
@@ -196,6 +200,20 @@ export default class DiffComponent extends Vue {
     return this.diff.time;
   }
 
+  get type(): string {
+    if (!this.diff || !this.diff.type) return "0";
+    return this.diff.type;
+  }
+
+  set type(value: string) {
+    this.editStandImageDiff({
+      key: this.actorKey,
+      statusName: this.statusName,
+      index: this.index,
+      type: parseInt(value, 10)
+    });
+  }
+
   set time(value: number[]) {
     this.editStandImageDiff({
       key: this.actorKey,
@@ -222,12 +240,13 @@ export default class DiffComponent extends Vue {
     border-left: 1px dashed #666666;
   }
 }
+
 $color1: #f7f7f7;
 $color2: #bebebe;
 .img-container {
   border: 1px solid #666666;
-  width: 5em;
-  height: 5em;
+  width: 6em;
+  height: 6em;
   background: $color1;
   display: flex;
   background-image: linear-gradient(45deg, $color2 25%, transparent 0),
@@ -242,6 +261,7 @@ $color2: #bebebe;
     background-size: contain;
   }
 }
+
 .delete-button {
   border-radius: 3px;
   border: solid 1px #666666;
@@ -257,9 +277,11 @@ $color2: #bebebe;
     border-color: darkred;
   }
 }
+
 input[type="number"] {
   width: 3em;
 }
+
 .locate {
   display: inline-flex;
   flex-direction: column;
@@ -275,6 +297,7 @@ input[type="number"] {
     justify-content: space-between;
   }
 }
+
 .range {
   position: relative;
   flex: 1;

@@ -3,8 +3,8 @@ import { Component, Vue, Prop, Emit, Watch } from "vue-property-decorator";
 
 @Component
 export default class SelectMixin extends Vue {
-  @Prop({ type: String, required: true })
-  public value!: string;
+  @Prop({ type: String })
+  public value: string;
 
   @Prop({ type: String, default: "" })
   protected defaultLabel!: string;

@@ -1,5 +1,10 @@
 <template>
-  <window-frame titleText="立ち絵設定" display-property="private.display.standImageSettingWindow" align="center" fixSize="660, 540">
+  <window-frame
+    titleText="立ち絵設定"
+    display-property="private.display.standImageSettingWindow"
+    align="center"
+    fixSize="672, 540"
+  >
     <div class="contents">
       <actor-tab-component @change="changeActor">
         <actor-status-tab-component slot-scope="{ actor }" v-if="actor" :actor="actor" @change="changeStatus" ref="actorStatusTabComponent">
@@ -359,6 +364,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
       tag,
       x,
       y,
+      type: 0,
       time: [30, 70]
     });
   }
