@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "set-skyway-key": "tools/set-skyway-key.sh"
+    "set-skyway-key": "scripts/set-skyway-key.sh"
   },
   "dependencies": {
     "ajv": "^6.10.0",
