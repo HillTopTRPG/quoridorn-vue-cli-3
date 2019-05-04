@@ -24,7 +24,7 @@
           <td><input type="range" v-model="transparency"></td>
         </tr>
         <tr>
-          <td colspan="2" class="multi"><button @click="commitEdit">編集</button><button @click="cancelEdit">キャンセル</button></td>
+          <td colspan="2" class="multi"><ctrl-button @click="commitEdit">編集</ctrl-button><ctrl-button @click="cancelEdit">キャンセル</ctrl-button></td>
         </tr>
       </tbody>
     </table>
@@ -32,14 +32,17 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import CtrlButton from "../../parts/CtrlButton";
 import WindowFrame from "../../WindowFrame";
 import WindowMixin from "../../WindowMixin";
+
+import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   name: "editMapMaskWindow",
   mixins: [WindowMixin],
   components: {
+    CtrlButton,
     WindowFrame
   },
   data() {

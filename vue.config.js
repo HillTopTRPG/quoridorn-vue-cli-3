@@ -29,8 +29,8 @@ module.exports = {
         test: new RegExp("\\.(" + productionGzipExtensions.join("|") + ")$"),
         threshold: 1024,
         minRatio: 0.8
-      }),
-      new BundleAnalyzerPlugin()
+      })
+      // new BundleAnalyzerPlugin()
     ]
   },
   // yamlローダーの追加

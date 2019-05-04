@@ -24,16 +24,17 @@
         <div class="description" v-if="isPlayerExist">おかえりなさい。<br>照合するパスワードを指定してください。</div>
       </fieldset>
       <div class="buttonArea">
-        <button @click="commit" type="button"><i class="icon-home3"></i> 参加</button>
+        <ctrl-button @click="commit" type="button"><i class="icon-home3"></i> 参加</ctrl-button>
       </div>
     </div>
   </window-frame>
 </template>
 
 <script lang="ts">
-import PlayerTypeSelect from "@/components/parts/select/PlayerTypeSelect.vue";
 import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
+import PlayerTypeSelect from "@/components/parts/select/PlayerTypeSelect.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
 import { Watch } from "vue-property-decorator";
@@ -41,6 +42,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     PlayerTypeSelect: PlayerTypeSelect
   }

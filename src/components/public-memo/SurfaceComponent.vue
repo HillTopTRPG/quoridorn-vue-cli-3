@@ -7,16 +7,16 @@
       </label>
       <!-- タブの設定 -->
       <div class="tabSettingArea">
-        <button
+        <ctrl-button
           class="left"
           @click.stop="moveTabOnClick(true)"
           :class="{ disabled: tabIndex === 0 }"
-        >＜</button>
-        <button
+        >＜</ctrl-button>
+        <ctrl-button
           class="right"
           @click.stop="moveTabOnClick(false)"
           :class="{ disabled: tabIndex === tabLength - 1 }"
-        >＞</button>
+        >＞</ctrl-button>
         <span class="icon-cross" @click.stop="deleteTab()">タブを削除</span>
         <span class="icon-copy" @click.stop="copyTab()">タブをコピー</span>
       </div>
@@ -193,7 +193,6 @@
             @click="event => itemConfigOnClick(event, itemIndex + 1)"
           ></span>
         </div>
-
       </template>
     </template>
   </div>
@@ -202,10 +201,12 @@
 <script lang="ts">
 import ActorSelect from "@/components/parts/select/ActorSelect.vue";
 import CharacterSelect from "@/components/parts/select/CharacterSelect.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
+
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component({ components: { ActorSelect, CharacterSelect } })
+@Component({ components: { CtrlButton, ActorSelect, CharacterSelect } })
 export default class SurfaceComponent extends Vue {
   @Prop({ type: String, required: true })
   public value!: string;

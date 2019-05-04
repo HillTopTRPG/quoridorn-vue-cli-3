@@ -9,8 +9,8 @@
     <!-- 数値情報 -->
     <div class="locate">
       <label>位置</label>
-      <label>X：<input type="number" min="0" v-model="x"></label>
-      <label>Y：<input type="number" min="0" v-model="y"></label>
+      <label>X：<input type="number" v-model="x"></label>
+      <label>Y：<input type="number" v-model="y"></label>
       <select v-model="type">
         <option value="0">重ねる</option>
         <option value="1">置換</option>

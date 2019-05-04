@@ -6,7 +6,7 @@
         <dt :key="'dt-' + player.key" :class="{ isNotExits: !getMembers(player.key).length, isMe: player.key === playerKey }">{{player.name}}{{player.type ? `（${player.type}）` : ""}}</dt>
         <dd :key="'dd-' + player.key" :class="{ isNotExits: !getMembers(player.key).length, isMe: player.key === playerKey }">
           <label class="returnUrlArea" v-if="!isWait">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createUrl(player)"/>
-            <button class="copy" @click="event => doCopy(event)">コピー</button>
+            <ctrl-button class="copy" @click="event => doCopy(event)">コピー</ctrl-button>
           </label>
         </dd>
       </template>
@@ -15,12 +15,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Getter } from "vuex-class";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
+import { Component, Vue } from "vue-property-decorator";
+import { Getter } from "vuex-class";
 import { execCopy } from "../../common/Utility";
 
-@Component
+@Component({ components: { CtrlButton } })
 export default class RoomInfo extends Vue {
   @Getter("playerList") private playerList: any;
   @Getter("inviteUrl") private inviteUrl: any;

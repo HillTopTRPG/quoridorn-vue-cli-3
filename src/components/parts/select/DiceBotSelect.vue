@@ -1,23 +1,24 @@
 <template>
-  <select :title="helpMessage" v-model="currentSystem" @contextmenu.prevent>
+  <ctrl-select :title="helpMessage" v-model="currentSystem" @contextmenu.prevent>
     <option
       v-for="systemObj in diceSystemList"
       :key="systemObj.system"
       :value="systemObj.system"
     >{{systemObj.system !== 'DiceBot' ? systemObj.name : 'ダイスボット指定なし'}}</option>
-  </select>
+  </ctrl-select>
 </template>
 
 <script lang="ts">
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
-@Component
+@Component({ components: { CtrlSelect } })
 export default class DiceBotSelect extends Vue {
   @Action("loading") private loading: any;
   @Action("getBcdiceSystemInfo") private getBcdiceSystemInfo: any;
   @Getter("diceSystemList") private diceSystemList: any;
-  @Prop() public value!: string;
+  @Prop() private value!: string;
 
   /*
    * data
@@ -47,6 +48,7 @@ export default class DiceBotSelect extends Vue {
 
   @Watch("currentSystem", { immediate: true })
   onChangeCurrentSystem(currentSystem: string) {
+    console.log(currentSystem);
     if (currentSystem === "DiceBot") {
       this.helpMessage =
         this.baseHelpMessage +

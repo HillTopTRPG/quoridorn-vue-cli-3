@@ -7,17 +7,19 @@
   >
     <div class="contents" @contextmenu.prevent>
       <div>未実装の機能です。</div>
-      <button @click="close">閉じる</button>
+      <ctrl-button @click="close">閉じる</ctrl-button>
     </div>
   </window-frame>
 </template>
 
 <script>
+import CtrlButton from "./parts/CtrlButton";
 import { mapState, mapActions } from "vuex";
 import WindowFrame from "./WindowFrame";
 
 export default {
   components: {
+    CtrlButton,
     WindowFrame
   },
   methods: {

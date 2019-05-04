@@ -18,29 +18,24 @@
     <div class="imageInfo">
       <div class="selectedImage">
         <label>タグ名：</label>
-        <select class="tagSelect" v-model="selectImageTag">
-          <option
-            v-for="tagObj in imageTagList"
-            :key="tagObj.key"
-            :value="tagObj.name"
-          >{{tagObj.name}}</option>
-        </select>
+        <image-tag-select class="tagSelect" v-model="selectImageTag" />
         <span>{{selectedTagIndexText}}</span>
       </div>
-      <button>隠し画像</button>
-      <button @click="doReverse">反</button>
+      <ctrl-button>隠し画像</ctrl-button>
+      <ctrl-button @click="doReverse">反</ctrl-button>
     </div>
-
   </div>
 </template>
 
 <script lang="ts">
+import ImageTagSelect from "@/components/parts/select/ImageTagSelect.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
+
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component
+@Component({ components: { CtrlButton, ImageTagSelect } })
 export default class ImageSelector extends Vue {
-  @Getter("imageTagList") private imageTagList: any;
   @Getter("imageList") private imageList: any;
 
   @Prop({ type: String })

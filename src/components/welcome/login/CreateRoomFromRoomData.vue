@@ -1,22 +1,23 @@
 <template>
   <fieldset class="root">
     <legend>部屋データから部屋を作る</legend>
-    <div class="input-room-data">部屋データ：<button @click="chooseFile">ファイルを選択</button>
+    <div class="input-room-data">部屋データ：<ctrl-button @click="chooseFile">ファイルを選択</ctrl-button>
       <div class="description">
         {{files.length ? "" : "未選択"}}
         <span v-for="file in files" :key="file.name">{{file.name}}</span>
       </div>
     </div>
     <input ref="fileChooser" type="file" style="display: none;" accept=".zip" multiple @change="event => selectFile(event)">
-    <button type="button" @click="commit"><i class="icon-home3"></i> 作成</button>
+    <ctrl-button @click="commit"><i class="icon-home3"></i> 作成</ctrl-button>
   </fieldset>
 </template>
 
 <script lang="ts">
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { Action } from "vuex-class";
 
-@Component
+@Component({ components: { CtrlButton } })
 export default class CreateRoomFromRoomData extends Vue {
   @Action("importStart") private importStart: any;
 

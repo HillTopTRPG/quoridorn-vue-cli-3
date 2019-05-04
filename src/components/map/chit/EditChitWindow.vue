@@ -15,8 +15,8 @@
       </div>
       <div class="imageInfo">
         <div class="selectedImage"><label>タグ名：</label><select class="tagSelect" v-model="currentImageTag"><option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option></select><span>{{selectedTagIndexText}}</span></div>
-        <button>隠し画像</button>
-        <button @click="doReverse">反</button>
+        <ctrl-button>隠し画像</ctrl-button>
+        <ctrl-button @click="doReverse">反</ctrl-button>
       </div>
       <div class="initiativeTable">
       </div>
@@ -25,8 +25,8 @@
       <textarea class="otherText" v-model="description" placeholder="説明"></textarea>
       <div class="buttonArea">
         <div>
-          <button @click="commit">確定</button>
-          <button @click="cancel">キャンセル</button>
+          <ctrl-button @click="commit">確定</ctrl-button>
+          <ctrl-button @click="cancel">キャンセル</ctrl-button>
         </div>
       </div>
     </div>
@@ -34,14 +34,17 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import CtrlButton from "../../parts/CtrlButton";
 import WindowFrame from "../../WindowFrame";
 import WindowMixin from "../../WindowMixin";
+
+import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   name: "editChitWindow",
   mixins: [WindowMixin],
   components: {
+    CtrlButton,
     WindowFrame
   },
   data() {

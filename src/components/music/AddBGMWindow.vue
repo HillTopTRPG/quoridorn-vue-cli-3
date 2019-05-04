@@ -18,7 +18,7 @@
           <!-- クレジットURL -->
           <label class="creditUrl"><span>CreditURL</span><input type="text" v-model="creditUrl"></label>
           <!-- クレジット取得 -->
-          <button class="getCredit" @click="getCredit">取得</button>
+          <ctrl-button class="getCredit" @click="getCredit">取得</ctrl-button>
         </div>
       </fieldset>
       <fieldset>
@@ -37,7 +37,7 @@
             :mutable="false"
             ref="volumeComponent"/>
           <!-- プレビュー -->
-          <button class="preview" @click="preview">プレビュー</button>
+          <ctrl-button class="preview" @click="preview">プレビュー</ctrl-button>
         </div>
         <div>
           <!-- 再生時間 -->
@@ -66,8 +66,8 @@
       </fieldset>
       <div class="buttonArea">
         <div>
-          <button @click="commit">確定</button>
-          <button @click="cancel">キャンセル</button>
+          <ctrl-button @click="commit">確定</ctrl-button>
+          <ctrl-button @click="cancel">キャンセル</ctrl-button>
         </div>
       </div>
     </div>
@@ -78,6 +78,7 @@
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import VolumeComponent from "./component/VolumeComponent.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
@@ -85,6 +86,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     VolumeComponent
   }

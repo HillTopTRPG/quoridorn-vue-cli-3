@@ -11,7 +11,7 @@
         <legend>{{imageObj.name}}</legend>
         <div>
           <img class="image" v-img="imageObj.image" draggable="false" />
-          <button class="passwordButton">隠し画像パスワード設定</button>
+          <ctrl-button class="passwordButton">隠し画像パスワード設定</ctrl-button>
           <label class="passwordLabel">隠し画像パスワード：{{imageObj.password !== '' ? 'あり' : 'なし'}}</label>
           <span class="tagLabel">付与するタグ(半角・全角スペースで区切り)</span>
           <input class="tagInput" type="text" @change="changeTag(imageObj.key)" v-model="imageObj.currentTag" />
@@ -21,14 +21,15 @@
         </div>
       </fieldset>
       <div class="operateArea">
-        <button @click="commit" :disabled="!imageList">決定</button>
-        <button @click="cancel" :disabled="!imageList">キャンセル</button>
+        <ctrl-button @click="commit" :disabled="!imageList">決定</ctrl-button>
+        <ctrl-button @click="cancel" :disabled="!imageList">キャンセル</ctrl-button>
       </div>
     </div>
   </window-frame>
 </template>
 
 <script lang="ts">
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
@@ -38,6 +39,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame
   }
 })

@@ -334,12 +334,7 @@ export default class Menu extends Vue {
      * ----------------- */
   /** ファイルアップローダー */
   clickFileUploader(): void {
-    this.setProperty({
-      property: "private.display.unSupportWindow.title",
-      value: "ファイルアップローダー",
-      logOff: true
-    });
-    this.windowOpen("private.display.unSupportWindow");
+    this.windowOpen("private.display.fileUploaderWindow");
     this.menuClick();
   }
 

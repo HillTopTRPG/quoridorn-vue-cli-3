@@ -53,8 +53,8 @@
       </div>
       <div class="buttonArea">
         <div>
-          <button @click="commit">確定</button>
-          <button @click="cancel">キャンセル</button>
+          <ctrl-button @click="commit">確定</ctrl-button>
+          <ctrl-button @click="cancel">キャンセル</ctrl-button>
         </div>
       </div>
     </div>
@@ -65,6 +65,7 @@
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import Divider from "../parts/Divider.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
@@ -72,6 +73,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     Divider
   }

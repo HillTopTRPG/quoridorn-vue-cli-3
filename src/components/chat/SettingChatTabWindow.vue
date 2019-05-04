@@ -6,14 +6,14 @@
           <label :key="tab.key">
             <span v-if="tab.key === 'chatTab-0'">{{tab.name}}</span>
             <input v-if="tab.key !== 'chatTab-0'" type="text" v-model="tab.name">
-            <button v-if="tab.key !== 'chatTab-0'" type="button" @click="delTab(tab.key, index)">削除</button>
+            <ctrl-button v-if="tab.key !== 'chatTab-0'" type="button" @click="delTab(tab.key, index)">削除</ctrl-button>
           </label>
         </template>
       </draggable>
-      <button type="button" @click="addTab">追加</button>
+      <ctrl-button type="button" @click="addTab">追加</ctrl-button>
       <div class="operateArea">
-        <button type="button" @click="commit">変更</button>
-        <button type="button" @click="cancel">キャンセル</button>
+        <ctrl-button type="button" @click="commit">変更</ctrl-button>
+        <ctrl-button type="button" @click="cancel">キャンセル</ctrl-button>
       </div>
     </div>
   </window-frame>
@@ -23,12 +23,14 @@
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import draggable from "vuedraggable";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     draggable
   }

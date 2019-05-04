@@ -3,8 +3,8 @@
     <div class="contents" @contextmenu.prevent>
       <div class="secret-unit" v-for="(secretDiceObj, index) in secretDiceList" :key="index">
         <label><textarea :value="createTextAreaValue(secretDiceObj)"></textarea></label>
-        <button type="button" @click="publish(index)">結果公開</button>
-        <button type="button" @click="delSecretDice(index)">削除</button>
+        <ctrl-button type="button" @click="publish(index)">結果公開</ctrl-button>
+        <ctrl-button type="button" @click="delSecretDice(index)">削除</ctrl-button>
       </div>
     </div>
   </window-frame>
@@ -13,14 +13,15 @@
 <script lang="ts">
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
-
 import { Vue, Watch } from "vue-property-decorator";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame
   }
 })

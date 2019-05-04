@@ -297,7 +297,8 @@ export default {
         x: 0,
         y: 0,
         objKey: null
-      }
+      },
+      fileUploaderWindow: { command: null, isDisplay: false, zIndex: 1 }
     }
   } /* end of state */,
   actions: {

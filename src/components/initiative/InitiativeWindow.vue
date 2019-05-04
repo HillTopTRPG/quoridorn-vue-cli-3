@@ -10,55 +10,55 @@
     <div class="contents">
       <div class="playOperationArea" @contextmenu.prevent>
         <!-- 拡大ボタン -->
-        <button
+        <ctrl-button
           @click="arrangeWindowSize(true)"
           v-if="isWindowViewScroll"
-        >◁︎拡大</button>
+        >◁︎拡大</ctrl-button>
 
         <!-- 縮小ボタン -->
-        <button
+        <ctrl-button
           @click="arrangeWindowSize(false)"
           v-if="!isWindowViewScroll"
           :disabled="baseWindowWidth === 0"
-        >縮小▷︎</button>
+        >縮小▷︎</ctrl-button>
 
         <!-- 空白 -->
         <div style="flex: 1;"></div>
 
         <!-- 設定ボタン -->
-        <button class="setting" @click="openSettingWindow">設定</button>
+        <ctrl-button class="setting" @click="openSettingWindow">設定</ctrl-button>
       </div>
       <div class="playOperationArea" @contextmenu.prevent>
         <!-- 戻るボタン -->
-        <button
+        <ctrl-button
           class="back"
           @click="roundBack"
           :disabled="round === 0 || backDisabled"
-        >戻る</button>
+        >戻る</ctrl-button>
 
         <!-- 次へボタン -->
-        <button
+        <ctrl-button
           class="next"
           @click="roundNext"
           :disabled="round === 0"
-        >次へ</button>
+        >次へ</ctrl-button>
 
         <!-- 空白 -->
         <div style="flex: 1;"></div>
 
         <!-- 戦闘開始ボタン -->
-        <button
+        <ctrl-button
           class="start"
           @click="battleStart"
           :disabled="sortCharacterList.length === 0"
-        >戦闘開始</button>
+        >戦闘開始</ctrl-button>
 
         <!-- 戦闘終了ボタン -->
-        <button
+        <ctrl-button
           class="end"
           @click="battleEnd"
           :disabled="round === 0"
-        >戦闘終了</button>
+        >戦闘終了</ctrl-button>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -207,9 +207,9 @@
         <span class="widthScale" ref="widthScale" style="visibility: hidden"></span>
       </div>
       <div class="operateArea">
-        <button @click="editButtonOnClick">変更</button>
+        <ctrl-button @click="editButtonOnClick">変更</ctrl-button>
         <span style="width: 0.5em;"></span>
-        <button disabled>削除</button>
+        <ctrl-button disabled>削除</ctrl-button>
       </div>
     </div>
   </window-frame>
@@ -220,6 +220,7 @@ import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
 import Divider from "../parts/Divider.vue";
 import ColorCheckBox from "@/components/parts/ColorCheckBox.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
@@ -228,6 +229,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     Divider,
     ColorCheckBox

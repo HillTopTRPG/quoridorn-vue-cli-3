@@ -27,6 +27,9 @@ Vue.directive("img", (el: any, binding) => {
 
 Vue.directive("bg-img", (el: any, binding: any) => {
   const imgData = binding.value;
+
+  if (!imgData) return;
+
   const img = new Image();
 
   img.onerror = () => {

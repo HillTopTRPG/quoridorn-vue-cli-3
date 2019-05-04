@@ -6,13 +6,14 @@
       </div>
       <div class="footer">
         <span>Quoridorn Ver.{{version}}</span>
-        <button @click="cancel" @contextmenu.prevent>閉じる</button>
+        <ctrl-button @click="cancel" @contextmenu.prevent>閉じる</ctrl-button>
       </div>
     </div>
   </window-frame>
 </template>
 
 <script lang="ts">
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import Logo from "./Logo.vue";
@@ -22,6 +23,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     Logo
   }

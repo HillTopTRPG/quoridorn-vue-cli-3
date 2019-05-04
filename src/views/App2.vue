@@ -61,6 +61,7 @@
     <public-memo-context/>
     <add-dice-symbol-window/>
     <dice-symbol-context/>
+    <file-uploader-window/>
   </div>
 </template>
 
@@ -116,12 +117,13 @@ import CounterRemoconContext from "@/components/counter-remocon/CounterRemoconCo
 
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
-import ImageViewWindow from "@/components/public-memo/ImageViewWindow.vue";
+import ImageViewWindow from "@/components/simple/ImageViewWindow.vue";
 import PublicMemoTile from "@/components/public-memo/PublicMemoTile.vue";
 import PublicMemoFukidashi from "@/components/public-memo/PublicMemoFukidashi.vue";
 import PublicMemoContext from "@/components/public-memo/PublicMemoContext.vue";
 import AddDiceSymbolWindow from "@/components/map/diceSymbol/AddDiceSymbolWindow.vue";
 import DiceSymbolContext from "@/components/map/diceSymbol/DiceSymbolContext.vue";
+import FileUploaderWindow from "@/components/simple/FileUploaderWindow.vue";
 
 @Component({
   components: {
@@ -177,7 +179,8 @@ import DiceSymbolContext from "@/components/map/diceSymbol/DiceSymbolContext.vue
     PublicMemoTile,
     PublicMemoFukidashi,
     PublicMemoContext,
-    AddDiceSymbolWindow
+    AddDiceSymbolWindow,
+    FileUploaderWindow
   }
 })
 export default class App2 extends Vue {

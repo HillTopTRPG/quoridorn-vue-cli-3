@@ -12,7 +12,7 @@
         </div>
       </fieldset>
       <div class="operateArea">
-        <button @click="cancel">閉じる</button>
+        <ctrl-button @click="cancel">閉じる</ctrl-button>
       </div>
     </div>
   </window-frame>
@@ -21,12 +21,14 @@
 <script lang="ts">
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame
   }
 })

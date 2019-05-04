@@ -45,8 +45,8 @@
            !------------------------------->
           <div id="panel2" class="tab_panel">
             <div class="spec-header">
-              <button class="open" @click="specAll(true)">全て開く</button>
-              <button class="close" @click="specAll(false)">全て閉じる</button>
+              <ctrl-button class="open" @click="specAll(true)">全て開く</ctrl-button>
+              <ctrl-button class="close" @click="specAll(false)">全て閉じる</ctrl-button>
             </div>
             <div class="menu">
               <environment/><!-- 動作環境 -->
@@ -71,7 +71,7 @@
               <create-easy-map-window/><!-- 簡易マップ作成機能 -->
               <save-map-window/><!-- マップ状態保存画面 -->
               <load-map-window/><!-- マップ切り替え画面 -->
-              <file-uploader-window/><!-- ファイルアップローダー画面 -->
+              <file-uploader-window-spec/><!-- ファイルアップローダー画面 -->
               <edit-image-tag-window/><!-- (画像)タグ編集画面 -->
               <delete-image-window/><!-- 画像削除画面 -->
               <welcome-window-spec/><!-- ようこそ画面 -->
@@ -105,6 +105,7 @@
 <script lang="ts">
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import Login from "./login/Login.vue";
 import Environment from "./spec/Environment.vue";
@@ -127,7 +128,7 @@ import AddMapMaskWindow from "./spec/AddMapMaskWindow.vue";
 import CreateEasyMapWindow from "./spec/CreateEasyMapWindow.vue";
 import SaveMapWindow from "./spec/SaveMapWindow.vue";
 import LoadMapWindow from "./spec/LoadMapWindow.vue";
-import FileUploaderWindow from "./spec/FileUploaderWindow.vue";
+import FileUploaderWindowSpec from "./spec/FileUploaderWindowSpec.vue";
 import EditImageTagWindow from "./spec/EditImageTagWindow.vue";
 import DeleteImageWindow from "./spec/DeleteImageWindow.vue";
 import WelcomeWindowSpec from "./spec/WelcomeWindowSpec.vue";
@@ -152,6 +153,7 @@ import AddDiceSymbolWindowSpec from "@/components/welcome/spec/AddDiceSymbolWind
 
 @Component({
   components: {
+    CtrlButton,
     AddDiceSymbolWindowSpec,
     CounterRemoconWindowSpec,
     WindowFrame,
@@ -178,7 +180,7 @@ import AddDiceSymbolWindowSpec from "@/components/welcome/spec/AddDiceSymbolWind
     CreateEasyMapWindow,
     SaveMapWindow,
     LoadMapWindow,
-    FileUploaderWindow,
+    FileUploaderWindowSpec,
     EditImageTagWindow,
     DeleteImageWindow,
     WelcomeWindowSpec,

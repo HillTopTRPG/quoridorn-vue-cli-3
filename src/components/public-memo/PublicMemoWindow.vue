@@ -73,10 +73,10 @@
       />
 
       <div class="operationArea" v-if="isEditMode">
-        <button @click="commitButtonOnClick">確定</button>
-        <button @click="previewButtonOnClick" v-if="!isPreview">プレビュー確認</button>
-        <button @click="editButtonOnClick" v-if="isPreview">編集に戻る</button>
-        <button @click="cancelButtonOnClick">キャンセル</button>
+        <ctrl-button @click="commitButtonOnClick">確定</ctrl-button>
+        <ctrl-button @click="previewButtonOnClick" v-if="!isPreview">プレビュー確認</ctrl-button>
+        <ctrl-button @click="editButtonOnClick" v-if="isPreview">編集に戻る</ctrl-button>
+        <ctrl-button @click="cancelButtonOnClick">キャンセル</ctrl-button>
       </div>
 
     </div>
@@ -113,12 +113,13 @@
 <script lang="ts">
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 import SurfaceComponent from "@/components/public-memo/SurfaceComponent.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component({ components: { WindowFrame, SurfaceComponent } })
+@Component({ components: { CtrlButton, WindowFrame, SurfaceComponent } })
 export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") windowOpen: any;
   @Action("setProperty") setProperty: any;

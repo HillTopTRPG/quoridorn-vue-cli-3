@@ -2,8 +2,8 @@
   <window-frame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`">
     <div class="contents" @contextmenu.prevent>
       <div>
-        <button type="button" @click="addButtonOnClick">追加</button>
-        <button type="button" @click="delButtonOnClick">削除</button>
+        <ctrl-button type="button" @click="addButtonOnClick">追加</ctrl-button>
+        <ctrl-button type="button" @click="delButtonOnClick">削除</ctrl-button>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -51,11 +51,11 @@
 
             <!-- 編集ボタン -->
             <td :style="colStyle(4)">
-              <button
+              <ctrl-button
                 type="button"
                 @click="edit(groupTargetTab.key)"
                 :disabled="groupTargetTab.key === 'groupTargetTab-0'"
-              >編集</button>
+              >編集</ctrl-button>
             </td>
           </tr>
           <tr class="space">
@@ -76,12 +76,14 @@
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import Divider from "../parts/Divider.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     Divider
   }

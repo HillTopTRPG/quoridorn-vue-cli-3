@@ -23,8 +23,8 @@
       <label @contextmenu.prevent>カウンター名一覧：<input type="text" v-model="format"></label>
       <hr>
       <div class="operationArea" @contextmenu.prevent>
-        <button @click="commit">決定</button>
-        <button @click="cancel">キャンセル</button>
+        <ctrl-button @click="commit">決定</ctrl-button>
+        <ctrl-button @click="cancel">キャンセル</ctrl-button>
       </div>
     </div>
   </window-frame>
@@ -33,12 +33,14 @@
 <script lang="ts">
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame
   }
 })

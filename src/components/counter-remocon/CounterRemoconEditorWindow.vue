@@ -40,18 +40,19 @@
         <span class="full example">{{exampleText}}</span>
       </label>
       <div class="operationArea">
-        <button @click="commitButtonOnClick">設定</button>
-        <button @click="cancelButtonOnClick">キャンセル</button>
+        <ctrl-button @click="commitButtonOnClick">設定</ctrl-button>
+        <ctrl-button @click="cancelButtonOnClick">キャンセル</ctrl-button>
       </div>
     </div>
   </window-frame>
 </template>
 
 <script lang="ts">
-import CounterSelect from "@/components/parts/select/CounterSelect.vue";
-import CharacterSelect from "@/components/parts/select/CharacterSelect.vue";
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
+import CounterSelect from "@/components/parts/select/CounterSelect.vue";
+import CharacterSelect from "@/components/parts/select/CharacterSelect.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
@@ -59,6 +60,7 @@ import { Watch } from "vue-property-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     CounterSelect,
     CharacterSelect

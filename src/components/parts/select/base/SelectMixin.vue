@@ -3,8 +3,8 @@ import { Component, Vue, Prop, Emit, Watch } from "vue-property-decorator";
 
 @Component
 export default class SelectMixin extends Vue {
-  @Prop({ type: String })
-  public value: string;
+  @Prop({ type: String, default: "" })
+  private value!: string;
 
   @Prop({ type: String, default: "" })
   protected defaultLabel!: string;
@@ -12,13 +12,7 @@ export default class SelectMixin extends Vue {
   private fontColor: string = "";
 
   @Emit("input")
-  public input(value: string | null) {}
-
-  @Watch("value", { immediate: true })
-  onChangeValue(value: string | null) {
-    // window.console.error("###", "$" + value + "$");
-    this.fontColor = value ? "#000000" : "#999999";
-  }
+  private input(value: string | null) {}
 
   private get localValue(): string | null {
     return this.value || "";
@@ -27,6 +21,12 @@ export default class SelectMixin extends Vue {
   private set localValue(value: string | null) {
     this.onChangeValue(value);
     this.input(value);
+  }
+
+  @Watch("value", { immediate: true })
+  onChangeValue(value: string | null) {
+    // window.console.error("###", "$" + value + "$");
+    this.fontColor = value ? "#000000" : "#999999";
   }
 
   updated() {

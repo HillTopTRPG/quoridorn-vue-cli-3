@@ -6,7 +6,7 @@
       <div v-if="saveDataList">複数のセーブデータで同じ項目を読み込ませる場合、各セーブデータで順次上書きされていきます。</div>
       <fieldset v-for="(saveDataObj, index) in saveDataList" :key="index">
         <legend>{{saveDataObj.fileName}}</legend>
-        <button @click="allSelect(index)">全て対象</button><button @click="allDisSelect(index)">全て除外</button>
+        <ctrl-ctrl-button @click="allSelect(index)">全て対象</button><ctrl-button @click="allDisSelect(index)">全て除外</ctrl-button>
         <div class="useCheckList">
           <label v-for="propObj in saveDataObj.useList" :key="propObj.label">
             <input type="checkbox" v-model="propObj.isUse" />
@@ -17,14 +17,15 @@
       -->
       <div v-if="saveDataList">現段階では部分的ロードは行えません。<br>全てのデータをロードします。</div>
       <div class="operateArea">
-        <button @click="commit" :disabled="!saveDataList">決定</button>
-        <button @click="cancel" :disabled="!saveDataList">キャンセル</button>
+        <ctrl-button @click="commit" :disabled="!saveDataList">決定</ctrl-button>
+        <ctrl-button @click="cancel" :disabled="!saveDataList">キャンセル</ctrl-button>
       </div>
     </div>
   </window-frame>
 </template>
 
 <script lang="ts">
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
@@ -34,6 +35,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame
   }
 })

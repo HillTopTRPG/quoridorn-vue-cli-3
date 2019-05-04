@@ -43,17 +43,18 @@
 
         <!-- 発言者選択 -->
         <span class="label">名前(！)</span>
-        <select
+        <ctrl-select
           :tabindex="chatTabs.length + 2"
           :value="chatActorKey"
-          @change="event => updateActorKey(event.target.value)" title=""
+          @change="event => updateActorKey(event.target.value)"
+          title=""
         >
           <option
             v-for="actor in getSelfActors"
             :key="actor.key"
             :value="actor.key"
           >{{getViewName(actor.key)}}</option>
-        </select>
+        </ctrl-select>
 
         <!-- ステータス選択 -->
         <actor-status-select :actorKey="chatActorKey" v-model="statusName" :tabindex="chatTabs.length + 3"/>
@@ -252,7 +253,7 @@
             ></textarea>
           </label>
         </div>
-        <button :tabindex="chatTabs.length + chatTabs.length + 17" @contextmenu.prevent>送信</button>
+        <ctrl-button :tabindex="chatTabs.length + chatTabs.length + 17" @contextmenu.prevent>送信</ctrl-button>
       </div>
       <!----------------
        ! 入力者表示
@@ -275,11 +276,13 @@
 </template>
 
 <script lang="ts">
-import DiceBotSelect from "../parts/select/DiceBotSelect.vue";
-import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
-
 import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
+
+import DiceBotSelect from "../parts/select/DiceBotSelect.vue";
+import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
@@ -287,6 +290,8 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
+    CtrlSelect,
     ActorStatusSelect,
     WindowFrame,
     DiceBotSelect

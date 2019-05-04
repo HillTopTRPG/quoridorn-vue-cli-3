@@ -20,7 +20,7 @@
           <!-- クレジットURL -->
           <label class="creditUrl"><span>CreditURL</span><input type="text" v-model="creditUrl" placeholder="未実装"></label>
           <!-- クレジット取得 -->
-          <button class="getCredit" @click="getCredit">取得</button>
+          <ctrl-button class="getCredit" @click="getCredit">取得</ctrl-button>
         </div>
       </fieldset>
       <fieldset>
@@ -39,7 +39,7 @@
             :mutable="false"
             ref="volumeComponent"/>
           <!-- プレビュー -->
-          <button class="preview" @click="preview">プレビュー</button>
+          <ctrl-button class="preview" @click="preview">プレビュー</ctrl-button>
         </div>
         <div>
           <!-- 再生開始 -->
@@ -87,8 +87,8 @@
       </fieldset>
       <div class="buttonArea">
         <div>
-          <button @click="commit">確定</button>
-          <button @click="cancel">キャンセル</button>
+          <ctrl-button @click="commit">確定</ctrl-button>
+          <ctrl-button @click="cancel">キャンセル</ctrl-button>
         </div>
       </div>
     </div>
@@ -96,15 +96,18 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
 import WindowFrame from "../WindowFrame";
 import WindowMixin from "../WindowMixin";
+import CtrlButton from "../parts/CtrlButton";
 import VolumeComponent from "./component/VolumeComponent";
+
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "editBGMWindow",
   mixins: [WindowMixin],
   components: {
+    CtrlButton,
     WindowFrame,
     VolumeComponent
   },

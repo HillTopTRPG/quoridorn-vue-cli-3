@@ -50,10 +50,10 @@
                       :disabled="status.standImage.isSystemLock"
                     >
                   </label>
-                  <button
+                  <ctrl-button
                     @click="addDiff()"
                     :disabled="status.standImage.isSystemLock"
-                  >差分追加</button>
+                  >差分追加</ctrl-button>
                 </div>
                 <label>サイズの自動調整
                   <input
@@ -118,13 +118,15 @@ import ActorStatusTabComponent from "@/components/parts/ActorStatusTabComponent.
 import DiffComponent from "@/components/stand-image/DiffComponent.vue";
 import ActorOtherStatusSelect from "@/components/parts/select/ActorOtherStatusSelect.vue";
 import StandImageComponent from "@/components/parts/StandImageComponent.vue";
-import { removeExt } from "@/components/common/Utility";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
+import { removeExt } from "@/components/common/Utility";
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     ActorOtherStatusSelect,
     WindowFrame,
     ActorTabComponent,

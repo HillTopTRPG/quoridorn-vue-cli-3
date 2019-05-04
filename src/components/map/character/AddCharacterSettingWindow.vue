@@ -8,10 +8,10 @@
         class="imageSelector"
       />
       <div class="switchImageArea">
-        <button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</button>
+        <ctrl-button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</ctrl-button>
         <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0" draggable="false"/></span>
-        <button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</button>
-        <button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</button>
+        <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</ctrl-button>
+        <ctrl-button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</ctrl-button>
       </div>
       <div class="initiativeTable">
       </div>
@@ -25,8 +25,8 @@
       <textarea class="otherText" v-model="text"></textarea>
       <div class="buttonArea">
         <div>
-          <button @click="commit">追加</button>
-          <button @click="cancel">キャンセル</button>
+          <ctrl-button @click="commit">追加</ctrl-button>
+          <ctrl-button @click="cancel">キャンセル</ctrl-button>
         </div>
       </div>
     </div>
@@ -34,9 +34,10 @@
 </template>
 
 <script lang="ts">
-import ImageSelector from "@/components/parts/ImageSelector.vue";
 import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
+import ImageSelector from "@/components/parts/ImageSelector.vue";
 
 import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
@@ -44,6 +45,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlButton,
     WindowFrame,
     ImageSelector
   }

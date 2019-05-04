@@ -2,9 +2,9 @@
   <window-frame titleText="BGM設定画面" display-property="private.display.settingBGMWindow" align="center" fixSize="394, 334" @open="initWindow">
     <div class="contents" @contextmenu.prevent>
       <div class="playOperationArea">
-        <button @click="doPlay">送信</button>
+        <ctrl-button @click="doPlay">送信</ctrl-button>
         <span class="space"></span>
-        <button @click="doPreview">プレビュー(自分のみ)</button>
+        <ctrl-button @click="doPreview">プレビュー(自分のみ)</ctrl-button>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -58,12 +58,12 @@
         </table>
       </div>
       <div class="operateArea">
-        <button @click="doAdd">追加</button>
-        <button @click="doModify">変更</button>
-        <button @click="doCopy">コピー</button>
-        <button @click="doDelete">削除</button>
-        <button @click="doUp">↑</button>
-        <button @click="doDown">↓</button>
+        <ctrl-button @click="doAdd">追加</ctrl-button>
+        <ctrl-button @click="doModify">変更</ctrl-button>
+        <ctrl-button @click="doCopy">コピー</ctrl-button>
+        <ctrl-button @click="doDelete">削除</ctrl-button>
+        <ctrl-button @click="doUp">↑</ctrl-button>
+        <ctrl-button @click="doDown">↓</ctrl-button>
         <!--<label><input type="checkbox" @change="changeSortMode" />並べ替え許可</label>-->
       </div>
     </div>
@@ -71,14 +71,15 @@
 </template>
 
 <script lang="ts">
-import Divider from "../parts/Divider.vue";
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
+import Divider from "../parts/Divider.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component({ components: { WindowFrame, Divider } })
+@Component({ components: { CtrlButton, WindowFrame, Divider } })
 export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") setProperty: any;
   @Action("windowOpen") windowOpen: any;

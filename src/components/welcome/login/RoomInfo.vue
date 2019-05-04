@@ -6,19 +6,20 @@
     <label>システム：<span>{{systemName}}</span></label>
     <div style="color: darkgreen;">※ ログイン情報の暗号化はまだしてないので、いずれ実装します。</div>
     <label v-if="!isWait">招待用URL：<input class="inviteUrl" type="text" readonly="readonly" :value="inviteUrl" />
-      <button class="copy" @click="event => doCopy(event)">コピー</button>
+      <ctrl-button class="copy" @click="event => doCopy(event)">コピー</ctrl-button>
     </label>
     <div class="description" v-if="isWait">ここは目的の部屋が作成されるまでの間に滞在する一時的な部屋です。<br>目的の部屋ができたらメッセージ表示の後、自動で部屋を移動します。<br>目的の部屋へのデータ引き継ぎはされません。</div>
   </fieldset>
 </template>
 
 <script lang="ts">
+import CtrlButton from "@/components/parts/CtrlButton.vue";
+
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
-
 import { execCopy } from "../../common/Utility";
 
-@Component
+@Component({ components: { CtrlButton } })
 export default class RoomInfo extends Vue {
   @Action("getBcdiceSystemInfo") private getBcdiceSystemInfo: any;
   @Getter("roomName") private roomName: any;
