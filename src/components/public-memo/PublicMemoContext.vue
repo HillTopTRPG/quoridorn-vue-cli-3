@@ -59,15 +59,6 @@ export default class PublicMemoContext extends Mixins<WindowMixin>(
     this.windowClose("private.display.publicMemoContext");
   }
 
-  viewEditCharacter(): void {
-    this.setProperty({
-      property: "private.display.editCharacterWindow.key",
-      value: this.characterContextObjKey
-    });
-    this.windowOpen("private.display.editCharacterWindow");
-    this.windowClose("private.display.characterContext");
-  }
-
   private get objKey() {
     return this.$store.state.private.display.publicMemoContext.objKey;
   }

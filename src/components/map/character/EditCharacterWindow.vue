@@ -5,20 +5,30 @@
     align="center"
     fixSize="653, 377"
     @open="open"
-  ><!--  baseSize="601, 377" -->
+    @reset="open"
+  >
     <div class="container" @contextmenu.prevent>
       <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
-      <div class="choseImage">
-        <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === currentImageKey}" :key="image.key" v-img="image.data" @click="selectTagImage(image.key)" draggable="false"/></div>
-      </div>
-      <div class="imageInfo">
-        <div class="selectedImage"><label>タグ名：</label><select class="tagSelect" v-model="currentImageTag"><option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option></select><span>{{selectedTagIndexText}}</span></div>
-        <ctrl-button>隠し画像</ctrl-button>
-        <ctrl-button @click="doReverse">反</ctrl-button>
-      </div>
+
+      <image-selector
+        v-model="selectImage"
+        :imageTag.sync="currentImageTag"
+        class="imageSelector"
+      />
+
       <div class="switchImageArea">
         <ctrl-button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</ctrl-button>
-        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0" draggable="false"/></span>
+        <span v-show="isOpenSwitch" class="switchImage">
+          <img
+            v-for="switchObj in switchImageList"
+            :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}"
+            :key="switchObj.key"
+            v-img="getImage(switchObj.imgKey)"
+            @click="selectSwitchImage(switchObj.key)"
+            tabindex="0"
+            draggable="false"
+          />
+        </span>
         <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</ctrl-button>
         <ctrl-button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</ctrl-button>
       </div>
@@ -42,190 +52,206 @@
   </window-frame>
 </template>
 
-<script>
-import CtrlButton from "../../parts/CtrlButton";
-import WindowFrame from "../../WindowFrame";
-import WindowMixin from "../../WindowMixin";
+<script lang="ts">
+import WindowFrame from "../../WindowFrame.vue";
+import WindowMixin from "../../WindowMixin.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
+import ImageSelector from "@/components/parts/ImageSelector.vue";
 
-import { mapState, mapActions, mapGetters } from "vuex";
+import { Watch } from "vue-property-decorator";
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-export default {
-  name: "editCharacterWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     CtrlButton,
-    WindowFrame
-  },
-  data() {
-    return {
-      isOpenSwitch: false,
-      currentImageTag: "キャラクター",
-      switchImageList: [{ key: 0, imgKey: "image-1", isReverse: false }],
-      switchCurrentKey: 0,
-      name: "",
-      size: 1,
-      isHide: false,
-      url: "",
-      text: ""
-    };
-  },
-  methods: {
-    ...mapActions([
-      "setProperty",
-      "windowOpen",
-      "windowClose",
-      "changeListObj"
-    ]),
-    addSwitch() {
-      let nextKey = -1;
-      let isFind;
-      do {
-        nextKey++;
-        isFind = false;
-        for (const switchImage of this.switchImageList) {
-          if (switchImage.key === nextKey) {
-            isFind = true;
-            break;
-          }
-        }
-      } while (isFind);
+    WindowFrame,
+    ImageSelector
+  }
+})
+export default class EditCharacterWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("setProperty") private setProperty: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("windowClose") private windowClose: any;
+  @Action("changeListObj") private changeListObj: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("parseColor") private parseColor: any;
+  @Getter("imageList") private imageList: any;
 
+  private selectImage: string = "image-1";
+
+  @Watch("selectImage")
+  onChangeSelectImage(selectImage: string) {
+    const index = this.switchImageList.findIndex(
+      image => image.key === this.switchCurrentKey
+    );
+    const switchImageObj = this.switchImageList[index];
+
+    switchImageObj.imgKey = selectImage.replace(":R", "");
+    switchImageObj.isReverse = /:R/.test(selectImage);
+    this.switchImageList.splice(index, 1, switchImageObj);
+  }
+
+  private isOpenSwitch: boolean = false;
+  private currentImageTag: string = "imgTag-2";
+  private switchImageList: any[] = [
+    { key: 0, imgKey: "image-1", isReverse: false }
+  ];
+  private switchCurrentKey: number = 0;
+  private name: string = "";
+  private size: number = 1;
+  private isHide: boolean = false;
+  private url: string = "";
+  private text: string = "";
+
+  private addSwitch(): void {
+    const nextKey: number =
+      Math.max.apply(null, this.switchImageList.map(image => image.key)) + 1;
+
+    this.switchImageList.push({
+      key: nextKey,
+      imgKey: this.selectImage.replace(":R", ""),
+      isReverse: false
+    });
+    this.switchCurrentKey = nextKey;
+  }
+
+  private doReverse(): void {
+    const index = this.switchImageList.findIndex(
+      image => image.key === this.switchCurrentKey
+    );
+    const switchImageObj = this.switchImageList[index];
+    switchImageObj.isReverse = !switchImageObj.isReverse;
+    this.switchImageList.splice(index, 1, switchImageObj);
+  }
+
+  private getImage(key: string): string {
+    const imageObj = this.imageList.filter(
+      (image: any) => image.key === key
+    )[0];
+    return imageObj ? imageObj.data : null;
+  }
+
+  private getKeyObj(list: any[], key: string | number): any {
+    return list.filter(obj => obj.key === key)[0];
+  }
+
+  private selectSwitchImage(key: number): void {
+    this.switchCurrentKey = key;
+  }
+
+  private selectTagImage(key: number): void {
+    const index = this.switchImageList.findIndex(
+      image => image.key === this.switchCurrentKey
+    );
+    const switchImageObj = this.switchImageList[index];
+    switchImageObj.imgKey = key;
+    switchImageObj.isReverse = false;
+    this.switchImageList.splice(index, 1, switchImageObj);
+  }
+
+  private deleteSwitch(): void {
+    const index = this.switchImageList.findIndex(
+      image => image.key === this.switchCurrentKey
+    );
+    const switchImageObj = this.switchImageList[index];
+    // 削除
+    this.switchImageList.splice(index, 1);
+    this.switchCurrentKey = this.switchImageList[
+      index < this.switchImageList.length
+        ? index
+        : this.switchImageList.length - 1
+    ].key;
+  }
+
+  private commit(): void {
+    if (this.name === "") {
+      alert(`名前を入力してください。`);
+      return;
+    }
+    this.changeListObj({
+      key: this.key,
+      isNotice: true,
+      name: this.name,
+      columns: this.size,
+      rows: this.size,
+      useImageList: this.switchImageList
+        .map(imgObj => imgObj.imgKey + (imgObj.isReverse ? ":R" : ""))
+        .join("|"),
+      isHide: this.isHide,
+      url: this.url,
+      text: this.text,
+      useImageIndex: 0,
+      currentImageTag: this.currentImageTag
+    });
+    this.windowClose("private.display.editCharacterWindow");
+  }
+
+  private cancel(): void {
+    this.windowClose("private.display.editCharacterWindow");
+  }
+
+  private open(): void {
+    this.isOpenSwitch = false;
+    let characterObj = this.getObj(this.key);
+    this.currentImageTag = characterObj.currentImageTag;
+    this.switchImageList.splice(0, this.switchImageList.length);
+    characterObj.useImageList.split("|").forEach((imageStr, index) => {
+      const isReverse = imageStr.indexOf(":R") >= 0;
+      const imageKey = imageStr.replace(":R", "");
       this.switchImageList.push({
-        key: nextKey,
-        imgKey: "image-1",
-        isReverse: false
+        key: index,
+        imgKey: imageKey,
+        isReverse: isReverse
       });
-      this.switchCurrentKey = nextKey;
-    },
-    doReverse() {
-      const switchImageObj = this.getKeyObj(
-        this.switchImageList,
-        this.switchCurrentKey
-      );
-      switchImageObj.isReverse = !switchImageObj.isReverse;
-      const index = this.switchImageList.indexOf(switchImageObj);
-      this.switchImageList.splice(index, 1, switchImageObj);
-    },
-    getImage(key) {
-      const imageObj = this.getKeyObj(this.storeImages, key);
-      return imageObj ? imageObj.data : null;
-    },
-    getKeyObj(list, key) {
-      const filteredList = list.filter(obj => obj.key === key);
-      if (filteredList.length === 0) return null;
-      if (filteredList.length > 1) return null;
-      return filteredList[0];
-    },
-    selectSwitchImage(key) {
-      this.switchCurrentKey = key;
-    },
-    selectTagImage(key) {
-      const switchImageObj = this.getKeyObj(
-        this.switchImageList,
-        this.switchCurrentKey
-      );
-      switchImageObj.imgKey = key;
-      switchImageObj.isReverse = false;
-      const index = this.switchImageList.indexOf(switchImageObj);
-      this.switchImageList.splice(index, 1, switchImageObj);
-    },
-    deleteSwitch() {
-      const switchObj = this.getKeyObj(
-        this.switchImageList,
-        this.switchCurrentKey
-      );
-      const index = this.switchImageList.indexOf(switchObj);
-      // 削除
-      this.switchImageList.splice(index, 1);
-      if (index < this.switchImageList.length) {
-        this.switchCurrentKey = this.switchImageList[index].key;
-      } else {
-        this.switchCurrentKey = this.switchImageList[
-          this.switchImageList.length - 1
-        ].key;
-      }
-    },
-    commit() {
-      if (this.name === "") {
-        alert(`名前を入力してください。`);
-        return;
-      }
-      this.changeListObj({
-        key: this.key,
-        isNotice: true,
-        name: this.name,
-        columns: this.size,
-        rows: this.size,
-        useImageList: this.switchImageList
-          .map(imgObj => imgObj.imgKey + (imgObj.isReverse ? ":R" : ""))
-          .join("|"),
-        isHide: this.isHide,
-        url: this.url,
-        text: this.text,
-        useImageIndex: 0,
-        currentImageTag: this.currentImageTag
-      });
-      this.windowClose("private.display.editCharacterWindow");
-    },
-    cancel() {
-      this.windowClose("private.display.editCharacterWindow");
-    },
-    open() {
-      this.isOpenSwitch = false;
-      let characterObj = this.getObj(this.key);
-      this.currentImageTag = characterObj.currentImageTag;
-      this.switchImageList.splice(0, this.switchImageList.length);
-      characterObj.useImageList.split("|").forEach((imageStr, index) => {
-        const isReverse = imageStr.indexOf(":R") >= 0;
-        const imageKey = imageStr.replace(":R", "");
-        this.switchImageList.push({
-          key: index,
-          imgKey: imageKey,
-          isReverse: isReverse
-        });
-      });
-      this.switchCurrentKey = characterObj.useImageIndex;
-      this.name = characterObj.name;
-      this.size = characterObj.columns;
-      this.isHide = characterObj.isHide;
-      this.url = characterObj.url;
-      this.text = characterObj.text;
-    }
-  },
-  computed: mapState({
-    ...mapGetters(["getObj", "parseColor"]),
-    key: state => state.private.display["editCharacterWindow"].key,
-    selectedTagIndexText() {
-      const imageList = this.imageList;
-      const keyObj = this.getKeyObj(imageList, this.currentImageKey);
-      const index = keyObj ? imageList.indexOf(keyObj) + 1 : 0;
-      return `${index}/${imageList.length}`;
-    },
-    isReverse() {
-      return this.getKeyObj(this.switchImageList, this.switchCurrentKey)
-        .isReverse;
-    },
-    isCanSwitchDelete() {
-      return this.switchImageList.length > 1;
-    },
-    storeImages: state => state.public.image.list,
-    currentImage() {
-      return this.getImage(this.currentImageKey);
-    },
-    currentImageKey() {
-      return this.getKeyObj(this.switchImageList, this.switchCurrentKey).imgKey;
-    },
-    tagList: state => state.public.image.tags.list,
-    imageList() {
-      return this.$store.state.public.image.list.filter(obj => {
-        if (this.currentImageTag === "(全て)") {
-          return true;
-        }
-        return obj.tag.indexOf(this.currentImageTag) >= 0;
-      });
-    }
-  })
-};
+    });
+    this.switchCurrentKey = characterObj.useImageIndex;
+    this.name = characterObj.name;
+    this.size = characterObj.columns;
+    this.isHide = characterObj.isHide;
+    this.url = characterObj.url;
+    this.text = characterObj.text;
+    this.selectImage = this.switchImageList[this.switchCurrentKey].imgKey;
+  }
+
+  private get key(): string {
+    return this.$store.state.private.display["editCharacterWindow"].key;
+  }
+
+  private get selectedTagIndexText(): string {
+    const imageList = this.imageList;
+    const keyObj = this.getKeyObj(imageList, this.currentImageKey);
+    const index = keyObj ? imageList.indexOf(keyObj) + 1 : 0;
+    return `${index}/${imageList.length}`;
+  }
+
+  private get isReverse(): boolean {
+    return this.getKeyObj(this.switchImageList, this.switchCurrentKey)
+      .isReverse;
+  }
+
+  private get isCanSwitchDelete(): boolean {
+    return this.switchImageList.length > 1;
+  }
+
+  private get storeImages(): any[] {
+    return this.$store.state.public.image.list;
+  }
+
+  private get currentImage(): any {
+    return this.getImage(this.currentImageKey);
+  }
+
+  private get currentImageKey(): string {
+    return this.getKeyObj(this.switchImageList, this.switchCurrentKey).imgKey;
+  }
+
+  private get tagList(): any[] {
+    return this.$store.state.public.image.tags.list;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -238,8 +264,7 @@ export default {
   grid-template-columns: 200px auto 1fr;
   grid-template-rows: 125px auto 1fr auto auto auto auto auto;
   grid-template-areas:
-    "viewImage       choseImage      choseImage"
-    "viewImage       imageInfo       imageInfo"
+    "viewImage       imageSelector   imageSelector"
     "viewImage       switchImageArea switchImageArea"
     "initiativeTable initiativeTable initiativeTable"
     "nameArea        nameArea        otherTextLabel"
@@ -288,35 +313,10 @@ export default {
   }
 }
 
-.choseImage {
-  grid-area: choseImage;
-  overflow-y: scroll;
-  max-height: 130px;
+.imageSelector {
+  grid-area: imageSelector;
 }
 
-.imageInfo {
-  grid-area: imageInfo;
-  display: flex;
-
-  .selectedImage {
-    flex: 1;
-    display: flex;
-
-    > * {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    select {
-      flex: 1;
-    }
-  }
-
-  > button {
-    margin-left: 10px;
-  }
-}
 .switchImageArea {
   grid-area: switchImageArea;
   display: flex;

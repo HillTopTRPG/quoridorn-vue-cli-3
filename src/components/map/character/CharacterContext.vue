@@ -39,7 +39,8 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
   viewEditCharacter(): void {
     this.setProperty({
       property: "private.display.editCharacterWindow.key",
-      value: this.characterContextObjKey
+      value: this.characterContextObjKey,
+      logOff: false
     });
     this.windowOpen("private.display.editCharacterWindow");
     this.windowClose("private.display.characterContext");

@@ -209,7 +209,7 @@
       <div class="operateArea">
         <ctrl-button @click="editButtonOnClick">変更</ctrl-button>
         <span style="width: 0.5em;"></span>
-        <ctrl-button disabled>削除</ctrl-button>
+        <ctrl-button :disabled="true">削除</ctrl-button>
       </div>
     </div>
   </window-frame>

@@ -1,4 +1,9 @@
-// URLパラメータ取得処理
+/**
+ * URLパラメータ取得処理
+ *
+ * @param name
+ * @param url
+ */
 export function getUrlParam(
   name: string,
   url: string = window.location.href
@@ -11,6 +16,11 @@ export function getUrlParam(
   return decodeURIComponent(results[2].replace(/(\+)|(¥%20)/g, " "));
 }
 
+/**
+ * 極彩ログ処理
+ *
+ * @param a
+ */
 export function qLog(...a: any): void {
   // window.console.log(...arguments)
 
@@ -113,6 +123,7 @@ export function qLog(...a: any): void {
 
 /**
  * 文字列をクリップボードにコピーする
+ *
  * @param text
  */
 export function execCopy(text: string): boolean {
@@ -134,11 +145,21 @@ export function execCopy(text: string): boolean {
   return result;
 }
 
+/**
+ * 拡張子を除去する
+ *
+ * @param fileName
+ */
 export function removeExt(fileName: string): string {
   const matchExt: string[] | null = fileName.match(/(.*)(?:\.([^.]+$))/);
   return matchExt ? matchExt[1] : fileName;
 }
 
+/**
+ * ファイル名から情報を取得する
+ *
+ * @param fileName
+ */
 export function getFileNameArgList(fileName: string): string[] {
   const matchExt: string[] | null = fileName.match(/(.*)(?:\.([^.]+$))/);
 
@@ -331,10 +352,21 @@ export function toInitiativeObjList(
   return resultList;
 }
 
+/**
+ * 合計値を算出する
+ *
+ * @param list
+ */
 export function sum(list: number[]): number {
   return list.reduce((accumlator, current) => accumlator + current);
 }
 
+/**
+ * イニシアティブ表の各列の幅を再計算する
+ *
+ * @param widthList
+ * @param formatObjList
+ */
 export function arrangeInitiativeWidthList(
   widthList: number[],
   formatObjList: any[]
@@ -367,6 +399,12 @@ export function arrangeInitiativeWidthList(
   return newWidthList;
 }
 
+/**
+ * リストから特定の要素を削除する
+ *
+ * @param list
+ * @param filterFunc
+ */
 export function listDelete(
   list: any[],
   filterFunc: (item: any, index: number) => {}
@@ -381,4 +419,87 @@ export function listDelete(
     return 0;
   });
   deleteIndexList.forEach(deleteIndex => list.splice(deleteIndex, 1));
+}
+
+export function fileToBase64(imageFiles: File[]): PromiseLike<any> {
+  const promiseList: PromiseLike<any>[] = imageFiles.map(file =>
+    createBase64DataSet(file, { w: 96, h: 96 })
+  );
+  return Promise.all(promiseList);
+}
+
+function createBase64DataSet(
+  imageFile: any,
+  { w, h }: { w: number; h: number }
+): any {
+  // 画像の読み込み処理
+  const normalLoad = new Promise<String>(
+    (resolve: Function, reject: Function) => {
+      try {
+        const reader: any = new FileReader();
+        reader.onload = () => {
+          // サムネイル画像でない場合はプレーンな画像データからBase64データを取得する
+          resolve(reader.result);
+        };
+        reader.readAsDataURL(imageFile);
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  // サムネイル画像の読み込み処理
+  const thumbnailLoad = new Promise<String>(
+    (resolve: Function, reject: Function) => {
+      // 画像の読み込み処理
+      try {
+        const reader: any = new FileReader();
+        reader.onload = function(event: any) {
+          // サムネイル画像作成の場合は小さくて決まったサイズの画像データに加工する（アニメGIFも最初の１コマの静止画になる）
+
+          const image = new Image();
+          image.onload = function() {
+            const useSize = {
+              w: image.width,
+              h: image.height
+            };
+
+            // 大きい場合は、比率を保ったまま縮小する
+            if (useSize.w > w || useSize.h > h) {
+              const scale = Math.min(w / useSize.w, h / useSize.h);
+              useSize.w = useSize.w * scale;
+              useSize.h = useSize.h * scale;
+            }
+
+            // 画像を描画してデータを取り出す（Base64変換の実装）
+            const canvas: HTMLCanvasElement = document.createElement(
+              "canvas"
+            ) as HTMLCanvasElement;
+            const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
+            canvas.width = w;
+            canvas.height = h;
+            const locate = {
+              x: (canvas.width - useSize.w) / 2,
+              y: (canvas.height - useSize.h) / 2
+            };
+            ctx.drawImage(image, locate.x, locate.y, useSize.w, useSize.h);
+
+            // 非同期で返却
+            resolve(canvas.toDataURL());
+          };
+          image.src = event.target.result;
+        };
+        reader.readAsDataURL(imageFile);
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  return Promise.all<String>([normalLoad, thumbnailLoad]).then(
+    (values: String[]) => ({
+      name: imageFile.name,
+      imageArgList: getFileNameArgList(imageFile.name),
+      image: values[0],
+      thumbnail: values[1]
+    })
+  );
 }

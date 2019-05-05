@@ -484,6 +484,9 @@ export default {
       if (kind === "groupTargetTab") {
         // グループチャットタブ
         return state.chat.groupTargetTab.list.filter(filterFunc)[0];
+      } else if (kind === "imgTag") {
+        // イメージタグ
+        return state.image.tags.list.filter(filterFunc)[0];
       } else {
         // その他
         return state[kind].list.filter(filterFunc)[0];

@@ -48,7 +48,6 @@ export default class DiceBotSelect extends Vue {
 
   @Watch("currentSystem", { immediate: true })
   onChangeCurrentSystem(currentSystem: string) {
-    console.log(currentSystem);
     if (currentSystem === "DiceBot") {
       this.helpMessage =
         this.baseHelpMessage +

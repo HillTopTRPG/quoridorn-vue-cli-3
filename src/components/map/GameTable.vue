@@ -81,7 +81,7 @@ import MapMask from "./mapMask/MapMask.vue";
 import Character from "./character/Character.vue";
 import Chit from "./chit/Chit.vue";
 
-import { qLog, getFileNameArgList } from "../common/Utility";
+import { qLog, fileToBase64 } from "../common/Utility";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { Action, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
@@ -553,11 +553,8 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     // 画像ファイルの処理
     if (imageFiles.length > 0) {
       // どこに使う画像ファイルなのかを選んでもらう
-      const promiseList: PromiseLike<any>[] = imageFiles.map(file =>
-        this.createBase64DataSet(file, { w: 96, h: 96 })
-      );
       const _: any = this;
-      Promise.all(promiseList).then((values: any[]) => {
+      fileToBase64(imageFiles).then((values: any[]) => {
         values.forEach((valueObj: any, index: number) => {
           valueObj.key = index;
         });
@@ -573,79 +570,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     if (zipFiles.length > 0) {
       this.importStart({ zipFiles: zipFiles, isRoomCreate: false });
     }
-  }
-
-  createBase64DataSet(imageFile: any, { w, h }: { w: number; h: number }): any {
-    // 画像の読み込み処理
-    const normalLoad = new Promise<String>(
-      (resolve: Function, reject: Function) => {
-        try {
-          const reader: any = new FileReader();
-          reader.onload = () => {
-            // サムネイル画像でない場合はプレーンな画像データからBase64データを取得する
-            resolve(reader.result);
-          };
-          reader.readAsDataURL(imageFile);
-        } catch (error) {
-          reject(error);
-        }
-      }
-    );
-    // サムネイル画像の読み込み処理
-    const thumbnailLoad = new Promise<String>(
-      (resolve: Function, reject: Function) => {
-        // 画像の読み込み処理
-        try {
-          const reader: any = new FileReader();
-          reader.onload = function(event: any) {
-            // サムネイル画像作成の場合は小さくて決まったサイズの画像データに加工する（アニメGIFも最初の１コマの静止画になる）
-
-            const image = new Image();
-            image.onload = function() {
-              const useSize = {
-                w: image.width,
-                h: image.height
-              };
-
-              // 大きい場合は、比率を保ったまま縮小する
-              if (useSize.w > w || useSize.h > h) {
-                const scale = Math.min(w / useSize.w, h / useSize.h);
-                useSize.w = useSize.w * scale;
-                useSize.h = useSize.h * scale;
-              }
-
-              // 画像を描画してデータを取り出す（Base64変換の実装）
-              const canvas: HTMLCanvasElement = document.createElement(
-                "canvas"
-              ) as HTMLCanvasElement;
-              const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
-              canvas.width = w;
-              canvas.height = h;
-              const locate = {
-                x: (canvas.width - useSize.w) / 2,
-                y: (canvas.height - useSize.h) / 2
-              };
-              ctx.drawImage(image, locate.x, locate.y, useSize.w, useSize.h);
-
-              // 非同期で返却
-              resolve(canvas.toDataURL());
-            };
-            image.src = event.target.result;
-          };
-          reader.readAsDataURL(imageFile);
-        } catch (error) {
-          reject(error);
-        }
-      }
-    );
-    return Promise.all<String>([normalLoad, thumbnailLoad]).then(
-      (values: String[]) => ({
-        name: imageFile.name,
-        imageArgList: getFileNameArgList(imageFile.name),
-        image: values[0],
-        thumbnail: values[1]
-      })
-    );
   }
 
   get currentAngle(): number {

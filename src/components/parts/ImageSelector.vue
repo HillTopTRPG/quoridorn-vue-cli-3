@@ -37,11 +37,13 @@ import { Getter } from "vuex-class";
 @Component({ components: { CtrlButton, ImageTagSelect } })
 export default class ImageSelector extends Vue {
   @Getter("imageList") private imageList: any;
+  @Getter("imageTagList") private imageTagList: any;
+  @Getter("getObj") private getObj: any;
 
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
   public value!: string;
 
-  @Prop({ type: String, default: "(全て)" })
+  @Prop({ type: String, default: "imgTag-0" })
   private imageTag!: string;
 
   private selectImageTag: string = "";
@@ -51,7 +53,7 @@ export default class ImageSelector extends Vue {
 
   @Watch("imageTag", { immediate: true })
   onChangeImageTag(value: string) {
-    this.selectImageTag = value || "(全て)";
+    this.selectImageTag = value || "imgTag-0";
   }
 
   @Watch("selectImageTag")
@@ -98,10 +100,21 @@ export default class ImageSelector extends Vue {
   }
 
   get useImageList(): any[] {
-    return this.imageList.filter((obj: any) => {
-      if (this.selectImageTag === "(全て)") return true;
-      return obj.tag.indexOf(this.selectImageTag) >= 0;
-    });
+    // (全て)なら全部
+    if (this.selectImageTag === "imgTag-0") return this.imageList;
+
+    return this.imageList.filter(
+      (obj: any) =>
+        obj.tag
+          .split(" ")
+          .map(
+            tagName =>
+              this.imageTagList.filter(
+                (imageTag: any) => imageTag.name === tagName
+              )[0]
+          )
+          .filter(imageObj => imageObj.key === this.selectImageTag)[0]
+    );
   }
 }
 </script>

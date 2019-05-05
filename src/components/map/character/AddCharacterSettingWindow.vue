@@ -1,15 +1,34 @@
 <template>
-  <window-frame titleText="キャラクター追加" display-property="private.display.addCharacterSettingWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
+  <window-frame
+    titleText="キャラクター追加"
+    display-property="private.display.addCharacterSettingWindow"
+    align="center"
+    fixSize="653, 377"
+    @open="open"
+    @reset="open"
+  >
     <div class="container" @contextmenu.prevent>
       <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
+
       <image-selector
         v-model="selectImage"
         :imageTag.sync="currentImageTag"
         class="imageSelector"
       />
+
       <div class="switchImageArea">
         <ctrl-button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</ctrl-button>
-        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0" draggable="false"/></span>
+        <span v-show="isOpenSwitch" class="switchImage">
+          <img
+            v-for="switchObj in switchImageList"
+            :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}"
+            :key="switchObj.key"
+            v-img="getImage(switchObj.imgKey)"
+            @click="selectSwitchImage(switchObj.key)"
+            tabindex="0"
+            draggable="false"
+          />
+        </span>
         <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</ctrl-button>
         <ctrl-button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</ctrl-button>
       </div>
@@ -78,7 +97,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   }
 
   private isOpenSwitch: boolean = false;
-  private currentImageTag: string = "キャラクター";
+  private currentImageTag: string = "imgTag-2";
   private switchImageList: any[] = [
     { key: 0, imgKey: "image-1", isReverse: false }
   ];
@@ -89,7 +108,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   private url: string = "";
   private text: string = "";
 
-  addSwitch() {
+  private addSwitch() {
     const nextKey: number =
       Math.max.apply(null, this.switchImageList.map(image => image.key)) + 1;
 
@@ -100,7 +119,8 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     });
     this.switchCurrentKey = nextKey;
   }
-  doReverse() {
+
+  private doReverse() {
     const index = this.switchImageList.findIndex(
       image => image.key === this.switchCurrentKey
     );
@@ -108,19 +128,23 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     switchImageObj.isReverse = !switchImageObj.isReverse;
     this.switchImageList.splice(index, 1, switchImageObj);
   }
-  getImage(key: number) {
+
+  private getImage(key: number) {
     const imageObj = this.imageList.filter(
       (image: any) => image.key === key
     )[0];
     return imageObj ? imageObj.data : null;
   }
-  getKeyObj(list: any[], key: number) {
+
+  private getKeyObj(list: any[], key: number) {
     return list.filter(obj => obj.key === key)[0];
   }
-  selectSwitchImage(key: number) {
+
+  private selectSwitchImage(key: number) {
     this.switchCurrentKey = key;
   }
-  selectTagImage(key: number) {
+
+  private selectTagImage(key: number) {
     const index = this.switchImageList.findIndex(
       image => image.key === this.switchCurrentKey
     );
@@ -129,7 +153,8 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     switchImageObj.isReverse = false;
     this.switchImageList.splice(index, 1, switchImageObj);
   }
-  deleteSwitch() {
+
+  private deleteSwitch() {
     const index = this.switchImageList.findIndex(
       image => image.key === this.switchCurrentKey
     );
@@ -142,7 +167,8 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
         : this.switchImageList.length - 1
     ].key;
   }
-  commit() {
+
+  private commit() {
     if (this.name === "") {
       alert(`名前を入力してください。`);
       return;
@@ -168,12 +194,14 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     });
     this.windowOpen("private.display.addCharacterWindow");
   }
-  cancel() {
+
+  private cancel() {
     this.windowClose("private.display.addCharacterSettingWindow");
   }
-  open() {
+
+  private open() {
     this.isOpenSwitch = false;
-    this.currentImageTag = "キャラクター";
+    this.currentImageTag = "imgTag-2";
     this.switchImageList.splice(0, this.switchImageList.length);
     this.switchImageList.push({
       key: 0,
@@ -189,17 +217,20 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     this.windowClose("private.display.addCharacterWindow");
   }
 
-  get isReverse() {
+  private get isReverse() {
     return this.getKeyObj(this.switchImageList, this.switchCurrentKey)
       .isReverse;
   }
-  get isCanSwitchDelete() {
+
+  private get isCanSwitchDelete() {
     return this.switchImageList.length > 1;
   }
-  get currentImage() {
+
+  private get currentImage() {
     return this.getImage(this.currentImageKey);
   }
-  get currentImageKey() {
+
+  private get currentImageKey() {
     return this.getKeyObj(this.switchImageList, this.switchCurrentKey).imgKey;
   }
 }
