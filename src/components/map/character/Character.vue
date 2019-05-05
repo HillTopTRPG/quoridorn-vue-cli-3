@@ -130,6 +130,12 @@ export default class Character extends PieceMixin {
     if (nextIndex > maxIndex) {
       nextIndex = 0;
     }
+
+    this.changeListObj({
+      key: this.objKey,
+      isNotice: true,
+      useImageIndex: nextIndex
+    });
   }
 
   get characterStyle(): any {
