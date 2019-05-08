@@ -24,7 +24,7 @@
               <label>
                 <select
                   :value="character.fontColorType"
-                  @change="(event) => changeFontColorType(character.key, event.target.value)"
+                  @input="(event) => changeFontColorType(character.key, event.target.value)"
                 >
                   <option value="0">主と同じ</option>
                   <option value="1">個別</option>

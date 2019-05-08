@@ -1,4 +1,3 @@
-<script lang="ts">
 import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 import { Component, Vue, Prop, Emit, Watch } from "vue-property-decorator";
 
@@ -23,7 +22,7 @@ export default class SelectMixin extends Vue {
   }
 
   private set localValue(value: string | null) {
-    // window.console.log(value);
+    // window.console.error(value);
     this.onChangeValue(value);
     this.input(value);
   }
@@ -33,14 +32,20 @@ export default class SelectMixin extends Vue {
     this.fontColor = value || this.defaultSelectable ? "#000000" : "#999999";
   }
 
+  protected get optionValueStrList(): string[] {
+    return [];
+  }
+
   updated() {
-    const selectElm: CtrlSelect = this.$refs.select as CtrlSelect;
-    if (selectElm) {
-      const index = selectElm.optionValueList.findIndex(
-        option => option === this.localValue
-      );
-      if (index === -1) this.localValue = null;
+    const optionValueStrList: string[] = this.optionValueStrList.concat();
+    optionValueStrList.push("");
+    const index = optionValueStrList.findIndex(
+      option => option === this.localValue
+    );
+    if (index === -1) {
+      // window.console.log(optionValueStrList);
+      // window.console.log("select reset", this.localValue, "-> ''");
+      this.localValue = "";
     }
   }
 }
-</script>

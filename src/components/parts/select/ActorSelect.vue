@@ -1,11 +1,15 @@
 <template>
-  <select-base :defaultLabel="defaultLabel" v-model="localValue">
+  <select-base
+    :defaultLabel="defaultLabel"
+    v-model="localValue"
+    :optionValueList="optionValueStrList"
+  >
     <option :key="actor.key" :value="actor.key" v-for="actor in selectActors">{{actor.name}}</option>
   </select-base>
 </template>
 
 <script lang="ts">
-import SelectMixin from "./base/SelectMixin.vue";
+import SelectMixin from "./base/SelectMixin.ts";
 import SelectBase from "./base/SelectBase.vue";
 
 import { Prop } from "vue-property-decorator";
@@ -24,13 +28,17 @@ export default class SelfActorSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Prop({ type: Array, required: true })
   private selectedActorList!: any[];
 
-  get selectActors(): any[] {
+  private get selectActors(): any[] {
     return this.getAllActors.filter(
       (actor: any) =>
         this.selectedActorList.findIndex(
           standActor => standActor.key === actor.key
         ) === -1
     );
+  }
+
+  protected get optionValueStrList(): string[] {
+    return this.selectActors.map(actor => actor.key);
   }
 }
 </script>

@@ -46,7 +46,7 @@
         <ctrl-select
           :tabindex="chatTabs.length + 2"
           :value="chatActorKey"
-          @change="event => updateActorKey(event.target.value)"
+          @input="updateActorKey"
           title=""
         >
           <option
@@ -354,6 +354,11 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private volatileTargetTab: string | null = "";
   private statusName: string = "◆";
 
+  @Watch("chatActorKey", { deep: true })
+  private onChangeChatActorKey(chatActorKey: any) {
+    this.statusName = "◆";
+  }
+
   /**
    * チャット入力欄の入力イベントハンドラ
    * @param event イベント
@@ -461,6 +466,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       const newValue = arrangeIndex(this.useCommandActorList, index);
 
       this.updateActorKey(newValue.key);
+
+      // window.console.log(this.statusName, "->", newValue.statusName);
       this.statusName = newValue.statusName;
     }
 
@@ -516,7 +523,10 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       if (this.volatileFrom) {
         this.updateActorKey(this.volatileFrom);
       }
-      if (this.volatileStatusName) this.statusName = this.volatileStatusName;
+      if (this.volatileStatusName) {
+        // window.console.log(this.statusName, "->", this.volatileStatusName);
+        this.statusName = this.volatileStatusName;
+      }
       if (this.volatileTarget) this.chatTarget = this.volatileTarget;
       if (this.volatileActiveTab) this.chatTabOnSelect(this.volatileActiveTab);
       if (this.volatileTargetTab) this.outputTab = this.volatileTargetTab;
@@ -859,7 +869,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Watch("secretTarget")
   private onChangeSecretTarget(this: any, secretTarget: any) {
     if (!secretTarget) return;
-    window.console.log("selectSecretTalk", secretTarget);
+    // window.console.log("selectSecretTalk", secretTarget);
     this.secretTarget = "";
   }
 

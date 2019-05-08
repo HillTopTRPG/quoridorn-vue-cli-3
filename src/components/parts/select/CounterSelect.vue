@@ -1,11 +1,16 @@
 <template>
-  <select-base defaultLabel="" :defaultSelectable="true" v-model="localValue">
+  <select-base
+    defaultLabel=""
+    :defaultSelectable="true"
+    v-model="localValue"
+    :optionValueList="optionValueStrList"
+  >
     <option v-for="(property, index) in usePropertyList" :key="index" :value="property.property">{{property.property}}</option>
   </select-base>
 </template>
 
 <script lang="ts">
-import SelectMixin from "./base/SelectMixin.vue";
+import SelectMixin from "./base/SelectMixin.ts";
 import SelectBase from "./base/SelectBase.vue";
 
 import { Getter } from "vuex-class";
@@ -33,6 +38,12 @@ export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
     });
 
     return resultList;
+  }
+
+  protected get optionValueStrList(): string[] {
+    return this.usePropertyList.map((property: any, index: number) =>
+      String(index)
+    );
   }
 }
 </script>

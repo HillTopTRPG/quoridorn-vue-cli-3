@@ -206,7 +206,8 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     };
     this.setProperty({
       property: `private.display.addCharacterWindow`,
-      value: obj
+      value: obj,
+      logOff: true
     });
     this.windowOpen("private.display.addCharacterWindow");
   }

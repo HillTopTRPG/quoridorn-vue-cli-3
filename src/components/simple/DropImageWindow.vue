@@ -15,7 +15,7 @@
           <label class="passwordLabel">隠し画像パスワード：{{imageObj.password !== '' ? 'あり' : 'なし'}}</label>
           <span class="tagLabel">付与するタグ(半角・全角スペースで区切り)</span>
           <input class="tagInput" type="text" @change="changeTag(imageObj.key)" v-model="imageObj.currentTag" />
-          <select class="tagSelect" @change="selectTag(imageObj.key)" v-model="imageObj.selectTag">
+          <select class="tagSelect" @input="selectTag(imageObj.key)" v-model="imageObj.selectTag">
             <option v-for="tagObj in imageTagList.slice(1)" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option>
           </select>
         </div>

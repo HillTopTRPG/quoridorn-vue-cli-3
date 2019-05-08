@@ -11,15 +11,22 @@
 </template>
 
 <script lang="ts">
-import SelectMixin from "./SelectMixin.vue";
+import SelectMixin from "./SelectMixin.ts";
 import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
-import { Prop } from "vue-property-decorator";
+import { Prop, Watch } from "vue-property-decorator";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({ components: { CtrlSelect } })
 export default class SelectBase extends Mixins<SelectMixin>(SelectMixin) {
   @Prop({ type: Boolean, default: false })
   private disabled!: boolean;
+
+  @Prop({ type: Array, required: true })
+  private optionValueList!: string[];
+
+  protected get optionValueStrList(): string[] {
+    return this.optionValueList;
+  }
 }
 </script>

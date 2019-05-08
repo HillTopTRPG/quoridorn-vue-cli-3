@@ -512,7 +512,7 @@ export default {
       delete payload.ownerPeerId;
       delete payload.isNotice;
 
-      window.console.log(payload.owner);
+      // window.console.log(payload.owner);
 
       if (rootGetters.playerKey === payload.owner) {
         rootGetters.historyList.push({ type: "add", key });

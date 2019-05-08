@@ -1,11 +1,17 @@
 <template>
-  <select-base defaultLabel="個別設定" :defaultSelectable="true" v-model="localValue" :disabled="disabled">
+  <select-base
+    defaultLabel="個別設定"
+    :defaultSelectable="true"
+    v-model="localValue"
+    :disabled="disabled"
+    :optionValueList="optionValueStrList"
+  >
     <option :key="status.name" :value="status.name" v-for="status in useStatusList">{{status.name}}</option>
   </select-base>
 </template>
 
 <script lang="ts">
-import SelectMixin from "./base/SelectMixin.vue";
+import SelectMixin from "./base/SelectMixin.ts";
 import SelectBase from "./base/SelectBase.vue";
 
 import { Prop } from "vue-property-decorator";
@@ -26,10 +32,14 @@ export default class ActorOtherStatusSelect extends Mixins<SelectMixin>(
   @Prop({ type: Boolean, default: false })
   private disabled!: boolean;
 
-  get useStatusList(): any[] {
+  private get useStatusList(): any[] {
     return this.actor.statusList.filter(
       (status: any) => !status.standImage.ref && status.name !== this.statusName
     );
+  }
+
+  protected get optionValueStrList(): string[] {
+    return this.useStatusList.map(status => status.name);
   }
 }
 </script>

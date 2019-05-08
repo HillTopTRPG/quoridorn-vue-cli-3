@@ -1,11 +1,15 @@
 <template>
-  <select-base :defaultLabel="defaultLabel" v-model="localValue">
+  <select-base
+    :defaultLabel="defaultLabel"
+    v-model="localValue"
+    :optionValueList="optionValueStrList"
+  >
     <option :key="tagObj.key" :value="tagObj.key" v-for="tagObj in imageTagList">{{tagObj.name}}</option>
   </select-base>
 </template>
 
 <script lang="ts">
-import SelectMixin from "./base/SelectMixin.vue";
+import SelectMixin from "./base/SelectMixin.ts";
 import SelectBase from "./base/SelectBase.vue";
 
 import { Prop } from "vue-property-decorator";
@@ -18,5 +22,9 @@ export default class SelfActorSelect extends Mixins<SelectMixin>(SelectMixin) {
 
   @Prop({ type: String, default: "画像タグ" })
   protected defaultLabel!: string;
+
+  protected get optionValueStrList(): string[] {
+    return this.imageTagList.map(status => status.system);
+  }
 }
 </script>
