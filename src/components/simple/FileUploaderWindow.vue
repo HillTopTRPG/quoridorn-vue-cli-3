@@ -185,16 +185,18 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
   }
 
   private commitOnClick() {
+    const regExp: RegExp = new RegExp("[ 　]+", "g");
     this.useImageList.forEach(imageObj => {
       this.addImage({
         name: imageObj.name,
-        tag: imageObj.currentTag,
+        tag: this.inputImageTag.replace(regExp, " "),
         data: imageObj.image,
         thumbnail: imageObj.thumbnail,
         imageArgList: imageObj.imageArgList,
         owner: this.playerKey
       });
     });
+    this.initWindow();
   }
 
   private cancelOnClick() {

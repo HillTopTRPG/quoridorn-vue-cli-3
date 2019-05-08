@@ -863,11 +863,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.secretTarget = "";
   }
 
-  @Watch("statusName")
-  private onChangeStatusName(statusName: string) {
-    if (!statusName) this.statusName = "◆";
-  }
-
   private get useCommandActorList(): any[] {
     const resultList: any[] = [];
     this.getSelfActors.forEach((actor: any) => {

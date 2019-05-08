@@ -170,8 +170,8 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
   }
 
   private updateStatus(standImage: any) {
-    const actor = this.getObj(this.actorKey);
-    const statusIndex = actor.statusList.findIndex(
+    const actor: any = this.getObj(this.actorKey);
+    const statusIndex: number = actor.statusList.findIndex(
       (status: any) => status.name === this.statusName
     );
     const updateStatusList: any = {};
@@ -188,9 +188,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
   }
 
   changeRef(ref: string): void {
-    this.updateStatus({
-      ref: ref
-    });
+    this.updateStatus({ ref });
   }
 
   changeStatus(statusName: string): void {
@@ -305,12 +303,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
                   }
                   if (!isFind) {
                     const argObj = DiffComponent.getArg(diffImage);
-                    this.addDiff(
-                      diffImage.key,
-                      diffImage.tag,
-                      argObj.x,
-                      argObj.y
-                    );
+                    this.addDiff(diffImage.key, imageTag, argObj.x, argObj.y);
                   }
                 });
               }
@@ -355,7 +348,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
 
   private addDiff(
     image: string = "",
-    tag: string = "立ち絵",
+    tag: string = "imgTag-4",
     x: number = 0,
     y: number = 0
   ): void {

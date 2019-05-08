@@ -198,15 +198,17 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
     let characterObj = this.getObj(this.key);
     this.currentImageTag = characterObj.currentImageTag;
     this.switchImageList.splice(0, this.switchImageList.length);
-    characterObj.useImageList.split("|").forEach((imageStr, index) => {
-      const isReverse = imageStr.indexOf(":R") >= 0;
-      const imageKey = imageStr.replace(":R", "");
-      this.switchImageList.push({
-        key: index,
-        imgKey: imageKey,
-        isReverse: isReverse
+    characterObj.useImageList
+      .split("|")
+      .forEach((imageStr: string, index: number) => {
+        const isReverse = imageStr.indexOf(":R") >= 0;
+        const imageKey = imageStr.replace(":R", "");
+        this.switchImageList.push({
+          key: index,
+          imgKey: imageKey,
+          isReverse: isReverse
+        });
       });
-    });
     this.switchCurrentKey = characterObj.useImageIndex;
     this.name = characterObj.name;
     this.size = characterObj.columns;
@@ -262,7 +264,7 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
   font-size: 12px;
   position: absolute;
   grid-template-columns: 200px auto 1fr;
-  grid-template-rows: 125px auto 1fr auto auto auto auto auto;
+  grid-template-rows: 1fr auto auto auto auto auto auto auto;
   grid-template-areas:
     "viewImage       imageSelector   imageSelector"
     "viewImage       switchImageArea switchImageArea"

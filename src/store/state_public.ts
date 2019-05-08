@@ -71,7 +71,7 @@ export default {
 
     /** マップ */
     map: {
-      imageTag: "マップ",
+      imageTag: "imgTag-1",
       imageKey: "image-0",
       isReverse: false,
       margin: {
@@ -640,6 +640,37 @@ export default {
     publicCounterRemoconList: (state: any) => state.counterRemocon.list,
     roomSystem: (state: any) => state.room.system,
     publicMemo: (state: any) => state.publicMemo,
-    historyList: (state: any) => state.historyList
+    historyList: (state: any) => state.historyList,
+    imageListTagStringList: (state: any, getter: any): string[] => {
+      const resultList: string[] = [];
+      const regExp = new RegExp("[ 　]+", "g");
+      getter.imageList.forEach((imageObj: any) => {
+        const tagList: string[] = imageObj.tag.split(regExp);
+        tagList.forEach(imageTagStr => {
+          const index = resultList.findIndex(result => result === imageTagStr);
+          if (index < 0) resultList.push(imageTagStr);
+        });
+      });
+      return resultList;
+    },
+    imageListFromTagKey: (state: any, getter: any): Function => (
+      tagKey: string
+    ): any[] => {
+      // (全て)なら全部
+      if (tagKey === "imgTag-0") return getter.imageList;
+
+      return getter.imageList.filter(
+        (obj: any) =>
+          obj.tag
+            .split(" ")
+            .map(
+              (tagName: string) =>
+                getter.imageTagList.filter(
+                  (imageTag: any) => imageTag.name === tagName
+                )[0]
+            )
+            .filter((imageObj: any) => imageObj.key === tagKey)[0]
+      );
+    }
   } /* end of getters */
 };

@@ -3,7 +3,7 @@
     v-model="localValue"
     :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }"
     ref="select"
-    @contextmenu.prevent
+    :disabled="disabled"
   >
     <option :disabled="!defaultSelectable" value="" v-if="defaultLabel !== undefined">{{defaultLabel}}</option>
     <slot/>
@@ -20,6 +20,6 @@ import { Component, Mixins } from "vue-mixin-decorator";
 @Component({ components: { CtrlSelect } })
 export default class SelectBase extends Mixins<SelectMixin>(SelectMixin) {
   @Prop({ type: Boolean, default: false })
-  private defaultSelectable!: boolean;
+  private disabled!: boolean;
 }
 </script>

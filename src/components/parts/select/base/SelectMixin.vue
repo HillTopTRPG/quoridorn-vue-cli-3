@@ -10,6 +10,9 @@ export default class SelectMixin extends Vue {
   @Prop({ type: String, default: "" })
   protected defaultLabel!: string;
 
+  @Prop({ type: Boolean, default: false })
+  private defaultSelectable!: boolean;
+
   private fontColor: string = "";
 
   @Emit("input")
@@ -20,14 +23,14 @@ export default class SelectMixin extends Vue {
   }
 
   private set localValue(value: string | null) {
+    // window.console.log(value);
     this.onChangeValue(value);
     this.input(value);
   }
 
   @Watch("value", { immediate: true })
   onChangeValue(value: string | null) {
-    // window.console.error("###", "$" + value + "$");
-    this.fontColor = value ? "#000000" : "#999999";
+    this.fontColor = value || this.defaultSelectable ? "#000000" : "#999999";
   }
 
   updated() {

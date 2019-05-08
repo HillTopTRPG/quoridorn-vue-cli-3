@@ -76,7 +76,7 @@ $background-area-active-background: linear-gradient(
   }
 
   .front-area {
-    @include inline-flex-box(column, center, center);
+    @include inline-flex-box(row, center, center);
     position: relative;
     z-index: 2;
     padding: 0 0.5em;
@@ -111,10 +111,17 @@ $background-area-active-background: linear-gradient(
     position: absolute;
     top: 4px;
     bottom: 4px;
-    right: 21px;
+    right: 20px;
     width: 1px;
     border-left: 1px solid rgba(0, 0, 0, 0.2);
     z-index: 2;
+  }
+
+  /* hover状態の仕切り線 */
+  &:not([disabled="disabled"]) {
+    &:hover:after {
+      border-left-color: #008efd;
+    }
   }
 
   select {
@@ -130,8 +137,7 @@ $background-area-active-background: linear-gradient(
     box-shadow: none;
     -webkit-appearance: none;
     appearance: none;
-    margin-right: 22px;
-    padding: 0 0.5em;
+    padding: 0 calc(22px + 0.5em) 0 0.5em;
     cursor: pointer;
 
     &[disabled="disabled"] {

@@ -1,5 +1,5 @@
 <template>
-  <label class="button-wrapper" :disabled="disabled">
+  <label class="ctrl-button-wrapper" :disabled="disabled">
     <input type="button" :disabled="disabled" @click="buttonOnClick" hidden>
     <span class="front-area"><slot/></span>
     <span class="background-area"></span>
@@ -11,8 +11,8 @@ import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 
 @Component({})
 export default class CtrlButton extends Vue {
-  @Prop({ type: Boolean })
-  private disabled: boolean | null;
+  @Prop({ type: Boolean, default: false })
+  private disabled!: boolean;
 
   @Emit("click")
   private buttonOnClick() {}
@@ -22,7 +22,7 @@ export default class CtrlButton extends Vue {
 <style scoped lang="scss">
 @import "./Ctrl.scss";
 
-.button-wrapper {
+.ctrl-button-wrapper {
   @include ctrl-button();
 }
 </style>

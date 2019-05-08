@@ -1,16 +1,13 @@
 <template>
   <window-frame titleText="マップ変更" display-property="private.display.editMapWindow" align="center" fixSize="401, 435" @open="initWindow" @reset="initWindow" @cancel="cancel" @close="close">
     <div class="container" @contextmenu.prevent>
-      <div class="choseImage">
-        <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === edit.imageKey}" :key="image.key" v-img="image.data" @click="selectImage(image.key)" draggable="false" /></div>
-      </div>
-      <div class="imageInfo">
-        <div class="selectedImage"><label>タグ名：</label><select class="tagSelect" v-model="edit.imageTag"><option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option></select><span>{{selectedTagIndexText}}</span></div>
-        <ctrl-button>隠し画像</ctrl-button>
-        <ctrl-button @click="doReverse">反</ctrl-button>
-      </div>
-      <div class="initiativeTable">
-      </div>
+
+      <image-selector
+        v-model="edit.imageKey"
+        :imageTag.sync="edit.imageTag"
+        class="imageSelector"
+      />
+
       <fieldset class="imageAreaSettings">
         <legend>イメージ部分</legend>
         <div>
@@ -48,327 +45,321 @@
   </window-frame>
 </template>
 
-<script>
-import CtrlButton from "../parts/CtrlButton";
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
+<script lang="ts">
+import CtrlButton from "../parts/CtrlButton.vue";
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
 
-import { mapState, mapActions, mapGetters } from "vuex";
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+import { Watch } from "vue-property-decorator";
+import ImageSelector from "@/components/parts/ImageSelector.vue";
 
-export default {
-  name: "editMapWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
+    ImageSelector,
     CtrlButton,
     WindowFrame
-  },
-  data() {
-    return {
-      edit: {
-        imageTag: "マップ",
-        imageKey: "image-0",
-        isReverse: false,
-        marginGridSize: 5,
-        marginGridColor: "#FFFFFF",
-        maskColor: "#145014",
-        maskAlpha: 0.1,
-        isUseGridColor: true,
-        isUseImage: true,
-        borderWidth: 20,
-        totalColumn: 20,
-        totalRow: 15,
-        gridColor: "#000000",
-        backgroundColor: "#92A8B3"
-      },
-      original: {
-        imageTag: "マップ",
-        imageKey: "image-0",
-        isReverse: false,
-        marginGridSize: 5,
-        marginGridColor: "#FFFFFF",
-        maskColor: "#145014",
-        maskAlpha: 0.1,
-        isUseGridColor: true,
-        isUseImage: true,
-        borderWidth: 20,
-        totalColumn: 20,
-        totalRow: 15,
-        gridColor: "#000000",
-        backgroundColor: "#92A8B3"
-      }
-    };
-  },
-  methods: {
-    ...mapActions(["setProperty", "windowOpen", "windowClose"]),
-    initWindow() {
-      const peerId = this.peerId(this.isWait);
-      if (this.storeMapObj.isEditing && this.storeMapObj.isEditing !== peerId) {
-        alert(
-          "他の画面とマップ変更操作が競合しますので、この操作はキャンセルします。"
-        );
-        this.windowClose("private.display.editMapWindow");
-        return;
-      }
-      this.edit.imageTag = this.storeMapObj.imageTag;
-      this.edit.imageKey = this.storeMapObj.imageKey;
-      this.edit.isReverse = this.storeMapObj.isReverse;
-      this.edit.marginGridSize = this.storeMapObj.margin.gridSize;
-      this.edit.isUseGridColor = this.storeMapObj.margin.isUseGridColor;
-      this.edit.isUseImage = this.storeMapObj.margin.isUseImage;
-      this.edit.marginGridColor = this.storeMapObj.margin.gridColor;
-      this.edit.maskColor = this.storeMapObj.margin.maskColor;
-      this.edit.maskAlpha = this.storeMapObj.margin.maskAlpha;
-      this.edit.borderWidth = this.storeMapObj.margin.borderWidth;
-      this.edit.totalColumn = this.storeMapObj.grid.totalColumn;
-      this.edit.totalRow = this.storeMapObj.grid.totalRow;
-      this.edit.gridColor = this.storeMapObj.grid.color;
-      this.edit.backgroundColor = this.storeMapObj.background;
+  }
+})
+export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("setProperty") private setProperty: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("peerId") private peerId: any;
+  @Getter("isWait") private isWait: any;
+  @Getter("imageListFromTagKey") private imageListFromTagKey: any;
 
-      this.original.imageTag = this.storeMapObj.imageTag;
-      this.original.imageKey = this.storeMapObj.imageKey;
-      this.original.isReverse = this.storeMapObj.isReverse;
-      this.original.marginGridSize = this.storeMapObj.margin.gridSize;
-      this.original.isUseGridColor = this.storeMapObj.margin.isUseGridColor;
-      this.original.isUseImage = this.storeMapObj.margin.isUseImage;
-      this.original.marginGridColor = this.storeMapObj.margin.gridColor;
-      this.original.maskColor = this.storeMapObj.margin.maskColor;
-      this.original.maskAlpha = this.storeMapObj.margin.maskAlpha;
-      this.original.borderWidth = this.storeMapObj.margin.borderWidth;
-      this.original.totalColumn = this.storeMapObj.grid.totalColumn;
-      this.original.totalRow = this.storeMapObj.grid.totalRow;
-      this.original.gridColor = this.storeMapObj.grid.color;
-      this.original.backgroundColor = this.storeMapObj.background;
-      this.setProperty({
-        property: "public.map.isEditing",
-        isNotice: true,
-        value: peerId,
-        logOff: true
-      });
-    },
-    commit() {
-      const peerId = this.peerId(this.isWait);
-      if (this.storeMapObj.isEditing === peerId) {
-        this.setProperty({
-          property: "public.map",
-          isNotice: true,
-          value: {
-            imageTag: this.edit.imageTag,
-            imageKey: this.edit.imageKey,
-            isReverse: this.edit.isReverse,
-            margin: {
-              gridSize: parseInt(this.edit.marginGridSize, 10),
-              borderWidth: parseInt(this.edit.borderWidth, 10),
-              gridColor: this.edit.marginGridColor,
-              isUseGridColor: this.edit.isUseGridColor,
-              isUseImage: this.edit.isUseImage,
-              maskColor: this.edit.maskColor,
-              maskAlpha: parseFloat(this.edit.maskAlpha)
-            },
-            grid: {
-              totalColumn: parseInt(this.edit.totalColumn, 10),
-              totalRow: parseInt(this.edit.totalRow, 10),
-              color: this.edit.gridColor
-            },
-            background: this.edit.backgroundColor,
-            isEditing: false
-          },
-          logOff: true
-        });
-      } else {
-        alert(
-          "ルームメイトとマップ変更操作が競合しますので、この操作はキャンセルします。"
-        );
-      }
-      this.setProperty({
-        property: "public.map.isEditing",
-        isNotice: true,
-        value: null,
-        logOff: true
-      });
+  private edit: any = {
+    imageTag: "imgTag-1",
+    imageKey: "image-1",
+    isReverse: false,
+    marginGridSize: 5,
+    marginGridColor: "#FFFFFF",
+    maskColor: "#145014",
+    maskAlpha: 0.1,
+    isUseGridColor: true,
+    isUseImage: true,
+    borderWidth: 20,
+    totalColumn: 20,
+    totalRow: 15,
+    gridColor: "#000000",
+    backgroundColor: "#92A8B3"
+  };
+
+  private original: any = {
+    imageTag: "imgTag-1",
+    imageKey: "image-1",
+    isReverse: false,
+    marginGridSize: 5,
+    marginGridColor: "#FFFFFF",
+    maskColor: "#145014",
+    maskAlpha: 0.1,
+    isUseGridColor: true,
+    isUseImage: true,
+    borderWidth: 20,
+    totalColumn: 20,
+    totalRow: 15,
+    gridColor: "#000000",
+    backgroundColor: "#92A8B3"
+  };
+
+  private initWindow() {
+    const peerId = this.peerId(this.isWait);
+    if (this.storeMapObj.isEditing && this.storeMapObj.isEditing !== peerId) {
+      alert(
+        "他の画面とマップ変更操作が競合しますので、この操作はキャンセルします。"
+      );
       this.windowClose("private.display.editMapWindow");
-    },
-    cancel() {
-      if (this.storeMapObj.isEditing === this.peerId(this.isWait)) {
-        this.setProperty({
-          property: "public.map",
-          isNotice: true,
-          value: {
-            imageTag: this.original.imageTag,
-            imageKey: this.original.imageKey,
-            isReverse: this.original.isReverse,
-            margin: {
-              gridSize: parseInt(this.original.marginGridSize, 10),
-              borderWidth: parseInt(this.original.borderWidth, 10),
-              gridColor: this.original.marginGridColor,
-              isUseGridColor: this.original.isUseGridColor,
-              isUseImage: this.original.isUseImage,
-              maskColor: this.original.maskColor,
-              maskAlpha: parseFloat(this.original.maskAlpha)
-            },
-            grid: {
-              totalColumn: parseInt(this.original.totalColumn, 10),
-              totalRow: parseInt(this.original.totalRow, 10),
-              color: this.original.gridColor
-            },
-            background: this.original.backgroundColor,
-            isEditing: false
-          },
-          logOff: true
-        });
-      }
-      this.windowClose("private.display.editMapWindow");
-    },
-    close() {
-      this.setProperty({
-        property: "public.map.isEditing",
-        isNotice: true,
-        value: null,
-        logOff: true
-      });
-    },
-    doReverse() {
-      this.edit.isReverse = !this.edit.isReverse;
-    },
-    selectImage(key) {
-      this.edit.imageKey = key;
-    },
-    getKeyObj(list, key) {
-      const filteredList = list.filter(obj => obj.key === key);
-      if (filteredList.length === 0) {
-        // window.console.log(`key:"${key}" is not find.`);
-        return null;
-      }
-      if (filteredList.length > 1) {
-        // window.console.log(`key:"(${key})" is duplicate.`);
-        return null;
-      }
-      return filteredList[0];
+      return;
     }
-  },
-  watch: {
-    "edit.imageTag": function(imageTag) {
+    this.edit.imageTag = this.storeMapObj.imageTag;
+    this.edit.imageKey = this.storeMapObj.imageKey;
+    this.edit.isReverse = this.storeMapObj.isReverse;
+    this.edit.marginGridSize = this.storeMapObj.margin.gridSize;
+    this.edit.isUseGridColor = this.storeMapObj.margin.isUseGridColor;
+    this.edit.isUseImage = this.storeMapObj.margin.isUseImage;
+    this.edit.marginGridColor = this.storeMapObj.margin.gridColor;
+    this.edit.maskColor = this.storeMapObj.margin.maskColor;
+    this.edit.maskAlpha = this.storeMapObj.margin.maskAlpha;
+    this.edit.borderWidth = this.storeMapObj.margin.borderWidth;
+    this.edit.totalColumn = this.storeMapObj.grid.totalColumn;
+    this.edit.totalRow = this.storeMapObj.grid.totalRow;
+    this.edit.gridColor = this.storeMapObj.grid.color;
+    this.edit.backgroundColor = this.storeMapObj.background;
+
+    this.original.imageTag = this.storeMapObj.imageTag;
+    this.original.imageKey = this.storeMapObj.imageKey;
+    this.original.isReverse = this.storeMapObj.isReverse;
+    this.original.marginGridSize = this.storeMapObj.margin.gridSize;
+    this.original.isUseGridColor = this.storeMapObj.margin.isUseGridColor;
+    this.original.isUseImage = this.storeMapObj.margin.isUseImage;
+    this.original.marginGridColor = this.storeMapObj.margin.gridColor;
+    this.original.maskColor = this.storeMapObj.margin.maskColor;
+    this.original.maskAlpha = this.storeMapObj.margin.maskAlpha;
+    this.original.borderWidth = this.storeMapObj.margin.borderWidth;
+    this.original.totalColumn = this.storeMapObj.grid.totalColumn;
+    this.original.totalRow = this.storeMapObj.grid.totalRow;
+    this.original.gridColor = this.storeMapObj.grid.color;
+    this.original.backgroundColor = this.storeMapObj.background;
+    this.setProperty({
+      property: "public.map.isEditing",
+      isNotice: true,
+      value: peerId,
+      logOff: true
+    });
+  }
+
+  private commit() {
+    const peerId = this.peerId(this.isWait);
+    if (this.storeMapObj.isEditing === peerId) {
       this.setProperty({
-        property: "public.map.imageTag",
-        value: imageTag,
+        property: "public.map",
+        isNotice: true,
+        value: {
+          imageTag: this.edit.imageTag,
+          imageKey: this.edit.imageKey,
+          isReverse: this.edit.isReverse,
+          margin: {
+            gridSize: parseInt(this.edit.marginGridSize, 10),
+            borderWidth: parseInt(this.edit.borderWidth, 10),
+            gridColor: this.edit.marginGridColor,
+            isUseGridColor: this.edit.isUseGridColor,
+            isUseImage: this.edit.isUseImage,
+            maskColor: this.edit.maskColor,
+            maskAlpha: parseFloat(this.edit.maskAlpha)
+          },
+          grid: {
+            totalColumn: parseInt(this.edit.totalColumn, 10),
+            totalRow: parseInt(this.edit.totalRow, 10),
+            color: this.edit.gridColor
+          },
+          background: this.edit.backgroundColor,
+          isEditing: false
+        },
         logOff: true
       });
-    },
-    "edit.imageKey": function(imageKey) {
+    } else {
+      alert(
+        "ルームメイトとマップ変更操作が競合しますので、この操作はキャンセルします。"
+      );
+    }
+    this.setProperty({
+      property: "public.map.isEditing",
+      isNotice: true,
+      value: null,
+      logOff: true
+    });
+    this.windowClose("private.display.editMapWindow");
+  }
+
+  private cancel() {
+    if (this.storeMapObj.isEditing === this.peerId(this.isWait)) {
       this.setProperty({
-        property: "public.map.imageKey",
-        value: imageKey,
-        logOff: true
-      });
-    },
-    "edit.isReverse": function(isReverse) {
-      this.setProperty({
-        property: "public.map.isReverse",
-        value: isReverse,
-        logOff: true
-      });
-    },
-    "edit.marginGridSize": function(marginGridSize) {
-      this.setProperty({
-        property: "public.map.margin.gridSize",
-        value: parseInt(marginGridSize, 10),
-        logOff: true
-      });
-    },
-    "edit.isUseGridColor": function(isUseGridColor) {
-      this.setProperty({
-        property: "public.map.margin.isUseGridColor",
-        value: isUseGridColor,
-        logOff: true
-      });
-    },
-    "edit.isUseImage": function(isUseImage) {
-      this.setProperty({
-        property: "public.map.margin.isUseImage",
-        value: isUseImage,
-        logOff: true
-      });
-    },
-    "edit.marginGridColor": function(marginGridColor) {
-      this.setProperty({
-        property: "public.map.margin.gridColor",
-        value: marginGridColor,
-        logOff: true
-      });
-    },
-    "edit.maskColor": function(maskColor) {
-      this.setProperty({
-        property: "public.map.margin.maskColor",
-        value: maskColor,
-        logOff: true
-      });
-    },
-    "edit.maskAlpha": function(maskAlpha) {
-      this.setProperty({
-        property: "public.map.margin.maskAlpha",
-        value: parseFloat(maskAlpha),
-        logOff: true
-      });
-    },
-    "edit.borderWidth": function(borderWidth) {
-      this.setProperty({
-        property: "public.map.margin.borderWidth",
-        value: parseInt(borderWidth, 10),
-        logOff: true
-      });
-    },
-    "edit.totalColumn": function(totalColumn) {
-      this.setProperty({
-        property: "public.map.grid.totalColumn",
-        value: parseInt(totalColumn, 10),
-        logOff: true
-      });
-    },
-    "edit.totalRow": function(totalRow) {
-      this.setProperty({
-        property: "public.map.grid.totalRow",
-        value: parseInt(totalRow, 10),
-        logOff: true
-      });
-    },
-    "edit.gridColor": function(gridColor) {
-      this.setProperty({
-        property: "public.map.grid.color",
-        value: gridColor,
-        logOff: true
-      });
-    },
-    "edit.backgroundColor": function(backgroundColor) {
-      this.setProperty({
-        property: "public.map.background",
-        value: backgroundColor,
+        property: "public.map",
+        isNotice: true,
+        value: {
+          imageTag: this.original.imageTag,
+          imageKey: this.original.imageKey,
+          isReverse: this.original.isReverse,
+          margin: {
+            gridSize: parseInt(this.original.marginGridSize, 10),
+            borderWidth: parseInt(this.original.borderWidth, 10),
+            gridColor: this.original.marginGridColor,
+            isUseGridColor: this.original.isUseGridColor,
+            isUseImage: this.original.isUseImage,
+            maskColor: this.original.maskColor,
+            maskAlpha: parseFloat(this.original.maskAlpha)
+          },
+          grid: {
+            totalColumn: parseInt(this.original.totalColumn, 10),
+            totalRow: parseInt(this.original.totalRow, 10),
+            color: this.original.gridColor
+          },
+          background: this.original.backgroundColor,
+          isEditing: false
+        },
         logOff: true
       });
     }
-  },
-  computed: mapState({
-    ...mapGetters(["peerId", "isWait"]),
-    selectedTagIndexText() {
-      const imageList = this.imageList;
-      const keyObj = this.getKeyObj(imageList, this.edit.imageKey);
-      const index = keyObj ? imageList.indexOf(keyObj) + 1 : 0;
-      return `${index}/${imageList.length}`;
-    },
-    tagList: state => state.public.image.tags.list,
-    storeImages: state => state.public.image.list,
-    currentImage() {
-      return this.getKeyObj(this.storeImages, this.edit.imageKey).data;
-    },
-    imageList() {
-      return this.$store.state.public.image.list.filter(obj => {
-        if (this.edit.imageTag === "(全て)") {
-          return true;
-        }
-        return obj.tag.indexOf(this.edit.imageTag) >= 0;
-      });
-    },
-    storeMapObj: state => state.public.map
-  })
-};
+    this.windowClose("private.display.editMapWindow");
+  }
+
+  private close() {
+    this.setProperty({
+      property: "public.map.isEditing",
+      isNotice: true,
+      value: null,
+      logOff: true
+    });
+  }
+
+  private doReverse() {
+    this.edit.isReverse = !this.edit.isReverse;
+  }
+
+  private selectImage(key: string) {
+    this.edit.imageKey = key;
+  }
+
+  private getKeyObj(list: any[], key: string) {
+    const filteredList = list.filter(obj => obj.key === key);
+    if (filteredList.length === 0) {
+      // window.console.log(`key:"${key}" is not find.`);
+      return null;
+    }
+    if (filteredList.length > 1) {
+      // window.console.log(`key:"(${key})" is duplicate.`);
+      return null;
+    }
+    return filteredList[0];
+  }
+
+  private get selectedTagIndexText(): string {
+    const useImageList = this.useImageList;
+    const keyObj = this.getKeyObj(useImageList, this.edit.imageKey);
+    const index = keyObj ? useImageList.indexOf(keyObj) + 1 : 0;
+    return `${index}/${useImageList.length}`;
+  }
+
+  private get tagList() {
+    return this.$store.state.public.image.tags.list;
+  }
+
+  private get storeImages() {
+    return this.$store.state.public.image.list;
+  }
+
+  private get currentImage() {
+    return this.getKeyObj(this.storeImages, this.edit.imageKey).data;
+  }
+
+  private get useImageList(): any[] {
+    return this.imageListFromTagKey(this.edit.imageTag);
+  }
+
+  private get storeMapObj() {
+    return this.$store.state.public.map;
+  }
+
+  private watchBase(property: string, value: any) {
+    this.setProperty({
+      property,
+      value,
+      logOff: true
+    });
+  }
+
+  @Watch("edit.imageTag")
+  private onChangeEditImageTag(imageTag: string) {
+    this.watchBase("public.map.imageTag", imageTag);
+  }
+
+  @Watch("edit.imageKey")
+  private onChangeEditImageKey(imageKey: string) {
+    this.watchBase("public.map.imageKey", imageKey);
+  }
+
+  @Watch("edit.isReverse")
+  private onChangeEditIsReverse(isReverse: boolean) {
+    this.watchBase("public.map.isReverse", isReverse);
+  }
+
+  @Watch("edit.marginGridSize")
+  private onChangeEditMarginGridSize(marginGridSize: string) {
+    this.watchBase("public.map.margin.gridSize", parseInt(marginGridSize, 10));
+  }
+
+  @Watch("edit.isUseGridColor")
+  private onChangeEditIsUseGridColor(isUseGridColor: boolean) {
+    this.watchBase("public.map.margin.isUseGridColor", isUseGridColor);
+  }
+
+  @Watch("edit.isUseImage")
+  private onChangeEditIsUseImage(isUseImage: boolean) {
+    this.watchBase("public.map.margin.isUseImage", isUseImage);
+  }
+
+  @Watch("edit.marginGridColor")
+  private onChangeEditMarginGridColor(marginGridColor: string) {
+    this.watchBase("public.map.margin.gridColor", marginGridColor);
+  }
+
+  @Watch("edit.maskColor")
+  private onChangeEditMaskColor(maskColor: string) {
+    this.watchBase("public.map.margin.maskColor", maskColor);
+  }
+
+  @Watch("edit.maskAlpha")
+  private onChangeEditMaskAlpha(maskAlpha: string) {
+    this.watchBase("public.map.margin.maskAlpha", parseFloat(maskAlpha));
+  }
+
+  @Watch("edit.borderWidth")
+  private onChangeEditBorderWidth(borderWidth: string) {
+    this.watchBase("public.map.margin.borderWidth", parseInt(borderWidth, 10));
+  }
+
+  @Watch("edit.totalColumn")
+  private onChangeEditTotalColumn(totalColumn: string) {
+    this.watchBase("public.map.grid.totalColumn", parseInt(totalColumn, 10));
+  }
+
+  @Watch("edit.totalRow")
+  private onChangeEditTotalRow(totalRow: string) {
+    this.watchBase("public.map.grid.totalRow", parseInt(totalRow, 10));
+  }
+
+  @Watch("edit.gridColor")
+  private onChangeEditGridColor(gridColor: string) {
+    this.watchBase("public.map.grid.color", gridColor);
+  }
+
+  @Watch("edit.backgroundColor")
+  private onChangeEditBackgroundColor(backgroundColor: string) {
+    this.watchBase("public.map.background", backgroundColor);
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -382,45 +373,9 @@ p {
 .container {
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   width: 100%;
+  height: 100%;
   font-size: 12px;
-  position: absolute;
-  grid-template-columns: auto;
-  grid-template-rows: auto auto auto auto auto auto;
-  grid-template-areas:
-    "choseImage"
-    "imageInfo"
-    "imageAreaSettings"
-    "marginAreaSettings"
-    "backgroundAreaSettings"
-    "buttonArea";
-}
-
-.tagImages {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  align-content: flex-start;
-  flex-wrap: wrap;
-  height: auto;
-  min-height: calc(100% - 2px);
-  box-sizing: border-box;
-  border: solid gray 1px;
-
-  img {
-    width: 50px;
-    height: 50px;
-    border: solid rgba(0, 0, 0, 0) 1px;
-
-    &.active {
-      border: solid blue 1px;
-    }
-  }
-}
-
-.isReverse {
-  transform: scale(-1, 1);
 }
 
 fieldset {
@@ -447,67 +402,14 @@ fieldset {
       }
     }
   }
-}
 
-legend {
-  margin-left: 10px;
-}
-
-/* .container > * { padding: 1px 0; } */
-.viewImage {
-  grid-area: viewImage;
-
-  img {
-    display: inline-block;
-    width: 200px;
-    height: 200px;
-  }
-}
-
-.choseImage {
-  grid-area: choseImage;
-  overflow-y: scroll;
-  height: 130px;
-}
-
-.imageInfo {
-  grid-area: imageInfo;
-  display: flex;
-
-  .selectedImage {
-    flex: 1;
-    display: flex;
-
-    > * {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    select {
-      flex: 1;
-    }
-  }
-
-  > button {
+  legend {
     margin-left: 10px;
   }
 }
 
-.initiativeTable {
-  grid-area: initiativeTable;
-}
-
-.imageAreaSettings {
-  grid-area: imageAreaSettings;
-}
-
-.marginAreaSettings {
-  grid-area: marginAreaSettings;
-}
-
-.backgroundAreaSettings {
-  grid-area: backgroundAreaSettings;
+.imageSelector {
+  flex: 1;
 }
 
 .size {
@@ -520,10 +422,6 @@ legend {
   border: 1px solid red;
 }
 
-.viewImage {
-  grid-area: viewImage;
-}
-
 .otherText {
   grid-area: otherText;
   resize: none;
@@ -533,13 +431,16 @@ legend {
 }
 
 .buttonArea {
-  grid-area: buttonArea;
   text-align: center;
-  padding-top: 15px;
-  padding-bottom: 10px;
+  padding-top: 0.5em;
 
   > div {
     display: inline-block;
+    padding-bottom: 0.5em;
+
+    > * {
+      margin: 0 0.5em;
+    }
   }
 }
 

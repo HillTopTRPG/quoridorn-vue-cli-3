@@ -134,12 +134,12 @@ export default class AddDiceSymbolWindow extends Mixins<WindowMixin>(
     input[type="number"],
     select {
       font-size: 12px;
-      padding: 0;
+      padding: 0 0.5em;
       margin: 0;
     }
 
     input[type="number"] {
-      min-width: 3.7em;
+      min-width: 2.7em;
     }
 
     select {

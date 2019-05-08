@@ -7,41 +7,57 @@
     @open="open"
     @reset="open"
   >
-    <div class="container" @contextmenu.prevent>
-      <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
+    <div class="container v-box" @contextmenu.prevent>
+      <div class="h-box flex-max">
+        <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
 
-      <image-selector
-        v-model="selectImage"
-        :imageTag.sync="currentImageTag"
-        class="imageSelector"
-      />
-
-      <div class="switchImageArea">
-        <ctrl-button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</ctrl-button>
-        <span v-show="isOpenSwitch" class="switchImage">
-          <img
-            v-for="switchObj in switchImageList"
-            :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}"
-            :key="switchObj.key"
-            v-img="getImage(switchObj.imgKey)"
-            @click="selectSwitchImage(switchObj.key)"
-            tabindex="0"
-            draggable="false"
+        <div class="v-box flex-max">
+          <image-selector
+            v-model="selectImage"
+            :imageTag.sync="currentImageTag"
+            class="imageSelector flex-max"
           />
-        </span>
-        <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</ctrl-button>
-        <ctrl-button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</ctrl-button>
+
+          <div class="switchImageArea">
+            <ctrl-button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</ctrl-button>
+            <span v-show="isOpenSwitch" class="switchImage">
+            <img
+              v-for="switchObj in switchImageList"
+              :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}"
+              :key="switchObj.key"
+              v-img="getImage(switchObj.imgKey)"
+              @click="selectSwitchImage(switchObj.key)"
+              tabindex="0"
+              draggable="false"
+            />
+          </span>
+            <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</ctrl-button>
+            <ctrl-button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</ctrl-button>
+          </div>
+        </div>
       </div>
+
       <div class="initiativeTable">
       </div>
-      <div class="nameArea"><label>名前：</label><input type="text" class="name" placeholder="必ず入力してください" v-model="name"/></div>
-      <div class="pieceOptions">
-        <label>サイズ：</label><input type="number" class="size" min="1" v-model="size"/>
-        <label><input type="checkbox" class="hide" v-model="isHide"/><span>マップマスクの下に隠す<br>(イニシアティブ表で非表示)</span></label>
+
+      <div class="h-box">
+        <!--
+        -->
+        <div class="v-box">
+          <div class="nameArea"><label>名前：</label><input type="text" class="name" placeholder="必ず入力してください" v-model="name"/></div>
+          <div class="pieceOptions">
+            <label>サイズ：</label><input type="number" class="size" min="1" v-model="size"/>
+            <label><input type="checkbox" class="hide" v-model="isHide"/><span>マップマスクの下に隠す<br>(イニシアティブ表で非表示)</span></label>
+          </div>
+          <div class="urlArea"><label>参照URL：</label><input type="text" v-model="url" placeholder="キャラクターシートのURL"/></div>
+        </div>
+
+        <label class="v-box flex-max">
+          その他
+          <textarea class="otherText flex-max" v-model="text"></textarea>
+        </label>
       </div>
-      <div class="urlArea"><label>参照URL：</label><input type="text" v-model="url" placeholder="キャラクターシートのURL"/></div>
-      <div class="otherTextLabel"><span>その他</span></div>
-      <textarea class="otherText" v-model="text"></textarea>
+
       <div class="buttonArea">
         <div>
           <ctrl-button @click="commit">追加</ctrl-button>
@@ -238,32 +254,22 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+@import "../../common.scss";
+
 .container {
-  display: grid;
   width: 100%;
+  height: 100%;
   font-size: 12px;
-  position: absolute;
-  grid-template-columns: 200px auto 1fr;
-  grid-template-rows: 150px 1fr auto auto auto auto auto;
-  grid-template-areas:
-    "viewImage       imageSelector   imageSelector"
-    "viewImage       switchImageArea switchImageArea"
-    "initiativeTable initiativeTable initiativeTable"
-    "nameArea        nameArea        otherTextLabel"
-    "pieceOptions    pieceOptions    otherText"
-    "urlArea         urlArea         otherText"
-    "buttonArea      buttonArea      buttonArea";
 
   > * {
     padding: 1px 0;
   }
 }
+
 .isReverse {
   transform: scale(-1, 1);
 }
 .viewImage {
-  grid-area: viewImage;
-
   img {
     display: inline-block;
     width: 200px;
@@ -271,10 +277,8 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   }
 }
 .imageSelector {
-  grid-area: imageSelector;
 }
 .switchImageArea {
-  grid-area: switchImageArea;
   display: flex;
 
   .switchImage {
@@ -306,28 +310,12 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   }
 }
 .initiativeTable {
-  grid-area: initiativeTable;
 }
 .nameArea {
-  grid-area: nameArea;
 }
 .viewImage {
-  grid-area: viewImage;
-}
-.otherTextLabel {
-  display: flex;
-  grid-area: otherTextLabel;
-  vertical-align: bottom;
-
-  span {
-    display: inline;
-    vertical-align: bottom;
-    flex: 1;
-  }
 }
 .pieceOptions {
-  grid-area: pieceOptions;
-
   input[type="number"] {
     width: 35px;
   }
@@ -338,14 +326,10 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   margin-right: 10px;
 }
 .otherText {
-  grid-area: otherText;
   resize: none;
-  width: 100%;
-  height: 100%;
   box-sizing: border-box;
 }
 .urlArea {
-  grid-area: urlArea;
   display: flex;
   vertical-align: middle;
 
@@ -357,16 +341,18 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
 }
 .urlArea input {
   flex: 1;
-  margin-right: 7px;
 }
 .buttonArea {
-  grid-area: buttonArea;
   text-align: center;
-  padding-top: 15px;
-  padding-bottom: 10px;
+  padding-top: 0.5em;
+  /*padding-bottom: 10px;*/
 
   > div {
     display: inline-block;
+
+    > * {
+      margin: 0 0.5em;
+    }
   }
 }
 input {

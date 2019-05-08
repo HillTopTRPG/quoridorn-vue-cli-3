@@ -435,7 +435,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
           standImage: {
             ref: "",
             base: "",
-            baseTag: "",
+            baseTag: "imgTag-0",
             autoResize: false,
             animationLength: 0,
             locate: 1,
@@ -495,6 +495,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       const columns = event.dataTransfer.getData("columns");
       const rows = event.dataTransfer.getData("rows");
       const description = event.dataTransfer.getData("description");
+      const isMulti = event.dataTransfer.getData("isMulti");
 
       // 必須項目
       pieceObj.columns = columns;
@@ -502,10 +503,15 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       // 個別部
       pieceObj.currentImageTag = currentImageTag;
       pieceObj.imageKey = imageKey;
-      pieceObj.isReverse = isReverse;
+      pieceObj.isReverse = isReverse === "true";
       pieceObj.description = description;
 
       this.addListObj(pieceObj);
+
+      window.console.log(isMulti);
+      if (isMulti === "false") {
+        this.windowClose("private.display.addMapMaskWindow");
+      }
       return;
     }
 

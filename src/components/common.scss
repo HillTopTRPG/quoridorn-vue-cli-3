@@ -23,3 +23,17 @@
   align-items: if($direction == row, $vertical, $horizontal);
   flex-wrap: $wrap;
 }
+
+.v-box {
+  @include flex-box(column, stretch, flex-start);
+  position: relative;
+}
+
+.h-box {
+  @include flex-box(row, flex-start, stretch);
+  position: relative;
+}
+
+.flex-max {
+  flex: 1;
+}

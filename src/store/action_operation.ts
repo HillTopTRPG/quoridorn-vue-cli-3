@@ -272,11 +272,27 @@ export default {
       rootState.public.image.list.push({
         key,
         name,
-        tag,
+        tag: tag.trim(),
         data,
         thumbnail,
         imageArgList,
         owner
+      });
+
+      const regExp: RegExp = new RegExp("[ 　]+", "g");
+      const tagStrList: string[] = tag.trim().split(regExp);
+      tagStrList.forEach(tagStr => {
+        let tagObj: any = rootGetters.imageTagList.filter(
+          (imageTagObj: any) => imageTagObj.name === tagStr
+        )[0];
+        if (!tagObj) {
+          const key: string = `imgTag-${++rootState.public.image.tags.maxKey}`;
+          tagObj = {
+            key,
+            name: tagStr
+          };
+          rootGetters.imageTagList.push(tagObj);
+        }
       });
       if (rootGetters.playerKey === owner) {
         rootGetters.historyList.push({ type: "add", key });

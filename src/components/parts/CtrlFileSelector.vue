@@ -1,5 +1,5 @@
 <template>
-  <label class="input-file-wrapper" :disabled="disabled">
+  <label class="ctrl-input-file-wrapper" :disabled="disabled">
     <input type="file" :disabled="disabled" @change="fileOnChange" hidden multiple>
     <span class="front-area"><slot/></span>
     <span class="background-area"></span>
@@ -11,8 +11,8 @@ import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 
 @Component({})
 export default class CtrlFileSelector extends Vue {
-  @Prop({ type: Boolean })
-  private disabled: boolean | null;
+  @Prop({ type: Boolean, default: false })
+  private disabled!: boolean;
 
   @Emit("change")
   private fileOnChange(event: any) {}
@@ -22,7 +22,7 @@ export default class CtrlFileSelector extends Vue {
 <style scoped lang="scss">
 @import "./Ctrl.scss";
 
-.input-file-wrapper {
+.ctrl-input-file-wrapper {
   @include ctrl-button();
 }
 </style>

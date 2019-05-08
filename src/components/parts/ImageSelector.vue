@@ -3,15 +3,17 @@
 
     <!-- 画像選択エリア -->
     <div class="choseImage">
+      <img
+        v-for="image in useImageList"
+        :class="{active : value && (image.key === value.replace(':R', ''))}"
+        :key="image.key"
+        v-img="image.data"
+        @click="selectTagImage(image.key)"
+        draggable="false"/>
+      <!--
       <div class="tagImages">
-        <img
-          v-for="image in useImageList"
-          :class="{active : value && (image.key === value.replace(':R', ''))}"
-          :key="image.key"
-          v-img="image.data"
-          @click="selectTagImage(image.key)"
-          draggable="false"/>
       </div>
+      -->
     </div>
 
     <!-- 絞り込み情報 -->
@@ -36,9 +38,8 @@ import { Getter } from "vuex-class";
 
 @Component({ components: { CtrlButton, ImageTagSelect } })
 export default class ImageSelector extends Vue {
-  @Getter("imageList") private imageList: any;
-  @Getter("imageTagList") private imageTagList: any;
   @Getter("getObj") private getObj: any;
+  @Getter("imageListFromTagKey") private imageListFromTagKey: any;
 
   @Prop({ type: String, required: true })
   public value!: string;
@@ -52,13 +53,13 @@ export default class ImageSelector extends Vue {
   public input(value: string | null) {}
 
   @Watch("imageTag", { immediate: true })
-  onChangeImageTag(value: string) {
+  private onChangeImageTag(value: string) {
     this.selectImageTag = value || "imgTag-0";
   }
 
   @Watch("selectImageTag")
   @Emit("update:imageTag")
-  onChangeSelectImageTag(value: string) {}
+  private onChangeSelectImageTag(value: string) {}
 
   private get localValue(): string | null {
     return this.value;
@@ -84,37 +85,23 @@ export default class ImageSelector extends Vue {
     this.localValue = imageKey + (isReverse ? ":R" : "");
   }
 
-  selectTagImage(key: string) {
+  private selectTagImage(key: string) {
     this.localValue = key;
   }
 
-  doReverse() {
+  private doReverse() {
     this.isReverse = !this.isReverse;
   }
 
-  get selectedTagIndexText() {
+  private get selectedTagIndexText() {
     const index = this.useImageList.findIndex(
       image => image.key === this.imageKey
     );
     return `${index + 1}/${this.useImageList.length}`;
   }
 
-  get useImageList(): any[] {
-    // (全て)なら全部
-    if (this.selectImageTag === "imgTag-0") return this.imageList;
-
-    return this.imageList.filter(
-      (obj: any) =>
-        obj.tag
-          .split(" ")
-          .map(
-            tagName =>
-              this.imageTagList.filter(
-                (imageTag: any) => imageTag.name === tagName
-              )[0]
-          )
-          .filter(imageObj => imageObj.key === this.selectImageTag)[0]
-    );
+  private get useImageList(): any[] {
+    return this.imageListFromTagKey(this.selectImageTag);
   }
 }
 </script>
@@ -125,35 +112,26 @@ export default class ImageSelector extends Vue {
   flex-direction: column;
 }
 .choseImage {
-  grid-area: choseImage;
-  overflow-y: scroll;
-  max-height: 130px;
+  overflow-y: auto;
   flex: 1;
   border: solid gray 1px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-content: flex-start;
+  flex-wrap: wrap;
 
-  .tagImages {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    align-content: flex-start;
-    flex-wrap: wrap;
-    height: auto;
-    box-sizing: border-box;
-    min-height: calc(100% - 2px);
+  img {
+    width: 50px;
+    height: 50px;
+    border: solid rgba(0, 0, 0, 0) 1px;
 
-    img {
-      width: 50px;
-      height: 50px;
-      border: solid rgba(0, 0, 0, 0) 1px;
-
-      &.active {
-        border: solid blue 1px;
-      }
+    &.active {
+      border: solid blue 1px;
     }
   }
 }
 .imageInfo {
-  grid-area: imageInfo;
   display: flex;
 
   .selectedImage {

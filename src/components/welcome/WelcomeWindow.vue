@@ -119,7 +119,7 @@ import ChangeFontSizeWindow from "./spec/ChangeFontSizeWindow.vue";
 import ResetAllWindow from "./spec/ResetAllWindow.vue";
 import AddCharacterWindow from "./spec/AddCharacterWindow.vue";
 import AddRangeWindow from "./spec/AddRangeWindow.vue";
-import AddChitWindow from "./spec/AddChitWindow.vue";
+import AddChitWindow from "./spec/AddChitWindowSpec.vue";
 import GraveyardWindow from "./spec/GraveyardWindow.vue";
 import WaitingRoomWindow from "./spec/WaitingRoomWindow.vue";
 import EditMapWindow from "./spec/EditMapWindow.vue";

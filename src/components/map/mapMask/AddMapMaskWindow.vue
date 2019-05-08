@@ -1,5 +1,10 @@
 <template>
-  <window-frame titleText="マスク作成" display-property="private.display.addMapMaskWindow" align="center" fixSize="285, 195">
+  <window-frame
+    titleText="マスク作成"
+    display-property="private.display.addMapMaskWindow"
+    align="center"
+    fixSize="285, 195"
+  >
     <table>
       <tbody>
         <tr>
@@ -36,75 +41,79 @@
   </window-frame>
 </template>
 
-<script>
-import { mapActions, mapGetters, mapState } from "vuex";
-import WindowFrame from "../../WindowFrame";
-import WindowMixin from "../../WindowMixin";
+<script lang="ts">
+import WindowFrame from "../../WindowFrame.vue";
+import WindowMixin from "../../WindowMixin.vue";
 
-export default {
-  name: "addMapMaskWindow",
-  mixins: [WindowMixin],
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
+
+@Component({
   components: {
     WindowFrame
-  },
-  data() {
-    return {
-      transparency: 0,
-      width: 1,
-      height: 1,
-      name: "",
-      isMulti: true,
-      color: "#000000"
-    };
-  },
-  methods: {
-    ...mapActions(["windowActive"]),
-    dragStart(event) {
-      event.dataTransfer.setData("kind", "mapMask");
-      event.dataTransfer.setData("name", this.name);
-      event.dataTransfer.setData("color", this.rgba);
-      event.dataTransfer.setData("fontColor", this.fontColor);
-      event.dataTransfer.setData("columns", this.width);
-      event.dataTransfer.setData("rows", this.height);
-      window.console.log(
-        `  [methods] drag start mapMask => {name:"${this.name}", color:${
-          this.color
-        }, size:(${this.width}, ${this.height}), transparency:${
-          this.transparency
-        }`
-      );
+  }
+})
+export default class AddMapMaskWindow extends Mixins<WindowMixin>(WindowMixin) {
+  @Action("windowActive") private windowActive: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("parseColor") private parseColor: any;
+
+  private transparency: number = 0;
+  private width: number = 1;
+  private height: number = 1;
+  private name: string = "";
+  private isMulti: boolean = true;
+  private color: string = "#000000";
+
+  private dragStart(event: any): void {
+    event.dataTransfer.setData("kind", "mapMask");
+    event.dataTransfer.setData("name", this.name);
+    event.dataTransfer.setData("color", this.rgba);
+    event.dataTransfer.setData("fontColor", this.fontColor);
+    event.dataTransfer.setData("columns", this.width);
+    event.dataTransfer.setData("rows", this.height);
+    event.dataTransfer.setData("isMulti", this.isMulti);
+    window.console.log(
+      `  [methods] drag start mapMask => {name:"${this.name}", color:${
+        this.color
+      }, size:(${this.width}, ${this.height}), transparency:${
+        this.transparency
+      }`
+    );
+  }
+
+  private get mapMaskStyle() {
+    let width = this.width * this.gridSize;
+    let height = this.height * this.gridSize;
+    let zoom = 1;
+    if (Math.max(width, height) > 160) {
+      zoom = 160 / Math.max(width, height);
+      width *= zoom;
+      height *= zoom;
     }
-  },
-  computed: mapState({
-    ...mapGetters(["parseColor"]),
-    mapMaskStyle() {
-      let width = this.width * this.gridSize;
-      let height = this.height * this.gridSize;
-      let zoom = 1;
-      if (Math.max(width, height) > 160) {
-        zoom = 160 / Math.max(width, height);
-        width *= zoom;
-        height *= zoom;
-      }
-      let result = {
-        width: width + "px",
-        height: height + "px",
-        "background-color": this.rgba,
-        color: this.fontColor
-      };
-      return result;
-    },
-    rgba() {
-      const colorObj = this.parseColor(this.color);
-      colorObj.a = (100 - this.transparency) / 100;
-      return colorObj.getRGBA();
-    },
-    fontColor() {
-      return this.parseColor(this.color).getColorCodeReverse();
-    },
-    gridSize: state => state.public.map.grid.size
-  })
-};
+    let result = {
+      width: width + "px",
+      height: height + "px",
+      "background-color": this.rgba,
+      color: this.fontColor
+    };
+    return result;
+  }
+
+  private get rgba() {
+    const colorObj = this.parseColor(this.color);
+    colorObj.a = (100 - this.transparency) / 100;
+    return colorObj.getRGBA();
+  }
+
+  private get fontColor() {
+    return this.parseColor(this.color).getColorCodeReverse();
+  }
+
+  private get gridSize() {
+    return this.$store.state.public.map.grid.size;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -454,11 +454,11 @@ fieldset.root > legend {
   text-align: center !important;
   margin-bottom: 0.5em;
 
-  > button {
+  > .ctrl-button-wrapper {
     margin-top: 0.5rem;
   }
 
-  > *:not(button) {
+  > *:not(.ctrl-button-wrapper) {
     text-align: left;
     margin-left: 4rem;
   }
@@ -484,7 +484,7 @@ label {
     display: block;
   }
 
-  &:not(.roomPassword) {
+  &:not(.roomPassword):not(.ctrl-button-wrapper) {
     display: flex;
 
     > input {
@@ -492,14 +492,9 @@ label {
     }
   }
 
-  button {
+  .ctrl-button-wrapper {
     padding: 0 5px;
     font-size: 11px;
-  }
-
-  select {
-    padding: 1px 2px;
-    font-size: 13px;
   }
 }
 </style>

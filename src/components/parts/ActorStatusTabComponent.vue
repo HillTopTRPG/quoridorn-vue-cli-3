@@ -121,7 +121,7 @@ export default class ActorStatusTabComponent extends Vue {
           standImage: {
             ref: "◆",
             base: "",
-            baseTag: "立ち絵",
+            baseTag: "imgTag-4",
             autoResize: true,
             animationLength: 1,
             locate: 1,

@@ -20,7 +20,7 @@ fieldset.root > button {
     font-size: 10px;
     color: #444444;
 }
-label,
+label:not([class^="ctrl-"]),
 legend{
     font-weight: bold;
 }

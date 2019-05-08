@@ -1,5 +1,5 @@
 <template>
-  <select-base defaultLabel="個別設定" :defaultSelectable="true" v-model="localValue">
+  <select-base defaultLabel="個別設定" :defaultSelectable="true" v-model="localValue" :disabled="disabled">
     <option :key="status.name" :value="status.name" v-for="status in useStatusList">{{status.name}}</option>
   </select-base>
 </template>
@@ -22,6 +22,9 @@ export default class ActorOtherStatusSelect extends Mixins<SelectMixin>(
 
   @Prop({ type: String, required: true })
   private statusName!: any;
+
+  @Prop({ type: Boolean, default: false })
+  private disabled!: boolean;
 
   get useStatusList(): any[] {
     return this.actor.statusList.filter(

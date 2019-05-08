@@ -1,5 +1,5 @@
 <template>
-  <label class="select-wrapper" :disabled="disabled">
+  <label class="ctrl-select-wrapper" :disabled="disabled" @contextmenu.prevent>
     <select
       v-model="localValue"
       ref="select"
@@ -14,8 +14,8 @@ import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 
 @Component({})
 export default class CtrlSelect extends Vue {
-  @Prop({ type: Boolean })
-  private disabled: boolean | null;
+  @Prop({ type: Boolean, default: false })
+  private disabled!: boolean;
 
   @Prop({ type: String, default: "" })
   public value!: string;
@@ -49,7 +49,7 @@ export default class CtrlSelect extends Vue {
 <style scoped lang="scss">
 @import "./Ctrl.scss";
 
-.select-wrapper {
+.ctrl-select-wrapper {
   @include ctrl-select();
 }
 </style>
