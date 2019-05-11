@@ -1,5 +1,13 @@
 <template>
-  <window-frame titleText="チット作成" display-property="private.display.addChitWindow" align="center" fixSize="653, 271" @open="open">
+  <window-frame
+    titleText="チット作成"
+    display-property="private.display.addChitWindow"
+    align="center"
+    fixSize="653, 271"
+    message="画像を直接マップにドラッグ＆ドロップで配置"
+    @open="open"
+    @reset="open"
+  >
     <div class="container" @contextmenu.prevent>
       <div class="viewImage">
         <img

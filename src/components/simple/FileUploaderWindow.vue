@@ -25,9 +25,9 @@
       </div>
 
       <div class="ctrl-type-1">
-        <label>対応画像：JPEG/GIF/PNG/WEBP</label>
+        <label>対応画像：JPEG/GIF/PNG</label>
         <ctrl-select :disabled="true" :optionInfoList="[ { key: null, value: '', text: '部屋専用のみ', disabled: true } ]"/>
-        <ctrl-button>隠し画像パスワード設定</ctrl-button>
+        <ctrl-button @click="passwordButtonOnClick">隠し画像パスワード設定</ctrl-button>
       </div>
 
       <div class="ctrl-type-1">
@@ -100,6 +100,10 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
     if (!imageTagObj) return;
 
     this.inputImageTag = selectImageTag === "imgTag-0" ? "" : imageTagObj.name;
+  }
+
+  private passwordButtonOnClick() {
+    alert("未実装です。");
   }
 
   /**

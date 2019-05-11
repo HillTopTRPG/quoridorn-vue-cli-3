@@ -23,12 +23,7 @@
       </label>
       <label>
         <span class="label">修正値{2}:</span>
-        <ctrl-select v-model="modifyType">
-          <option :value="COUNTER_REMOCON_TYPE.PLUS">＋</option>
-          <option :value="COUNTER_REMOCON_TYPE.MINUS">ー</option>
-          <option :value="COUNTER_REMOCON_TYPE.EQUALS">＝</option>
-          <option :value="COUNTER_REMOCON_TYPE.PLUS_MINUS">±</option>
-        </ctrl-select>
+        <ctrl-select v-model="modifyType" :optionInfoList="modifyTypeOptionInfoList"/>
         <input type="text" v-model="modifyValue">
       </label>
       <label>
@@ -236,6 +231,35 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
         this.sampleDiceValue = "";
       });
     }
+  }
+
+  private get modifyTypeOptionInfoList(): any[] {
+    const resultList: any[] = [];
+    resultList.push({
+      key: 0,
+      value: this.COUNTER_REMOCON_TYPE.PLUS,
+      text: "＋",
+      disabled: false
+    });
+    resultList.push({
+      key: 1,
+      value: this.COUNTER_REMOCON_TYPE.MINUS,
+      text: "ー",
+      disabled: false
+    });
+    resultList.push({
+      key: 2,
+      value: this.COUNTER_REMOCON_TYPE.EQUALS,
+      text: "＝",
+      disabled: false
+    });
+    resultList.push({
+      key: 3,
+      value: this.COUNTER_REMOCON_TYPE.PLUS_MINUS,
+      text: "±",
+      disabled: false
+    });
+    return resultList;
   }
 }
 </script>

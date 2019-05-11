@@ -153,6 +153,7 @@ $background-area-active-background: linear-gradient(
 
   select {
     @include inline-flex-box(row, flex-start, center);
+    width: 100%;
     height: 100%;
     z-index: 3;
     position: relative;

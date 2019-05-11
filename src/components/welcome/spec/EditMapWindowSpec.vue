@@ -1,11 +1,18 @@
 <template>
-  <spec-frame property="editMapWindow" label-str="マップ変更画面" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame property="editMapWindow" label-str="マップ変更画面" lastVersion="1.0.0b11" :isSpecFixed="true">
     <!----------------------
      ! 起動操作
      !--------------------->
-    <spec-item class-str="operation" label-str="起動操作">
+    <spec-item class-str="operation" label-str="起動操作1">
       <li>画面上部メニューの「マップ」を選択</li>
       <li>「マップ変更」を選択</li>
+    </spec-item>
+    <!----------------------
+     ! 起動操作
+     !--------------------->
+    <spec-item class-str="operation" label-str="起動操作2">
+      <li>マップを右クリック</li>
+      <li>表示されたメニューの「マップ変更」を選択</li>
     </spec-item>
     <!----------------------
      ! 仕様

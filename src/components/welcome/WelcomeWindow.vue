@@ -122,7 +122,7 @@ import AddRangeWindow from "./spec/AddRangeWindow.vue";
 import AddChitWindow from "./spec/AddChitWindowSpec.vue";
 import GraveyardWindow from "./spec/GraveyardWindow.vue";
 import WaitingRoomWindow from "./spec/WaitingRoomWindow.vue";
-import EditMapWindow from "./spec/EditMapWindow.vue";
+import EditMapWindow from "./spec/EditMapWindowSpec.vue";
 import EditFloorTileMode from "./spec/EditFloorTileMode.vue";
 import AddMapMaskWindow from "./spec/AddMapMaskWindow.vue";
 import CreateEasyMapWindow from "./spec/CreateEasyMapWindow.vue";

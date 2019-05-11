@@ -46,7 +46,7 @@ export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
     resultList.unshift({
       key: -1,
       value: "",
-      text: "",
+      text: "未指定",
       disabled: false
     });
     return resultList;

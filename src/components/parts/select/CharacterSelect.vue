@@ -55,12 +55,22 @@ export default class CharacterSelect extends Mixins<SelectMixin>(SelectMixin) {
       text: character.name,
       disabled: false
     }));
+
     resultList.unshift({
-      key: null,
+      key: "",
       value: "",
-      text: "",
+      text: "未指定",
       disabled: false
     });
+
+    if (this.useCharacterList.length === 0)
+      resultList.unshift({
+        key: null,
+        value: null,
+        text: "キャラクターが居ません",
+        disabled: true
+      });
+
     return resultList;
   }
 }

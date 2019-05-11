@@ -122,7 +122,7 @@ export default {
           buttonName: "万能",
           target: "",
           counterName: "",
-          modifyType: 2,
+          modifyType: "2",
           modifyValue: "",
           message: "{0}の{1}を{2}した{4}",
           exampleText: "[選択キャラ]の[選択項目]を0した（[選択項目]：3->3）"

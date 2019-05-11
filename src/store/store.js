@@ -362,6 +362,21 @@ export default new Vuex.Store({
 
             const imageArgList = getFileNameArgList(image.name);
             if (imageArgList.length) image.imageArgList = imageArgList;
+
+            const regExp = new RegExp("[ 　]+", "g");
+            const tagStrList = image.tag.split(regExp);
+            tagStrList.forEach(tagStr => {
+              const imageTag = rootGetters.imageTagList.filter(
+                imageTag => imageTag.name === tagStr
+              )[0];
+              if (!imageTag) {
+                const nextNum = ++rootState.public.image.tags.maxKey;
+                rootState.public.image.tags.list.push({
+                  key: `imgTag-${nextNum}`,
+                  name: image.tag
+                });
+              }
+            });
           });
           rootState.public.image.list = imageList;
           rootState.public.image.maxKey = imageList.length - 1;

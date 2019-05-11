@@ -103,12 +103,17 @@ export default {
           `command=${encodeURIComponent(command)}`
         ].join("&");
         const url = `${state.connect.bcdiceServer}/v1/diceroll?${params}`;
-        fetch(url)
-          .then(response => response.json())
-          .then(json => {
-            resolve(json);
-          })
-          .catch(err => reject(err));
+
+        try {
+          fetch(url)
+            .then(response => response.json())
+            .then(json => {
+              resolve(json);
+            });
+          // .catch(err => { /* 無視 */ }); // reject(err)
+        } catch (error) {
+          // 無視
+        }
       });
     }
   },

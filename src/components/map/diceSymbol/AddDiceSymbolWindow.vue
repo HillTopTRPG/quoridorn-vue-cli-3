@@ -15,24 +15,11 @@
         </label>
         <label>
           <span>ダイス種別</span>
-          <ctrl-select v-model="faceNum">
-            <option value="4">D4</option>
-            <option value="6">D6</option>
-            <option value="8">D8</option>
-            <option value="10">D10</option>
-            <option value="12">D12</option>
-            <option value="20">D20</option>
-          </ctrl-select>
+          <ctrl-select v-model="faceNum" :optionInfoList="faceNumOptionInfoList"/>
         </label>
         <label :style="{ visibility: (dice[faceNum] && dice[faceNum].length > 1) ? 'visible' : 'hidden' }">
           <span></span>
-          <ctrl-select v-model="type">
-            <option
-              v-for="diceObj in dice[faceNum]"
-              :key="diceObj.type"
-              :value="diceObj.type"
-            >{{diceObj.label}}</option>
-          </ctrl-select>
+          <ctrl-select v-model="type" :optionInfoList="diceTypeOptionInfoList"/>
         </label>
         <label>
           <input type="checkbox" v-model="isHide">
@@ -77,20 +64,20 @@ export default class AddDiceSymbolWindow extends Mixins<WindowMixin>(
   @Getter("dice") private dice: any;
   @Getter("dicePipsImage") private dicePipsImage: any;
 
-  private faceNum: number = 6;
+  private faceNum: string = "6";
   private type: string = "";
   private pips: number = 1;
   private isHide: boolean = false;
 
   private initWindow() {
-    this.faceNum = 6;
+    this.faceNum = "6";
     this.pips = 1;
     this.isHide = false;
     this.onChangeFaceNum(this.faceNum);
   }
 
   @Watch("faceNum", { immediate: true })
-  onChangeFaceNum(faceNum: number) {
+  onChangeFaceNum(faceNum: string) {
     this.pips = 1;
     const diceSetList: any[] = this.dice[faceNum];
     this.type = diceSetList ? diceSetList[0].type : "";
@@ -106,6 +93,58 @@ export default class AddDiceSymbolWindow extends Mixins<WindowMixin>(
 
   private get diceImage() {
     return this.dicePipsImage(this.faceNum, this.type, this.pips);
+  }
+
+  private get faceNumOptionInfoList(): any[] {
+    const resultList: any[] = [];
+    resultList.push({
+      key: 0,
+      value: "4",
+      text: "D4",
+      disabled: false
+    });
+    resultList.push({
+      key: 1,
+      value: "6",
+      text: "D6",
+      disabled: false
+    });
+    resultList.push({
+      key: 2,
+      value: "8",
+      text: "D8",
+      disabled: false
+    });
+    resultList.push({
+      key: 3,
+      value: "10",
+      text: "D10",
+      disabled: false
+    });
+    resultList.push({
+      key: 4,
+      value: "12",
+      text: "D12",
+      disabled: false
+    });
+    resultList.push({
+      key: 5,
+      value: "20",
+      text: "D20",
+      disabled: false
+    });
+    return resultList;
+  }
+
+  private get diceTypeOptionInfoList(): any[] {
+    return !this.dice[this.faceNum]
+      ? []
+      : this.dice[this.faceNum].map((diceObj: any) => ({
+          key: diceObj.type,
+          value: diceObj.type,
+          text: diceObj.label,
+          disabled: false
+        }));
   }
 }
 </script>
@@ -126,7 +165,6 @@ export default class AddDiceSymbolWindow extends Mixins<WindowMixin>(
 
   label {
     @include flex-box(row);
-    width: 100%;
     height: 2em;
 
     span {
