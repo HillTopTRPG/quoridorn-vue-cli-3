@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import SelectMixin from "./base/SelectMixin.ts";
+import SelectMixin from "./base/SelectMixin";
 import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Component, Mixins } from "vue-mixin-decorator";

@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import SelectMixin from "./base/SelectMixin.ts";
+import SelectMixin from "./base/SelectMixin";
 import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Getter } from "vuex-class";
@@ -44,7 +44,7 @@ export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
       disabled: false
     }));
     resultList.unshift({
-      key: null,
+      key: -1,
       value: "",
       text: "",
       disabled: false

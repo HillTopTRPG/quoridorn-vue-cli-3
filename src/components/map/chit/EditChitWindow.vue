@@ -80,7 +80,7 @@ export default class EditChitWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   @Watch("selectImage")
-  private onChangeSelectImage(selectImage) {
+  private onChangeSelectImage(selectImage: string) {
     this.isReverse = /:R/.test(this.selectImage);
   }
 

@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import SelfActorSelect from "@/components/parts/select/SelfActorSelect.vue";
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
 @Component({

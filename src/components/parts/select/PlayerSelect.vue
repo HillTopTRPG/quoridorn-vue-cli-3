@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import SelectMixin from "./base/SelectMixin.ts";
+import SelectMixin from "./base/SelectMixin";
 import SelectBase from "./base/SelectBase.vue";
 
 import { Getter } from "vuex-class";

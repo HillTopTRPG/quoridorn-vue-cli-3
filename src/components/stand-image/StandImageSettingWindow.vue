@@ -299,8 +299,10 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
                   if (diffList) {
                     for (const diff of diffList) {
                       if (
+                        diff &&
+                        diff.imageKey &&
                         diff.imageKey.replace(":R", "") ===
-                        diffImage.key.replace(":R", "")
+                          diffImage.key.replace(":R", "")
                       ) {
                         isFind = true;
                         break;

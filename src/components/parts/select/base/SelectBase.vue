@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import SelectMixin from "./SelectMixin.ts";
+import SelectMixin from "./SelectMixin";
 import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Prop, Watch } from "vue-property-decorator";

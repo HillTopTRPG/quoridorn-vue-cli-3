@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import SelectMixin from "./base/SelectMixin.ts";
+import SelectMixin from "./base/SelectMixin";
 import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Prop } from "vue-property-decorator";
@@ -24,9 +24,6 @@ export default class ActorStatusSelect extends Mixins<SelectMixin>(
 ) {
   @Prop({ type: String, required: true })
   private actorKey!: string;
-
-  @Prop({ type: Boolean, default: false })
-  private test!: boolean;
 
   @Getter("getObj") private getObj: any;
 

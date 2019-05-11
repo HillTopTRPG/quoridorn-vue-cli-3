@@ -17,8 +17,8 @@
 </template>
 
 <script lang="ts">
-import ContextFrame from "../ContextFrame";
-import WindowMixin from "../WindowMixin";
+import ContextFrame from "../ContextFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
 import { qLog } from "../common/Utility";
 
 import { Action } from "vuex-class";
