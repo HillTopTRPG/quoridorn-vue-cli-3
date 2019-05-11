@@ -26,9 +26,7 @@
 
       <div class="ctrl-type-1">
         <label>対応画像：JPEG/GIF/PNG/WEBP</label>
-        <ctrl-select :disabled="true">
-          <option value="">部屋専用のみ</option>
-        </ctrl-select>
+        <ctrl-select :disabled="true" :optionInfoList="[ { key: null, value: '', text: '部屋専用のみ', disabled: true } ]"/>
         <ctrl-button>隠し画像パスワード設定</ctrl-button>
       </div>
 

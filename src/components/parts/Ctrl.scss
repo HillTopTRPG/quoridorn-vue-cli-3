@@ -94,10 +94,16 @@ $background-area-active-background: linear-gradient(
     padding: 0;
     -webkit-appearance: none;
     appearance: none;
-    background-color: transparent;
+    background: transparent none;
     border: none;
     border-radius: 5px;
     z-index: 3;
+    opacity: 0;
+
+    &:focus ~ .background-area {
+      outline-offset: 0;
+      outline: -webkit-focus-ring-color auto 5px;
+    }
 
     &:active ~ .background-area {
       background: $background-area-active-background;

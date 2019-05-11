@@ -4,7 +4,12 @@
     :disabled="disabled"
     @contextmenu.prevent
   >
-    <input type="file" :disabled="disabled" @change.stop.prevent="fileOnChange" hidden multiple>
+    <input
+      type="file"
+      :disabled="disabled"
+      @change.stop.prevent="fileOnChange"
+      multiple
+    >
     <span class="front-area"><slot/></span>
     <span class="background-area"></span>
   </label>
