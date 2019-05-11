@@ -11,10 +11,7 @@
       <label>位置</label>
       <label>X：<input type="number" v-model="x"></label>
       <label>Y：<input type="number" v-model="y"></label>
-      <ctrl-select v-model="type">
-        <option value="0">重ねる</option>
-        <option value="1">置換</option>
-      </ctrl-select>
+      <ctrl-select v-model="type" :optionInfoList="optionInfoList"/>
     </div>
 
     <!-- アニメーション周期 -->
@@ -110,7 +107,8 @@ export default class DiffComponent extends Vue {
       statusName: this.statusName,
       index: this.index,
       image: imageKey,
-      tag: imageTag
+      tag: imageTag,
+      time: this.time
     };
 
     // 画像のファイル名の情報を利用
@@ -118,8 +116,11 @@ export default class DiffComponent extends Vue {
       (image: any) => image.key === imageKey.replace(":R", "")
     )[0];
     const argObj = DiffComponent.getArg(imageObj);
-    if (argObj.x !== undefined) arg.x = argObj.x;
-    if (argObj.y !== undefined) arg.y = argObj.y;
+    const isReverse: boolean = /:R/.test(imageKey);
+    if (argObj.x !== undefined) arg.x = isReverse ? argObj.reverseX : argObj.x;
+    if (argObj.y !== undefined) arg.y = isReverse ? argObj.reverseY : argObj.y;
+    if (argObj.from !== undefined) arg.time[0] = argObj.from;
+    if (argObj.to !== undefined) arg.time[1] = argObj.to;
 
     this.editStandImageDiff(arg);
   }
@@ -131,15 +132,21 @@ export default class DiffComponent extends Vue {
 
     const imageArgList: string[] = imageObj.imageArgList;
 
-    if (imageArgList.length >= 2) {
-      const num = parseInt(imageArgList[1], 10);
-      if (!isNaN(num)) arg.x = num;
-    }
+    if (!imageArgList) return arg;
 
-    if (imageArgList.length >= 3) {
-      const num = parseInt(imageArgList[2], 10);
-      if (!isNaN(num)) arg.y = num;
-    }
+    const getParamNum = (index: number): number | null => {
+      if (imageArgList.length <= index) return null;
+      const num = parseInt(imageArgList[index], 10);
+      return isNaN(num) ? null : num;
+    };
+
+    arg.type = getParamNum(0);
+    arg.x = getParamNum(1);
+    arg.y = getParamNum(2);
+    arg.reverseX = getParamNum(3);
+    arg.reverseY = getParamNum(4);
+    arg.from = getParamNum(5);
+    arg.to = getParamNum(6);
 
     return arg;
   }
@@ -204,7 +211,7 @@ export default class DiffComponent extends Vue {
 
   get type(): string {
     if (!this.diff || !this.diff.type) return "0";
-    return this.diff.type;
+    return String(this.diff.type);
   }
 
   set type(value: string) {
@@ -223,6 +230,23 @@ export default class DiffComponent extends Vue {
       index: this.index,
       time: value
     });
+  }
+
+  private get optionInfoList(): any[] {
+    const resultList: any[] = [];
+    resultList.push({
+      key: "0",
+      value: "0",
+      text: "重ねる",
+      disabled: false
+    });
+    resultList.push({
+      key: "1",
+      value: "1",
+      text: "置換",
+      disabled: false
+    });
+    return resultList;
   }
 }
 </script>
@@ -261,6 +285,10 @@ $color2: #bebebe;
   .img {
     flex: 1;
     background-size: contain;
+
+    &.isReverse {
+      transform: scale(-1, 1);
+    }
   }
 }
 

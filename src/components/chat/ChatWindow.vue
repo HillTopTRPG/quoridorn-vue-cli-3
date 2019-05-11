@@ -48,19 +48,23 @@
           :value="chatActorKey"
           @input="updateActorKey"
           title=""
-        >
-          <option
-            v-for="actor in getSelfActors"
-            :key="actor.key"
-            :value="actor.key"
-          >{{getViewName(actor.key)}}</option>
-        </ctrl-select>
+          :optionInfoList="getSelfActors.map(actor => ({ key: actor.key, value: actor.key, text: getViewName(actor.key) }))"
+        />
 
         <!-- ステータス選択 -->
-        <actor-status-select :actorKey="chatActorKey" v-model="statusName" :tabindex="chatTabs.length + 3"/>
+        <actor-status-select
+          :actorKey="chatActorKey"
+          v-model="statusName"
+          :tabindex="chatTabs.length + 3"
+        />
 
         <!-- ダイスボット選択 -->
-        <dice-bot-select ref="diceBot" v-model="currentDiceBotSystem" :tabindex="chatTabs.length + 4" class="diceBotSystem"/>
+        <dice-bot-select
+          ref="diceBot"
+          v-model="currentDiceBotSystem"
+          :tabindex="chatTabs.length + 4"
+          class="diceBotSystem"
+        />
 
         <!-- ここから各種機能呼び出しボタン -->
         <span class="icon">
@@ -354,7 +358,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private volatileTargetTab: string | null = "";
   private statusName: string = "◆";
 
-  @Watch("chatActorKey", { deep: true })
+  @Watch("chatActorKey", { deep: true, immediate: true })
   private onChangeChatActorKey(chatActorKey: any) {
     this.statusName = "◆";
   }

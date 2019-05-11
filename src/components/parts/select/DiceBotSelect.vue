@@ -2,14 +2,8 @@
   <ctrl-select
     :title="helpMessage"
     v-model="currentSystem"
-    @contextmenu.prevent
-  >
-    <option
-      v-for="systemObj in diceSystemList"
-      :key="systemObj.system"
-      :value="systemObj.system"
-    >{{systemObj.system !== 'DiceBot' ? systemObj.name : 'ダイスボット指定なし'}}</option>
-  </ctrl-select>
+    :optionInfoList="diceSystemList.map(systemObj => ({ key: systemObj.system, value: systemObj.system, text: systemObj.system !== 'DiceBot' ? systemObj.name : 'ダイスボット指定なし' }))"
+  />
 </template>
 
 <script lang="ts">

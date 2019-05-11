@@ -359,7 +359,9 @@ export default new Vuex.Store({
           imageList.forEach((image, index) => {
             image.key = `image-${index}`;
             image.name = image.data.replace(/.*\//, "");
-            image.imageArgList = getFileNameArgList(image.name);
+
+            const imageArgList = getFileNameArgList(image.name);
+            if (imageArgList.length) image.imageArgList = imageArgList;
           });
           rootState.public.image.list = imageList;
           rootState.public.image.maxKey = imageList.length - 1;

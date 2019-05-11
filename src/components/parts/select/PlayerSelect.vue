@@ -1,11 +1,8 @@
 <template>
-  <select-base
-    defaultLabel="プレイヤー"
+  <ctrl-select
     v-model="localValue"
-    :optionValueList="optionValueStrList"
-  >
-    <option v-for="player in playerList" :key="player.key" :value="player.key">{{player.name}}</option>
-  </select-base>
+    :optionInfoList="optionInfoList"
+  />
 </template>
 
 <script lang="ts">
@@ -14,15 +11,27 @@ import SelectBase from "./base/SelectBase.vue";
 
 import { Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 @Component({
-  components: { SelectBase }
+  components: { CtrlSelect, SelectBase }
 })
 export default class PlayerSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Getter("playerList") private playerList: any;
 
-  protected get optionValueStrList(): string[] {
-    return this.playerList.map(player => player.key);
+  private get optionInfoList(): any[] {
+    const resultList = this.playerList.map((player: any) => ({
+      key: player.key,
+      value: player.key,
+      text: player.name
+    }));
+    resultList.unshift({
+      key: null,
+      value: "",
+      text: "プレイヤー",
+      disabled: true
+    });
+    return resultList;
   }
 }
 </script>

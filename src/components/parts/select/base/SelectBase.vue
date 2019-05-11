@@ -1,9 +1,10 @@
 <template>
   <ctrl-select
     v-model="localValue"
-    :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }"
     ref="select"
+    :test="test"
     :disabled="disabled"
+    :optionInfoList="optionInfoList"
   >
     <option :disabled="!defaultSelectable" value="" v-if="defaultLabel !== undefined">{{defaultLabel}}</option>
     <slot/>
@@ -23,10 +24,6 @@ export default class SelectBase extends Mixins<SelectMixin>(SelectMixin) {
   private disabled!: boolean;
 
   @Prop({ type: Array, required: true })
-  private optionValueList!: string[];
-
-  protected get optionValueStrList(): string[] {
-    return this.optionValueList;
-  }
+  private optionInfoList!: any[];
 }
 </script>

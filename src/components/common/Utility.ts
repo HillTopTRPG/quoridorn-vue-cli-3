@@ -160,7 +160,7 @@ export function removeExt(fileName: string): string {
  *
  * @param fileName
  */
-export function getFileNameArgList(fileName: string): string[] {
+export function getFileNameArgList(fileName: string): (string | number)[] {
   const matchExt: string[] | null = fileName.match(/(.*)(?:\.([^.]+$))/);
 
   const useFileName: string = matchExt ? matchExt[1] : fileName;
@@ -170,7 +170,12 @@ export function getFileNameArgList(fileName: string): string[] {
 
   const argStr: string = useFileName.substring(index + 2).trim();
 
-  return argStr ? argStr.split("_") : [];
+  return argStr
+    ? argStr.split("_").map(str => {
+        const num: number = parseInt(str, 10);
+        return isNaN(num) ? str : num;
+      })
+    : [];
 }
 
 export function toInitiativeObjList(

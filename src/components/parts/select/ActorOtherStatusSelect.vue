@@ -1,24 +1,20 @@
 <template>
-  <select-base
-    defaultLabel="個別設定"
-    :defaultSelectable="true"
+  <ctrl-select
     v-model="localValue"
+    :optionInfoList="optionInfoList"
     :disabled="disabled"
-    :optionValueList="optionValueStrList"
-  >
-    <option :key="status.name" :value="status.name" v-for="status in useStatusList">{{status.name}}</option>
-  </select-base>
+  />
 </template>
 
 <script lang="ts">
 import SelectMixin from "./base/SelectMixin.ts";
-import SelectBase from "./base/SelectBase.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Prop } from "vue-property-decorator";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
-  components: { SelectBase }
+  components: { CtrlSelect }
 })
 export default class ActorOtherStatusSelect extends Mixins<SelectMixin>(
   SelectMixin
@@ -38,8 +34,20 @@ export default class ActorOtherStatusSelect extends Mixins<SelectMixin>(
     );
   }
 
-  protected get optionValueStrList(): string[] {
-    return this.useStatusList.map(status => status.name);
+  private get optionInfoList(): any[] {
+    const resultList = this.useStatusList.map(status => ({
+      key: status.name,
+      value: status.name,
+      text: status.name,
+      disabled: false
+    }));
+    resultList.unshift({
+      key: null,
+      value: "",
+      text: "個別設定",
+      disabled: false
+    });
+    return resultList;
   }
 }
 </script>

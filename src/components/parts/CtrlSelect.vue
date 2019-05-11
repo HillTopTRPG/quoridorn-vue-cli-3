@@ -8,44 +8,41 @@
       v-model="localValue"
       ref="select"
       :disabled="disabled"
-    ><slot/></select>
+      :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }"
+    >
+      <option
+        v-for="optionInfo in optionInfoList"
+        :key="optionInfo.key"
+        :value="optionInfo.value"
+        :disabled="optionInfo.disabled"
+      >{{optionInfo.text}}</option>
+    </select>
     <div class="background-area"></div>
   </label>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import SelectMixin from "@/components/parts/select/base/SelectMixin";
+
+import { Prop, Watch } from "vue-property-decorator";
+import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({})
-export default class CtrlSelect extends Vue {
+export default class CtrlSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Prop({ type: Boolean, default: false })
   private disabled!: boolean;
 
-  @Prop({ type: String, default: "" })
-  public value!: string;
+  @Prop({ type: Array, required: true })
+  private optionInfoList!: any[];
 
-  @Emit("input")
-  public input(value: string | null) {}
+  private fontColor: string = "";
 
-  private get localValue(): string | null {
-    return this.value || "";
-  }
-
-  private set localValue(value: string | null) {
-    this.input(value);
-  }
-
-  public get optionValueList(): string[] {
-    const selectElm: HTMLSelectElement = this.$refs.select as HTMLSelectElement;
-    if (selectElm) {
-      const options: HTMLOptionElement[] = Array.prototype.slice.call(
-        selectElm.querySelectorAll("option")
-      ) as Array<HTMLOptionElement>;
-
-      return options.map(option => option.value);
-    }
-
-    return [];
+  @Watch("value", { immediate: true })
+  onChangeValue(value: string | null) {
+    const optionInfo: any = this.optionInfoList.filter(
+      optionInfo => optionInfo.value === value
+    )[0];
+    this.fontColor = optionInfo && optionInfo.disabled ? "#999999" : "#000000";
   }
 }
 </script>

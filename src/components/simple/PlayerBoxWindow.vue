@@ -24,16 +24,17 @@
               <label>
                 <ctrl-select
                   :value="character.fontColorType"
-                  @input="(event) => changeFontColorType(character.key, event.target.value)"
+                  @input="value => changeFontColorType(character.key, value)"
+                  :test="true"
                 >
                   <option value="0">主と同じ</option>
                   <option value="1">個別</option>
                 </ctrl-select>
                 <input
                   type="color"
-                  :value="character.fontColorType === 0 ? getPlayer ? getPlayer.fontColor : '' : character.fontColor"
+                  :value="character.fontColorType === '0' ? getPlayer ? getPlayer.fontColor : '' : character.fontColor"
                   @change="event => changeCharacterFontColor(character.key, event.target.value, event.target.parentNode.nextElementSibling.firstElementChild.checked)"
-                  :disabled="character.fontColorType === 0"/>
+                  :disabled="character.fontColorType === '0'"/>
               </label>
               <label>過去ログ反映<input type="checkbox" checked /></label>
             </fieldset>
@@ -113,7 +114,7 @@ export default class PlayerBoxWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("playerKey") private playerKey: any;
   @Getter("getMapObjectList") private getMapObjectList: any;
 
-  private currentPlayerKey: string = "";
+  private currentPlayerKey: string = "aaa";
 
   changeFontColorType(this: any, key: string, value: string): void {
     const characterList = this.getMapObjectList({ kind: "character" });

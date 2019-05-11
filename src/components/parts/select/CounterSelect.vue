@@ -1,23 +1,19 @@
 <template>
-  <select-base
-    defaultLabel=""
-    :defaultSelectable="true"
+  <ctrl-select
     v-model="localValue"
-    :optionValueList="optionValueStrList"
-  >
-    <option v-for="(property, index) in usePropertyList" :key="index" :value="property.property">{{property.property}}</option>
-  </select-base>
+    :optionInfoList="optionInfoList"
+  />
 </template>
 
 <script lang="ts">
 import SelectMixin from "./base/SelectMixin.ts";
-import SelectBase from "./base/SelectBase.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
-  components: { SelectBase }
+  components: { CtrlSelect }
 })
 export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Getter("propertyList") private propertyList: any;
@@ -40,8 +36,20 @@ export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
     return resultList;
   }
 
-  protected get optionValueStrList(): string[] {
-    return this.usePropertyList.map(property => property.property);
+  private get optionInfoList(): any[] {
+    const resultList = this.usePropertyList.map((prop, index) => ({
+      key: index,
+      value: prop.property,
+      text: prop.property,
+      disabled: false
+    }));
+    resultList.unshift({
+      key: null,
+      value: "",
+      text: "",
+      disabled: false
+    });
+    return resultList;
   }
 }
 </script>

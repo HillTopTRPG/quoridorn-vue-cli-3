@@ -1,27 +1,37 @@
 <template>
-  <select-base
-    defaultLabel="権限"
+  <ctrl-select
     v-model="localValue"
-    :optionValueList="optionValueStrList"
-  >
-    <option :key="role.value" :value="role.value" v-for="role in roles">{{role.label}}</option>
-  </select-base>
+    :optionInfoList="optionInfoList"
+  />
 </template>
 
 <script lang="ts">
-import { Getter } from "vuex-class";
 import SelectMixin from "./base/SelectMixin.ts";
-import SelectBase from "./base/SelectBase.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
+
 import { Component, Mixins } from "vue-mixin-decorator";
+import { Getter } from "vuex-class";
 
 @Component({
-  components: { SelectBase }
+  components: { CtrlSelect }
 })
 export default class PlayerTypeSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Getter("roles") private roles: any;
 
-  protected get optionValueStrList(): string[] {
-    return this.roles.map(role => role.value);
+  private get optionInfoList(): any[] {
+    const resultList = this.roles.map((role: any) => ({
+      key: role.value,
+      value: role.value,
+      text: role.label,
+      disabled: false
+    }));
+    resultList.unshift({
+      key: null,
+      value: "",
+      text: "権限",
+      disabled: true
+    });
+    return resultList;
   }
 }
 </script>

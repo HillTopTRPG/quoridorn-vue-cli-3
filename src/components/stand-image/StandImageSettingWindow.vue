@@ -3,7 +3,7 @@
     titleText="立ち絵設定"
     display-property="private.display.standImageSettingWindow"
     align="center"
-    fixSize="672, 540"
+    fixSize="676, 540"
   >
     <div class="contents">
       <actor-tab-component @change="changeActor">
@@ -17,7 +17,8 @@
                   :statusName="status.name"
                   :value="status.standImage.ref"
                   :disabled="status.standImage.isSystemLock"
-                  @input="changeRef"/>
+                  @input="changeRef"
+                />
               </label>
 
               <span
@@ -277,6 +278,8 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
 
               this.updateStatus(arg);
 
+              const isReverse: boolean = /:R/.test(imageKey);
+
               // 画像のファイル名の情報を利用
               const baseImage: any = this.imageList.filter(
                 (image: any) => image.key === imageKey.replace(":R", "")
@@ -295,7 +298,10 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
                   let isFind = false;
                   if (diffList) {
                     for (const diff of diffList) {
-                      if (diff.imageKey === diffImage.key) {
+                      if (
+                        diff.imageKey.replace(":R", "") ===
+                        diffImage.key.replace(":R", "")
+                      ) {
                         isFind = true;
                         break;
                       }
@@ -303,7 +309,15 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
                   }
                   if (!isFind) {
                     const argObj = DiffComponent.getArg(diffImage);
-                    this.addDiff(diffImage.key, imageTag, argObj.x, argObj.y);
+                    this.addDiff(
+                      diffImage.key,
+                      imageTag,
+                      argObj.type,
+                      isReverse ? argObj.reverseX : argObj.x,
+                      isReverse ? argObj.reverseY : argObj.y,
+                      argObj.from,
+                      argObj.to
+                    );
                   }
                 });
               }
@@ -349,8 +363,11 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
   private addDiff(
     image: string = "",
     tag: string = "imgTag-4",
+    type: number = 0,
     x: number = 0,
-    y: number = 0
+    y: number = 0,
+    from: number = 30,
+    to: number = 70
   ): void {
     this.addStandImageDiff({
       key: this.actorKey,
@@ -359,8 +376,8 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
       tag,
       x,
       y,
-      type: 0,
-      time: [30, 70]
+      type: type,
+      time: [from, to]
     });
   }
 }

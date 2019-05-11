@@ -489,7 +489,7 @@ export default {
         return state.image.tags.list.filter(filterFunc)[0];
       } else {
         // その他
-        return state[kind].list.filter(filterFunc)[0];
+        return state[kind] ? state[kind].list.filter(filterFunc)[0] : undefined;
       }
     },
 
@@ -602,7 +602,7 @@ export default {
       let color = "black";
       if (actor) {
         if (actor.key.split("-")[0] === "character") {
-          if (actor.fontColorType === 0) {
+          if (actor.fontColorType === "0") {
             // プレイヤーと同じ色を使う
             color = getter.getSelfActors[0].color;
           } else {

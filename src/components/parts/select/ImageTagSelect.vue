@@ -1,30 +1,39 @@
 <template>
-  <select-base
-    :defaultLabel="defaultLabel"
+  <ctrl-select
     v-model="localValue"
-    :optionValueList="optionValueStrList"
-  >
-    <option :key="tagObj.key" :value="tagObj.key" v-for="tagObj in imageTagList">{{tagObj.name}}</option>
-  </select-base>
+    :optionInfoList="optionInfoList"
+  />
 </template>
 
 <script lang="ts">
 import SelectMixin from "./base/SelectMixin.ts";
-import SelectBase from "./base/SelectBase.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Prop } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
-@Component({ components: { SelectBase } })
+@Component({ components: { CtrlSelect } })
 export default class SelfActorSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Getter("imageTagList") private imageTagList: any;
 
   @Prop({ type: String, default: "画像タグ" })
   protected defaultLabel!: string;
 
-  protected get optionValueStrList(): string[] {
-    return this.imageTagList.map(status => status.system);
+  private get optionInfoList(): any[] {
+    const resultList = this.imageTagList.map((tagObj, index) => ({
+      key: tagObj.key,
+      value: tagObj.key,
+      text: tagObj.name,
+      disabled: false
+    }));
+    resultList.unshift({
+      key: null,
+      value: "",
+      text: this.defaultLabel,
+      disabled: true
+    });
+    return resultList;
   }
 }
 </script>

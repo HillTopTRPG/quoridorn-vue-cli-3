@@ -1,28 +1,20 @@
 <template>
-  <select-base
-    defaultLabel=""
-    :defaultSelectable="true"
+  <ctrl-select
     v-model="localValue"
-    :optionValueList="optionValueStrList"
-  >
-    <option
-      v-for="character in useCharacterList"
-      :key="character.key"
-      :value="character.key"
-    >{{character.name}}</option>
-  </select-base>
+    :optionInfoList="optionInfoList"
+  />
 </template>
 
 <script lang="ts">
 import SelectMixin from "./base/SelectMixin.ts";
-import SelectBase from "./base/SelectBase.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { Prop } from "vue-property-decorator";
 
 @Component({
-  components: { SelectBase }
+  components: { CtrlSelect }
 })
 export default class CharacterSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Getter("getMapObjectList") private getMapObjectList: any;
@@ -56,8 +48,20 @@ export default class CharacterSelect extends Mixins<SelectMixin>(SelectMixin) {
     return resultList;
   }
 
-  protected get optionValueStrList(): string[] {
-    return this.useCharacterList.map(character => character.key);
+  private get optionInfoList(): any[] {
+    const resultList = this.useCharacterList.map(character => ({
+      key: character.key,
+      value: character.key,
+      text: character.name,
+      disabled: false
+    }));
+    resultList.unshift({
+      key: null,
+      value: "",
+      text: "",
+      disabled: false
+    });
+    return resultList;
   }
 }
 </script>

@@ -6,7 +6,7 @@
     <label>システム：<span>{{systemName}}</span></label>
     <div style="color: darkgreen;">※ ログイン情報の暗号化はまだしてないので、いずれ実装します。</div>
     <label v-if="!isWait">招待用URL：<input class="inviteUrl" type="text" readonly="readonly" :value="inviteUrl" />
-      <ctrl-button class="copy" @click="event => doCopy(event)">コピー</ctrl-button>
+      <ctrl-button class="copy" @click="doCopy">コピー</ctrl-button>
     </label>
     <div class="description" v-if="isWait">ここは目的の部屋が作成されるまでの間に滞在する一時的な部屋です。<br>目的の部屋ができたらメッセージ表示の後、自動で部屋を移動します。<br>目的の部屋へのデータ引き継ぎはされません。</div>
   </fieldset>
@@ -47,11 +47,12 @@ export default class RoomInfo extends Vue {
    * @param event
    */
   doCopy(event: any): void {
-    const text = event.target.previousElementSibling.value;
+    const text = event.target.parentNode.previousElementSibling.value;
     if (!execCopy(text)) {
-      alert("テキストをコピーできませんでした。");
+      alert("テキストをコピーできませんでした。\n" + text);
+    } else {
+      alert(text);
     }
-    alert(text);
   }
 }
 </script>
