@@ -11,10 +11,10 @@
       <label>位置</label>
       <label>X：<input type="number" v-model="x"></label>
       <label>Y：<input type="number" v-model="y"></label>
-      <select v-model="type">
+      <ctrl-select v-model="type">
         <option value="0">重ねる</option>
         <option value="1">置換</option>
-      </select>
+      </ctrl-select>
     </div>
 
     <!-- アニメーション周期 -->
@@ -33,12 +33,14 @@
 
 <script lang="ts">
 import RangeMultiplePersent from "../parts/RangeMultiplePersent.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 
 @Component({
   components: {
+    CtrlSelect,
     RangeMultiplePersent
   }
 })

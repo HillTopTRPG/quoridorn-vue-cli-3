@@ -494,14 +494,28 @@ export default new Vuex.Store({
      * =================================================================================================================
      * 指定されたプロパティパスの値を反転させる
      * @param dispatch
+     * @param getters
+     * @param commit
      * @param payload
      * @returns {*}
      */
-    reverseProperty: ({ dispatch }, payload) =>
-      dispatch("sendNoticeOperation", {
-        value: payload,
-        method: "doReverseProperty"
-      }),
+    reverseProperty: ({ dispatch, getters }, payload) => {
+      const target = getters.getStateValue(payload.property);
+      if (typeof target === "boolean") {
+        dispatch("sendNoticeOperation", {
+          value: payload,
+          method: "doReverseProperty"
+        });
+      } else {
+        // payload.property = `${payload.property}.isDisplay`;
+        payload.value = !target.isDisplay;
+        if (!target.isDisplay) {
+          dispatch("windowOpen", payload.property);
+        } else {
+          dispatch("windowClose", payload.property);
+        }
+      }
+    },
     /**
      * 指定されたプロパティパスの値を反転させる
      * @param getters
@@ -510,14 +524,7 @@ export default new Vuex.Store({
      */
     doReverseProperty: ({ getters, commit }, { property }) => {
       const target = getters.getStateValue(property);
-      const payload = {};
-      if (typeof target === "boolean") {
-        payload.property = property;
-        payload.value = !target;
-      } else {
-        payload.property = `${property}.isDisplay`;
-        payload.value = !target.isDisplay;
-      }
+      const payload = { property, value: !target };
       commit("doSetProperty", payload);
     },
 

@@ -1,34 +1,35 @@
 <template>
-  <div class="item" @click="reverseProperty({property: property})" @mouseenter="mouseEnter">
+  <div class="item" @click="itemOnClick" @mouseenter="mouseEnter">
     <span class="check"><i v-show="propValue" class="icon-checkmark"></i></span>
     <span><slot/></span>
   </div>
 </template>
 
-<script>
-import { mapState, mapActions, mapGetters } from "vuex";
+<script lang="ts">
+import { Action, Getter } from "vuex-class";
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 
-export default {
-  name: "menuBooleanItem",
-  props: {
-    property: {
-      type: String,
-      required: true
-    }
-  },
-  methods: {
-    ...mapActions(["reverseProperty"]),
-    mouseEnter(event) {
-      this.$emit("mouseenter", event);
-    }
-  },
-  computed: mapState({
-    ...mapGetters(["isWindowOpen"]),
-    propValue() {
-      return this.isWindowOpen(this.property);
-    }
-  })
-};
+@Component({})
+export default class MenuBooleanItem extends Vue {
+  @Prop({ type: String, required: true })
+  private property!: string;
+
+  @Action("reverseProperty") private reverseProperty: any;
+  @Getter("isWindowOpen") private isWindowOpen: any;
+
+  @Emit("click")
+  private itemOnClick() {
+    this.reverseProperty({ property: this.property });
+  }
+
+  private mouseEnter(event: any) {
+    this.$emit("mouseenter", event);
+  }
+
+  private get propValue() {
+    return this.isWindowOpen(this.property);
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

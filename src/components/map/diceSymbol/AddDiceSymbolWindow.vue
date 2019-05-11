@@ -15,24 +15,24 @@
         </label>
         <label>
           <span>ダイス種別</span>
-          <select v-model="faceNum">
+          <ctrl-select v-model="faceNum">
             <option value="4">D4</option>
             <option value="6">D6</option>
             <option value="8">D8</option>
             <option value="10">D10</option>
             <option value="12">D12</option>
             <option value="20">D20</option>
-          </select>
+          </ctrl-select>
         </label>
         <label :style="{ visibility: (dice[faceNum] && dice[faceNum].length > 1) ? 'visible' : 'hidden' }">
           <span></span>
-          <select v-model="type">
+          <ctrl-select v-model="type">
             <option
               v-for="diceObj in dice[faceNum]"
               :key="diceObj.type"
               :value="diceObj.type"
             >{{diceObj.label}}</option>
-          </select>
+          </ctrl-select>
         </label>
         <label>
           <input type="checkbox" v-model="isHide">
@@ -55,6 +55,7 @@
 <script lang="ts">
 import WindowFrame from "../../WindowFrame.vue";
 import WindowMixin from "../../WindowMixin.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
@@ -62,6 +63,7 @@ import { Watch } from "vue-property-decorator";
 
 @Component({
   components: {
+    CtrlSelect,
     WindowFrame
   }
 })

@@ -5,10 +5,10 @@
         <div>
           <label>秘匿チャット<input type="checkbox" v-model="isSecret"></label>
           <label>名前<input type="text" v-model="name"></label>
-          <label>出力先のタブ<select v-model="targetTab">
+          <label>出力先のタブ<ctrl-select v-model="targetTab">
             <option :value="null">指定なし</option>
             <option v-for="tabObj in chatTabs" :key="tabObj.name" :value="tabObj.key">{{tabObj.name}}</option>
-          </select></label>
+          </ctrl-select></label>
           <label>全体<input type="checkbox" v-model="isAll"></label>
         </div>
         <div class="tableContainer">
@@ -66,6 +66,7 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import Divider from "../parts/Divider.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
@@ -73,6 +74,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlSelect,
     CtrlButton,
     WindowFrame,
     Divider

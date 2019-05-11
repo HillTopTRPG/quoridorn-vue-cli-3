@@ -23,12 +23,12 @@
       </label>
       <label>
         <span class="label">修正値{2}:</span>
-        <select v-model="modifyType">
+        <ctrl-select v-model="modifyType">
           <option :value="COUNTER_REMOCON_TYPE.PLUS">＋</option>
           <option :value="COUNTER_REMOCON_TYPE.MINUS">ー</option>
           <option :value="COUNTER_REMOCON_TYPE.EQUALS">＝</option>
           <option :value="COUNTER_REMOCON_TYPE.PLUS_MINUS">±</option>
-        </select>
+        </ctrl-select>
         <input type="text" v-model="modifyValue">
       </label>
       <label>
@@ -53,6 +53,7 @@ import WindowFrame from "../WindowFrame.vue";
 import CounterSelect from "@/components/parts/select/CounterSelect.vue";
 import CharacterSelect from "@/components/parts/select/CharacterSelect.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
@@ -60,6 +61,7 @@ import { Watch } from "vue-property-decorator";
 
 @Component({
   components: {
+    CtrlSelect,
     CtrlButton,
     WindowFrame,
     CounterSelect,
@@ -80,7 +82,7 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
   private buttonName: string = "";
   private target: string = "";
   private counterName: string = "";
-  private modifyType: number = 0;
+  private modifyType: string = "0";
   private modifyValue: string = "";
   private sampleValue: number = 0;
   private sampleDiceValue: string = "";

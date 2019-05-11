@@ -1,5 +1,9 @@
 <template>
-  <label class="ctrl-select-wrapper" :disabled="disabled" @contextmenu.prevent>
+  <label
+    class="ctrl-select-wrapper"
+    :disabled="disabled"
+    @contextmenu.prevent
+  >
     <select
       v-model="localValue"
       ref="select"

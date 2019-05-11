@@ -22,13 +22,13 @@
             <fieldset class="fontColorArea">
               <legend>チャット文字色</legend>
               <label>
-                <select
+                <ctrl-select
                   :value="character.fontColorType"
                   @input="(event) => changeFontColorType(character.key, event.target.value)"
                 >
                   <option value="0">主と同じ</option>
                   <option value="1">個別</option>
-                </select>
+                </ctrl-select>
                 <input
                   type="color"
                   :value="character.fontColorType === 0 ? getPlayer ? getPlayer.fontColor : '' : character.fontColor"
@@ -91,6 +91,7 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import CharacterChip from "../map/character/CharacterChip.vue";
 import PlayerSelect from "@/components/parts/select/PlayerSelect.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
@@ -98,6 +99,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlSelect,
     PlayerSelect,
     WindowFrame,
     CharacterChip

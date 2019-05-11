@@ -41,9 +41,7 @@ export default class CounterSelect extends Mixins<SelectMixin>(SelectMixin) {
   }
 
   protected get optionValueStrList(): string[] {
-    return this.usePropertyList.map((property: any, index: number) =>
-      String(index)
-    );
+    return this.usePropertyList.map(property => property.property);
   }
 }
 </script>

@@ -15,9 +15,9 @@
           <label class="passwordLabel">隠し画像パスワード：{{imageObj.password !== '' ? 'あり' : 'なし'}}</label>
           <span class="tagLabel">付与するタグ(半角・全角スペースで区切り)</span>
           <input class="tagInput" type="text" @change="changeTag(imageObj.key)" v-model="imageObj.currentTag" />
-          <select class="tagSelect" @input="selectTag(imageObj.key)" v-model="imageObj.selectTag">
+          <ctrl-select class="tagSelect" @input="selectTag(imageObj.key)" v-model="imageObj.selectTag">
             <option v-for="tagObj in imageTagList.slice(1)" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option>
-          </select>
+          </ctrl-select>
         </div>
       </fieldset>
       <div class="operateArea">
@@ -30,6 +30,7 @@
 
 <script lang="ts">
 import CtrlButton from "@/components/parts/CtrlButton.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 
@@ -39,6 +40,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlSelect,
     CtrlButton,
     WindowFrame
   }

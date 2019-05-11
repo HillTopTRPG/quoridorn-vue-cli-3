@@ -54,9 +54,9 @@
         <legend>チャット連動</legend>
         <div class="lastWide">
           <!-- チャット連動オプション -->
-          <label class="option"><select v-model="chatLinkage">
+          <label class="option"><ctrl-select v-model="chatLinkage">
             <option v-for="opt in options" :value="opt.value" :key="opt.value">{{opt.label}}</option>
-          </select></label>
+          </ctrl-select></label>
           <!-- 検索文字 -->
           <label
             class="search"
@@ -79,6 +79,7 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import VolumeComponent from "./component/VolumeComponent.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
@@ -86,6 +87,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
   components: {
+    CtrlSelect,
     CtrlButton,
     WindowFrame,
     VolumeComponent

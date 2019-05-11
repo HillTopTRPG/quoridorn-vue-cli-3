@@ -1,6 +1,12 @@
 <template>
-  <label class="ctrl-button-wrapper" :disabled="disabled">
-    <input type="button" :disabled="disabled" @click="buttonOnClick" hidden>
+  <label
+    class="ctrl-button-wrapper"
+    :disabled="disabled"
+    @click.left.stop.prevent="buttonOnClickLeft"
+    @click.right.stop.prevent="buttonOnClickRight"
+    @contextmenu.prevent
+  >
+    <input type="button" :disabled="disabled" hidden>
     <span class="front-area"><slot/></span>
     <span class="background-area"></span>
   </label>
@@ -15,7 +21,10 @@ export default class CtrlButton extends Vue {
   private disabled!: boolean;
 
   @Emit("click")
-  private buttonOnClick() {}
+  private buttonOnClickLeft(event: any) {}
+
+  @Emit("click-right")
+  private buttonOnClickRight(event: any) {}
 }
 </script>
 

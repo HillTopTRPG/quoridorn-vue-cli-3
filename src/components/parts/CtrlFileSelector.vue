@@ -1,6 +1,10 @@
 <template>
-  <label class="ctrl-input-file-wrapper" :disabled="disabled">
-    <input type="file" :disabled="disabled" @change="fileOnChange" hidden multiple>
+  <label
+    class="ctrl-input-file-wrapper"
+    :disabled="disabled"
+    @contextmenu.prevent
+  >
+    <input type="file" :disabled="disabled" @change.stop.prevent="fileOnChange" hidden multiple>
     <span class="front-area"><slot/></span>
     <span class="background-area"></span>
   </label>

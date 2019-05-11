@@ -15,9 +15,8 @@
           :key="index"
         >
           <ctrl-button
-            @click.left.stop="event => remoconButtonOnClick(infoObj, event)"
-            @click.right="event => openContext(event, infoObj.key)"
-            @contextmenu.prevent
+            @click="event => remoconButtonOnClick(infoObj, event)"
+            @click-right="event => openContext(event, infoObj.key)"
           >{{infoObj.buttonName}}</ctrl-button>
         </label>
       </div>
@@ -515,6 +514,7 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
   font-size: 12px;
   display: flex;
   flex-direction: column;
+  z-index: 0;
 
   .playOperationArea {
     display: flex;
@@ -562,6 +562,7 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
   display: flex;
   flex-direction: column;
   border: 1px solid lightgray;
+  z-index: 1;
 }
 
 .selectItem {
@@ -599,14 +600,6 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
         border-color: transparent transparent transparent #000000;
       }
     }
-  }
-}
-
-button {
-  border-radius: 0.5em;
-
-  &:disabled {
-    background-color: lightgrey;
   }
 }
 </style>
