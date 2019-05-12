@@ -489,7 +489,7 @@ export default {
       { dispatch, rootGetters }: { dispatch: Function; rootGetters: any },
       payload: any
     ) => {
-      payload.owner = rootGetters.playerKey;
+      payload.owner = payload.owner || rootGetters.playerKey;
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddListObj"
@@ -512,7 +512,7 @@ export default {
       delete payload.ownerPeerId;
       delete payload.isNotice;
 
-      // window.console.log(payload.owner);
+      // window.console.log(payload);
 
       if (rootGetters.playerKey === payload.owner) {
         rootGetters.historyList.push({ type: "add", key });

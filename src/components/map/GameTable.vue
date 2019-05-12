@@ -533,8 +533,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.pips = parseInt(pips, 10);
       pieceObj.isHide = isHide === "true";
 
-      window.console.log(pieceObj);
-
       this.addListObj(pieceObj);
       return;
     }

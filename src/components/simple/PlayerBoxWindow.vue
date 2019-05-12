@@ -25,11 +25,8 @@
                 <ctrl-select
                   :value="character.fontColorType"
                   @input="value => changeFontColorType(character.key, value)"
-                  :test="true"
-                >
-                  <option value="0">主と同じ</option>
-                  <option value="1">個別</option>
-                </ctrl-select>
+                  :optionInfoList="fontColorTypeOptionInfoList"
+                />
                 <input
                   type="color"
                   :value="character.fontColorType === '0' ? getPlayer ? getPlayer.fontColor : '' : character.fontColor"
@@ -173,6 +170,23 @@ export default class PlayerBoxWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   get getPlayer(): any {
     return this.getObj(this.currentPlayerKey);
+  }
+
+  private get fontColorTypeOptionInfoList(): any[] {
+    const resultList: any[] = [];
+    resultList.push({
+      key: 0,
+      value: "0",
+      text: "主と同じ",
+      disabled: false
+    });
+    resultList.push({
+      key: 1,
+      value: "1",
+      text: "個別",
+      disabled: false
+    });
+    return resultList;
   }
 }
 </script>

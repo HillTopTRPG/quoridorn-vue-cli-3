@@ -200,6 +200,7 @@ export default {
       delete saveData.public.mapMask;
       delete saveData.public.image;
       delete saveData.public.bgm;
+      delete saveData.public.diceSymbol;
 
       // お試しデータのカードデッキはとりあえず削除
       delete saveData.public.deck;
