@@ -35,7 +35,7 @@ export default class DiceSymbolContext extends Mixins<WindowMixin>(
   @Action("changeListObj") private changeListObj: any;
   @Action("deleteListObj") private deleteListObj: any;
   @Action("sendBcdiceServer") private sendBcdiceServer: any;
-  @Action("addSimpleChatLog") private addSimpleChatLog: any;
+  @Action("addChatLog") private addChatLog: any;
   @Getter("getObj") private getObj: any;
   @Getter("dice") private dice: any;
   @Getter("playerKey") private playerKey: any;
@@ -59,7 +59,7 @@ export default class DiceSymbolContext extends Mixins<WindowMixin>(
           const pips: number = parseInt(resultValue, 10);
           // ログに出力
           if (!diceObj.isHide) {
-            this.addSimpleChatLog({
+            this.addChatLog({
               text: `ダイス合計：${pips}(${command} = [${pips}])`
             });
           }
@@ -81,7 +81,7 @@ export default class DiceSymbolContext extends Mixins<WindowMixin>(
     }」のダイスシンボルの値が変更されました。`;
     if (!diceObj.isHide) text += `(${diceObj.pips}→${pips})`;
     // ログに出力
-    this.addSimpleChatLog({ text });
+    this.addChatLog({ text });
     this.windowClose("private.display.diceSymbolContext");
 
     // ダイスシンボルに反映

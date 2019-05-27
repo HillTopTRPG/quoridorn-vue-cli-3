@@ -3,7 +3,7 @@
     titleText="チャット"
     display-property="private.display.chatWindow"
     align="left-bottom"
-    baseSize="-300, 260"
+    baseSize="-300, 300"
     :fontSizeBar="true"
   >
     <div class="container">
@@ -12,14 +12,32 @@
        !--------------->
       <div class="tabs dep" @contextmenu.prevent>
         <!-- タブ -->
-        <span
+        <div
           class="tab"
           v-for="(tabObj, index) in chatTabs"
           :key="tabObj.name"
-          :class="{ active: tabObj.key === activeTab, unRead: tabObj.unRead > 0 }"
-          @mousedown.prevent="chatTabOnSelect(tabObj.key)"
           :tabindex="index + 1"
-        >#{{tabObj.name}}/{{tabObj.unRead}}</span>
+          :class="{ active: tabObj.key === activeChatTab, hover: tabObj.key === hoverChatTab, unRead: tabObj.unRead > 0, vertical: isChatTabIsVertical, isLast: index === chatTabs.length - 1 }"
+        >
+          <div
+            class="corner-container"
+            v-if="isChatTabIsVertical"
+          >
+            <div
+              class="corner"
+              @mousedown.prevent="chatTabOnSelect(tabObj.key)"
+              @mouseenter.prevent="chatTabOnHover(tabObj.key)"
+              @mouseleave.prevent="chatTabOnHover('')"
+            ></div>
+          </div>
+
+          <div
+            class="text"
+            @mousedown.prevent="chatTabOnSelect(tabObj.key)"
+            @mouseenter.prevent="chatTabOnHover(tabObj.key)"
+            @mouseleave.prevent="chatTabOnHover('')"
+          ><span>#{{tabObj.name}}/{{tabObj.unRead}}</span></div>
+        </div>
 
         <!-- タブ設定ボタン -->
         <span
@@ -322,7 +340,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("createInputtingMsg") private createInputtingMsg: any;
   @Getter("fontColor") private fontColor: any;
   @Getter("chatTargetList") private chatTargetList: any;
-  @Getter("activeTab") private activeTab: any;
+  @Getter("activeChatTab") private activeChatTab: any;
+  @Getter("hoverChatTab") private hoverChatTab: any;
   @Getter("hoverTab") private hoverTab: any;
   @Getter("playerKey") private playerKey: any;
   @Getter("chatOptionPagingSize") private chatOptionPagingSize: any;
@@ -330,7 +349,10 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("chatActorKey") private chatActorKey: any;
   @Getter("roomSystem") private roomSystem: any;
   @Getter("getChatColor") private getChatColor: any;
-  @Getter("getOwnerKey") private getOwnerKey: any;
+  @Getter("customDiceBotList") private customDiceBotList: any;
+  @Getter("customDiceBotRoomSysList") private customDiceBotRoomSysList: any;
+  @Getter("loadYaml") private loadYaml: any;
+  @Getter("isChatTabIsVertical") private isChatTabIsVertical: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;
@@ -370,6 +392,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private onInput(event: any): void {
     const text = event.target.value;
 
+    // コマンド（発言者選択）
     let selectFrom: string = "";
     if (text.startsWith("!") || text.startsWith("！")) {
       const useText = text.substring(1);
@@ -384,6 +407,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       });
     }
 
+    // コマンド（グループチャット選択）
     let selectTarget: string = "";
     if (text.startsWith(">") || text.startsWith("＞")) {
       const useText = text.substring(1);
@@ -398,6 +422,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       });
     }
 
+    // コマンド（タブ選択）
     let selectTab: string | null | undefined = undefined;
     if (text.startsWith("#") || text.startsWith("＃")) {
       const useText = text.substring(1);
@@ -449,7 +474,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (!this.volatileFrom) this.volatileFrom = this.chatActorKey;
     if (!this.volatileStatusName) this.volatileStatusName = this.statusName;
     if (!this.volatileTarget) this.volatileTarget = this.chatTarget;
-    if (!this.volatileActiveTab) this.volatileActiveTab = this.activeTab;
+    if (!this.volatileActiveTab) this.volatileActiveTab = this.activeChatTab;
     if (!this.volatileTargetTab) this.volatileTargetTab = this.outputTab;
 
     // カーソル移動と、移動後の輪転処理
@@ -549,11 +574,23 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
    */
   private chatTabOnSelect(key: string): void {
     this.setProperty({
-      property: "chat.activeTab",
+      property: "chat.activeChatTab",
       value: key,
       logOff: true
     });
     this.chatTabSelect(key);
+  }
+
+  /**
+   * チャットログ表示タブをホバーされたときの挙動
+   * @param key タブのkey
+   */
+  private chatTabOnHover(key: string): void {
+    this.setProperty({
+      property: "chat.hoverChatTab",
+      value: key,
+      logOff: true
+    });
   }
 
   /**
@@ -598,12 +635,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
    * ダイスボット管理ボタンクリックイベントハンドラ
    */
   private diceBotSettingButtonOnClick(): void {
-    this.setProperty({
-      property: "private.display.unSupportWindow.title",
-      value: "ダイスボット用表管理",
-      logOff: true
-    });
-    this.windowOpen("private.display.unSupportWindow");
+    this.windowOpen("private.display.customDiceBotTableWindow");
   }
 
   /**
@@ -694,7 +726,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.enterPressing = flg;
     if (!flg) return;
     if (event.shiftKey) {
-      this.currentMessage += "\r\n";
+      this.currentMessage += "\n";
       return;
     }
     if (this.currentMessage === "") return;
@@ -712,7 +744,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
 
     // 文字色決定
-    const color = this.getChatColor(this.chatActorKey);
+    // const color = this.getChatColor(this.chatActorKey);
 
     // 括弧をつけるオプション
     let text = this.currentMessage;
@@ -723,100 +755,236 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     // 出力先タブ決定
     let outputTab = this.outputTab;
     if (outputTab === null) {
-      outputTab = this.activeTab;
+      outputTab = this.activeChatTab;
     }
-
-    let ownerKey: string | undefined = this.getOwnerKey(this.chatActorKey);
 
     // -------------------
     // ダイスBot処理
     // -------------------
-    this.sendBcdiceServer({
-      system: this.currentDiceBotSystem,
-      command: this.currentMessage
-    })
-      .then((json: any) => {
-        let isDiceRoll: boolean = false;
-        let isSecretDice: boolean = false;
-        let diceRollResult: string | null = null;
+    const outputNormalChat = (commandStr: string) => {
+      if (!/[@><+-/*=0-9a-zA-Z()"?^$]+/.test(commandStr)) {
+        // -------------------
+        // プレイヤー発言
+        // -------------------
+        this.addChatLog({
+          name: this.getViewName(this.chatActorKey),
+          text,
+          // color,
+          tab: outputTab,
+          actorKey: this.chatActorKey,
+          statusName: this.statusName,
+          target: this.chatTarget,
+          owner: this.chatActorKey
+        });
+        return;
+      }
+      this.sendBcdiceServer({
+        system: this.currentDiceBotSystem,
+        command: this.currentMessage
+      })
+        .then((json: any) => {
+          let isDiceRoll: boolean = false;
+          let isSecretDice: boolean = false;
+          let diceRollResult: string | null = null;
+          let dices: any = null;
 
-        if (json.ok) {
-          // bcdiceとして結果が取れた
-          const resultStr: string = json.result;
-          isSecretDice = json.secret;
-          diceRollResult = resultStr.replace(/(^: )/g, "").replace(/＞/g, "→");
-          isDiceRoll = true;
-        } else {
-          // bcdiceとして結果は取れなかった
-        }
-        this.currentMessage = "";
+          if (json.ok) {
+            // bcdiceとして結果が取れた
+            const resultStr: string = json.result;
+            isSecretDice = json.secret;
+            dices = json.dices;
 
-        if (isDiceRoll && isSecretDice) {
-          // -------------------
-          // シークレットダイス
-          // -------------------
-          this.addChatLog({
-            name: this.getViewName(this.chatActorKey),
-            text: `シークレットダイス`,
-            color: color,
-            tab: outputTab,
-            from: ownerKey,
-            actorKey: this.chatActorKey,
-            statusName: this.statusName,
-            target: this.chatTarget,
-            owner: this.chatActorKey
-          });
+            window.console.log(json);
 
-          // 隠しダイスロール結果画面に反映
-          this.addSecretDice({
-            name: this.getViewName(this.chatActorKey),
-            diceBot: this.currentDiceBotSystem,
-            text: text,
-            diceRollResult: diceRollResult,
-            color: color,
-            tab: outputTab,
-            from: ownerKey,
-            actorKey: this.chatActorKey,
-            statusName: this.statusName,
-            target: this.chatTarget,
-            owner: this.chatActorKey
+            diceRollResult = resultStr
+              .replace(/(^: )/g, "")
+              .replace(/＞/g, "→");
+            isDiceRoll = true;
+          } else {
+            // bcdiceとして結果は取れなかった
+          }
+          this.currentMessage = "";
+
+          this.setProperty({
+            property: `public.chat.diceBotMessage`,
+            value: {
+              // message: "",
+              isView: false
+            },
+            isNotice: true,
+            logOff: true
           });
-        } else {
-          // -------------------
-          // プレイヤー発言
-          // -------------------
-          this.addChatLog({
-            name: this.getViewName(this.chatActorKey),
-            text: text,
-            color: color,
-            tab: outputTab,
-            from: ownerKey,
-            actorKey: this.chatActorKey,
-            statusName: this.statusName,
-            target: this.chatTarget,
-            owner: this.chatActorKey
-          });
-          if (isDiceRoll) {
+          if (isDiceRoll && isSecretDice) {
             // -------------------
-            // ダイスロール結果
+            // シークレットダイス
             // -------------------
             this.addChatLog({
-              name: this.currentDiceBotSystem,
-              text: diceRollResult,
-              color: color,
+              name: this.getViewName(this.chatActorKey),
+              text: `シークレットダイス`,
+              // color: color,
               tab: outputTab,
-              from: ownerKey,
               actorKey: this.chatActorKey,
               statusName: this.statusName,
               target: this.chatTarget,
               owner: this.chatActorKey
             });
+
+            // 隠しダイスロール結果画面に反映
+            this.addSecretDice({
+              name: this.getViewName(this.chatActorKey),
+              diceBot: this.currentDiceBotSystem,
+              text,
+              diceRollResult: diceRollResult,
+              // color: color,
+              tab: outputTab,
+              actorKey: this.chatActorKey,
+              statusName: this.statusName,
+              target: this.chatTarget,
+              owner: this.chatActorKey,
+              dices
+            });
+          } else {
+            // -------------------
+            // プレイヤー発言
+            // -------------------
+            this.addChatLog({
+              name: this.getViewName(this.chatActorKey),
+              text,
+              // color,
+              tab: outputTab,
+              actorKey: this.chatActorKey,
+              statusName: this.statusName,
+              target: this.chatTarget,
+              owner: this.chatActorKey
+            });
+            if (isDiceRoll) {
+              // -------------------
+              // ダイスロール結果
+              // -------------------
+              this.addChatLog({
+                name: this.currentDiceBotSystem,
+                text: diceRollResult,
+                // color,
+                tab: outputTab,
+                actorKey: this.chatActorKey,
+                statusName: this.statusName,
+                target: this.chatTarget,
+                owner: this.chatActorKey,
+                dices,
+                isDiceBot: true
+              });
+            }
           }
+        })
+        .catch((err: any) => {
+          window.console.error(err);
+        });
+    };
+
+    // -------------------
+    // 独自ダイスBot処理
+    // -------------------
+    const commandStr = this.currentMessage
+      .split(new RegExp("\\s+"))[0]
+      .toLowerCase();
+    const customDiceBotObj: any = this.customDiceBotList.filter(
+      (customDiceBotObj: any) =>
+        customDiceBotObj.commandName.toLowerCase() === commandStr
+    )[0];
+    const customDiceBotRoomSysObj: any = this.customDiceBotRoomSysList.filter(
+      (customDiceBotObj: any) =>
+        customDiceBotObj.commandName.toLowerCase() === commandStr
+    )[0];
+    const useCustomDiceBotObj = customDiceBotObj || customDiceBotRoomSysObj;
+    if (!useCustomDiceBotObj) {
+      // 独自ダイスボットが見つからなかったので通常のチャット処理
+      outputNormalChat(commandStr);
+    } else {
+      // 独自ダイスボットが見つかった
+      const diceRoll = useCustomDiceBotObj.diceRoll;
+      const tableTitle = useCustomDiceBotObj.tableTitle;
+      const diceBotSystem = useCustomDiceBotObj.diceBotSystem;
+      const tableContents = useCustomDiceBotObj.tableContents;
+      const customTableInfoList: any[] = tableContents
+        .split(/[\r\n]+/)
+        .map((lineStr: string) => {
+          const matchResult: any = lineStr.match(/^([^:：]+)[:：](.+)$/);
+          if (!matchResult) return null;
+          const key: string = matchResult[1];
+          const value: string = matchResult[2];
+          return { key, value };
+        })
+        .filter((info: any) => info);
+
+      this.sendBcdiceServer({ system: diceBotSystem, command: diceRoll }).then(
+        (json: any) => {
+          let diceRollResult: string | null = null;
+          let diceResultStr: string | null = null;
+          let dices: any[] | null = null;
+          if (json.ok) {
+            // bcdiceとして結果が取れた
+            const resultStr: string = json.result;
+            dices = json.dices;
+            diceRollResult = resultStr.replace(/^.*＞ */, "");
+            let sum = 0;
+            diceResultStr = dices!
+              .map((dice: any) => {
+                sum += dice.value;
+                return dice.value;
+              })
+              .join(",");
+            diceResultStr = `(${sum}[${diceResultStr}])`;
+          }
+
+          const customDiceBotResult = customTableInfoList.filter(
+            customTableInfo => customTableInfo.key === diceRollResult
+          )[0];
+
+          const customDiceBotResultText: string = [
+            tableTitle,
+            diceResultStr,
+            " → ",
+            customDiceBotResult ? customDiceBotResult.value : "該当値なし"
+          ].join("");
+
+          this.setProperty({
+            property: `public.chat.diceBotMessage`,
+            value: {
+              message: customDiceBotResult
+                ? customDiceBotResult.value
+                : ["該当値なし", diceRollResult].join("\n"),
+              isView: true
+            },
+            isNotice: true,
+            logOff: true
+          });
+
+          this.currentMessage = "";
+          this.addChatLog({
+            name: this.getViewName(this.chatActorKey),
+            text,
+            // color,
+            tab: outputTab,
+            actorKey: this.chatActorKey,
+            statusName: this.statusName,
+            target: this.chatTarget,
+            owner: this.chatActorKey
+          });
+          this.addChatLog({
+            name: diceBotSystem,
+            text: customDiceBotResultText,
+            // color,
+            tab: outputTab,
+            actorKey: this.chatActorKey,
+            statusName: this.statusName,
+            target: this.chatTarget,
+            owner: this.chatActorKey,
+            dices,
+            isDiceBot: true
+          });
         }
-      })
-      .catch((err: any) => {
-        window.console.error(err);
-      });
+      );
+    }
   }
 
   /**
@@ -842,6 +1010,31 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Watch("roomSystem")
   private onChangeRoomSystem(roomSystem: string) {
     this.currentDiceBotSystem = roomSystem;
+    const path = `/static/conf/system/${roomSystem}/customDiceBot.yaml`;
+    this.loadYaml(path)
+      .then((customDiceBotList: any[]) => {
+        // 読み込めた場合
+        customDiceBotList.forEach((customDiceBot: any, index: number) => {
+          customDiceBot.key = `customDiceBotRoomSys-${index}`;
+          customDiceBot.diceBotSystem = roomSystem;
+          customDiceBot.tableContents = customDiceBot.tableContents.join("\n");
+        });
+        this.setProperty({
+          property: "public.customDiceBot.roomSysList",
+          value: customDiceBotList,
+          isNotice: true,
+          logOff: true
+        });
+      })
+      .catch((err: any) => {
+        // 初期化
+        this.setProperty({
+          property: "public.customDiceBot.roomSysList",
+          value: [],
+          isNotice: true,
+          logOff: true
+        });
+      });
   }
 
   @Watch("currentDiceBotSystem")
@@ -909,7 +1102,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (this.chatOptionSelectMode === "tab") {
       const list = this.chatTabs.map((tab: any) => ({ key: tab.name }));
       list.unshift({ key: null });
-      index = list.findIndex((target: any) => target.key === this.activeTab);
+      index = list.findIndex(
+        (target: any) => target.key === this.activeChatTab
+      );
     }
     if (index === -1) return -1;
     return Math.floor(index / this.chatOptionPagingSize) + 1;
@@ -948,59 +1143,149 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+@import "../common";
+
 .container {
   width: 100%;
   height: 100%;
   display: flex;
-  display: -webkit-box;
-  display: -ms-flexbox;
   flex-direction: column;
   position: relative;
   overflow: visible;
 }
 
+$background-gradient: linear-gradient(
+  to bottom,
+  rgba(240, 240, 240, 1),
+  rgba(200, 200, 200, 1)
+);
+
+$hover-border-color: #0092ed;
+
 .tabs {
   display: flex;
-  padding-left: 1em;
+  align-items: flex-end;
   width: 100%;
   box-sizing: border-box;
-  z-index: 10;
   margin-bottom: -1px;
-}
 
-.tab {
-  position: relative;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(rgba(240, 240, 240, 1), rgba(0, 0, 0, 0.2));
-  padding: 0 0.7em;
-  height: 2em;
-  box-sizing: border-box;
-  border: 1px solid gray;
-  border-bottom: none;
-  border-radius: 5px 5px 0 0;
-  margin-right: -1px;
-  z-index: 10;
-  white-space: nowrap;
-  outline: none;
+  .tab {
+    @include inline-flex-box(row, flex-start, flex-end);
+    outline: none;
+    overflow: visible;
+    margin-right: -1px;
 
-  &.addButton {
-    cursor: pointer;
-  }
-  &.unRead {
-    background-color: yellow;
-  }
+    .corner-container {
+      @include flex-box(row, center, center);
+      position: absolute;
+      width: calc(2.82em - 1px);
+      height: 1.41em;
+      /*border-bottom: solid 1px gray;*/
+      z-index: 7;
+      overflow: hidden;
 
-  &:hover {
-    border-color: #0092ed;
-    z-index: 100;
-  }
+      .corner {
+        transform: translateY(calc(0.7em + 1px)) rotate(-45deg);
+        background: $background-gradient;
+        transform-origin: center;
+        width: 2em;
+        height: 2em;
+        min-height: 1px;
+        border-top: 1px solid gray;
+        box-sizing: content-box;
+        cursor: pointer;
+      }
+    }
 
-  &.addButton:active,
-  &.active {
-    background: white none;
+    .text {
+      @include flex-box(row, flex-start, center);
+      /*position: absolute;*/
+      border-radius: 5px 5px 0 0;
+      padding: 0 0.5em;
+      z-index: 8;
+      height: calc(2em - 1px);
+      background: $background-gradient;
+      box-sizing: content-box;
+      cursor: pointer;
+      border: 1px solid gray;
+      border-bottom-width: 0;
+    }
+
+    &.vertical {
+      width: calc(2.82em);
+      margin-right: 0;
+
+      .text {
+        border-radius: 0 5px 0 0;
+        border-left-width: 0;
+        border-bottom-width: 0;
+        margin-top: 2.5em;
+        transform: translateX(2.82em) translateX(-1px) rotate(-45deg);
+        transform-origin: left bottom;
+        flex: 1;
+        width: 5em;
+        padding: 0;
+
+        > * {
+          margin-left: -0.7em;
+          min-width: 5em;
+          padding-right: 0.5em;
+          overflow: hidden;
+        }
+      }
+
+      &.hover {
+        .text {
+          border-bottom-width: 1px;
+          transform: translateX(2.82em) translateX(-1px) rotate(-45deg)
+            translateY(1px);
+        }
+      }
+
+      &.isLast .text {
+        border-bottom-width: 1px;
+        transform: translateX(2.82em) translateX(-1px) rotate(-45deg)
+          translateY(1px);
+      }
+    }
+
+    &.unRead {
+      background-color: yellow;
+    }
+
+    &.hover {
+      .corner-container .corner,
+      .text {
+        border-color: $hover-border-color;
+      }
+
+      .text {
+        z-index: 9;
+        width: auto;
+      }
+    }
+
+    &.active {
+      .corner-container .corner,
+      .text {
+        background: white none;
+      }
+
+      .corner-container {
+        z-index: 11;
+      }
+
+      .text {
+        z-index: 12;
+      }
+    }
+
+    &.addButton {
+      position: absolute;
+      right: 1px;
+      cursor: pointer;
+      z-index: 20;
+    }
   }
 }
 
@@ -1019,7 +1304,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   /*font-size: 13px;*/
   min-height: 70px;
   position: relative;
-  z-index: 0;
+  z-index: 10;
   white-space: normal;
   word-break: break-all;
 }
@@ -1275,6 +1560,6 @@ i.icon-target {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 1em;
+  padding-right: 3em;
 }
 </style>

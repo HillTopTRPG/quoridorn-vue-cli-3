@@ -54,13 +54,11 @@
         <legend>チャット連動</legend>
         <div class="lastWide">
           <!-- チャット連動オプション -->
-          <label class="option"><ctrl-select v-model="chatLinkage">
-            <option v-for="opt in options" :value="opt.value" :key="opt.value">{{opt.label}}</option>
-          </ctrl-select></label>
+          <label class="option"><ctrl-select v-model="chatLinkage" :optionInfoList="chatLinkageOptionInfoList"/></label>
           <!-- 検索文字 -->
           <label
             class="search"
-            v-show="chatLinkage === 1 || chatLinkage === 2">
+            v-show="chatLinkage === '1' || chatLinkage === '2'">
             <input :placeholder="chatLinkage === 1 ? '' : 'Javascriptの正規表現'" type="text" v-model="chatLinkageSearch"></label>
         </div>
       </fieldset>
@@ -114,12 +112,12 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private isMute: boolean = false;
   private volume: number = 0.8;
   private options: any[] = [
-    { value: 0, label: "なし" },
-    { value: 1, label: "末尾文字" },
-    { value: 2, label: "正規表現" }
+    { value: "0", label: "なし" },
+    { value: "1", label: "末尾文字" },
+    { value: "2", label: "正規表現" }
   ];
   private tags: string[] = ["BGM", "SE"];
-  private chatLinkage: number = 0;
+  private chatLinkage: string = "0";
   private chatLinkageSearch: string = "";
 
   initWindow(this: any): void {
@@ -136,7 +134,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.playLength = 0;
     this.isMute = false;
     this.volume = 0.8;
-    this.chatLinkage = 0;
+    this.chatLinkage = "0";
     this.chatLinkageSearch = "";
 
     const urlElm: HTMLElement = this.$refs.urlElm;
@@ -186,6 +184,14 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   setVolume(volume: string): void {
     this.volume = Math.floor(parseFloat(volume) * 100) / 100;
+  }
+
+  private get chatLinkageOptionInfoList() {
+    return this.options.map((option: any) => ({
+      key: option.value,
+      value: option.value,
+      text: option.label
+    }));
   }
 
   @Watch("url")

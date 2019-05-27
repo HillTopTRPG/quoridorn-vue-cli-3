@@ -83,7 +83,7 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
   WindowMixin
 ) {
   @Action("windowOpen") private windowOpen: any;
-  @Action("addSimpleChatLog") private addSimpleChatLog: any;
+  @Action("addChatLog") private addChatLog: any;
   @Action("changeListObj") private changeListObj: any;
   @Action("sendBcdiceServer") private sendBcdiceServer: any;
   @Action("setProperty") private setProperty: any;
@@ -219,7 +219,7 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
             : beforeValue + useCommitValue;
 
         // ログに出力
-        this.addSimpleChatLog({
+        this.addChatLog({
           text: remoconObj.message
             .replace("{0}", character.name)
             .replace("{1}", counterName)

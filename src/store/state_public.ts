@@ -106,6 +106,9 @@ export default {
     /** ダイスシンボル */
     diceSymbol: { list: [], maxKey: -1 },
 
+    /** カスタムダイスボット */
+    customDiceBot: { list: [], maxKey: -1, roomSysList: [] },
+
     /** キャラクタープロパティ */
     initiative: {
       round: 0,
@@ -136,7 +139,8 @@ export default {
       /** チャットのタブ */
       tab: {
         list: [{ key: "chatTab-0", name: "メイン" }],
-        maxKey: 0
+        maxKey: 0,
+        isVertical: false
       },
       /** グループチャットのタブ */
       groupTargetTab: {
@@ -165,7 +169,12 @@ export default {
       },
 
       /** 入力中のルームメイトのpeerId一覧 */
-      inputting: {}
+      inputting: {},
+
+      diceBotMessage: {
+        isView: false,
+        message: ""
+      }
     },
 
     /** 共有メモ */
@@ -671,6 +680,11 @@ export default {
             )
             .filter((imageObj: any) => imageObj.key === tagKey)[0]
       );
-    }
+    },
+    customDiceBotList: (state: any) => state.customDiceBot.list,
+    customDiceBotRoomSysList: (state: any) => state.customDiceBot.roomSysList,
+    diceBotMessageText: (state: any) => state.chat.diceBotMessage.message,
+    diceBotMessageView: (state: any) => state.chat.diceBotMessage.isView,
+    isChatTabIsVertical: (state: any) => state.chat.tab.isVertical,
   } /* end of getters */
 };

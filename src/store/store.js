@@ -53,7 +53,8 @@ export default new Vuex.Store({
     },
 
     chat: {
-      activeTab: "chatTab-0",
+      activeChatTab: "chatTab-0",
+      hoverChatTab: "",
       actorKey: "",
       diceSystemList: []
     },
@@ -117,125 +118,6 @@ export default new Vuex.Store({
      * @param rootGetters
      */
     onMount({ dispatch, state, rootState, rootGetters }) {
-      const addTestPublicMemo = (index, title) => {
-        const publicMemoObj = {
-          key: `publicMemo-${index}`,
-          targetList: [],
-          title: title,
-          tabList: []
-        };
-        const firstPcIndex = index * 3;
-        for (let i = firstPcIndex; i < firstPcIndex + 3; i++) {
-          publicMemoObj.tabList.push({
-            tabName: `PC${i + 1}`,
-            front: {
-              targetList: [],
-              contentsList: [
-                {
-                  kind: "images",
-                  imageKeyList: [
-                    {
-                      key: `image-${i + 3}`,
-                      tag: "(全て)"
-                    }
-                  ]
-                },
-                {
-                  kind: "title",
-                  text: "導入"
-                },
-                {
-                  kind: "text",
-                  text: `あなたはたまたま通りかかった、とあるシノビ${i +
-                    1}である`
-                },
-                {
-                  kind: "separator"
-                },
-                {
-                  kind: "checkbox",
-                  text: "あなたの選択肢１",
-                  checked: false
-                },
-                {
-                  kind: "checkbox",
-                  text: "あなたの選択肢２",
-                  checked: false
-                },
-                {
-                  kind: "title",
-                  text: "使命"
-                },
-                {
-                  kind: "text",
-                  text: "無事に帰宅すること"
-                }
-              ]
-            },
-            back: {
-              targetList: [],
-              contentsList: [
-                {
-                  kind: "title",
-                  text: "秘密"
-                },
-                {
-                  kind: "text",
-                  text:
-                    "実はあなたは眠くてしょうがない。\nそのことを他のPCに気取られてはいけない。"
-                },
-                {
-                  kind: "sub-title",
-                  text: "本当の使命"
-                },
-                {
-                  kind: "text",
-                  text: "眠気を悟られる前に他のPCを全て倒すこと。"
-                }
-              ]
-            }
-          });
-        }
-        rootState.public.publicMemo.list.push(publicMemoObj);
-        rootState.public.publicMemo.maxKey = index;
-      };
-      // rootState.public.publicMemo.list = [];
-      // addTestPublicMemo(0, "HO1");
-      // addTestPublicMemo(1, "HO2");
-      // addTestPublicMemo(2, "HO3");
-      // addTestPublicMemo(3, "HO4");
-      // addTestPublicMemo(4, "HO5");
-      // rootState.public.publicMemo.list.push({
-      //   key: `publicMemo-${5}`,
-      //   targetList: [],
-      //   title: "ハウスルール",
-      //   index: 6,
-      //   tabList: [
-      //     {
-      //       tabName: `使用コマンド`,
-      //       index: 1,
-      //       front: {
-      //         targetList: [],
-      //         contentsList: [
-      //           {
-      //             kind: "title",
-      //             text: "コマンド"
-      //           },
-      //           {
-      //             kind: "text",
-      //             text: `KWT：変調表`
-      //           }
-      //         ]
-      //       },
-      //       back: {
-      //         targetList: [],
-      //         contentsList: []
-      //       }
-      //     }
-      //   ]
-      // });
-      // rootState.public.publicMemo.maxKey = 5;
-
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
@@ -296,17 +178,10 @@ export default new Vuex.Store({
        */
       // dispatch("changeChatTab", { tabsText: "雑談" });
 
-      const loadYaml = confFilePath => {
-        return window
-          .fetch(confFilePath)
-          .then(responce => responce.text())
-          .then(text => yaml.safeLoad(text));
-      };
-
       /* ----------------------------------------------------------------------
        * ダイスの設定
        */
-      loadYaml(process.env.BASE_URL + "/static/conf/dice.yaml").then(dice => {
+      rootGetters.loadYaml("/static/conf/dice.yaml").then(dice => {
         state.dice = dice;
       });
 
@@ -318,34 +193,32 @@ export default new Vuex.Store({
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
-      loadYaml(process.env.BASE_URL + "/static/conf/deck.yaml").then(
-        deckList => {
-          const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
+      rootGetters.loadYaml("/static/conf/deck.yaml").then(deckList => {
+        const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
 
-          if (!cardSet) return;
-          const basePath = cardSet.basePath || "";
-          const storeDeck = rootState.public.deck;
-          storeDeck.name = cardSet.name;
-          storeDeck.back = basePath + cardSet.back;
-          storeDeck.width = cardSet.width || 128;
-          storeDeck.height = cardSet.height || 192;
-          cardSet.source = cardSet.source || {};
-          storeDeck.author = cardSet.source.author || "";
-          storeDeck.title = cardSet.source.title || "";
-          storeDeck.refs = cardSet.source.refs || [];
-          storeDeck.cards.list = cardSet.cards.map((card, i) => ({
-            key: `card-${i}`,
-            front: { text: `` },
-            back: { text: ``, img: basePath + card.file }
-          }));
-          storeDeck.cards.maxKey = cardSet.cards.length - 1;
-        }
-      );
+        if (!cardSet) return;
+        const basePath = cardSet.basePath || "";
+        const storeDeck = rootState.public.deck;
+        storeDeck.name = cardSet.name;
+        storeDeck.back = basePath + cardSet.back;
+        storeDeck.width = cardSet.width || 128;
+        storeDeck.height = cardSet.height || 192;
+        cardSet.source = cardSet.source || {};
+        storeDeck.author = cardSet.source.author || "";
+        storeDeck.title = cardSet.source.title || "";
+        storeDeck.refs = cardSet.source.refs || [];
+        storeDeck.cards.list = cardSet.cards.map((card, i) => ({
+          key: `card-${i}`,
+          front: { text: `` },
+          back: { text: ``, img: basePath + card.file }
+        }));
+        storeDeck.cards.maxKey = cardSet.cards.length - 1;
+      });
 
       /* ----------------------------------------------------------------------
        * BGMの設定
        */
-      loadYaml(process.env.BASE_URL + "/static/conf/bgm.yaml").then(bgmList => {
+      rootGetters.loadYaml("/static/conf/bgm.yaml").then(bgmList => {
         bgmList.forEach((bgm, index) => (bgm.key = `bgm-${index}`));
         rootState.public.bgm.list = bgmList;
         rootState.public.bgm.maxKey = bgmList.length - 1;
@@ -354,115 +227,111 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * 画像の設定
        */
-      loadYaml(process.env.BASE_URL + "/static/conf/image.yaml").then(
-        imageList => {
-          imageList.forEach((image, index) => {
-            image.key = `image-${index}`;
-            image.name = image.data.replace(/.*\//, "");
+      rootGetters.loadYaml("/static/conf/image.yaml").then(imageList => {
+        imageList.forEach((image, index) => {
+          image.key = `image-${index}`;
+          image.name = image.data.replace(/.*\//, "");
 
-            const imageArgList = getFileNameArgList(image.name);
-            if (imageArgList.length) image.imageArgList = imageArgList;
+          const imageArgList = getFileNameArgList(image.name);
+          if (imageArgList.length) image.imageArgList = imageArgList;
 
-            const regExp = new RegExp("[ 　]+", "g");
-            const tagStrList = image.tag.split(regExp);
-            tagStrList.forEach(tagStr => {
-              const imageTag = rootGetters.imageTagList.filter(
-                imageTag => imageTag.name === tagStr
-              )[0];
-              if (!imageTag) {
-                const nextNum = ++rootState.public.image.tags.maxKey;
-                rootState.public.image.tags.list.push({
-                  key: `imgTag-${nextNum}`,
-                  name: image.tag
-                });
-              }
-            });
+          const regExp = new RegExp("[ 　]+", "g");
+          const tagStrList = image.tag.split(regExp);
+          tagStrList.forEach(tagStr => {
+            const imageTag = rootGetters.imageTagList.filter(
+              imageTag => imageTag.name === tagStr
+            )[0];
+            if (!imageTag) {
+              const nextNum = ++rootState.public.image.tags.maxKey;
+              rootState.public.image.tags.list.push({
+                key: `imgTag-${nextNum}`,
+                name: image.tag
+              });
+            }
           });
-          rootState.public.image.list = imageList;
-          rootState.public.image.maxKey = imageList.length - 1;
-        }
-      );
+        });
+        rootState.public.image.list = imageList;
+        rootState.public.image.maxKey = imageList.length - 1;
+      });
 
       /* ----------------------------------------------------------------------
        * 接続設定の設定
        */
-      loadYaml(process.env.BASE_URL + "/static/conf/connect.yaml").then(
-        setting => {
-          rootState.setting.connect.skywayKey = setting.skywayKey;
-          rootState.setting.connect.type = setting.type;
-          rootState.setting.connect.bcdiceServer = setting.bcdiceServer;
+      rootGetters.loadYaml("/static/conf/connect.yaml").then(setting => {
+        rootState.setting.connect.skywayKey = setting.skywayKey;
+        rootState.setting.connect.type = setting.type;
+        rootState.setting.connect.bcdiceServer = setting.bcdiceServer;
 
-          /* ----------------------------------------------------------------------
-           * ダイスシステムの検証
+        /* ----------------------------------------------------------------------
+         * ダイスシステムの検証
+         */
+        dispatch("getBcdiceSystemList")
+          .then(systemList => {
+            state.chat.diceSystemList = systemList;
+            const index = systemList.findIndex(
+              systemObj => systemObj.system === system
+            );
+            if (index === -1) system = "DiceBot";
+          })
+          .catch(() => {
+            alert(
+              `BCDice-apiサーバ\n${
+                setting.bcdiceServer
+              }\nの接続に失敗しました。`
+            );
+          });
+
+        /* ----------------------------------------------------------------------
+         * 初期入室の処理
+         */
+        if (roomName) {
+          /* ------------------------------
+           * 部屋存在チェック
            */
-          dispatch("getBcdiceSystemList")
-            .then(systemList => {
-              state.chat.diceSystemList = systemList;
-              const index = systemList.findIndex(
-                systemObj => systemObj.system === system
-              );
-              if (index === -1) system = "DiceBot";
+          dispatch("loading", true);
+          Promise.resolve()
+            .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
+            .then(peerId => {
+              // const logTexts = [];
+              // logTexts.push(`create room by peer:"${peerId}"`);
+              // logTexts.push(`本番: ${rootGetters.peerId(false)}`);
+              // logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
+              // window.console.log(logTexts.join(", "));
+              return dispatch("checkRoomName", { roomName: roomName });
             })
-            .catch(() => {
-              alert(
-                `BCDice-apiサーバ\n${
-                  setting.bcdiceServer
-                }\nの接続に失敗しました。`
-              );
-            });
-
-          /* ----------------------------------------------------------------------
-           * 初期入室の処理
-           */
-          if (roomName) {
-            /* ------------------------------
-             * 部屋存在チェック
-             */
-            dispatch("loading", true);
-            Promise.resolve()
-              .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
-              .then(peerId => {
-                // const logTexts = [];
-                // logTexts.push(`create room by peer:"${peerId}"`);
-                // logTexts.push(`本番: ${rootGetters.peerId(false)}`);
-                // logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
-                // window.console.log(logTexts.join(", "));
-                return dispatch("checkRoomName", { roomName: roomName });
-              })
-              .then(isExist => {
-                const baseArg = {
-                  roomName: roomName,
-                  roomPassword: roomPassword,
-                  playerName: playerName,
-                  playerPassword: playerPassword,
-                  playerType: playerType,
-                  fontColor: "#000000",
-                  system: system,
-                  isWait: false
-                };
-                // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
-                if (
-                  !isExist &&
-                  roomPassword !== null &&
-                  playerName &&
-                  playerPassword !== null &&
-                  playerType !== null
-                ) {
-                  baseArg.playerType = baseArg.playerType || "PL";
-                  return dispatch("doNewRoom", baseArg);
-                }
-                // 「この部屋に入る」画面で入力される項目が指定されていれば既存部屋への入室を試みる
-                if (isExist && roomPassword !== null) {
-                  baseArg.useWindow = true;
-                  baseArg.useAlert = true;
-                  return dispatch("doJoinRoom", baseArg);
-                }
-              })
-              .then(() => dispatch("loading", false))
-              .catch(() => dispatch("loading", false));
-          }
+            .then(isExist => {
+              const baseArg = {
+                roomName: roomName,
+                roomPassword: roomPassword,
+                playerName: playerName,
+                playerPassword: playerPassword,
+                playerType: playerType,
+                fontColor: "#000000",
+                system: system,
+                isWait: false
+              };
+              // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
+              if (
+                !isExist &&
+                roomPassword !== null &&
+                playerName &&
+                playerPassword !== null &&
+                playerType !== null
+              ) {
+                baseArg.playerType = baseArg.playerType || "PL";
+                return dispatch("doNewRoom", baseArg);
+              }
+              // 「この部屋に入る」画面で入力される項目が指定されていれば既存部屋への入室を試みる
+              if (isExist && roomPassword !== null) {
+                baseArg.useWindow = true;
+                baseArg.useAlert = true;
+                return dispatch("doJoinRoom", baseArg);
+              }
+            })
+            .then(() => dispatch("loading", false))
+            .catch(() => dispatch("loading", false));
         }
-      );
+      });
     },
 
     /**
@@ -757,6 +626,26 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    loadYaml: state =>
+      /**
+       * 指定されたURLのyamlを読み込み、オブジェクトを返却する
+       * @param confFilePath yamlファイルのURL
+       * @returns {*}
+       */
+      yamlPath => {
+        return window
+          .fetch(process.env.BASE_URL + yamlPath)
+          .then(responce => responce.text())
+          .then(text => yaml.safeLoad(text))
+          .catch(err => {
+            window.console.log(
+              "yamlファイルの読み込みに失敗しました",
+              yamlPath
+            );
+            throw err;
+          });
+      },
+
     getStateValue: state =>
       /**
        * stateから指定されたプロパティパスの値を取得する
@@ -870,7 +759,8 @@ export default new Vuex.Store({
     isModal: state => state.mode.isModal,
     isLoading: state => state.mode.isLoading,
     isWait: state => state.mode.isWait,
-    activeTab: state => state.chat.activeTab,
+    activeChatTab: state => state.chat.activeChatTab,
+    hoverChatTab: state => state.chat.hoverChatTab,
     hoverTab: state => state.chat.hoverTab,
     rollObj: state => state.map.rollObj,
     isDraggingLeft: state => state.map.isDraggingLeft,
@@ -907,14 +797,6 @@ export default new Vuex.Store({
         };
       });
     },
-    /**
-     * 選択済みのチャットのタブのオブジェクト
-     * @param state
-     * @param getters
-     * @returns any
-     */
-    activeChatTab: (state, getters) =>
-      getters.chatTabs.filter(tab => tab.isActive)[0],
     grid: state => ({
       c: state.map.grid.c,
       r: state.map.grid.r

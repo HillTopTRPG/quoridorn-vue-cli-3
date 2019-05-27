@@ -8,7 +8,7 @@
     </div>
 
     <label class="roomName">部屋名：<input ref="roomNameInput" type="text" v-model="roomName" placeholder="必須項目" @keypress.enter="commitRoomName"/>
-      <ctrl-button @click="commitRoomName" type="button">チェック</ctrl-button>
+      <ctrl-button @click="commitRoomName">チェック</ctrl-button>
     </label>
 
     <!----------------------
@@ -29,7 +29,7 @@
         <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
         <div class="description">部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！</div>
       </fieldset>
-      <ctrl-button @click="doWaitRoom" type="button"><i class="icon-home3"></i> 仮入室</ctrl-button>
+      <ctrl-button @click="doWaitRoom"><i class="icon-home3"></i> 仮入室</ctrl-button>
     </div>
 
     <!----------------------
@@ -49,7 +49,7 @@
         <div class="description">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
       -->
-      <ctrl-button @click="roomProcess(false)" type="button"><i class="icon-home3"></i> 入室</ctrl-button>
+      <ctrl-button @click="roomProcess(false)"><i class="icon-home3"></i> 入室</ctrl-button>
     </div>
 
     <!----------------------
@@ -73,7 +73,7 @@
         <div class="description">部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！</div>
         <div class="description">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
       </fieldset>
-      <ctrl-button @click="roomProcess(true)" type="button"><i class="icon-home3"></i> 作成</ctrl-button>
+      <ctrl-button @click="roomProcess(true)"><i class="icon-home3"></i> 作成</ctrl-button>
     </div>
   </fieldset>
 </template>
@@ -103,7 +103,6 @@ export default class CreateNewRoom extends Vue {
   @Action("windowOpen") private windowOpen: any;
   @Action("loading") private loading: any;
   @Action("simpleJoinRoom") private simpleJoinRoom: any;
-  @Action("addChatLog") private addChatLog: any;
   @Action("doNewRoom") private doNewRoom: any;
   @Action("doJoinRoom") private doJoinRoom: any;
   @Mutation("updateIsWait") private updateIsWait: any;

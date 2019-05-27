@@ -62,6 +62,9 @@
     <add-dice-symbol-window/>
     <dice-symbol-context/>
     <file-uploader-window/>
+    <custom-dice-bot-table-window/>
+    <edit-custom-dice-bot-table-window/>
+    <dice-bot-message/>
   </div>
 </template>
 
@@ -124,6 +127,9 @@ import PublicMemoContext from "@/components/public-memo/PublicMemoContext.vue";
 import AddDiceSymbolWindow from "@/components/map/diceSymbol/AddDiceSymbolWindow.vue";
 import DiceSymbolContext from "@/components/map/diceSymbol/DiceSymbolContext.vue";
 import FileUploaderWindow from "@/components/simple/FileUploaderWindow.vue";
+import CustomDiceBotTableWindow from "@/components/custom-dice-bot/CustomDiceBotTableWindow.vue";
+import EditCustomDiceBotTableWindow from "@/components/custom-dice-bot/EditCustomDiceBotTableWindow.vue";
+import DiceBotMessage from "@/components/chat/DiceBotMessage.vue";
 
 @Component({
   components: {
@@ -180,7 +186,10 @@ import FileUploaderWindow from "@/components/simple/FileUploaderWindow.vue";
     PublicMemoFukidashi,
     PublicMemoContext,
     AddDiceSymbolWindow,
-    FileUploaderWindow
+    FileUploaderWindow,
+    CustomDiceBotTableWindow,
+    EditCustomDiceBotTableWindow,
+    DiceBotMessage
   }
 })
 export default class App2 extends Vue {

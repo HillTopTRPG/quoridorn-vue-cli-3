@@ -76,7 +76,6 @@ export default class SpecFrame extends Vue {
     overflow-y: hidden;
     padding: 0 0.5em;
     margin: 0;
-    white-space: normal;
     background-color: rgb(251, 247, 248);
     border-left: 1px solid rgb(220, 219, 215);
     border-right: 1px solid rgb(220, 219, 215);

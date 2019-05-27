@@ -11,12 +11,7 @@
       <!----------------------------------------------------------------------------------
        ! ロゴ
        !--------------------------------------------------------------------------------->
-      <div id="logo-container">
-        <div>
-          <logo/>
-          <div>Ver.{{version}}</div>
-        </div>
-      </div>
+      <logo/>
 
       <!----------------------------------------------------------------------------------
        ! タブ
@@ -236,23 +231,6 @@ export default class WelcomeWindow extends Mixins<WindowMixin>(WindowMixin) {
   flex-direction: column;
 }
 
-#logo-container {
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0.8em;
-  font-size: 16px;
-  pointer-events: none;
-
-  div {
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-end;
-  }
-}
-
 .tab_wrap {
   width: 100%;
   flex: 1;
@@ -303,6 +281,7 @@ input[type="radio"] {
   display: none;
   flex: 1;
   width: 100%;
+  white-space: normal;
 
   p {
     font-size: 14px;

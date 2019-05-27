@@ -37,6 +37,13 @@ export default class CtrlSelect extends Mixins<SelectMixin>(SelectMixin) {
 
   private fontColor: string = "";
 
+  @Watch("optionInfoList", { immediate: true })
+  onChangeOptionInfoList(optionInfoList: any[]) {
+    if (this["test"]) {
+      window.console.log(optionInfoList);
+    }
+  }
+
   @Watch("value", { immediate: true })
   onChangeValue(value: string | null) {
     const optionInfo: any = this.optionInfoList.filter(

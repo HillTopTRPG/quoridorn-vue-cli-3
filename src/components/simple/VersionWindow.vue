@@ -1,14 +1,11 @@
 <template>
-  <window-frame titleText="バージョン" display-property="private.display.versionWindow" align="center" fixSize="300, 158">
-    <div class="contents">
-      <div class="logo-container" @contextmenu.prevent>
-        <logo/>
-      </div>
-      <div class="footer">
-        <span>Quoridorn Ver.{{version}}</span>
-        <ctrl-button @click="cancel" @contextmenu.prevent>閉じる</ctrl-button>
-      </div>
-    </div>
+  <window-frame
+    titleText="バージョン"
+    display-property="private.display.versionWindow"
+    align="center"
+    fixSize="500, 158"
+  >
+    <logo/>
   </window-frame>
 </template>
 
@@ -40,22 +37,4 @@ export default class VersionWindow extends Mixins<WindowMixin>(WindowMixin) {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.contents {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  font-size: 12px;
-}
-.logo-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1.3em;
-  font-size: 16px;
-  pointer-events: none;
-}
-.footer {
-  display: flex;
-  justify-content: space-between;
-}
 </style>

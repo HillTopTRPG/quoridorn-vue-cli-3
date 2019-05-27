@@ -15,9 +15,12 @@
           <label class="passwordLabel">隠し画像パスワード：{{imageObj.password !== '' ? 'あり' : 'なし'}}</label>
           <span class="tagLabel">付与するタグ(半角・全角スペースで区切り)</span>
           <input class="tagInput" type="text" @change="changeTag(imageObj.key)" v-model="imageObj.currentTag" />
-          <ctrl-select class="tagSelect" @input="selectTag(imageObj.key)" v-model="imageObj.selectTag">
-            <option v-for="tagObj in imageTagList.slice(1)" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option>
-          </ctrl-select>
+          <ctrl-select
+            class="tagSelect"
+            @input="selectTag(imageObj.key)"
+            v-model="imageObj.selectTag"
+            :optionInfoList="tagSelectOptionInfoList"
+          />
         </div>
       </fieldset>
       <div class="operateArea">
@@ -111,6 +114,18 @@ export default class DropImageWindow extends Mixins<WindowMixin>(WindowMixin) {
     // this.imageList.splice(index, 1, imgObj)
     // 選択によってタグの削除が発生する可能性があるので、タグリストを整理してもらう
     this.imageTagChange({ key: key, imageList: this.imageList });
+  }
+
+  private get tagSelectOptionInfoList(): any[] {
+    return this.imageTagList
+      .concat()
+      .slice(1)
+      .map((imageTag: any) => ({
+        key: imageTag.key,
+        value: imageTag.name,
+        text: imageTag.name,
+        disabled: false
+      }));
   }
 
   @Watch("dropImageList")

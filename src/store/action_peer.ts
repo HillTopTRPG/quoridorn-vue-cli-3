@@ -184,6 +184,7 @@ export default {
         dispatch("addChatLog", {
           name: rootGetters.systemLog.name,
           text: `${player.name} が退室しました。`,
+          from: rootGetters.systemLog.from,
           color: rootGetters.systemLog.color,
           tab: rootGetters.systemLog.tab,
           owner: rootGetters.systemLog.owner
@@ -1109,6 +1110,7 @@ export default {
       dispatch("addChatLog", {
         name: rootGetters.systemLog.name,
         text: `${playerName} が入室しました。`,
+        from: rootGetters.systemLog.from,
         color: rootGetters.systemLog.color,
         tab: rootGetters.systemLog.tab,
         owner: rootGetters.systemLog.owner

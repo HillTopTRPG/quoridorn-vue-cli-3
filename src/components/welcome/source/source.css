@@ -31,3 +31,10 @@ ul.detail > li:not(:first-child) {
 ul.detail > li > *:first-child {
   font-weight: bold;
 }
+
+.illustration {
+  background-image: url("http://mihikari.sakura.ne.jp/quoridorn/official/img/mascot/humanization.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right;
+}

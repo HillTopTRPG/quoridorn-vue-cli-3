@@ -82,7 +82,6 @@ export default {
       addCharacterWindow: {
         command: null,
         isDisplay: false,
-        doResetPosition: false,
         zIndex: 1,
         name: "",
         size: 1,
@@ -121,7 +120,6 @@ export default {
       settingBGMWindow: {
         command: null,
         isDisplay: false,
-        doResetPosition: false,
         zIndex: 1,
         // テーブル形式用データここから
         widthList: [30, 30, 30, 112, 53, 25, 30, 40],
@@ -294,11 +292,33 @@ export default {
       diceSymbolContext: {
         command: null,
         isDisplay: false,
+        zIndex: 1,
         x: 0,
         y: 0,
         objKey: null
       },
-      fileUploaderWindow: { command: null, isDisplay: false, zIndex: 1 }
+      fileUploaderWindow: { command: null, isDisplay: false, zIndex: 1 },
+      customDiceBotTableWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        // テーブル形式用データここから
+        widthList: [100, 100, 213],
+        selectLineKey: null,
+        hoverDevIndex: -1,
+        movingIndex: -1,
+        movedIndex: -1,
+        startX: -1,
+        startLeftWidth: -1,
+        startRightWidth: -1
+        // テーブル形式用データここまで
+      },
+      editCustomDiceBotTableWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: null
+      }
     }
   } /* end of state */,
   actions: {

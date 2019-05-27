@@ -24,7 +24,7 @@
         <div class="description" v-if="isPlayerExist">おかえりなさい。<br>照合するパスワードを指定してください。</div>
       </fieldset>
       <div class="buttonArea">
-        <ctrl-button @click="commit" type="button"><i class="icon-home3"></i> 参加</ctrl-button>
+        <ctrl-button @click="commit"><i class="icon-home3"></i> 参加</ctrl-button>
       </div>
     </div>
   </window-frame>

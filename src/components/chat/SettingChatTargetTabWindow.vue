@@ -1,9 +1,14 @@
 <template>
-  <window-frame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`">
+  <window-frame
+    titleText="グループチャット設定画面"
+    display-property="private.display.settingChatTargetTabWindow"
+    align="center"
+    :fixSize="`${windowSize.w}, ${windowSize.h}`"
+  >
     <div class="contents" @contextmenu.prevent>
       <div>
-        <ctrl-button type="button" @click="addButtonOnClick">追加</ctrl-button>
-        <ctrl-button type="button" @click="delButtonOnClick">削除</ctrl-button>
+        <ctrl-button @click="addButtonOnClick">追加</ctrl-button>
+        <ctrl-button @click="delButtonOnClick">削除</ctrl-button>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -52,7 +57,6 @@
             <!-- 編集ボタン -->
             <td :style="colStyle(4)">
               <ctrl-button
-                type="button"
                 @click="edit(groupTargetTab.key)"
                 :disabled="groupTargetTab.key === 'groupTargetTab-0'"
               >編集</ctrl-button>
@@ -365,14 +369,14 @@ table tbody {
       &.isActive {
         background-color: rgb(127, 206, 255) !important;
       }
-    }
 
-    &:nth-child(odd):hover {
-      background: rgb(178, 225, 255);
-    }
+      &:nth-child(odd):hover {
+        background: rgb(178, 225, 255);
+      }
 
-    &:nth-child(even):hover {
-      background: rgb(178, 225, 255);
+      &:nth-child(even):hover {
+        background: rgb(178, 225, 255);
+      }
     }
   }
 }

@@ -20,7 +20,16 @@
       </li>
       <li>
         <span class="unSelectable">【画像関係】</span>
-        <ul class="detail">
+        <ul class="detail illustration">
+          <li>
+            <div>渡空燕丸<span class="unSelectable"> (<a target="_blank" href="https://twitter.com/karasuma_kojiro">on <span class="icon-twitter"></span> Twitter</a>)</span></div>
+            <ul>
+              <li><span class="unSelectable">マスコットキャラクターの創造・作成</span></li>
+              <li><span class="unSelectable">擬人化キャラクターの創造・作成</span></li>
+            </ul>
+            <span style="font-size: 90%; color: red;">キャラクター素材のQuoridorn以外での利用：<br>Quoridornの宣伝であることが明確な表記かつ<br>非商用の目的の場合は許可いたします。<br>悪質な転載・利用を発見した場合は<br>直ちにイラストの利用料を請求いたします。</span><br>
+            <span style="font-size: 90%;">キャラクター素材の著作権は<br>Quoridorn開発者HillTopが所有しています。</span>
+          </li>
           <li>
             <div><span class="unSelectable">デフォルトマップ背景</span></div>
             <div><span class="unSelectable">サイト名：</span>TEDDY-PLAZA<span class="unSelectable"> (<a target="_blank" href="http://teddy-plaza.sakura.ne.jp">LINK</a>)</span></div>
@@ -46,10 +55,6 @@
             </div>
           </li>
           -->
-          <li>
-            <div><span class="unSelectable">icoファイルジェレネータ</span></div>
-            <div><span class="unSelectable">サイト名：</span>X-Icon Editor<span class="unSelectable"> (<a target="_blank" href="http://www.xiconeditor.com/">LINK</a>)</span></div>
-          </li>
         </ul>
       </li>
       <li>
@@ -69,16 +74,16 @@
             </div>
           </li>
           <li>
-            <div><span class="unSelectable">タロットカード 大アルカナ</span></div>
-            <div><span class="unSelectable">サイト名：</span>flickr<span class="unSelectable"> (<a target="_blank" href="https://www.flickr.com">LINK</a>)</span></div>
-            <div><span class="unSelectable">作者：</span>Sigo Paolini</div>
-            <div><span class="unSelectable">作品名：</span>「Napo Tarot」<span class="unSelectable">(<a target="_blank" href="https://www.flickr.com/photos/thegreathorsecigar/sets/72157634257174286">LINK</a>)</span></div>
-          </li>
-          <li>
             <div><span class="unSelectable">花札</span></div>
             <div><span class="unSelectable">サイト名：</span>pixiv<span class="unSelectable"> (<a target="_blank" href="https://www.pixiv.net/">LINK</a>)</span></div>
             <div><span class="unSelectable">作者：</span>メタボルタ</div>
             <div><span class="unSelectable">作品名：</span>「花札＠どどんとふ」<span class="unSelectable">(<a target="_blank" href="https://www.pixiv.net/member_illust.php?mode=medium&illust_id=52572048">LINK1</a> / <a target="_blank" href="https://www.pixiv.net/member_illust.php?mode=medium&illust_id=52619352">LINK2</a>)</span></div>
+          </li>
+          <li>
+            <div><span class="unSelectable">タロットカード 大アルカナ</span></div>
+            <div><span class="unSelectable">サイト名：</span>flickr<span class="unSelectable"> (<a target="_blank" href="https://www.flickr.com">LINK</a>)</span></div>
+            <div><span class="unSelectable">作者：</span>Sigo Paolini</div>
+            <div><span class="unSelectable">作品名：</span>「Napo Tarot」<span class="unSelectable">(<a target="_blank" href="https://www.flickr.com/photos/thegreathorsecigar/sets/72157634257174286">LINK</a>)</span></div>
           </li>
         </ul>
       </li>

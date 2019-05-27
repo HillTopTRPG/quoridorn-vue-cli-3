@@ -3,7 +3,7 @@
     class="public-memo-tile"
     :style="style"
     @click.left="tileOnClick"
-    v-bg-img="'static/img/map/memo2.webp'"
+    v-bg-img="'static/img/map/memo2.png'"
     @click.right.prevent="openContext"
     @contextmenu.prevent
   >{{ publicMemoObj.title }}</div>

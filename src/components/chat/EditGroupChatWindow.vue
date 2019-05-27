@@ -5,10 +5,7 @@
         <div>
           <label>秘匿チャット<input type="checkbox" v-model="isSecret"></label>
           <label>名前<input type="text" v-model="name"></label>
-          <label>出力先のタブ<ctrl-select v-model="targetTab">
-            <option :value="null">指定なし</option>
-            <option v-for="tabObj in chatTabs" :key="tabObj.name" :value="tabObj.key">{{tabObj.name}}</option>
-          </ctrl-select></label>
+          <label>出力先のタブ<ctrl-select v-model="targetTab" :optionInfoList="targetTabOptionInfoList"/></label>
           <label>全体<input type="checkbox" v-model="isAll"></label>
         </div>
         <div class="tableContainer">
@@ -95,7 +92,7 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
 
   private isSecret: boolean = false;
   private name: string = "";
-  private targetTab: string | null = null;
+  private targetTab: string = "";
   private isAll: boolean = false;
   private group: any[] = [];
 
@@ -105,14 +102,6 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
     this.targetTab = this.storeObj.targetTab;
     this.isAll = this.storeObj.isAll;
     this.group = this.storeObj.group.concat();
-    // window.console.log(
-    //   "!!!!initWindow",
-    //   this.isSecret,
-    //   this.name,
-    //   this.targetTab,
-    //   this.isAll,
-    //   this.group
-    // );
   }
 
   private commit() {
@@ -314,6 +303,22 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
       );
     });
     return result;
+  }
+
+  private get targetTabOptionInfoList(): any[] {
+    const resultList: any[] = this.chatTabs.map((tabObj: any) => ({
+      key: tabObj.name,
+      value: tabObj.key,
+      text: tabObj.name,
+      disabled: false
+    }));
+    resultList.unshift({
+      key: "0",
+      value: "",
+      text: "指定なし",
+      disabled: false
+    });
+    return resultList;
   }
 }
 </script>
