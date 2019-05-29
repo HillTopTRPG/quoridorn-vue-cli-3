@@ -150,6 +150,7 @@ export default {
         isDisplay: false,
         zIndex: 1,
         windowSize: { w: 537, h: 300 },
+        isTabVertical: false,
         // テーブル形式用データここから
         widthList: [25, 80, 80, 253, 58], // 500
         selectLineKey: null,

@@ -1,16 +1,16 @@
 <template>
-  <div class="tabs dep" @contextmenu.prevent>
+  <div class="tabs" @contextmenu.prevent>
     <!-- タブ -->
     <div
       class="tab"
       v-for="(tabObj, index) in tabList"
       :key="tabObj.name"
-      :tabindex="index + 1"
-      :class="getTabClasses(tabObj)"
+      :tabindex="tabIndex + index + 1"
+      :class="getTabClasses(tabObj, index)"
     >
       <div
         class="corner-container"
-        v-if="isChatTabIsVertical"
+        v-if="isVertical"
       >
         <div
           class="corner"
@@ -25,14 +25,16 @@
         @mousedown.prevent="chatTabOnSelect(tabObj.key)"
         @mouseenter.prevent="chatTabOnHover(tabObj.key)"
         @mouseleave.prevent="chatTabOnHover('')"
-      ><span>#{{tabObj.name}}/{{tabObj.unRead}}</span></div>
+      ><span>{{textFunc(tabObj)}}</span></div>
     </div>
+
+    <slot/>
 
     <!-- タブ設定ボタン -->
     <span
       class="tab addButton"
       @click="tabAddButtonOnClick"
-      :tabindex="chatTabs.length + 1"
+      :tabindex="tabIndex + chatTabs.length + 1"
     ><span class="icon-cog"></span></span>
   </div>
 </template>
@@ -43,7 +45,7 @@ import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({ components: {} })
-export default class ChatWindow extends Vue {
+export default class TabsComponent extends Vue {
   @Prop({ type: Array, required: true })
   private tabList!: any[];
 
@@ -53,48 +55,45 @@ export default class ChatWindow extends Vue {
   @Prop({ type: String, required: true })
   private hoverChatTab!: string;
 
+  @Prop({ type: Boolean, required: true })
+  private isVertical!: boolean;
+
+  @Prop({ type: Number, required: true })
+  private tabIndex!: number;
+
+  @Prop({ type: Function, required: true })
+  private textFunc!: Function;
+
   @Action("chatTabSelect") private chatTabSelect: any;
   @Action("setProperty") private setProperty: any;
-  @Action("windowOpen") private windowOpen: any;
   @Getter("chatTabs") private chatTabs: any;
-  @Getter("isChatTabIsVertical") private isChatTabIsVertical: any;
 
   /**
    * チャットログ表示タブを選択されたときの挙動
    * @param key タブのkey
    */
   @Emit("onSelect")
-  private chatTabOnSelect(key: string): void {
-    this.setProperty({
-      property: "chat.activeChatTab",
-      value: key,
-      logOff: true
-    });
-    this.chatTabSelect(key);
-  }
+  private chatTabOnSelect(key: string): void {}
 
   /**
    * チャットログ表示タブをホバーされたときの挙動
    * @param key タブのkey
    */
   @Emit("onHover")
-  private chatTabOnHover(key: string): void {
-    this.hoverChatTab = key;
-  }
+  private chatTabOnHover(key: string): void {}
 
   /**
    * チャットタブ追加ボタンクリックイベントハンドラ
    */
-  private tabAddButtonOnClick(): void {
-    this.windowOpen("private.display.settingChatTabWindow");
-  }
+  @Emit("editTab")
+  private tabAddButtonOnClick(): void {}
 
   private getTabClasses(tabObj: any, index: number) {
     return {
       active: tabObj.key === this.activeChatTab,
       hover: tabObj.key === this.hoverChatTab,
       unRead: tabObj.unRead > 0,
-      vertical: this.isChatTabIsVertical,
+      vertical: this.isVertical,
       isLast: index === this.chatTabs.length - 1
     };
   }
@@ -118,12 +117,15 @@ $hover-border-color: #0092ed;
   width: 100%;
   box-sizing: border-box;
   margin-bottom: -1px;
+  overflow: visible;
+  outline: none;
+  font-size: 11px;
 
   .tab {
     @include inline-flex-box(row, flex-start, flex-end);
     outline: none;
     overflow: visible;
-    margin-right: -1px;
+    margin-right: -2px;
 
     .corner-container {
       @include flex-box(row, center, center);
@@ -135,13 +137,16 @@ $hover-border-color: #0092ed;
       overflow: hidden;
 
       .corner {
-        transform: translateY(calc(0.7em + 1px)) rotate(-45deg);
+        transform: translateY(calc(0.7em + 1px)) translateX(1px) rotate(-45deg)
+          translateX(-1px);
         background: $background-gradient;
         transform-origin: center;
         width: 2em;
         height: 2em;
         min-height: 1px;
-        border-top: 1px solid gray;
+        border: 1px solid gray;
+        border-left-color: transparent;
+        border-right-color: transparent;
         box-sizing: content-box;
         cursor: pointer;
       }
@@ -153,24 +158,26 @@ $hover-border-color: #0092ed;
       border-radius: 5px 5px 0 0;
       padding: 0 0.5em;
       z-index: 8;
-      height: calc(2em - 1px);
+      height: calc(2em - 0px);
       background: $background-gradient;
       box-sizing: content-box;
       cursor: pointer;
       border: 1px solid gray;
-      border-bottom-width: 0;
+      border-bottom-color: transparent;
     }
 
     &.vertical {
       width: calc(2.82em);
-      margin-right: 0;
+      /*margin-right: 0;*/
 
       .text {
         border-radius: 0 5px 0 0;
-        border-left-width: 0;
-        border-bottom-width: 0;
+        border-left-color: transparent;
+        border-bottom-color: transparent;
+        height: calc(2em - 3px);
         margin-top: 2.5em;
-        transform: translateX(2.82em) translateX(-1px) rotate(-45deg);
+        transform: translateX(2.82em) rotate(-45deg) translateX(-1px)
+          translateY(-1px);
         transform-origin: left bottom;
         flex: 1;
         width: 5em;
@@ -186,16 +193,18 @@ $hover-border-color: #0092ed;
 
       &.hover {
         .text {
-          border-bottom-width: 1px;
-          transform: translateX(2.82em) translateX(-1px) rotate(-45deg)
-            translateY(1px);
+          border-bottom-color: $hover-border-color;
+          border-left-color: transparent;
+          z-index: 20;
+        }
+
+        &.isLast .text {
+          border-bottom-color: $hover-border-color;
         }
       }
 
       &.isLast .text {
-        border-bottom-width: 1px;
-        transform: translateX(2.82em) translateX(-1px) rotate(-45deg)
-          translateY(1px);
+        border-bottom-color: gray;
       }
     }
 
@@ -204,14 +213,14 @@ $hover-border-color: #0092ed;
     }
 
     &.hover {
-      .corner-container .corner,
-      .text {
-        border-color: $hover-border-color;
+      .corner-container .corner {
+        border-top-color: $hover-border-color;
       }
 
       .text {
         z-index: 9;
         width: auto;
+        border-color: $hover-border-color;
       }
     }
 
@@ -231,10 +240,17 @@ $hover-border-color: #0092ed;
     }
 
     &.addButton {
+      @include flex-box(row, center, center);
       position: absolute;
       right: 1px;
       cursor: pointer;
-      z-index: 20;
+      z-index: 13;
+      height: 2em;
+      padding: 0 0.5em;
+      background: $background-gradient;
+      border: 1px solid gray;
+      border-radius: 5px 5px 0 0;
+      box-sizing: border-box;
     }
   }
 }

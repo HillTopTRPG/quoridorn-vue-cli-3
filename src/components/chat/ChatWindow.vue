@@ -10,42 +10,17 @@
       <!----------------
        ! タブ
        !--------------->
-      <div class="tabs dep" @contextmenu.prevent>
-        <!-- タブ -->
-        <div
-          class="tab"
-          v-for="(tabObj, index) in chatTabs"
-          :key="tabObj.name"
-          :tabindex="index + 1"
-          :class="{ active: tabObj.key === activeChatTab, hover: tabObj.key === hoverChatTab, unRead: tabObj.unRead > 0, vertical: isChatTabIsVertical, isLast: index === chatTabs.length - 1 }"
-        >
-          <div
-            class="corner-container"
-            v-if="isChatTabIsVertical"
-          >
-            <div
-              class="corner"
-              @mousedown.prevent="chatTabOnSelect(tabObj.key)"
-              @mouseenter.prevent="chatTabOnHover(tabObj.key)"
-              @mouseleave.prevent="chatTabOnHover('')"
-            ></div>
-          </div>
-
-          <div
-            class="text"
-            @mousedown.prevent="chatTabOnSelect(tabObj.key)"
-            @mouseenter.prevent="chatTabOnHover(tabObj.key)"
-            @mouseleave.prevent="chatTabOnHover('')"
-          ><span>#{{tabObj.name}}/{{tabObj.unRead}}</span></div>
-        </div>
-
-        <!-- タブ設定ボタン -->
-        <span
-          class="tab addButton"
-          @click="tabAddButtonOnClick"
-          :tabindex="chatTabs.length + 1"
-        ><span class="icon-cog"></span></span>
-      </div>
+      <tabs-component
+        :tabIndex="0"
+        :tabList="chatTabs"
+        :activeChatTab="activeChatTab"
+        :hoverChatTab="hoverChatTab"
+        :isVertical="isChatTabVertical"
+        :textFunc="info => `#${info.name}/${info.unRead}`"
+        @onSelect="chatTabOnSelect"
+        @onHover="chatTabOnHover"
+        @editTab="tabAddButtonOnClick"
+      />
 
       <!----------------
        ! チャットログ
@@ -168,32 +143,24 @@
           <!----------------
            ! グループチャットタブ
            !--------------->
-          <div class="tabs" @contextmenu.prevent>
-
-            <!-- グループチャットタブ -->
-            <span
-              class="tab"
-              v-for="(tabObj, index) in groupTargetTabList"
-              :key="tabObj.key"
-              :class="{ active: tabObj.key === chatTarget }"
-              @mousedown.prevent="groupTargetTabOnSelect(tabObj.key)"
-              :tabindex="chatTabs.length + 14 + index"
-            >&gt; {{tabObj.name}}{{otherMatcherObj(tabObj) ? `(${getViewName(otherMatcherObj(tabObj).key)})` : ''}}</span>
-
-            <!-- グループチャットタブ編集ボタン -->
-            <span
-              class="tab addButton"
-              @click="targetTabAddButtonOnClick"
-              :tabindex="chatTabs.length + chatTabs.length + 14"
-            ><span class="icon-cog"></span></span>
-
+          <tabs-component
+            class="group"
+            :tabIndex="chatTabs.length + 13"
+            :tabList="groupTargetTabList"
+            :activeChatTab="chatTarget"
+            :hoverChatTab="hoverChatTargetTab"
+            :isVertical="isTargetTabVertical"
+            :textFunc="info => `${info.name}${otherMatcherObj(info) ? `(${getViewName(otherMatcherObj(info).key)})` : ''}`"
+            @onSelect="groupTargetTabOnSelect"
+            @onHover="groupTargetTabOnHover"
+            @editTab="targetTabAddButtonOnClick"
+          >
             <!-- 「」付与チェックボックス -->
             <label class="bracketOption">
               <input type="checkbox" v-model="addBrackets" :tabindex="chatTabs.length + chatTabs.length + 15" />
               発言時に「」を付与
             </label>
-
-          </div>
+          </tabs-component>
 
           <!----------------
            ! チャットオプション（送信者）
@@ -309,9 +276,11 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
+import TabsComponent from "@/components/parts/TabsComponent.vue";
 
 @Component({
   components: {
+    TabsComponent,
     CtrlButton,
     CtrlSelect,
     ActorStatusSelect,
@@ -352,7 +321,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("customDiceBotList") private customDiceBotList: any;
   @Getter("customDiceBotRoomSysList") private customDiceBotRoomSysList: any;
   @Getter("loadYaml") private loadYaml: any;
-  @Getter("isChatTabIsVertical") private isChatTabIsVertical: any;
+  @Getter("isChatTabVertical") private isChatTabVertical: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;
@@ -379,6 +348,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private volatileActiveTab: string = "";
   private volatileTargetTab: string | null = "";
   private statusName: string = "◆";
+  private hoverChatTargetTab = "";
 
   @Watch("chatActorKey", { deep: true, immediate: true })
   private onChangeChatActorKey(chatActorKey: any) {
@@ -608,6 +578,10 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         this.updateActorKey(otherObj.key);
       }
     }
+  }
+
+  private groupTargetTabOnHover(targetKey: string): void {
+    this.hoverChatTargetTab = targetKey;
   }
 
   /**
@@ -1138,6 +1112,11 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     const endIndex = Math.min(pageNum * this.chatOptionPagingSize, list.length);
     return list.splice(startIndex, endIndex - startIndex);
   }
+
+  private get isTargetTabVertical() {
+    return this.$store.state.private.display.settingChatTargetTabWindow
+      .isTabVertical;
+  }
 }
 </script>
 
@@ -1154,139 +1133,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   overflow: visible;
 }
 
-$background-gradient: linear-gradient(
-  to bottom,
-  rgba(240, 240, 240, 1),
-  rgba(200, 200, 200, 1)
-);
-
-$hover-border-color: #0092ed;
-
-.tabs {
-  display: flex;
-  align-items: flex-end;
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: -1px;
-
-  .tab {
-    @include inline-flex-box(row, flex-start, flex-end);
-    outline: none;
-    overflow: visible;
-    margin-right: -1px;
-
-    .corner-container {
-      @include flex-box(row, center, center);
-      position: absolute;
-      width: calc(2.82em - 1px);
-      height: 1.41em;
-      /*border-bottom: solid 1px gray;*/
-      z-index: 7;
-      overflow: hidden;
-
-      .corner {
-        transform: translateY(calc(0.7em + 1px)) rotate(-45deg);
-        background: $background-gradient;
-        transform-origin: center;
-        width: 2em;
-        height: 2em;
-        min-height: 1px;
-        border-top: 1px solid gray;
-        box-sizing: content-box;
-        cursor: pointer;
-      }
-    }
-
-    .text {
-      @include flex-box(row, flex-start, center);
-      /*position: absolute;*/
-      border-radius: 5px 5px 0 0;
-      padding: 0 0.5em;
-      z-index: 8;
-      height: calc(2em - 1px);
-      background: $background-gradient;
-      box-sizing: content-box;
-      cursor: pointer;
-      border: 1px solid gray;
-      border-bottom-width: 0;
-    }
-
-    &.vertical {
-      width: calc(2.82em);
-      margin-right: 0;
-
-      .text {
-        border-radius: 0 5px 0 0;
-        border-left-width: 0;
-        border-bottom-width: 0;
-        margin-top: 2.5em;
-        transform: translateX(2.82em) translateX(-1px) rotate(-45deg);
-        transform-origin: left bottom;
-        flex: 1;
-        width: 5em;
-        padding: 0;
-
-        > * {
-          margin-left: -0.7em;
-          min-width: 5em;
-          padding-right: 0.5em;
-          overflow: hidden;
-        }
-      }
-
-      &.hover {
-        .text {
-          border-bottom-width: 1px;
-          transform: translateX(2.82em) translateX(-1px) rotate(-45deg)
-            translateY(1px);
-        }
-      }
-
-      &.isLast .text {
-        border-bottom-width: 1px;
-        transform: translateX(2.82em) translateX(-1px) rotate(-45deg)
-          translateY(1px);
-      }
-    }
-
-    &.unRead {
-      background-color: yellow;
-    }
-
-    &.hover {
-      .corner-container .corner,
-      .text {
-        border-color: $hover-border-color;
-      }
-
-      .text {
-        z-index: 9;
-        width: auto;
-      }
-    }
-
-    &.active {
-      .corner-container .corner,
-      .text {
-        background: white none;
-      }
-
-      .corner-container {
-        z-index: 11;
-      }
-
-      .text {
-        z-index: 12;
-      }
-    }
-
-    &.addButton {
-      position: absolute;
-      right: 1px;
-      cursor: pointer;
-      z-index: 20;
-    }
-  }
+.tabs.group {
+  margin-left: 0.5em;
 }
 
 #chatLog {
@@ -1337,15 +1185,15 @@ $hover-border-color: #0092ed;
     text-align: center;
   }
 
-  > * {
+  > *:not(.tabs) {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    justify-content: flex-end;
+    align-items: center;
     height: 42px;
     min-height: 42px;
   }
 
-  > div {
+  > div:not(.tabs) {
     flex-direction: column;
 
     &:not(.textAreaContainer) {
@@ -1361,17 +1209,13 @@ $hover-border-color: #0092ed;
   display: flex;
 }
 
-.sendLine > div > *:not(.chatOptionSelector) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .chatInputArea {
   flex: 1;
   display: flex;
   width: 100%;
   font-size: 13px;
+  position: relative;
+  z-index: 10;
 }
 
 .chatOption {

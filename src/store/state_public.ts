@@ -685,6 +685,6 @@ export default {
     customDiceBotRoomSysList: (state: any) => state.customDiceBot.roomSysList,
     diceBotMessageText: (state: any) => state.chat.diceBotMessage.message,
     diceBotMessageView: (state: any) => state.chat.diceBotMessage.isView,
-    isChatTabIsVertical: (state: any) => state.chat.tab.isVertical,
+    isChatTabVertical: (state: any) => state.chat.tab.isVertical
   } /* end of getters */
 };

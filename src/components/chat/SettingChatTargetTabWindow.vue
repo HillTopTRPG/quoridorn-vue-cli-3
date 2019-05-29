@@ -9,6 +9,7 @@
       <div>
         <ctrl-button @click="addButtonOnClick">追加</ctrl-button>
         <ctrl-button @click="delButtonOnClick">削除</ctrl-button>
+        <label>タブを斜めにする<input type="checkbox" v-model="isTabVertical"></label>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -107,7 +108,13 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   @Getter("chatActorKey") private chatActorKey: any;
 
   private addButtonOnClick() {
-    this.addGroupTargetTab({ ownerKey: this.getChatFromKey() });
+    this.addGroupTargetTab({ ownerKey: this.getChatFromKey() }).then(() => {
+      const last: any = this.groupTargetTabList[
+        this.groupTargetTabList.length - 1
+      ];
+      this.selectLine(last.key);
+      this.edit(last.key);
+    });
   }
 
   private delButtonOnClick() {
@@ -281,6 +288,18 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
     return this.$store.state.private.display.settingChatTargetTabWindow
       .windowSize;
   }
+
+  private get isTabVertical() {
+    return this.$store.state.private.display.settingChatTargetTabWindow
+      .isTabVertical;
+  }
+  private set isTabVertical(flg: boolean) {
+    this.setProperty({
+      property: `private.display.settingChatTargetTabWindow.isTabVertical`,
+      value: flg,
+      logOff: true
+    });
+  }
 }
 </script>
 
@@ -295,12 +314,6 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
 
 label {
   display: flex;
-  margin-top: 5px;
-
-  input {
-    flex: 1;
-    margin-left: 5px;
-  }
 }
 
 .operateArea {
@@ -417,18 +430,6 @@ td i {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-table select {
-  width: 100%;
-  height: 100%;
-  background: none;
-  border: none;
-}
-
-table input {
-  background: none;
-  border: none;
 }
 
 button {
