@@ -13,6 +13,7 @@ import { getFileNameArgList, getUrlParam } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
 import yaml from "js-yaml";
 import moment from "moment";
+const CryptoJS = require("crypto-js");
 // const moment = require("moment");
 
 Vue.use(Vuex);
@@ -810,6 +811,15 @@ export default new Vuex.Store({
       const diceObj = diceSetList.filter(diceSet => diceSet.type === type)[0];
       if (!diceObj) return null;
       return diceObj.pips[pips];
-    }
+    },
+    hash: state => (planeText, key) => CryptoJS.HmacSHA1(planeText, key),
+    isSameHash: state => (hash, planeText, key) =>
+      hash === CryptoJS.HmacSHA1(planeText, key),
+    encrypt: state => (planeText, password) =>
+      CryptoJS.AES.encrypt(planeText, password),
+    decrypt: state => (ciphertext, password) =>
+      CryptoJS.AES.decrypt(ciphertext.toString(), password).toString(
+        CryptoJS.enc.Utf8
+      )
   }
 });
