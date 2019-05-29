@@ -1,5 +1,6 @@
 <template>
   <b-g-m-core-component
+    :bgmKey="bgmKey"
     :tag="tag"
     :isLoop="isLoop"
     :title="title"
@@ -138,5 +139,4 @@ export default class BGMYoutubeComponent extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>
+<style></style>

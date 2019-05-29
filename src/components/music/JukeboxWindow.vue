@@ -1,7 +1,16 @@
-<template><!-- 150, 209 -->
-  <window-frame titleText="再生中BGM一覧" fixSize="222, 274" display-property="private.display.jukeboxWindow" align="right-bottom" :isBanClose="true" @add="add">
+<template
+  ><!-- 150, 209 -->
+  <window-frame
+    titleText="再生中BGM一覧"
+    fixSize="222, 274"
+    display-property="private.display.jukeboxWindow"
+    align="right-bottom"
+    :isBanClose="true"
+    @add="add"
+    @remove="remove"
+  >
     <div class="contents" @contextmenu.prevent>
-      <master-volume-component/>
+      <master-volume-component />
       <template v-for="bgmObj in playList">
         <b-g-m-youtube-component
           v-if="/www\.youtube\.com/.test(bgmObj.url)"
@@ -22,6 +31,7 @@
         <b-g-m-file-component
           v-if="!/www\.youtube\.com/.test(bgmObj.url)"
           :key="bgmObj.key"
+          :bgmKey="bgmObj.key"
           :ref="bgmObj.key"
           :tag="bgmObj.tag || ''"
           :isLoop="bgmObj.isLoop || false"
@@ -66,7 +76,7 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private playList: any[] = [];
 
-  add(bgmKey: string): void {
+  private add(bgmKey: string): void {
     if (!bgmKey) return;
     const addBgmObj = this.bgmList.filter(
       (bgmObj: any) => bgmObj.key === bgmKey
@@ -102,7 +112,8 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
       }
     }
   }
-  remove(bgmKey: string): void {
+
+  private remove(bgmKey: string): void {
     const delBgmObj = this.bgmList.filter(
       (bgmObj: any) => bgmObj.key === bgmKey
     )[0];

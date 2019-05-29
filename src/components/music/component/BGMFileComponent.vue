@@ -1,5 +1,6 @@
 <template>
   <b-g-m-core-component
+    :bgmKey="bgmKey"
     :tag="tag"
     :isLoop="isLoop"
     :title="title"
@@ -32,6 +33,9 @@ import { Component, Prop, Vue } from "vue-property-decorator";
   }
 })
 export default class BGMFileComponent extends Vue {
+  @Prop({ type: String, required: true })
+  private bgmKey!: string;
+
   @Prop({ required: true })
   private tag!: string;
 
@@ -116,5 +120,5 @@ export default class BGMFileComponent extends Vue {
     );
     bgmCoreComponent.timeUpdate(this.jukeboxAudio.currentTime);
   }
-}
-</script>()
+}</script
+>()

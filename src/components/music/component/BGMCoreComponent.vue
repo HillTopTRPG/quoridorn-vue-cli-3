@@ -1,26 +1,62 @@
 <template>
   <div class="bgmCoreComponent" @contextmenu.prevent>
     <div class="thumbnail">
-      <img v-img="thumbnailData" draggable="false" alt="Not Found" :title="thumbnailTitle" @click="thumbnailClick">
+      <span class="icon-cross" @click.stop="deleteItem"></span>
+      <img
+        v-img="thumbnailData"
+        draggable="false"
+        alt="Not Found"
+        :title="thumbnailTitle"
+        @click="thumbnailClick"
+      />
     </div>
     <div class="bgmComponent">
       <div class="attrArea">
-        <span class="tag" :title="'【タグ】\n' + tag">{{tag}}</span><!--
-     --><span class="title" :title="'【タイトル】\n' + title">{{title}}</span><!--
-     --><span class="icon loop" disabled v-if="isLoop"><i class="icon-loop" title="ループ再生します"></i></span>
+        <span class="tag" :title="'【タグ】\n' + tag">{{ tag }}</span
+        ><!--
+     --><span class="title" :title="'【タイトル】\n' + title">{{ title }}</span
+        ><!--
+     --><span class="icon loop" disabled v-if="isLoop"
+          ><i class="icon-loop" title="ループ再生します"></i
+        ></span>
       </div>
       <div class="controlArea">
-        <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="isPlay"><i class="icon-play3"></i></span>
-        <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="!isPlay"><i class="icon-pause2"></i></span>
+        <span
+          class="icon play"
+          :class="{ isPlay: isPlay }"
+          @click="changePlay()"
+          v-show="isPlay"
+          ><i class="icon-play3"></i
+        ></span>
+        <span
+          class="icon play"
+          :class="{ isPlay: isPlay }"
+          @click="changePlay()"
+          v-show="!isPlay"
+          ><i class="icon-pause2"></i
+        ></span>
         <volume-component
           :initVolume="initVolume"
           @mute="setMute"
           @volume="setVolume"
-          ref="volumeComponent"/>
+          ref="volumeComponent"
+        />
       </div>
       <div class="playLengthArea">
-        <input class="playLength" :class="{isPlay: isPlay}" :style="playLengthStyle" type="range" min="0" :max="Math.round(duration * 100) / 100" step="0.01" v-model="playLength" @input="seekTo">
-        <span class="playLengthText">{{Math.round(playLength)}}/{{Math.round(duration)}}</span>
+        <input
+          class="playLength"
+          :class="{ isPlay: isPlay }"
+          :style="playLengthStyle"
+          type="range"
+          min="0"
+          :max="Math.round(duration * 100) / 100"
+          step="0.01"
+          v-model="playLength"
+          @input="seekTo"
+        />
+        <span class="playLengthText"
+          >{{ Math.round(playLength) }}/{{ Math.round(duration) }}</span
+        >
       </div>
     </div>
   </div>
@@ -30,7 +66,7 @@
 import VolumeComponent from "./VolumeComponent.vue";
 import { getUrlParam } from "../../common/Utility";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { Getter } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 
 @Component({
   components: {
@@ -38,8 +74,12 @@ import { Getter } from "vuex-class";
   }
 })
 export default class BGMCoreComponent extends Vue {
+  @Action("setProperty") private setProperty: any;
   @Getter("masterMute") private masterMute: any;
   @Getter("masterVolume") private masterVolume: any;
+
+  @Prop({ type: String, required: true })
+  private bgmKey!: string;
 
   @Prop({ type: String, required: true })
   private tag!: string;
@@ -80,6 +120,15 @@ export default class BGMCoreComponent extends Vue {
 
   private fadeInTable: number[] = [];
   private fadeOutTable: number[] = [];
+
+  private deleteItem() {
+    this.setProperty({
+      property: "private.display.jukeboxWindow.command",
+      logOff: true,
+      isNotice: false,
+      value: { command: "remove", payload: this.bgmKey }
+    });
+  }
 
   mounted(this: any): void {
     this.isYoutube = /www\.youtube\.com/.test(this.url);
@@ -270,16 +319,38 @@ export default class BGMCoreComponent extends Vue {
   margin-top: 4px;
   padding-top: 4px;
   border-top: 2px solid black;
+
+  &:hover .thumbnail .icon-cross {
+    visibility: visible;
+  }
 }
 
 .thumbnail {
+  position: relative;
   height: 54px;
   width: 72px;
   cursor: pointer;
 
-  > * {
+  > *:not(.icon-cross) {
     width: 100%;
     height: 100%;
+  }
+
+  .icon-cross {
+    visibility: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: white;
+    border: solid 1px black;
+    border-radius: 50%;
+    font-size: 10px;
+    padding: 0.3em;
+
+    &:hover {
+      background-color: lightyellow;
+      color: red;
+    }
   }
 }
 
