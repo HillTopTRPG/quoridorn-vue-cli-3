@@ -1,7 +1,15 @@
 <template>
-  <window-frame titleText="マップ変更" display-property="private.display.editMapWindow" align="center" fixSize="401, 435" @open="initWindow" @reset="initWindow" @cancel="cancel" @close="close">
+  <window-frame
+    titleText="マップ変更"
+    display-property="private.display.editMapWindow"
+    align="center"
+    fixSize="401, 435"
+    @open="initWindow"
+    @reset="initWindow"
+    @cancel="cancel"
+    @close="close"
+  >
     <div class="container" @contextmenu.prevent>
-
       <image-selector
         v-model="edit.imageKey"
         :imageTag.sync="edit.imageTag"
@@ -11,27 +19,100 @@
       <fieldset class="imageAreaSettings">
         <legend>イメージ部分</legend>
         <div>
-          <div class="totalRow"><label>縦マス：<input type="number" min="1" class="size" v-model="edit.totalRow" /></label></div>
-          <div class="totalColumn"><label>横マス：<input type="number" min="1" class="size" v-model="edit.totalColumn" /></label></div>
-          <div class="gridColor"><label>マス目の色：<input type="color" class="size" v-model="edit.gridColor" /></label></div>
+          <div class="totalRow">
+            <label
+              >縦マス：<input
+                type="number"
+                min="1"
+                class="size"
+                v-model="edit.totalRow"
+            /></label>
+          </div>
+          <div class="totalColumn">
+            <label
+              >横マス：<input
+                type="number"
+                min="1"
+                class="size"
+                v-model="edit.totalColumn"
+            /></label>
+          </div>
+          <div class="gridColor">
+            <label
+              >マス目の色：<input
+                type="color"
+                class="size"
+                v-model="edit.gridColor"
+            /></label>
+          </div>
         </div>
       </fieldset>
       <fieldset class="marginAreaSettings">
         <legend>余白部分</legend>
         <div>
-          <div class="marginGridSize"><label>マス数：<input type="number" min="0" class="size" v-model="edit.marginGridSize" /></label></div>
-          <div class="borderWidth"><label>外周罫線の太さ：<input type="number" min="0" class="size" v-model="edit.borderWidth" /></label></div>
-          <div class="isUseImage"><label>ぼかし画像：<input type="checkbox" v-model="edit.isUseImage" /></label></div>
+          <div class="marginGridSize">
+            <label
+              >マス数：<input
+                type="number"
+                min="0"
+                class="size"
+                v-model="edit.marginGridSize"
+            /></label>
+          </div>
+          <div class="borderWidth">
+            <label
+              >外周罫線の太さ：<input
+                type="number"
+                min="0"
+                class="size"
+                v-model="edit.borderWidth"
+            /></label>
+          </div>
+          <div class="isUseImage">
+            <label
+              >ぼかし画像：<input type="checkbox" v-model="edit.isUseImage"
+            /></label>
+          </div>
         </div>
         <div>
-          <div class="isUseGridColor"><label>被せ色：<input type="color" class="size" v-model="edit.maskColor" /><input type="range" class="maskAlpha" min="0" max="1" step="0.1" v-model="edit.maskAlpha" /></label></div>
-          <div class="isUseGridColor"><label>方眼罫線：<input type="checkbox" v-model="edit.isUseGridColor" /><input v-show="edit.isUseGridColor" type="color" class="size" v-model="edit.marginGridColor" /></label></div>
+          <div class="isUseGridColor">
+            <label
+              >被せ色：<input
+                type="color"
+                class="size"
+                v-model="edit.maskColor"/><input
+                type="range"
+                class="maskAlpha"
+                min="0"
+                max="1"
+                step="0.1"
+                v-model="edit.maskAlpha"
+            /></label>
+          </div>
+          <div class="isUseGridColor">
+            <label
+              >方眼罫線：<input
+                type="checkbox"
+                v-model="edit.isUseGridColor"/><input
+                v-show="edit.isUseGridColor"
+                type="color"
+                class="size"
+                v-model="edit.marginGridColor"
+            /></label>
+          </div>
         </div>
       </fieldset>
       <fieldset class="backgroundAreaSettings">
         <legend>背景部分</legend>
         <div>
-          <div class="backgroundColor"><label>背景色：<input type="color" class="size" v-model="edit.backgroundColor" /></label></div>
+          <div class="backgroundColor">
+            <label
+              >背景色：<input
+                type="color"
+                class="size"
+                v-model="edit.backgroundColor"
+            /></label>
+          </div>
         </div>
       </fieldset>
       <div class="buttonArea">
@@ -69,6 +150,7 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("peerId") private peerId: any;
   @Getter("isWait") private isWait: any;
   @Getter("imageListFromTagKey") private imageListFromTagKey: any;
+  @Getter("currentMap") private currentMap: any;
 
   private edit: any = {
     imageTag: "imgTag-1",
@@ -106,42 +188,42 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private initWindow() {
     const peerId = this.peerId(this.isWait);
-    if (this.storeMapObj.isEditing && this.storeMapObj.isEditing !== peerId) {
+    if (this.storeMap.isEditing && this.storeMap.isEditing !== peerId) {
       alert(
         "他の画面とマップ変更操作が競合しますので、この操作はキャンセルします。"
       );
       this.windowClose("private.display.editMapWindow");
       return;
     }
-    this.edit.imageTag = this.storeMapObj.imageTag;
-    this.edit.imageKey = this.storeMapObj.imageKey;
-    this.edit.isReverse = this.storeMapObj.isReverse;
-    this.edit.marginGridSize = this.storeMapObj.margin.gridSize;
-    this.edit.isUseGridColor = this.storeMapObj.margin.isUseGridColor;
-    this.edit.isUseImage = this.storeMapObj.margin.isUseImage;
-    this.edit.marginGridColor = this.storeMapObj.margin.gridColor;
-    this.edit.maskColor = this.storeMapObj.margin.maskColor;
-    this.edit.maskAlpha = this.storeMapObj.margin.maskAlpha;
-    this.edit.borderWidth = this.storeMapObj.margin.borderWidth;
-    this.edit.totalColumn = this.storeMapObj.grid.totalColumn;
-    this.edit.totalRow = this.storeMapObj.grid.totalRow;
-    this.edit.gridColor = this.storeMapObj.grid.color;
-    this.edit.backgroundColor = this.storeMapObj.background;
+    this.edit.imageTag = this.currentMap.imageTag;
+    this.edit.imageKey = this.currentMap.imageKey;
+    this.edit.isReverse = this.currentMap.isReverse;
+    this.edit.marginGridSize = this.currentMap.margin.gridSize;
+    this.edit.isUseGridColor = this.currentMap.margin.isUseGridColor;
+    this.edit.isUseImage = this.currentMap.margin.isUseImage;
+    this.edit.marginGridColor = this.currentMap.margin.gridColor;
+    this.edit.maskColor = this.currentMap.margin.maskColor;
+    this.edit.maskAlpha = this.currentMap.margin.maskAlpha;
+    this.edit.borderWidth = this.currentMap.margin.borderWidth;
+    this.edit.totalColumn = this.currentMap.grid.totalColumn;
+    this.edit.totalRow = this.currentMap.grid.totalRow;
+    this.edit.gridColor = this.currentMap.grid.color;
+    this.edit.backgroundColor = this.currentMap.background;
 
-    this.original.imageTag = this.storeMapObj.imageTag;
-    this.original.imageKey = this.storeMapObj.imageKey;
-    this.original.isReverse = this.storeMapObj.isReverse;
-    this.original.marginGridSize = this.storeMapObj.margin.gridSize;
-    this.original.isUseGridColor = this.storeMapObj.margin.isUseGridColor;
-    this.original.isUseImage = this.storeMapObj.margin.isUseImage;
-    this.original.marginGridColor = this.storeMapObj.margin.gridColor;
-    this.original.maskColor = this.storeMapObj.margin.maskColor;
-    this.original.maskAlpha = this.storeMapObj.margin.maskAlpha;
-    this.original.borderWidth = this.storeMapObj.margin.borderWidth;
-    this.original.totalColumn = this.storeMapObj.grid.totalColumn;
-    this.original.totalRow = this.storeMapObj.grid.totalRow;
-    this.original.gridColor = this.storeMapObj.grid.color;
-    this.original.backgroundColor = this.storeMapObj.background;
+    this.original.imageTag = this.currentMap.imageTag;
+    this.original.imageKey = this.currentMap.imageKey;
+    this.original.isReverse = this.currentMap.isReverse;
+    this.original.marginGridSize = this.currentMap.margin.gridSize;
+    this.original.isUseGridColor = this.currentMap.margin.isUseGridColor;
+    this.original.isUseImage = this.currentMap.margin.isUseImage;
+    this.original.marginGridColor = this.currentMap.margin.gridColor;
+    this.original.maskColor = this.currentMap.margin.maskColor;
+    this.original.maskAlpha = this.currentMap.margin.maskAlpha;
+    this.original.borderWidth = this.currentMap.margin.borderWidth;
+    this.original.totalColumn = this.currentMap.grid.totalColumn;
+    this.original.totalRow = this.currentMap.grid.totalRow;
+    this.original.gridColor = this.currentMap.grid.color;
+    this.original.backgroundColor = this.currentMap.background;
     this.setProperty({
       property: "public.map.isEditing",
       isNotice: true,
@@ -152,9 +234,12 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private commit() {
     const peerId = this.peerId(this.isWait);
-    if (this.storeMapObj.isEditing === peerId) {
+    if (this.storeMap.isEditing === peerId) {
+      const index = this.storeMap.list.findIndex(
+        (mapObj: any) => mapObj.key === this.currentMap.key
+      );
       this.setProperty({
-        property: "public.map",
+        property: `public.map.list.${index}`,
         isNotice: true,
         value: {
           imageTag: this.edit.imageTag,
@@ -189,14 +274,18 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
       isNotice: true,
       value: null,
       logOff: true
+    }).then(() => {
+      this.windowClose("private.display.editMapWindow");
     });
-    this.windowClose("private.display.editMapWindow");
   }
 
   private cancel() {
-    if (this.storeMapObj.isEditing === this.peerId(this.isWait)) {
+    if (this.storeMap.isEditing === this.peerId(this.isWait)) {
+      const index = this.storeMap.list.findIndex(
+        (mapObj: any) => mapObj.key === this.currentMap.key
+      );
       this.setProperty({
-        property: "public.map",
+        property: `public.map.list.${index}`,
         isNotice: true,
         value: {
           imageTag: this.original.imageTag,
@@ -278,7 +367,7 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
     return this.imageListFromTagKey(this.edit.imageTag);
   }
 
-  private get storeMapObj() {
+  private get storeMap() {
     return this.$store.state.public.map;
   }
 

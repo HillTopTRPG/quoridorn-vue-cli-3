@@ -9,77 +9,86 @@
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
           <thead>
-          <tr>
-            <th :style="colStyle(0)">ゲームシステム</th><divider :index="0" prop="customDiceBotTableWindow"/>
-            <th :style="colStyle(1)">コマンド名</th><divider :index="1" prop="customDiceBotTableWindow"/>
-            <th :style="colStyle(2)">表タイトル</th>
-          </tr>
+            <tr>
+              <th :style="colStyle(0)">ゲームシステム</th>
+              <divider :index="0" prop="customDiceBotTableWindow" />
+              <th :style="colStyle(1)">コマンド名</th>
+              <divider :index="1" prop="customDiceBotTableWindow" />
+              <th :style="colStyle(2)">表タイトル</th>
+            </tr>
           </thead>
           <tbody>
-          <!-- ===============================================================
+            <!-- ===============================================================
             コンテンツ
           -->
-          <!-- ユーザが手動で追加したもの -->
-          <tr
-            v-for="customDiceBot in customDiceBotList"
-            :key="customDiceBot.key"
-            @click="selectLine(customDiceBot.key)"
-            :class="{isActive: selectLineKey === customDiceBot.key}"
-          >
+            <!-- ユーザが手動で追加したもの -->
+            <tr
+              v-for="customDiceBot in customDiceBotList"
+              :key="customDiceBot.key"
+              @click="selectLine(customDiceBot.key)"
+              :class="{ isActive: selectLineKey === customDiceBot.key }"
+            >
+              <!-- ゲームシステム -->
+              <td :style="colStyle(0)">
+                {{ getSystemName(customDiceBot.diceBotSystem) }}
+              </td>
+              <divider :index="0" prop="customDiceBotTableWindow" />
 
-            <!-- ゲームシステム -->
-            <td :style="colStyle(0)">
-              {{getSystemName(customDiceBot.diceBotSystem)}}
-            </td>
-            <divider :index="0" prop="customDiceBotTableWindow"/>
+              <!-- コマンド名 -->
+              <td :style="colStyle(1)">
+                {{ customDiceBot.commandName }}
+              </td>
+              <divider :index="1" prop="customDiceBotTableWindow" />
 
-            <!-- コマンド名 -->
-            <td :style="colStyle(1)">
-              {{customDiceBot.commandName}}
-            </td>
-            <divider :index="1" prop="customDiceBotTableWindow"/>
+              <!-- 表タイトル -->
+              <td :style="colStyle(2)">
+                {{ customDiceBot.tableTitle }}
+              </td>
+            </tr>
 
-            <!-- 表タイトル -->
-            <td :style="colStyle(2)">
-              {{customDiceBot.tableTitle}}
-            </td>
-          </tr>
+            <tr class="separator">
+              <td colspan="5"></td>
+            </tr>
+            <tr class="separator">
+              <td colspan="5"></td>
+            </tr>
 
-          <tr class="separator"><td colspan="5"></td></tr>
-          <tr class="separator"><td colspan="5"></td></tr>
+            <!-- 設定ファイルから追加したもの -->
+            <tr
+              v-for="customDiceBot in customDiceBotRoomSysList"
+              :key="customDiceBot.key"
+              @click="selectLine(customDiceBot.key)"
+              :class="{ isActive: selectLineKey === customDiceBot.key }"
+            >
+              <!-- ゲームシステム -->
+              <td :style="colStyle(0)">
+                {{ getSystemName(customDiceBot.diceBotSystem) }}
+              </td>
+              <divider :index="0" prop="customDiceBotTableWindow" />
 
-          <!-- 設定ファイルから追加したもの -->
-          <tr
-            v-for="customDiceBot in customDiceBotRoomSysList"
-            :key="customDiceBot.key"
-            @click="selectLine(customDiceBot.key)"
-            :class="{isActive: selectLineKey === customDiceBot.key}"
-          >
+              <!-- コマンド名 -->
+              <td :style="colStyle(1)">
+                {{ customDiceBot.commandName }}
+              </td>
+              <divider :index="1" prop="customDiceBotTableWindow" />
 
-            <!-- ゲームシステム -->
-            <td :style="colStyle(0)">
-              {{getSystemName(customDiceBot.diceBotSystem)}}
-            </td>
-            <divider :index="0" prop="customDiceBotTableWindow"/>
+              <!-- 表タイトル -->
+              <td :style="colStyle(2)">
+                {{ customDiceBot.tableTitle }}（設定ファイル由来）
+              </td>
+            </tr>
 
-            <!-- コマンド名 -->
-            <td :style="colStyle(1)">
-              {{customDiceBot.commandName}}
-            </td>
-            <divider :index="1" prop="customDiceBotTableWindow"/>
-
-            <!-- 表タイトル -->
-            <td :style="colStyle(2)">
-              {{customDiceBot.tableTitle}}（設定ファイル由来）
-            </td>
-          </tr>
-
-          <!-- 余白部分 -->
-          <tr class="space" :class="{ isOdd: listLengthIsOdd, isEven: !listLengthIsOdd }">
-            <td :style="colStyle(0)"></td><divider :index="0" prop="customDiceBotTableWindow"/>
-            <td :style="colStyle(1)"></td><divider :index="1" prop="customDiceBotTableWindow"/>
-            <td :style="colStyle(2)"></td>
-          </tr>
+            <!-- 余白部分 -->
+            <tr
+              class="space"
+              :class="{ isOdd: !listLengthIsOdd, isEven: listLengthIsOdd }"
+            >
+              <td :style="colStyle(0)"></td>
+              <divider :index="0" prop="customDiceBotTableWindow" />
+              <td :style="colStyle(1)"></td>
+              <divider :index="1" prop="customDiceBotTableWindow" />
+              <td :style="colStyle(2)"></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -116,8 +125,8 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
   @Action("windowClose") private windowClose: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
-  @Action("deleteGroupTargetTab") private deleteGroupTargetTab: any;
   @Action("addListObj") private addListObj: any;
+  @Action("deleteListObj") private deleteListObj: any;
   @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
@@ -162,32 +171,44 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
   }
 
   private copyButtonOnClick(): void {
-    if (this.selectLineKey) {
-      // TODO create
-    } else {
+    if (!this.selectLineKey) {
       alert("コピー対象を選択してください。");
+      return;
     }
+
+    const customDiceBotObj = JSON.parse(
+      JSON.stringify(
+        this.customDiceBotList.filter(
+          (bot: any) => bot.key === this.selectLineKey
+        )[0]
+      )
+    );
+    customDiceBotObj.propName = "customDiceBot";
+    customDiceBotObj.kind = "customDiceBot";
+    this.addListObj(customDiceBotObj);
   }
 
   private changeButtonOnClick(key: string): void {
-    if (this.selectLineKey) {
-      this.setProperty({
-        property: "private.display.editCustomDiceBotTableWindow.objKey",
-        value: this.selectLineKey,
-        logOff: true
-      });
-      this.windowOpen("private.display.editCustomDiceBotTableWindow");
-    } else {
+    if (!this.selectLineKey) {
       alert("変更対象を選択してください。");
+      return;
     }
+
+    this.setProperty({
+      property: "private.display.editCustomDiceBotTableWindow.objKey",
+      value: this.selectLineKey,
+      logOff: true
+    });
+    this.windowOpen("private.display.editCustomDiceBotTableWindow");
   }
 
   private deleteButtonOnClick(): void {
-    if (this.selectLineKey) {
-      this.deleteGroupTargetTab({ key: this.selectLineKey });
-    } else {
+    if (!this.selectLineKey) {
       alert("削除対象を選択してください。");
+      return;
     }
+
+    this.deleteListObj({ key: this.selectLineKey, propName: "customDiceBot" });
   }
 
   private cancelButtonOnClick(): void {
@@ -245,7 +266,7 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
   private get listLengthIsOdd(): boolean {
     return (
       (this.customDiceBotList.length + this.customDiceBotRoomSysList.length) %
-      2 !==
+        2 !==
       0
     );
   }

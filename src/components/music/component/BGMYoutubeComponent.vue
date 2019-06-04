@@ -65,7 +65,7 @@ export default class BGMYoutubeComponent extends Vue {
   @Prop({ type: Number, required: true })
   private fadeOut!: number;
 
-  onMounted() {
+  private onMounted() {
     const result = (<any>window)["youtube"]["registration"](
       this.tag,
       this.url,
@@ -82,28 +82,28 @@ export default class BGMYoutubeComponent extends Vue {
     if (!result) this.$emit("end");
   }
 
-  onDestroyed() {
+  private onDestroyed() {
     (<any>window)["youtube"]["destroyed"](this.tag);
   }
 
-  onReady() {}
+  private onReady() {}
 
-  onPlaying(this: any, duration: number) {
+  private onPlaying(this: any, duration: number) {
     const bgmCoreComponent: BGMCoreComponent = this.$refs.core;
     bgmCoreComponent.setDuration(duration);
     bgmCoreComponent.play();
   }
 
-  onError(event: any) {
+  private onError(event: any) {
     window.console.error(event);
   }
 
-  onPaused(this: any) {
+  private onPaused(this: any) {
     const bgmCoreComponent: BGMCoreComponent = this.$refs.core;
     bgmCoreComponent.pause();
   }
 
-  onReject() {
+  private onReject() {
     window.console.error("youtube - onReject => reload");
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
@@ -112,31 +112,34 @@ export default class BGMYoutubeComponent extends Vue {
     });
   }
 
-  onMute(mute: boolean) {
+  private onMute(mute: boolean) {
     (<any>window)["youtube"][mute ? "mute" : "unMute"](this.tag);
   }
-  onVolume(volume: number) {
+
+  private onVolume(volume: number) {
     (<any>window)["youtube"]["setVolume"](this.tag, volume * 100);
   }
-  onPlay() {
+
+  private onPlay() {
     (<any>window)["youtube"]["play"](this.tag);
   }
-  onPause() {
+
+  private onPause() {
     (<any>window)["youtube"]["pause"](this.tag);
   }
-  onSeekTo(time: any) {
+
+  private onSeekTo(time: any) {
     (<any>window)["youtube"]["seekTo"](this.tag, time, true);
   }
-  onEnd() {
+
+  private onEnd() {
     this.$emit("end");
   }
-  onTimeUpdate(time: number) {
+
+  private onTimeUpdate(time: number) {
     const bgmCoreComponent: BGMCoreComponent = this.$refs
       .core! as BGMCoreComponent;
     bgmCoreComponent.timeUpdate(time);
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style></style>

@@ -120,5 +120,5 @@ export default class BGMFileComponent extends Vue {
     );
     bgmCoreComponent.timeUpdate(this.jukeboxAudio.currentTime);
   }
-}</script
->()
+}
+</script>

@@ -26,14 +26,17 @@
        ! チャットログ
        !--------------->
       <ul id="chatLog" class="selectable" @wheel.stop>
-        <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
+        <li
+          v-for="(chatLog, index) in chatLogList"
+          v-html="chatLog.viewHtml"
+          :key="index"
+        ></li>
       </ul>
 
       <!----------------
        ! 操作盤
        !--------------->
       <label class="oneLine dep" @contextmenu.prevent>
-
         <!-- 発言者選択 -->
         <span class="label">名前(！)</span>
         <ctrl-select
@@ -41,7 +44,13 @@
           :value="chatActorKey"
           @input="updateActorKey"
           title=""
-          :optionInfoList="getSelfActors.map(actor => ({ key: actor.key, value: actor.key, text: getViewName(actor.key) }))"
+          :optionInfoList="
+            getSelfActors.map(actor => ({
+              key: actor.key,
+              value: actor.key,
+              text: getViewName(actor.key)
+            }))
+          "
         />
 
         <!-- ステータス選択 -->
@@ -150,14 +159,25 @@
             :activeChatTab="chatTarget"
             :hoverChatTab="hoverChatTargetTab"
             :isVertical="isTargetTabVertical"
-            :textFunc="info => `${info.name}${otherMatcherObj(info) ? `(${getViewName(otherMatcherObj(info).key)})` : ''}`"
+            :textFunc="
+              info =>
+                `${info.name}${
+                  otherMatcherObj(info)
+                    ? `(${getViewName(otherMatcherObj(info).key)})`
+                    : ''
+                }`
+            "
             @onSelect="groupTargetTabOnSelect"
             @onHover="groupTargetTabOnHover"
             @editTab="targetTabAddButtonOnClick"
           >
             <!-- 「」付与チェックボックス -->
             <label class="bracketOption">
-              <input type="checkbox" v-model="addBrackets" :tabindex="chatTabs.length + chatTabs.length + 15" />
+              <input
+                type="checkbox"
+                v-model="addBrackets"
+                :tabindex="chatTabs.length + chatTabs.length + 15"
+              />
               発言時に「」を付与
             </label>
           </tabs-component>
@@ -165,64 +185,194 @@
           <!----------------
            ! チャットオプション（送信者）
            !--------------->
-          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'from'" @contextmenu.prevent>
-            <span>送信者{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
+          <div
+            class="chatOptionSelector dep"
+            v-if="chatOptionSelectMode === 'from'"
+            @contextmenu.prevent
+          >
+            <span
+              >送信者{{
+                chatOptionPageMaxNum > 1
+                  ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})`
+                  : ""
+              }}</span
+            >
             <ul>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
-              <li v-for="actor in chatOptionPagingList"
-                  :key="actor.name"
-                  :class="{selected: actor.key === chatActorKey && actor.statusName === statusName}"
-                  tabindex="-1"
-              >{{actor.name}}</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1"
+              >
+                [末尾へ]
+              </li>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1"
+              >
+                [前へ]
+              </li>
+              <li
+                v-for="actor in chatOptionPagingList"
+                :key="actor.name"
+                :class="{
+                  selected:
+                    actor.key === chatActorKey &&
+                    actor.statusName === statusName
+                }"
+                tabindex="-1"
+              >
+                {{ actor.name }}
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum !== chatOptionPageMaxNum
+                "
+              >
+                [次へ]
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum === chatOptionPageMaxNum
+                "
+              >
+                [先頭へ]
+              </li>
             </ul>
           </div>
 
           <!----------------
            ! チャットオプション（対象）
            !--------------->
-          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'target'" @contextmenu.prevent>
-            <span>送信先{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
+          <div
+            class="chatOptionSelector dep"
+            v-if="chatOptionSelectMode === 'target'"
+            @contextmenu.prevent
+          >
+            <span
+              >送信先{{
+                chatOptionPageMaxNum > 1
+                  ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})`
+                  : ""
+              }}</span
+            >
             <ul>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
-              <li v-for="target in chatOptionPagingList"
-                  :key="target.key"
-                  :class="{selected: chatTarget === target.key}"
-                  tabindex="-1"
-              >{{getViewName(target.key)}}</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1"
+              >
+                [末尾へ]
+              </li>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1"
+              >
+                [前へ]
+              </li>
+              <li
+                v-for="target in chatOptionPagingList"
+                :key="target.key"
+                :class="{ selected: chatTarget === target.key }"
+                tabindex="-1"
+              >
+                {{ getViewName(target.key) }}
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum !== chatOptionPageMaxNum
+                "
+              >
+                [次へ]
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum === chatOptionPageMaxNum
+                "
+              >
+                [先頭へ]
+              </li>
             </ul>
           </div>
 
           <!----------------
            ! チャットオプション（タブ）
            !--------------->
-          <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'tab'" @contextmenu.prevent>
-            <span>出力先のタブ{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
+          <div
+            class="chatOptionSelector dep"
+            v-if="chatOptionSelectMode === 'tab'"
+            @contextmenu.prevent
+          >
+            <span
+              >出力先のタブ{{
+                chatOptionPageMaxNum > 1
+                  ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})`
+                  : ""
+              }}</span
+            >
             <ul>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1"
+              >
+                [末尾へ]
+              </li>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1"
+              >
+                [前へ]
+              </li>
               <li
                 v-for="tab in chatOptionPagingList"
                 :key="tab.key"
-                :class="{selected: outputTab === tab.key}"
+                :class="{ selected: outputTab === tab.key }"
                 tabindex="-1"
-              >{{tab.name}}</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
-              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
+              >
+                {{ tab.name }}
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum !== chatOptionPageMaxNum
+                "
+              >
+                [次へ]
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum === chatOptionPageMaxNum
+                "
+              >
+                [先頭へ]
+              </li>
             </ul>
           </div>
 
           <!-- チャット入力エリア -->
           <label class="chatInputArea">
-            <span class="chatOption" @click="chatOptionOnClick" @contextmenu.prevent>
-              <span class="emphasis">! {{getViewName(chatActorKey)}}-{{statusName}}</span>
-              <span :class="{emphasis: chatTarget !== 'groupTargetTab-0'}">> {{groupTargetName}}</span>
-              <span :class="{emphasis: outputTab !== null}"># {{outputTab ? getTabName(outputTab) : "[選択中]"}}</span>
+            <span
+              class="chatOption"
+              @click="chatOptionOnClick"
+              @contextmenu.prevent
+            >
+              <span class="emphasis"
+                >! {{ getViewName(chatActorKey) }}-{{ statusName }}</span
+              >
+              <span :class="{ emphasis: chatTarget !== 'groupTargetTab-0' }"
+                >> {{ groupTargetName }}</span
+              >
+              <span :class="{ emphasis: outputTab !== null }"
+                ># {{ outputTab ? getTabName(outputTab) : "[選択中]" }}</span
+              >
             </span>
             <!----------------
              ! 入力欄
@@ -242,22 +392,23 @@
             ></textarea>
           </label>
         </div>
-        <ctrl-button :tabindex="chatTabs.length + chatTabs.length + 17" @contextmenu.prevent>送信</ctrl-button>
+        <ctrl-button
+          :tabindex="chatTabs.length + chatTabs.length + 17"
+          @contextmenu.prevent
+          >送信</ctrl-button
+        >
       </div>
       <!----------------
        ! 入力者表示
        !--------------->
       <div class="inputtingArea dep" @contextmenu.prevent>
-        <div
-          v-for="name in inputtingPeerIdList"
-          :key="name"
-        >
+        <div v-for="name in inputtingPeerIdList" :key="name">
           <img
             alt=""
-            v-show="inputtingPeerIdList.length>0"
+            v-show="inputtingPeerIdList.length > 0"
             :src="require('../../assets/inputting.gif')"
-          >
-          {{createInputtingMsg(name)}}
+          />
+          {{ createInputtingMsg(name) }}
         </div>
       </div>
     </div>
@@ -754,7 +905,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       }
       this.sendBcdiceServer({
         system: this.currentDiceBotSystem,
-        command: this.currentMessage
+        command: commandStr
       })
         .then((json: any) => {
           let isDiceRoll: boolean = false;
@@ -858,9 +1009,13 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     // -------------------
     // 独自ダイスBot処理
     // -------------------
-    const commandStr = this.currentMessage
+    const commandStr = text
       .split(new RegExp("\\s+"))[0]
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, s =>
+        String.fromCharCode(s.charCodeAt(0) - 65248)
+      )
       .toLowerCase();
+    window.console.log("commandStr：", commandStr);
     const customDiceBotObj: any = this.customDiceBotList.filter(
       (customDiceBotObj: any) =>
         customDiceBotObj.commandName.toLowerCase() === commandStr
@@ -991,7 +1146,13 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         customDiceBotList.forEach((customDiceBot: any, index: number) => {
           customDiceBot.key = `customDiceBotRoomSys-${index}`;
           customDiceBot.diceBotSystem = roomSystem;
-          customDiceBot.tableContents = customDiceBot.tableContents.join("\n");
+          const tableContents: any = customDiceBot!.tableContents;
+          const tableContentsArr = [];
+          for (const prop in tableContents) {
+            if (!tableContents.hasOwnProperty(prop)) continue;
+            tableContentsArr.push(`${prop}:${tableContents[prop]}`);
+          }
+          customDiceBot.tableContents = tableContentsArr.join("\n");
         });
         this.setProperty({
           property: "public.customDiceBot.roomSysList",
@@ -1001,6 +1162,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         });
       })
       .catch((err: any) => {
+        window.console.log(err);
         // 初期化
         this.setProperty({
           property: "public.customDiceBot.roomSysList",

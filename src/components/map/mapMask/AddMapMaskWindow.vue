@@ -9,32 +9,44 @@
       <tbody>
         <tr>
           <th>文字：</th>
-          <td><input type="text" v-model="name"></td>
+          <td><input type="text" v-model="name" /></td>
           <td class="mapMaskGrid" rowspan="6">
-            <div :style="mapMaskStyle" @dragstart="dragStart"
-                 @mousedown.stop="windowActive({ property: 'private.display.addMapMaskWindow', isClose: false })"
-                 class="mapMask" draggable="true">{{name}}
+            <div
+              :style="mapMaskStyle"
+              @dragstart="dragStart"
+              @mousedown.stop="
+                windowActive({
+                  property: 'private.display.addMapMaskWindow',
+                  isClose: false
+                })
+              "
+              class="mapMask"
+              draggable="true"
+            >
+              {{ name }}
             </div>
           </td>
         </tr>
         <tr>
           <th>色：</th>
-          <td><input type="color" v-model="color"></td>
+          <td><input type="color" v-model="color" /></td>
         </tr>
         <tr>
           <th>高さ：</th>
-          <td><input type="number" min="1" v-model="height"></td>
+          <td><input type="number" min="1" v-model="height" /></td>
         </tr>
         <tr>
           <th>幅：</th>
-          <td><input type="number" min="1" v-model="width"></td>
+          <td><input type="number" min="1" v-model="width" /></td>
         </tr>
         <tr>
           <th>透明度：</th>
-          <td><input type="range" v-model="transparency"></td>
+          <td><input type="range" v-model="transparency" /></td>
         </tr>
         <tr>
-          <td colspan="2" class="multi"><label><input type="checkbox" v-model="isMulti">複数作成</label></td>
+          <td colspan="2" class="multi">
+            <label><input type="checkbox" v-model="isMulti" />複数作成</label>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -57,6 +69,7 @@ export default class AddMapMaskWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowActive") private windowActive: any;
   @Action("windowClose") private windowClose: any;
   @Getter("parseColor") private parseColor: any;
+  @Getter("currentMap") private currentMap: any;
 
   private transparency: number = 0;
   private width: number = 1;
@@ -111,7 +124,7 @@ export default class AddMapMaskWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private get gridSize() {
-    return this.$store.state.public.map.grid.size;
+    return this.currentMap.grid.size;
   }
 }
 </script>

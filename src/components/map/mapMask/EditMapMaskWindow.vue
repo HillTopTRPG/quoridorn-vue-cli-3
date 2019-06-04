@@ -1,124 +1,147 @@
 <template>
-  <window-frame titleText="マスク変更" display-property="private.display.editMapMaskWindow" align="center" fixSize="285, 198" @open="initWindow" @reset="initWindow">
+  <window-frame
+    titleText="マスク変更"
+    display-property="private.display.editMapMaskWindow"
+    align="center"
+    fixSize="285, 198"
+    @open="initWindow"
+    @reset="initWindow"
+  >
     <table>
       <tbody>
         <tr>
           <th>文字：</th>
-          <td><input type="text" v-model="name"></td>
-          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" :style="mapMaskStyle">{{name}}</div></td>
+          <td><input type="text" v-model="name" /></td>
+          <td rowspan="6" class="mapMaskGrid">
+            <div class="mapMask" :style="mapMaskStyle">{{ name }}</div>
+          </td>
         </tr>
         <tr>
           <th>色：</th>
-          <td><input type="color" v-model="color"></td>
+          <td><input type="color" v-model="color" /></td>
         </tr>
         <tr>
           <th>高さ：</th>
-          <td><input type="number" min="1" v-model="height"></td>
+          <td><input type="number" min="1" v-model="height" /></td>
         </tr>
         <tr>
           <th>幅：</th>
-          <td><input type="number" min="1" v-model="width"></td>
+          <td><input type="number" min="1" v-model="width" /></td>
         </tr>
         <tr>
           <th>透明度：</th>
-          <td><input type="range" v-model="transparency"></td>
+          <td><input type="range" v-model="transparency" /></td>
         </tr>
         <tr>
-          <td colspan="2" class="multi"><ctrl-button @click="commitEdit">編集</ctrl-button><ctrl-button @click="cancelEdit">キャンセル</ctrl-button></td>
+          <td colspan="2" class="multi">
+            <ctrl-button @click="commitEdit">編集</ctrl-button
+            ><ctrl-button @click="cancelEdit">キャンセル</ctrl-button>
+          </td>
         </tr>
       </tbody>
     </table>
   </window-frame>
 </template>
 
-<script>
-import CtrlButton from "../../parts/CtrlButton";
-import WindowFrame from "../../WindowFrame";
-import WindowMixin from "../../WindowMixin";
+<script lang="ts">
+import CtrlButton from "../../parts/CtrlButton.vue";
+import WindowFrame from "../../WindowFrame.vue";
+import WindowMixin from "../../WindowMixin.vue";
 
-import { mapState, mapActions, mapGetters } from "vuex";
+import { Action, Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
-export default {
-  name: "editMapMaskWindow",
-  mixins: [WindowMixin],
+@Component({
   components: {
     CtrlButton,
     WindowFrame
-  },
-  data() {
-    return {
-      name: "",
-      width: 1,
-      height: 1,
-      color: "#000000",
-      transparency: 0
-    };
-  },
-  methods: {
-    ...mapActions(["windowClose", "changeListObj"]),
-    commitEdit() {
-      this.changeListObj({
-        key: this.key,
-        name: this.name,
-        columns: this.width,
-        rows: this.height,
-        color: this.rgba,
-        fontColor: this.fontColor,
-        isNotice: true
-      });
-      this.windowClose("private.display.editMapMaskWindow");
-    },
-    cancelEdit() {
-      this.windowClose("private.display.editMapMaskWindow");
-    },
-    initWindow() {
-      // window.console.log(`initWindow`)
-      let mapMaskObj = this.getObj(this.key);
-      this.name = mapMaskObj.name;
-      this.width = mapMaskObj.columns;
-      this.height = mapMaskObj.rows;
-      const colorObj = this.parseColor(mapMaskObj.color);
-      this.color = colorObj.getColorCode();
-      this.transparency = 100 - Math.floor(colorObj.a * 100);
-      window.console.log(
-        `  [methods] init window => EditMapMask:{name:"${this.name}", color:${
-          this.color
-        }, size:(${this.width}, ${this.height}), transparency:${
-          this.transparency
-        }}`
-      );
+  }
+})
+export default class EditMapMaskWindow extends Mixins<WindowMixin>(
+  WindowMixin
+) {
+  @Action("changeListObj") private changeListObj: any;
+  @Action("windowClose") private windowClose: any;
+  @Getter("parseColor") private parseColor: any;
+  @Getter("getObj") private getObj: any;
+  @Getter("currentMap") private currentMap: any;
+
+  private name: string = "";
+  private width: number = 1;
+  private height: number = 1;
+  private color: string = "#000000";
+  private transparency: number = 0;
+
+  private commitEdit() {
+    this.changeListObj({
+      key: this.key,
+      name: this.name,
+      columns: this.width,
+      rows: this.height,
+      color: this.rgba,
+      fontColor: this.fontColor,
+      isNotice: true
+    });
+    this.windowClose("private.display.editMapMaskWindow");
+  }
+
+  private cancelEdit() {
+    this.windowClose("private.display.editMapMaskWindow");
+  }
+
+  private initWindow() {
+    // window.console.log(`initWindow`)
+    let mapMaskObj = this.getObj(this.key);
+    this.name = mapMaskObj.name;
+    this.width = mapMaskObj.columns;
+    this.height = mapMaskObj.rows;
+    const colorObj = this.parseColor(mapMaskObj.color);
+    this.color = colorObj.getColorCode();
+    this.transparency = 100 - Math.floor(colorObj.a * 100);
+    window.console.log(
+      `  [methods] init window => EditMapMask:{name:"${this.name}", color:${
+        this.color
+      }, size:(${this.width}, ${this.height}), transparency:${
+        this.transparency
+      }}`
+    );
+  }
+
+  private get key() {
+    return this.$store.state.private.display["editMapMaskWindow"].key;
+  }
+
+  private get mapMaskStyle() {
+    let width = this.width * this.gridSize;
+    let height = this.height * this.gridSize;
+    let zoom = 1;
+    if (Math.max(width, height) > 160) {
+      zoom = 160 / Math.max(width, height);
+      width *= zoom;
+      height *= zoom;
     }
-  },
-  computed: mapState({
-    ...mapGetters(["parseColor", "getObj"]),
-    key: state => state.private.display["editMapMaskWindow"].key,
-    mapMaskStyle() {
-      let width = this.width * this.gridSize;
-      let height = this.height * this.gridSize;
-      let zoom = 1;
-      if (Math.max(width, height) > 160) {
-        zoom = 160 / Math.max(width, height);
-        width *= zoom;
-        height *= zoom;
-      }
-      return {
-        width: width + "px",
-        height: height + "px",
-        "background-color": this.rgba,
-        color: this.fontColor
-      };
-    },
-    rgba() {
-      const colorObj = this.parseColor(this.color);
-      colorObj.a = (100 - this.transparency) / 100;
-      return colorObj.getRGBA();
-    },
-    fontColor() {
-      return this.parseColor(this.color).getColorCodeReverse();
-    },
-    gridSize: state => state.public.map.grid.size
-  })
-};
+    return {
+      width: width + "px",
+      height: height + "px",
+      "background-color": this.rgba,
+      color: this.fontColor
+    };
+  }
+
+  private get rgba() {
+    const colorObj = this.parseColor(this.color);
+    colorObj.a = (100 - this.transparency) / 100;
+    return colorObj.getRGBA();
+  }
+
+  private get fontColor() {
+    return this.parseColor(this.color).getColorCodeReverse();
+  }
+
+  private get gridSize() {
+    return this.currentMap.grid.size;
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

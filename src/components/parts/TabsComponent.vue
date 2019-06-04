@@ -8,10 +8,7 @@
       :tabindex="tabIndex + index + 1"
       :class="getTabClasses(tabObj, index)"
     >
-      <div
-        class="corner-container"
-        v-if="isVertical"
-      >
+      <div class="corner-container" v-if="isVertical">
         <div
           class="corner"
           @mousedown.prevent="chatTabOnSelect(tabObj.key)"
@@ -25,17 +22,20 @@
         @mousedown.prevent="chatTabOnSelect(tabObj.key)"
         @mouseenter.prevent="chatTabOnHover(tabObj.key)"
         @mouseleave.prevent="chatTabOnHover('')"
-      ><span>{{textFunc(tabObj)}}</span></div>
+      >
+        <span>{{ textFunc(tabObj) }}</span>
+      </div>
     </div>
 
-    <slot/>
+    <slot />
 
     <!-- タブ設定ボタン -->
     <span
       class="tab addButton"
       @click="tabAddButtonOnClick"
       :tabindex="tabIndex + chatTabs.length + 1"
-    ><span class="icon-cog"></span></span>
+      ><span class="icon-cog"></span
+    ></span>
   </div>
 </template>
 
@@ -221,6 +221,7 @@ $hover-border-color: #0092ed;
         z-index: 9;
         width: auto;
         border-color: $hover-border-color;
+        border-bottom-color: transparent;
       }
     }
 

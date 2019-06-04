@@ -1,11 +1,13 @@
 <template>
   <canvas
     id="map-canvas"
-    :class="{ isReverse : isReverse }"
+    :class="{ isReverse: isReverse }"
     :width="canvasSize.w"
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
-    @contextmenu.prevent></canvas>
+    @contextmenu.prevent
+  >
+  </canvas>
 </template>
 
 <script lang="ts">

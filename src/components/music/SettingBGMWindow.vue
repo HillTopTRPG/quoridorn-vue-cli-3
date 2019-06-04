@@ -1,5 +1,11 @@
 <template>
-  <window-frame titleText="BGM設定画面" display-property="private.display.settingBGMWindow" align="center" fixSize="394, 334" @open="initWindow">
+  <window-frame
+    titleText="BGM設定画面"
+    display-property="private.display.settingBGMWindow"
+    align="center"
+    fixSize="394, 334"
+    @open="initWindow"
+  >
     <div class="contents" @contextmenu.prevent>
       <div class="playOperationArea">
         <ctrl-button @click="doPlay">送信</ctrl-button>
@@ -10,13 +16,20 @@
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
           <thead>
             <tr>
-              <th :style="colStyle(0)">連動</th><divider :index="0" prop="settingBGMWindow"/>
-              <th :style="colStyle(1)">タグ</th><divider :index="1" prop="settingBGMWindow"/>
-              <th :style="colStyle(2)">種別</th><divider :index="2" prop="settingBGMWindow"/>
-              <th :style="colStyle(3)">タイトル</th><divider :index="3" prop="settingBGMWindow"/>
-              <th :style="colStyle(4)">時間</th><divider :index="4" prop="settingBGMWindow"/>
-              <th :style="colStyle(5)">繰</th><divider :index="5" prop="settingBGMWindow"/>
-              <th :style="colStyle(6)">音量</th><divider :index="6" prop="settingBGMWindow"/>
+              <th :style="colStyle(0)">連動</th>
+              <divider :index="0" prop="settingBGMWindow" />
+              <th :style="colStyle(1)">タグ</th>
+              <divider :index="1" prop="settingBGMWindow" />
+              <th :style="colStyle(2)">種別</th>
+              <divider :index="2" prop="settingBGMWindow" />
+              <th :style="colStyle(3)">タイトル</th>
+              <divider :index="3" prop="settingBGMWindow" />
+              <th :style="colStyle(4)">時間</th>
+              <divider :index="4" prop="settingBGMWindow" />
+              <th :style="colStyle(5)">繰</th>
+              <divider :index="5" prop="settingBGMWindow" />
+              <th :style="colStyle(6)">音量</th>
+              <divider :index="6" prop="settingBGMWindow" />
               <th :style="colStyle(7)">fade</th>
             </tr>
           </thead>
@@ -24,34 +37,69 @@
             <!-- ===============================================================
               コンテンツ
             -->
-            <tr v-for="bgmObj in bgmList"
+            <tr
+              v-for="bgmObj in bgmList"
               :key="bgmObj.key"
               @click="selectLine(bgmObj.key)"
               @dblclick="playBGM()"
-              :class="{isActive: selectLineKey === bgmObj.key}"
+              :class="{ isActive: selectLineKey === bgmObj.key }"
             >
-              <td :style="colStyle(0)" :title="linkageStr(bgmObj)">{{bgmObj.chatLinkage > 0 ? 'あり' : 'なし'}}</td><divider :index="0" prop="settingBGMWindow"/>
-              <td :style="colStyle(1)">{{bgmObj.tag}}</td><divider :index="1" prop="settingBGMWindow"/>
+              <td :style="colStyle(0)" :title="linkageStr(bgmObj)">
+                {{ bgmObj.chatLinkage > 0 ? "あり" : "なし" }}
+              </td>
+              <divider :index="0" prop="settingBGMWindow" />
+              <td :style="colStyle(1)">{{ bgmObj.tag }}</td>
+              <divider :index="1" prop="settingBGMWindow" />
               <td :style="colStyle(2)">
                 <i class="icon-stop2" v-if="!bgmObj.url"></i>
                 <i class="icon-youtube2" v-if="isYoutube(bgmObj.url)"></i>
                 <i class="icon-dropbox" v-if="isDropBox(bgmObj.url)"></i>
-                <i class="icon-file-music" v-if="bgmObj.url && !isYoutube(bgmObj.url) && !isDropBox(bgmObj.url)"></i>
-              </td><divider :index="2" prop="settingBGMWindow"/>
-              <td :style="colStyle(3)" class="selectable">{{bgmObj.title}}</td><divider :index="3" prop="settingBGMWindow"/>
-              <td :style="colStyle(4)">{{bgmObj.url ? convertSecond(bgmObj.start, bgmObj.end) : '-'}}</td><divider :index="4" prop="settingBGMWindow"/>
-              <td :style="colStyle(5)"><i class="icon-loop" v-if="bgmObj.url && bgmObj.isLoop"></i>{{bgmObj.url && bgmObj.isLoop ? '' : '-'}}</td><divider :index="5" prop="settingBGMWindow"/>
-              <td :style="colStyle(6)">{{bgmObj.url ? bgmObj.volume * 100 : '-'}}</td><divider :index="6" prop="settingBGMWindow"/>
-              <td :style="colStyle(7)" :title="fadeTitle(bgmObj)">{{bgmObj.url ? fadeStr(bgmObj) : '-'}}</td>
+                <i
+                  class="icon-file-music"
+                  v-if="
+                    bgmObj.url &&
+                      !isYoutube(bgmObj.url) &&
+                      !isDropBox(bgmObj.url)
+                  "
+                ></i>
+              </td>
+              <divider :index="2" prop="settingBGMWindow" />
+              <td :style="colStyle(3)" class="selectable">
+                {{ bgmObj.title }}
+              </td>
+              <divider :index="3" prop="settingBGMWindow" />
+              <td :style="colStyle(4)">
+                {{ bgmObj.url ? convertSecond(bgmObj.start, bgmObj.end) : "-" }}
+              </td>
+              <divider :index="4" prop="settingBGMWindow" />
+              <td :style="colStyle(5)">
+                <i class="icon-loop" v-if="bgmObj.url && bgmObj.isLoop"></i
+                >{{ bgmObj.url && bgmObj.isLoop ? "" : "-" }}
+              </td>
+              <divider :index="5" prop="settingBGMWindow" />
+              <td :style="colStyle(6)">
+                {{ bgmObj.url ? bgmObj.volume * 100 : "-" }}
+              </td>
+              <divider :index="6" prop="settingBGMWindow" />
+              <td :style="colStyle(7)" :title="fadeTitle(bgmObj)">
+                {{ bgmObj.url ? fadeStr(bgmObj) : "-" }}
+              </td>
             </tr>
             <tr class="space">
-              <td :style="colStyle(0)"></td><divider :index="0" prop="settingBGMWindow"/>
-              <td :style="colStyle(1)"></td><divider :index="1" prop="settingBGMWindow"/>
-              <td :style="colStyle(2)"></td><divider :index="2" prop="settingBGMWindow"/>
-              <td :style="colStyle(3)"></td><divider :index="3" prop="settingBGMWindow"/>
-              <td :style="colStyle(4)"></td><divider :index="4" prop="settingBGMWindow"/>
-              <td :style="colStyle(5)"></td><divider :index="5" prop="settingBGMWindow"/>
-              <td :style="colStyle(6)"></td><divider :index="6" prop="settingBGMWindow"/>
+              <td :style="colStyle(0)"></td>
+              <divider :index="0" prop="settingBGMWindow" />
+              <td :style="colStyle(1)"></td>
+              <divider :index="1" prop="settingBGMWindow" />
+              <td :style="colStyle(2)"></td>
+              <divider :index="2" prop="settingBGMWindow" />
+              <td :style="colStyle(3)"></td>
+              <divider :index="3" prop="settingBGMWindow" />
+              <td :style="colStyle(4)"></td>
+              <divider :index="4" prop="settingBGMWindow" />
+              <td :style="colStyle(5)"></td>
+              <divider :index="5" prop="settingBGMWindow" />
+              <td :style="colStyle(6)"></td>
+              <divider :index="6" prop="settingBGMWindow" />
               <td :style="colStyle(7)"></td>
             </tr>
           </tbody>
@@ -141,9 +189,6 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
         )[0]
       )
     );
-    // const bgmObj = this.bgmList.filter(
-    //   bgmObj => bgmObj.key === this.selectLineKey
-    // )[0];
     bgmObj.propName = "bgm";
     bgmObj.kind = "bgm";
     this.addListObj(bgmObj);

@@ -1,5 +1,10 @@
 <template>
-  <spec-frame property="chatWindowSpec" label-str="チャット画面" lastVersion="1.0.0b5" :isSpecFixed="true">
+  <spec-frame
+    property="chatWindowSpec"
+    label-str="チャット画面"
+    lastVersion="1.0.0b12"
+    :isSpecFixed="true"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -23,11 +28,14 @@
           <li>秘匿チャット</li>
           <li>グループチャット</li>
           <li>
-            簡易コマンド<br>一覧に一致する名前の入力で絞り込みが可能<br>ESCキー押下で選択キャンセル
+            簡易コマンド<br />一覧に一致する名前の入力で絞り込みが可能<br />ESCキー押下で選択キャンセル
             <ol>
-              <li>「!」または「！」<br>→ 発言者の選択</li>
-              <li>「>」または「＞」<br>→ グループチャットまたは秘匿チャット先(個人)の選択</li>
-              <li>「#」または「＃」<br>→ 出力先タブの選択</li>
+              <li>「!」または「！」<br />→ 発言者の選択</li>
+              <li>
+                「>」または「＞」<br />→
+                グループチャットまたは秘匿チャット先(個人)の選択
+              </li>
+              <li>「#」または「＃」<br />→ 出力先タブの選択</li>
             </ol>
           </li>
           <li>使用するダイスボットの選択</li>
@@ -55,7 +63,10 @@
           <li>
             ログ保存
             <ol>
-              <li>HTML形式<br>→ 出力されたHTML上で様々な見え方の制御ができるようにする。</li>
+              <li>
+                HTML形式<br />→
+                出力されたHTML上で様々な見え方の制御ができるようにする。
+              </li>
               <li>テキスト形式</li>
               <li>json形式</li>
             </ol>
@@ -106,15 +117,32 @@
      ! 実装しない機能
      !--------------------->
     <spec-item class-str="unSupport" label-str="実装しない機能">
-      <li>機能メニューの「音音声」<br>→ マスターボリューム調整機能で代用可能</li>
-      <li>簡易ファイルアップローダー<br>→ 不要と判断</li>
-      <li>テキスト読み上げ<br>→ 実装方法がすぐに思いつかない。どうしても欲しいという意見があれば考える</li>
+      <li>
+        機能メニューの「音音声」<br />→ マスターボリューム調整機能で代用可能
+      </li>
+      <li>簡易ファイルアップローダー<br />→ 不要と判断</li>
+      <li>
+        テキスト読み上げ<br />→
+        実装方法がすぐに思いつかない。どうしても欲しいという意見があれば考える
+      </li>
     </spec-item>
     <!----------------------
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
+      <li>
+        <spec-link property="customDiceBotTableWindowSpec" title-str=""
+          >ダイスボット用表管理</spec-link
+        >
+      </li>
+      <li>
+        <spec-link property="settingBgmWindowSpec" title-str=""
+          >BGM設定画面</spec-link
+        >
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -125,5 +153,4 @@ export default { mixins: [SpecMixin] };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>
