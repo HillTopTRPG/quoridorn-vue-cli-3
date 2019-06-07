@@ -9,8 +9,8 @@
       :disabled="disabled"
       @change.stop.prevent="fileOnChange"
       multiple
-    >
-    <span class="front-area"><slot/></span>
+    />
+    <span class="front-area"><slot /></span>
     <span class="background-area"></span>
   </label>
 </template>

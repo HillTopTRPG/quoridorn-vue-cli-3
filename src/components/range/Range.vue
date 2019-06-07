@@ -1,9 +1,10 @@
 <template>
-  <canvas class='range'
-    :style='rangeStyle'
-    :width='width'
-    :height='height'
-    ref='canvas'
+  <canvas
+    class="range"
+    :style="rangeStyle"
+    :width="width"
+    :height="height"
+    ref="canvas"
     @contextmenu.prevent
   ></canvas>
 </template>

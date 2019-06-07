@@ -1,5 +1,10 @@
 <template>
-  <spec-frame property="import" label-str="ロード機能" lastVersion="1.0.0b5" :isSpecFixed="false">
+  <spec-frame
+    property="import"
+    label-str="ロード機能"
+    lastVersion="1.0.0b5"
+    :isSpecFixed="false"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -11,17 +16,21 @@
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>読み込ませたファイルのどのデータを使うかを選択できるようにする</li>
+      <li>
+        読み込ませたファイルのどのデータを使うかを選択できるようにする
+      </li>
       <li>
         データの取り込み方法は以下の通り
         <ol>
           <li>
             差分取り込み
             <ol class="importTypeItem">
-              <li>取り込み対象情報と完全に一致するデータが無ければ、追加する形で取り込む</li>
               <li>
-                「画像を参照するデータ」を一緒にロードした場合、その「参照画像ID」を適切に設定。<br>
-                画像を取り込んでいた場合は新しく割り振られた画像IDを設定。<br>
+                取り込み対象情報と完全に一致するデータが無ければ、追加する形で取り込む
+              </li>
+              <li>
+                「画像を参照するデータ」を一緒にロードした場合、その「参照画像ID」を適切に設定。<br />
+                画像を取り込んでいた場合は新しく割り振られた画像IDを設定。<br />
                 既存に全く同じデータが存在して取り込まなかった場合は既存の画面IDを設定。
               </li>
             </ol>
@@ -51,7 +60,9 @@
                 <li>そのキャラのイニシアティブ表の情報</li>
               </ol>
             </div>
-            <div class="importType"><label>取り込み方法：</label><span>差分取り込み</span></div>
+            <div class="importType">
+              <label>取り込み方法：</label><span>差分取り込み</span>
+            </div>
           </li>
           <li>
             <div class="kind">カード</div>
@@ -62,7 +73,9 @@
                 <li>各カードの所在と順序と状態(裏表など)</li>
               </ol>
             </div>
-            <div class="importType"><label>取り込み方法：</label><span>差分取り込み</span></div>
+            <div class="importType">
+              <label>取り込み方法：</label><span>差分取り込み</span>
+            </div>
           </li>
           <li>
             <div class="kind">BGM</div>
@@ -73,7 +86,9 @@
                 <li>再生中のBGM情報</li>
               </ol>
             </div>
-            <div class="importType"><label>取り込み方法：</label><span>差分取り込み</span></div>
+            <div class="importType">
+              <label>取り込み方法：</label><span>差分取り込み</span>
+            </div>
           </li>
           <li>
             <div class="kind">カットイン</div>
@@ -84,7 +99,9 @@
                 <li>再生中のカットイン情報</li>
               </ol>
             </div>
-            <div class="importType"><label>取り込み方法：</label><span>差分取り込み</span></div>
+            <div class="importType">
+              <label>取り込み方法：</label><span>差分取り込み</span>
+            </div>
           </li>
           <li>
             <div class="kind">範囲</div>
@@ -112,8 +129,12 @@
           </li>
           <li>
             <div class="kind">ダイスシンボル</div>
-            <div class="kindItem"><label>情報項目：</label><span>当該機能で使う情報すべて。</span></div>
-            <div class="importType"><label>取り込み方法：</label><span>差分取り込み</span></div>
+            <div class="kindItem">
+              <label>情報項目：</label><span>当該機能で使う情報すべて。</span>
+            </div>
+            <div class="importType">
+              <label>取り込み方法：</label><span>差分取り込み</span>
+            </div>
           </li>
         </ol>
       </li>
@@ -128,7 +149,9 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>取り込みデータを選んでのロードは初回リリースでは対象外とする。</li>
+      <li>
+        取り込みデータを選んでのロードは初回リリースでは対象外とする。
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
@@ -140,7 +163,9 @@
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -150,6 +175,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

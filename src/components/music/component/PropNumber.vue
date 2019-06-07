@@ -1,10 +1,11 @@
 <template>
-  <input type="number"
+  <input
+    type="number"
     @change="event => changeProperty(event.target.value)"
     :value="storePropertyValue"
     @dblclick.stop
     @contextmenu.prevent
-  >
+  />
 </template>
 
 <script>
@@ -47,7 +48,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 input {
   width: 100%;

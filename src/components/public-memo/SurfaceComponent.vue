@@ -3,7 +3,7 @@
     <template v-if="isEditMode">
       <label>
         タブの名前
-        <input type="text" v-model="localValue">
+        <input type="text" v-model="localValue" />
       </label>
       <!-- タブの設定 -->
       <div class="tabSettingArea">
@@ -11,12 +11,16 @@
           class="left"
           @click.stop="moveTabOnClick(true)"
           :class="{ disabled: tabIndex === 0 }"
-        >＜</ctrl-button>
+        >
+          ＜
+        </ctrl-button>
         <ctrl-button
           class="right"
           @click.stop="moveTabOnClick(false)"
           :class="{ disabled: tabIndex === tabLength - 1 }"
-        >＞</ctrl-button>
+        >
+          ＞
+        </ctrl-button>
         <span class="icon-cross" @click.stop="deleteTab()">タブを削除</span>
         <span class="icon-copy" @click.stop="copyTab()">タブをコピー</span>
       </div>
@@ -34,7 +38,7 @@
           class="actor"
           @click="deleteTargetOnClick(actor.key)"
         >
-          <span>{{actor.name}}</span>
+          <span>{{ actor.name }}</span>
           <span class="icon-cross"></span>
         </div>
 
@@ -46,15 +50,15 @@
     </template>
 
     <!-- 閲覧権限がない場合 -->
-    <div v-if="!isViewableSurface()" class="disabled"
-    >{{!isViewableSurface() ? "あなたにこの面は開示されていません。" : ""}}</div>
+    <div v-if="!isViewableSurface()" class="disabled">
+      {{ !isViewableSurface() ? "あなたにこの面は開示されていません。" : "" }}
+    </div>
 
     <!-- 閲覧権限がある場合 -->
     <template v-if="isViewableSurface()">
-      <div
-        v-if="!isFront && surface.contentsList.length === 0"
-        class="warning"
-      >※ 裏面が白紙なので、このタブは面がありません。</div>
+      <div v-if="!isFront && surface.contentsList.length === 0" class="warning">
+        ※ 裏面が白紙なので、このタブは面がありません。
+      </div>
       <template v-for="(contents, itemIndex) in surface.contentsList">
         <!-- 大見出し -->
         <div
@@ -62,7 +66,12 @@
           class="item title selectable"
           :key="`contents-${itemIndex}`"
         >
-          <span v-html="contents.text.replace(/\n/g, '<br>').replace(/^$/, '大見出し')" v-if="!isEditMode"></span>
+          <span
+            v-html="
+              contents.text.replace(/\n/g, '<br />').replace(/^$/, '大見出し')
+            "
+            v-if="!isEditMode"
+          ></span>
           <textarea
             v-model="contents.text"
             v-if="isEditMode"
@@ -82,7 +91,12 @@
           class="item sub-title selectable"
           :key="`contents-${itemIndex}`"
         >
-          <span v-html="contents.text.replace(/\n/g, '<br>').replace(/^$/, '小見出し')" v-if="!isEditMode"></span>
+          <span
+            v-html="
+              contents.text.replace(/\n/g, '<br />').replace(/^$/, '小見出し')
+            "
+            v-if="!isEditMode"
+          ></span>
           <textarea
             v-model="contents.text"
             v-if="isEditMode"
@@ -102,7 +116,12 @@
           class="item text selectable"
           :key="`contents-${itemIndex}`"
         >
-          <span v-html="contents.text.replace(/\n/g, '<br>').replace(/^$/, 'テキスト')" v-if="!isEditMode"></span>
+          <span
+            v-html="
+              contents.text.replace(/\n/g, '<br />').replace(/^$/, 'テキスト')
+            "
+            v-if="!isEditMode"
+          ></span>
           <textarea
             v-model="contents.text"
             v-if="isEditMode"
@@ -122,7 +141,7 @@
           class="item separator"
           :key="`contents-${itemIndex}`"
         >
-          <hr>
+          <hr />
           <span
             class="item-config icon-cog"
             @click="event => itemConfigOnClick(event, itemIndex + 1)"
@@ -136,14 +155,17 @@
           class="item checkbox"
           :key="`contents-${itemIndex}`"
         >
-          <label :class="{ isEditMode: isEditMode}">
+          <label :class="{ isEditMode: isEditMode }">
             <input
               type="checkbox"
               :checked="contents.checked"
               @change="event => checkOnChange(event.target.checked, itemIndex)"
               :disabled="isEditMode"
-            >
-            <span v-html="contents.text.replace(/\n/g, '<br>')" v-if="!isEditMode"></span>
+            />
+            <span
+              v-html="contents.text.replace(/\n/g, '<br />')"
+              v-if="!isEditMode"
+            ></span>
           </label>
           <textarea
             v-model="contents.text"
@@ -173,10 +195,19 @@
             <img
               v-if="getObj(imageObj.key)"
               :src="getObj(imageObj.key).data"
-              alt="">
+              alt=""
+            />
             <span
               class="image-config icon-cog"
-              @click.stop="event => imageConfigOnClick(event, itemIndex, imageIndex, contents.imageKeyList.length)"
+              @click.stop="
+                event =>
+                  imageConfigOnClick(
+                    event,
+                    itemIndex,
+                    imageIndex,
+                    contents.imageKeyList.length
+                  )
+              "
               v-if="isEditMode"
             ></span>
           </div>

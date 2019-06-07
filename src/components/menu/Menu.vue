@@ -2,24 +2,83 @@
   <div :style="menuStyle" id="menu" @contextmenu.prevent>
     <!-- 操作ボタングループ -->
     <div class="span-group">
-      <span @click="menuClick()" @mouseenter="menuHover('ファイル')" :class="{isHover : isShow('ファイル')}">ファイル</span>
-      <span @click="menuClick()" @mouseenter="menuHover('表示')" :class="{isHover : isShow('表示', 'ウィンドウ')}">表示</span>
-      <span @click="menuClick()" @mouseenter="menuHover('コマ')" :class="{isHover : isShow('コマ')}">コマ</span>
-      <span @click="menuClick()" @mouseenter="menuHover('マップ')" :class="{isHover : isShow('マップ')}">マップ</span>
-      <span @click="menuClick()" @mouseenter="menuHover('画像')" :class="{isHover : isShow('画像')}">画像</span>
-      <span @click="menuClick()" @mouseenter="menuHover('ヘルプ')" :class="{isHover : isShow('ヘルプ')}">ヘルプ</span>
-      <span @click="menuClick()" @mouseenter="menuHover('デモ')" :class="{isHover : isShow('デモ')}">デモ</span>
+      <span
+        @click="menuClick()"
+        @mouseenter="menuHover('ファイル')"
+        :class="{ isHover: isShow('ファイル') }"
+      >
+        ファイル
+      </span>
+      <span
+        @click="menuClick()"
+        @mouseenter="menuHover('表示')"
+        :class="{ isHover: isShow('表示', 'ウィンドウ') }"
+      >
+        表示
+      </span>
+      <span
+        @click="menuClick()"
+        @mouseenter="menuHover('コマ')"
+        :class="{ isHover: isShow('コマ') }"
+      >
+        コマ
+      </span>
+      <span
+        @click="menuClick()"
+        @mouseenter="menuHover('マップ')"
+        :class="{ isHover: isShow('マップ') }"
+      >
+        マップ
+      </span>
+      <span
+        @click="menuClick()"
+        @mouseenter="menuHover('画像')"
+        :class="{ isHover: isShow('画像') }"
+      >
+        画像
+      </span>
+      <span
+        @click="menuClick()"
+        @mouseenter="menuHover('ヘルプ')"
+        :class="{ isHover: isShow('ヘルプ') }"
+      >
+        ヘルプ
+      </span>
+      <span
+        @click="menuClick()"
+        @mouseenter="menuHover('デモ')"
+        :class="{ isHover: isShow('デモ') }"
+      >
+        デモ
+      </span>
     </div>
     <!-- 部屋情報 -->
-    <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isRoomJoined}">
-      <span :class="{isDisconnect : !isRoomJoined}">{{ `${roomName}` || "未接続" }}</span>
+    <div
+      class="menu-button"
+      @click="clickRoomInfo"
+      :title="roomInfoTitle"
+      :class="{ isDisconnect: !isRoomJoined }"
+    >
+      <span :class="{ isDisconnect: !isRoomJoined }">{{
+        `${roomName}` || "未接続"
+      }}</span>
       ：
-      <span>{{ members.length }}</span>名
+      <span>{{ members.length }}</span>
+      名
     </div>
     <!-- 共有メモ -->
-    <div class="menu-button" @click="clickPublicMemo" :title="publicMemoTitle">共有メモ</div>
+    <div class="menu-button" @click="clickPublicMemo" :title="publicMemoTitle">
+      共有メモ
+    </div>
     <!-- ログアウト -->
-    <div class="menu-button" @click="clickLogOut" :class="{isDisconnect : !isRoomJoined}" :title="logoutTitle">ログアウト</div>
+    <div
+      class="menu-button"
+      @click="clickLogOut"
+      :class="{ isDisconnect: !isRoomJoined }"
+      :title="logoutTitle"
+    >
+      ログアウト
+    </div>
 
     <!--------------------------------------------------
      ! ファイル
@@ -32,20 +91,65 @@
      ! 表示
      !-------------------------------------------------->
     <div class="hoverMenu hoverMenu3" v-show="isShow('表示', 'ウィンドウ')">
-      <div class="item" @mouseenter="menuHover('ウィンドウ')">ウィンドウ<span class="triangle"></span></div>
-      <hr @mouseenter="menuHover('表示')">
-      <menu-boolean-item property="private.setting.standImage" @mouseenter="menuHover('表示')">立ち絵表示</menu-boolean-item>
-      <menu-boolean-item property="private.setting.cutIn" @mouseenter="menuHover('表示')">カットイン表示</menu-boolean-item>
-      <hr @mouseenter="menuHover('表示')">
-      <menu-boolean-item property="public.setting.gridId" @mouseenter="menuHover('表示')">座標表示</menu-boolean-item>
-      <menu-boolean-item property="public.setting.gridLine" @mouseenter="menuHover('表示')">マス目表示</menu-boolean-item>
-      <hr @mouseenter="menuHover('表示')">
-      <menu-boolean-item property="public.setting.isFitGrid" @mouseenter="menuHover('表示')">マス目にキャラクターを合わせる</menu-boolean-item>
-      <menu-boolean-item property="private.setting.standImageAutoResize" @mouseenter="menuHover('表示')">立ち絵のサイズを自動調整する</menu-boolean-item>
-      <hr @mouseenter="menuHover('表示')">
-      <div class="item" @click="clickSettingFontSize" @mouseenter="menuHover('表示')">フォントサイズ調整</div>
-      <hr @mouseenter="menuHover('表示')">
-      <div class="item" @click="clickResetWindowLocate" @mouseenter="menuHover('表示')">ウィンドウ配置初期化</div>
+      <div class="item" @mouseenter="menuHover('ウィンドウ')">
+        ウィンドウ
+        <span class="triangle"></span>
+      </div>
+      <hr @mouseenter="menuHover('表示')" />
+      <menu-boolean-item
+        property="private.setting.standImage"
+        @mouseenter="menuHover('表示')"
+      >
+        立ち絵表示
+      </menu-boolean-item>
+      <menu-boolean-item
+        property="private.setting.cutIn"
+        @mouseenter="menuHover('表示')"
+      >
+        カットイン表示
+      </menu-boolean-item>
+      <hr @mouseenter="menuHover('表示')" />
+      <menu-boolean-item
+        property="public.setting.gridId"
+        @mouseenter="menuHover('表示')"
+      >
+        座標表示
+      </menu-boolean-item>
+      <menu-boolean-item
+        property="public.setting.gridLine"
+        @mouseenter="menuHover('表示')"
+      >
+        マス目表示
+      </menu-boolean-item>
+      <hr @mouseenter="menuHover('表示')" />
+      <menu-boolean-item
+        property="public.setting.isFitGrid"
+        @mouseenter="menuHover('表示')"
+      >
+        マス目にキャラクターを合わせる
+      </menu-boolean-item>
+      <menu-boolean-item
+        property="private.setting.standImageAutoResize"
+        @mouseenter="menuHover('表示')"
+      >
+        立ち絵のサイズを自動調整する
+      </menu-boolean-item>
+      <hr @mouseenter="menuHover('表示')" />
+      <div
+        class="item"
+        @click="clickSettingFontSize"
+        @mouseenter="menuHover('表示')"
+      >
+        フォントサイズ調整
+      </div>
+      <hr @mouseenter="menuHover('表示')" />
+      <div
+        class="item"
+        @click="clickResetWindowLocate"
+        @mouseenter="menuHover('表示')"
+      >
+        ウィンドウ配置初期化
+      </div>
     </div>
     <!--------------------------------------------------
      ! コマ
@@ -53,13 +157,15 @@
     <div class="hoverMenu hoverMenu4" v-show="isShow('コマ')">
       <div class="item" @click="clickAddCharacter">キャラクター追加</div>
       <div class="item" @click="clickAddRange">範囲追加</div>
-      <hr>
+      <hr />
       <div class="item" @click="clickAddChit">チット作成</div>
-      <hr>
+      <hr />
       <div class="item" @click="clickGraveyard">墓場</div>
       <div class="item" @click="clickWaitingRoom">キャラクター待合室</div>
-      <hr>
-      <menu-boolean-item property="public.setting.pieceRotateMarker">回転マーカーを表示する</menu-boolean-item>
+      <hr />
+      <menu-boolean-item property="public.setting.pieceRotateMarker">
+        回転マーカーを表示する
+      </menu-boolean-item>
     </div>
     <!--------------------------------------------------
      ! マップ
@@ -69,7 +175,7 @@
       <div class="item" @click="clickFloorTileMode">フロアタイル変更モード</div>
       <div class="item" @click="clickAddMapMask">マップマスク追加</div>
       <div class="item" @click="clickCreateEasyMap">簡易マップ作成</div>
-      <hr>
+      <hr />
       <div class="item" @click="clickSaveMap">マップ状態保存</div>
       <div class="item" @click="clickSwitchMap">マップ切り替え</div>
     </div>
@@ -78,7 +184,7 @@
      !-------------------------------------------------->
     <div class="hoverMenu hoverMenu6" v-show="isShow('画像')">
       <div class="item" @click="clickFileUploader">ファイルアップローダー</div>
-      <hr>
+      <hr />
       <div class="item" @click="clickTagEdit">タグ編集</div>
       <div class="item" @click="clickDeleteImage">画像削除</div>
     </div>
@@ -89,21 +195,53 @@
       <div class="item" @click="clickWelcome">ようこそ画面</div>
       <div class="item" @click="clickVersion">バージョン</div>
       <div class="item" @click="clickManual">マニュアル</div>
-      <hr>
+      <hr />
       <div class="item" @click="clickOfficialSite">オフィシャルサイトへ</div>
     </div>
     <!--------------------------------------------------
      ! ウィンドウ
      !-------------------------------------------------->
     <div class="hoverMenu hoverMenu8" v-show="isShow('ウィンドウ')">
-      <menu-boolean-item @click="menuClick" property="private.display.chatWindow">チャット表示</menu-boolean-item>
-      <menu-boolean-item @click="menuClick" property="private.setting.dice">ダイス表示</menu-boolean-item>
-      <menu-boolean-item @click="menuClick" property="private.display.playerBoxWindow">プレイヤーボックス表示</menu-boolean-item>
-      <menu-boolean-item @click="menuClick" property="private.display.initiativeWindow">イニシアティブ表示</menu-boolean-item>
-      <menu-boolean-item @click="menuClick" property="private.display.resourceWindow">リソース表示</menu-boolean-item>
-      <hr>
-      <menu-boolean-item @click="menuClick" property="private.display.chatPaletteWindow">チャットパレット表示</menu-boolean-item>
-      <menu-boolean-item @click="menuClick" property="private.display.counterRemoconWindow">カウンターリモコン表示</menu-boolean-item>
+      <menu-boolean-item
+        @click="menuClick"
+        property="private.display.chatWindow"
+      >
+        チャット表示
+      </menu-boolean-item>
+      <menu-boolean-item @click="menuClick" property="private.setting.dice">
+        ダイス表示
+      </menu-boolean-item>
+      <menu-boolean-item
+        @click="menuClick"
+        property="private.display.playerBoxWindow"
+      >
+        プレイヤーボックス表示
+      </menu-boolean-item>
+      <menu-boolean-item
+        @click="menuClick"
+        property="private.display.initiativeWindow"
+      >
+        イニシアティブ表示
+      </menu-boolean-item>
+      <menu-boolean-item
+        @click="menuClick"
+        property="private.display.resourceWindow"
+      >
+        リソース表示
+      </menu-boolean-item>
+      <hr />
+      <menu-boolean-item
+        @click="menuClick"
+        property="private.display.chatPaletteWindow"
+      >
+        チャットパレット表示
+      </menu-boolean-item>
+      <menu-boolean-item
+        @click="menuClick"
+        property="private.display.counterRemoconWindow"
+      >
+        カウンターリモコン表示
+      </menu-boolean-item>
     </div>
     <!--------------------------------------------------
      ! デモ
@@ -111,7 +249,7 @@
     <div class="hoverMenu hoverMenu9" v-show="isShow('デモ')">
       <div class="item" @click="clickDevHistory">開発履歴</div>
       <div class="item" @click="clickViewFunction">現時点の仕様</div>
-      <hr>
+      <hr />
       <div class="item" @click="clickBufForm">不具合の報告</div>
     </div>
   </div>
@@ -184,8 +322,8 @@ export default class Menu extends Vue {
   }
 
   /* --------------------
-     * ファイル
-     * ----------------- */
+   * ファイル
+   * ----------------- */
   /** セーブ */
   clickExport(): void {
     this.exportStart();
@@ -204,8 +342,8 @@ export default class Menu extends Vue {
   }
 
   /* --------------------
-     * 表示
-     * ----------------- */
+   * 表示
+   * ----------------- */
   /** フォントサイズ調整 */
   clickSettingFontSize(): void {
     this.setProperty({
@@ -224,8 +362,8 @@ export default class Menu extends Vue {
   }
 
   /* --------------------
-     * コマ
-     * ----------------- */
+   * コマ
+   * ----------------- */
   /** キャラクター追加 */
   clickAddCharacter(): void {
     this.windowOpen("private.display.addCharacterSettingWindow");
@@ -272,8 +410,8 @@ export default class Menu extends Vue {
   }
 
   /* --------------------
-     * マップ
-     * ----------------- */
+   * マップ
+   * ----------------- */
   /** マップ変更 */
   clickChangeMap(): void {
     this.windowOpen("private.display.editMapWindow");
@@ -331,8 +469,8 @@ export default class Menu extends Vue {
   }
 
   /* --------------------
-     * 画像
-     * ----------------- */
+   * 画像
+   * ----------------- */
   /** ファイルアップローダー */
   clickFileUploader(): void {
     this.windowOpen("private.display.fileUploaderWindow");
@@ -362,8 +500,8 @@ export default class Menu extends Vue {
   }
 
   /* --------------------
-     * ヘルプ
-     * ----------------- */
+   * ヘルプ
+   * ----------------- */
   /** ようこそ */
   clickWelcome(): void {
     this.windowOpen("private.display.welcomeWindow");
@@ -399,8 +537,8 @@ export default class Menu extends Vue {
   }
 
   /* --------------------
-     * デモ
-     * ----------------- */
+   * デモ
+   * ----------------- */
   /** 開発履歴 */
   clickDevHistory(): void {
     this.windowOpen("private.display.devLogWindow");
@@ -447,7 +585,6 @@ export default class Menu extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 #menu {
   display: flex;

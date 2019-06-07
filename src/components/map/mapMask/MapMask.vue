@@ -1,14 +1,21 @@
 <template>
-  <div class="mapMask"
+  <div
+    class="mapMask"
     :class="[storeObj.isLock ? 'isLock' : 'isUnLock', isHover ? 'hover' : '']"
     :style="mapMaskStyle"
-    @mouseover="mouseover" @mouseout="mouseout"
-    @click.right.prevent="(e) => openContext(e, 'private.display.mapMaskContext')"
-    @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
-    @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
-    @touchstart.stop="leftDown" @touchend.stop="leftUp" @touchcancel.stop="leftUp"
-    @contextmenu.prevent>
-    {{storeObj.name}}
+    @mouseover="mouseover"
+    @mouseout="mouseout"
+    @click.right.prevent="e => openContext(e, 'private.display.mapMaskContext')"
+    @mousedown.left.stop="leftDown"
+    @mouseup.left.stop="leftUp"
+    @mousedown.right.stop="rightDown"
+    @mouseup.right.stop="rightUp"
+    @touchstart.stop="leftDown"
+    @touchend.stop="leftUp"
+    @touchcancel.stop="leftUp"
+    @contextmenu.prevent
+  >
+    {{ storeObj.name }}
   </div>
 </template>
 
@@ -49,7 +56,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .mapMask {
   position: fixed;

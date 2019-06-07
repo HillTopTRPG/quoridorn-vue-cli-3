@@ -1,11 +1,23 @@
 <template>
   <div class="logo-container">
     <div class="img-container">
-      <img class="mascot-left" src="http://mihikari.sakura.ne.jp/quoridorn/official/img/mascot/normal/mascot_normal.png" @contextmenu.prevent>
-      <img class="logo" src="../../assets/logo/bg_white_4c.svg" @contextmenu.prevent>
-      <img class="mascot-right" src="http://mihikari.sakura.ne.jp/quoridorn/official/img/mascot/teach/mascot_teach.png" @contextmenu.prevent>
+      <img
+        class="mascot-left"
+        src="http://mihikari.sakura.ne.jp/quoridorn/official/img/mascot/normal/mascot_normal.png"
+        @contextmenu.prevent
+      />
+      <img
+        class="logo"
+        src="../../assets/logo/bg_white_4c.svg"
+        @contextmenu.prevent
+      />
+      <img
+        class="mascot-right"
+        src="http://mihikari.sakura.ne.jp/quoridorn/official/img/mascot/teach/mascot_teach.png"
+        @contextmenu.prevent
+      />
     </div>
-    <div class="version">Ver.{{version}}</div>
+    <div class="version">Ver.{{ version }}</div>
   </div>
 </template>
 
@@ -19,7 +31,6 @@ export default class Logo extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "../common.scss";
 

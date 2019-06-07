@@ -4,7 +4,13 @@
     :optionInfoList="optionInfoList"
     :test="test"
   >
-    <option v-for="status in statusList" :key="status.name" :value="status.name">{{status.name}}</option>
+    <option
+      v-for="status in statusList"
+      :key="status.name"
+      :value="status.name"
+    >
+      {{ status.name }}
+    </option>
   </ctrl-select>
 </template>
 

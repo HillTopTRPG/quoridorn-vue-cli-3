@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="stand-image"
-    @click="onClick"
-    @contextmenu.prevent
-  >
+  <div class="stand-image" @click="onClick" @contextmenu.prevent>
     <canvas
       :width="canvasSize.w"
       :height="canvasSize.h"
@@ -308,7 +304,6 @@ export default class StandImageComponent extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .stand-image {
   position: relative;

@@ -11,8 +11,16 @@
   >
     <div class="contents">
       <div class="title" v-if="usePublicMemoObj">
-        <span v-if="!isEditMode || isPreview" v-html="usePublicMemoObj.title.replace(/\n/g, '<br>')"></span>
-        <textarea v-model="usePublicMemoObj.title" v-if="isEditMode && !isPreview" @input="textareaOnInput" placeholder="タイトル"></textarea>
+        <span
+          v-if="!isEditMode || isPreview"
+          v-html="usePublicMemoObj.title.replace(/\n/g, '<br />')"
+        ></span>
+        <textarea
+          v-model="usePublicMemoObj.title"
+          v-if="isEditMode && !isPreview"
+          @input="textareaOnInput"
+          placeholder="タイトル"
+        ></textarea>
       </div>
 
       <!-- タブ -->
@@ -24,32 +32,40 @@
           :class="{ active: index === currentTabIndex }"
           @click.prevent="tabOnClick(index)"
         >
-          <span>{{tabObj.tabName}}</span>
+          <span>{{ tabObj.tabName }}</span>
         </span>
         <span
           class="tab"
           @click="addButtonOnClick"
           v-if="isEditMode && !isPreview"
         >
-          <input type="text" @change="addTab" placeholder="追加タブの名前">
+          <input type="text" @change="addTab" placeholder="追加タブの名前" />
         </span>
       </div>
 
       <!-- 表裏タブ -->
       <div
         class="tabs surface"
-        v-if="isEditMode && !isPreview || usePublicMemoTabObj && usePublicMemoTabObj.back.contentsList.length"
+        v-if="
+          (isEditMode && !isPreview) ||
+            (usePublicMemoTabObj &&
+              usePublicMemoTabObj.back.contentsList.length)
+        "
       >
         <span
           class="tab surface"
           :class="{ active: isFront }"
           @click.prevent="surfaceTabOnClick(true)"
-        >表</span>
+        >
+          表
+        </span>
         <span
           class="tab surface"
           :class="{ active: !isFront }"
           @click.prevent="surfaceTabOnClick(false)"
-        >裏</span>
+        >
+          裏
+        </span>
       </div>
 
       <!-- タブ内容 -->
@@ -74,11 +90,14 @@
 
       <div class="operationArea" v-if="isEditMode">
         <ctrl-button @click="commitButtonOnClick">確定</ctrl-button>
-        <ctrl-button @click="previewButtonOnClick" v-if="!isPreview">プレビュー確認</ctrl-button>
-        <ctrl-button @click="editButtonOnClick" v-if="isPreview">編集に戻る</ctrl-button>
+        <ctrl-button @click="previewButtonOnClick" v-if="!isPreview">
+          プレビュー確認
+        </ctrl-button>
+        <ctrl-button @click="editButtonOnClick" v-if="isPreview">
+          編集に戻る
+        </ctrl-button>
         <ctrl-button @click="cancelButtonOnClick">キャンセル</ctrl-button>
       </div>
-
     </div>
 
     <!-- 項目操作メニュー -->
@@ -91,9 +110,13 @@
       <div @click.stop="insertTitleItemOnClick">下に大見出しを追加</div>
       <div @click.stop="insertSubTitleItemOnClick">下に小見出しを追加</div>
       <div @click.stop="insertTextItemOnClick">下にテキストを追加</div>
-      <div @click.stop="insertCheckboxItemOnClick">下にチェックボックスを追加</div>
+      <div @click.stop="insertCheckboxItemOnClick">
+        下にチェックボックスを追加
+      </div>
       <div @click.stop="insertHrItemOnClick">下に区切り線を追加</div>
-      <div @click.stop="insertImageFrameItemOnClick">下に画像ブロックを追加</div>
+      <div @click.stop="insertImageFrameItemOnClick">
+        下に画像ブロックを追加
+      </div>
       <div @click.stop="deleteItemOnClick" v-if="hoverMenuItemIndex">削除</div>
     </div>
 
@@ -105,7 +128,12 @@
       @mouseleave="configOnClose"
     >
       <div @click.stop="insertImageOnClick">左に画像を追加</div>
-      <div @click.stop="deleteImageOnClick" :class="{ disabled: !imageDeletable }">削除</div>
+      <div
+        @click.stop="deleteImageOnClick"
+        :class="{ disabled: !imageDeletable }"
+      >
+        削除
+      </div>
     </div>
   </window-frame>
 </template>
@@ -473,7 +501,6 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "../common.scss";
 

@@ -8,7 +8,14 @@
     @reset="initWindow"
   >
     <div class="container" @contextmenu.prevent>
-      <div class="viewImage"><img class="img" v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
+      <div class="viewImage">
+        <img
+          class="img"
+          v-img="currentImage"
+          draggable="false"
+          :class="{ isReverse: isReverse }"
+        />
+      </div>
 
       <image-selector
         v-model="selectImage"
@@ -16,9 +23,19 @@
         class="imageSelector"
       />
 
-      <div class="rowsNum"><label>縦マス：</label><input type="number" min="1" class="size" v-model="rows"/></div>
-      <div class="columnsNum"><label>横マス：</label><input type="number" min="1" class="size" v-model="columns"/></div>
-      <textarea class="otherText" v-model="description" placeholder="説明"></textarea>
+      <div class="rowsNum">
+        <label>縦マス：</label>
+        <input type="number" min="1" class="size" v-model="rows" />
+      </div>
+      <div class="columnsNum">
+        <label>横マス：</label>
+        <input type="number" min="1" class="size" v-model="columns" />
+      </div>
+      <textarea
+        class="otherText"
+        v-model="description"
+        placeholder="説明"
+      ></textarea>
       <div class="buttonArea">
         <div>
           <ctrl-button @click="commit">確定</ctrl-button>
@@ -117,7 +134,6 @@ export default class EditChitWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .container {
   display: grid;

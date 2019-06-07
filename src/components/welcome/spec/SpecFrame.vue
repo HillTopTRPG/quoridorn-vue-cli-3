@@ -1,13 +1,13 @@
 <template>
   <div class="menu-item">
-    <input :id="property" type="checkbox" v-model="isOpened">
+    <input :id="property" type="checkbox" v-model="isOpened" />
     <label :id="refProp" @click="clickLink">
-      <span>{{labelStr}}</span>
+      <span>{{ labelStr }}</span>
       <span class="deco-new" v-if="lastVersion === version">[NEW]</span>
       <span class="deco-fixed" v-if="!isSpecFixed">[仕様未確定]</span>
     </label>
     <div class="accordion" v-if="isOpened">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
@@ -58,7 +58,6 @@ export default class SpecFrame extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <!--<style scoped src="./spec.css"></style>-->
 <style scoped lang="scss">
 .deco-fixed,

@@ -2,7 +2,14 @@
   <div
     class="card"
     :style="cardStyle"
-    :class="[viewMode, {isViewer: isViewer, isOdd: useIndex % 2 === 1, isEven: useIndex % 2 === 0}]"
+    :class="[
+      viewMode,
+      {
+        isViewer: isViewer,
+        isOdd: useIndex % 2 === 1,
+        isEven: useIndex % 2 === 0
+      }
+    ]"
     @mouseover="mouseOver"
     @mouseout="mouseOut"
     @click.right.prevent="openContext"
@@ -10,7 +17,11 @@
     @contextmenu.prevent
   >
     <figure class="front" :style="frontStyle"></figure>
-    <div class="back" :style="backStyle" v-html="card ? card.back.text.replace(/\n/g, '<br>') : ''"></div>
+    <div
+      class="back"
+      :style="backStyle"
+      v-html="card ? card.back.text.replace(/\n/g, '<br />') : ''"
+    ></div>
   </div>
 </template>
 
@@ -216,7 +227,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .card {
   position: absolute;

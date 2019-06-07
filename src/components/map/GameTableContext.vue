@@ -1,18 +1,36 @@
 <template>
   <context-frame displayProperty="private.display.gameTableContext">
-    <div class="item" @click.left.prevent="addCharacter">キャラクター追加</div>
-    <div class="item" @click.left.prevent="addMapMask">マップマスク追加</div>
-    <div class="item" @click.left.prevent="addMapMarker">マップマーカー追加</div>
-    <div class="item" @click.left.prevent="addChit">チット追加</div>
-    <hr>
-    <div class="item" @click.left.prevent="addDiceSymbol">ダイスシンボル追加</div>
-    <hr>
-    <div class="item" @click.left.prevent="changeMap">マップ変更</div>
-    <hr>
-    <div class="item" @click.left.prevent="createHandCardArea">手札置き場の作成</div>
-    <div class="item" @click.left.prevent="createMessageCard">メッセージカード作成</div>
-    <hr>
-    <div class="item" @click.left.prevent="resetWindowLocate">ウィンドウ配置初期化</div>
+    <div class="item" @click.left.prevent="addCharacter">
+      キャラクター追加
+    </div>
+    <div class="item" @click.left.prevent="addMapMask">
+      マップマスク追加
+    </div>
+    <div class="item" @click.left.prevent="addMapMarker">
+      マップマーカー追加
+    </div>
+    <div class="item" @click.left.prevent="addChit">
+      チット追加
+    </div>
+    <hr />
+    <div class="item" @click.left.prevent="addDiceSymbol">
+      ダイスシンボル追加
+    </div>
+    <hr />
+    <div class="item" @click.left.prevent="changeMap">
+      マップ変更
+    </div>
+    <hr />
+    <div class="item" @click.left.prevent="createHandCardArea">
+      手札置き場の作成
+    </div>
+    <div class="item" @click.left.prevent="createMessageCard">
+      メッセージカード作成
+    </div>
+    <hr />
+    <div class="item" @click.left.prevent="resetWindowLocate">
+      ウィンドウ配置初期化
+    </div>
   </context-frame>
 </template>
 

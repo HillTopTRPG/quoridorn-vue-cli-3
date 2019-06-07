@@ -1,24 +1,35 @@
 <template>
   <div
     class="diceSymbol"
-    :class="[ isHover ? 'hover' : '', isHide ? 'isHide' : '' ]"
+    :class="[isHover ? 'hover' : '', isHide ? 'isHide' : '']"
     :style="chitStyle"
-    @click.right.prevent="(e) => openContext(e, 'private.display.diceSymbolContext')"
+    @click.right.prevent="
+      e => openContext(e, 'private.display.diceSymbolContext')
+    "
     @mouseover="mouseover"
     @mouseout="mouseout"
     @mousedown.left.stop="leftDown"
     @mouseup.left.stop="leftUp"
     @mousedown.right.stop="rightDown"
     @mouseup.right.stop="rightUp"
-    @touchstart="leftDown" @touchend="leftUp"
+    @touchstart="leftDown"
+    @touchend="leftUp"
     @touchcancel="leftUp"
     @contextmenu.prevent
   >
     <div class="border"></div>
-    <img class="image" v-img="diceImage" draggable="false" v-if="!isAbsoluteHide"/>
+    <img
+      class="image"
+      v-img="diceImage"
+      draggable="false"
+      v-if="!isAbsoluteHide"
+    />
     <div class="balloon" v-if="isHover">
-      <span v-if="ownerPlayer">[{{ownerPlayer.name}}]のダイス</span>
-      <span>{{ isHide ? "非公開：" : "" }}{{isAbsoluteHide ? '' : `${pips} / D${faceNum}`}}</span>
+      <span v-if="ownerPlayer">[{{ ownerPlayer.name }}]のダイス</span>
+      <span>
+        {{ isHide ? "非公開：" : "" }}
+        {{ isAbsoluteHide ? "" : `${pips} / D${faceNum}` }}
+      </span>
     </div>
   </div>
 </template>
@@ -91,7 +102,6 @@ export default class DiceSymbol extends PieceMixin {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "../../common.scss";
 

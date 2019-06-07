@@ -8,7 +8,13 @@
     @reset="open"
   >
     <div class="container" @contextmenu.prevent>
-      <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
+      <div class="viewImage">
+        <img
+          v-img="currentImage"
+          draggable="false"
+          :class="{ isReverse: isReverse }"
+        />
+      </div>
 
       <image-selector
         v-model="selectImage"
@@ -17,11 +23,20 @@
       />
 
       <div class="switchImageArea">
-        <ctrl-button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</ctrl-button>
+        <ctrl-button
+          v-show="!isOpenSwitch"
+          @click="isOpenSwitch = true"
+          class="switchButton"
+        >
+          画像切替設定
+        </ctrl-button>
         <span v-show="isOpenSwitch" class="switchImage">
           <img
             v-for="switchObj in switchImageList"
-            :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}"
+            :class="{
+              active: switchObj.key === switchCurrentKey,
+              isReverse: switchObj.isReverse
+            }"
             :key="switchObj.key"
             v-img="getImage(switchObj.imgKey)"
             @click="selectSwitchImage(switchObj.key)"
@@ -29,17 +44,43 @@
             draggable="false"
           />
         </span>
-        <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</ctrl-button>
-        <ctrl-button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</ctrl-button>
+        <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">
+          追加
+        </ctrl-button>
+        <ctrl-button
+          v-show="isOpenSwitch"
+          @click.prevent="deleteSwitch"
+          :disabled="!isCanSwitchDelete"
+        >
+          削除
+        </ctrl-button>
       </div>
-      <div class="initiativeTable">
+      <div class="initiativeTable"></div>
+      <div class="nameArea">
+        <label>名前：</label>
+        <input
+          type="text"
+          class="name"
+          placeholder="必ず入力してください"
+          v-model="name"
+        />
       </div>
-      <div class="nameArea"><label>名前：</label><input type="text" class="name" placeholder="必ず入力してください" v-model="name"/></div>
       <div class="pieceOptions">
-        <label>サイズ：</label><input type="number" class="size" min="1" v-model="size"/>
-        <label><input type="checkbox" class="hide" v-model="isHide"/><span>マップマスクの下に隠す<br>(イニシアティブ表で非表示)</span></label>
+        <label>サイズ：</label>
+        <input type="number" class="size" min="1" v-model="size" />
+        <label>
+          <input type="checkbox" class="hide" v-model="isHide" />
+          <span>マップマスクの下に隠す<br />(イニシアティブ表で非表示)</span>
+        </label>
       </div>
-      <div class="urlArea"><label>参照URL：</label><input type="text" v-model="url" placeholder="キャラクターシートのURL"/></div>
+      <div class="urlArea">
+        <label>参照URL：</label>
+        <input
+          type="text"
+          v-model="url"
+          placeholder="キャラクターシートのURL"
+        />
+      </div>
       <div class="otherTextLabel"><span>その他</span></div>
       <textarea class="otherText" v-model="text"></textarea>
       <div class="buttonArea">
@@ -256,7 +297,6 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .container {
   display: grid;

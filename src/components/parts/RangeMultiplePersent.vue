@@ -12,12 +12,24 @@
     :tooltipDir="'top'"
     formatter="{value}%"
     mergeFormatter="{value1}% ~ {value2}%"
-    :tooltipStyle='{ "backgroundColor": "#666666", "borderColor": "#666666", "fontSize": "1em" }'
-    :bgStyle='{ "backgroundColor": "#aadddd", "borderTop": "1px solid #666666", "borderBottom": "1px solid #666666", borderRadius: 0 }'
+    :tooltipStyle="{
+      backgroundColor: '#666666',
+      borderColor: '#666666',
+      fontSize: '1em'
+    }"
+    :bgStyle="{
+      backgroundColor: '#aadddd',
+      borderTop: '1px solid #666666',
+      borderBottom: '1px solid #666666',
+      borderRadius: 0
+    }"
     @contextmenu.prevent
   >
     <template slot="label" slot-scope="{ label, active, index }">
-      <span :class="['custom-label', { active }, { 'line': index % 50 !== 0 }]" v-if="index % 10 === 0">
+      <span
+        :class="['custom-label', { active }, { line: index % 50 !== 0 }]"
+        v-if="index % 10 === 0"
+      >
         {{ index % 50 === 0 ? label : "" }}
       </span>
     </template>
@@ -50,7 +62,6 @@ export default class RangeMultiplePersent extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .vue-slider-component {
   margin: 2em 0 0;

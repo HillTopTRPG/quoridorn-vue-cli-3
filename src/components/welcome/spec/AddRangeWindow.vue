@@ -1,5 +1,10 @@
 <template>
-  <spec-frame property="addRangeWindow" label-str="範囲追加" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame
+    property="addRangeWindow"
+    label-str="範囲追加"
+    lastVersion="1.0.0b1"
+    :isSpecFixed="true"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -25,19 +30,27 @@
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
       <li>本機能自体が未実装</li>
-      <li>中身の処理はキャラクターに簡易実装されているが、バグが数点ある</li>
+      <li>
+        中身の処理はキャラクターに簡易実装されているが、バグが数点ある
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
      !--------------------->
     <spec-item class-str="unSupport" label-str="実装しない機能">
-      <li>どどんとふの各システム用に用意された「範囲追加」は対応しない<br>→ 基本機能が全て実装できた後の「個別システム対応」のフェーズで対応するかも</li>
+      <li>
+        どどんとふの各システム用に用意された「範囲追加」は対応しない
+        <br />→
+        基本機能が全て実装できた後の「個別システム対応」のフェーズで対応するかも
+      </li>
     </spec-item>
     <!----------------------
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -47,6 +60,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

@@ -1,20 +1,31 @@
 <template>
-  <spec-frame property="roomInfoWindow" label-str="プレイルーム情報表示画面" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame
+    property="roomInfoWindow"
+    label-str="プレイルーム情報表示画面"
+    lastVersion="1.0.0b1"
+    :isSpecFixed="true"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
     <spec-item class-str="operation" label-str="起動操作">
-      <li>画面上部メニューの「共有メモ」の左のボタンを選択</li>
+      <li>
+        画面上部メニューの「共有メモ」の左のボタンを選択
+      </li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>部屋を建てていない場合は未接続の旨を起動ボタンと画面内部に表示</li>
+      <li>
+        部屋を建てていない場合は未接続の旨を起動ボタンと画面内部に表示
+      </li>
       <li>ルーム名をタイトルに表示</li>
       <li>部屋に招待するためのURLを表示</li>
       <li>ルームメンバーをすべて表示</li>
-      <li>各ルームメンバーの部屋復帰用のURLを表示</li>
+      <li>
+        各ルームメンバーの部屋復帰用のURLを表示
+      </li>
       <li>ゲームシステムの変更</li>
       <li>見学者の可否の選択</li>
       <li>使用するチャットのタブを設定できる機能</li>
@@ -49,10 +60,16 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>ゲームシステムの変更<br>→ 初回リリースに含める機能。</li>
-      <li>見学者の可否の選択<br>→ 初回リリースには含めない。運用でカバーお願いします。</li>
-      <li>使用するチャットのタブを設定できる機能<br>→ チャット欄から設定できるので初回リリースには含めない。</li>
-      <li>各種初期設定の設定<br>→ 初回リリースには含めない機能。</li>
+      <li>ゲームシステムの変更<br />→ 初回リリースに含める機能。</li>
+      <li>
+        見学者の可否の選択
+        <br />→ 初回リリースには含めない。運用でカバーお願いします。
+      </li>
+      <li>
+        使用するチャットのタブを設定できる機能
+        <br />→ チャット欄から設定できるので初回リリースには含めない。
+      </li>
+      <li>各種初期設定の設定<br />→ 初回リリースには含めない機能。</li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
@@ -64,7 +81,9 @@
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -74,6 +93,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

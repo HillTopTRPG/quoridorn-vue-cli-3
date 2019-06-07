@@ -1,13 +1,22 @@
 <template>
   <fieldset class="root">
     <legend>部屋データから部屋を作る</legend>
-    <div class="input-room-data">部屋データ：<ctrl-button @click="chooseFile">ファイルを選択</ctrl-button>
+    <div class="input-room-data">
+      部屋データ：
+      <ctrl-button @click="chooseFile">ファイルを選択</ctrl-button>
       <div class="description">
-        {{files.length ? "" : "未選択"}}
-        <span v-for="file in files" :key="file.name">{{file.name}}</span>
+        {{ files.length ? "" : "未選択" }}
+        <span v-for="file in files" :key="file.name">{{ file.name }}</span>
       </div>
     </div>
-    <input ref="fileChooser" type="file" style="display: none;" accept=".zip" multiple @change="event => selectFile(event)">
+    <input
+      ref="fileChooser"
+      type="file"
+      style="display: none;"
+      accept=".zip"
+      multiple
+      @change="event => selectFile(event)"
+    />
     <ctrl-button @click="commit"><i class="icon-home3"></i> 作成</ctrl-button>
   </fieldset>
 </template>
@@ -47,8 +56,7 @@ export default class CreateRoomFromRoomData extends Vue {
 }
 </script>
 
-<style scoped src="./login.css">
-</style>
+<style scoped src="./login.css"></style>
 
 <style scoped lang="scss">
 fieldset.root,

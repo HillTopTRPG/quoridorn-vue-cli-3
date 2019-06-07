@@ -7,10 +7,7 @@
     :message="fileName"
   >
     <div class="contents" @contextmenu.prevent>
-      <image-selector
-        v-model="imageKey"
-        :imageTag.sync="imageTag"
-      />
+      <image-selector v-model="imageKey" :imageTag.sync="imageTag" />
     </div>
   </window-frame>
 </template>
@@ -74,7 +71,6 @@ export default class ImageSelectorWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

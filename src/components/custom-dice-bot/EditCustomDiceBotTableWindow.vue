@@ -10,19 +10,40 @@
   >
     <div class="contents v-box" @contextmenu.prevent>
       <div class="line-box">
-        <label class="commandName h-box">コマンド名：<input type="text" class="flex-max" v-model="commandName"></label>
-        <label class="diceRoll h-box">ダイス：<input type="text" class="flex-max" v-model="diceRoll"></label>
-        <label class="tableTitle h-box flex-max">表タイトル：<input type="text" class="flex-max" v-model="tableTitle"></label>
+        <label class="commandName h-box">
+          コマンド名：
+          <input type="text" class="flex-max" v-model="commandName" />
+        </label>
+        <label class="diceRoll h-box">
+          ダイス：
+          <input type="text" class="flex-max" v-model="diceRoll" />
+        </label>
+        <label class="tableTitle h-box flex-max">
+          表タイトル：
+          <input type="text" class="flex-max" v-model="tableTitle" />
+        </label>
       </div>
       <div class="line-box">
         <label class="tableContentsLabel">表内容</label>
-        <label class="diceBotSystem">ゲームシステム：<dice-bot-select v-model="diceBotSystem"/></label>
+        <label class="diceBotSystem">
+          ゲームシステム：
+          <dice-bot-select v-model="diceBotSystem" />
+        </label>
       </div>
-      <label class="h-box flex-max tableContents"><textarea class="flex-max" v-model="tableContents"></textarea></label>
-      <div v-if="isRoomSys" style="color: red;">※ この表は変更しても、部屋情報のダイスボットが変更されると初期化されます。</div>
+      <label class="h-box flex-max tableContents">
+        <textarea class="flex-max" v-model="tableContents"></textarea>
+      </label>
+      <div v-if="isRoomSys" style="color: red;">
+        ※
+        この表は変更しても、部屋情報のダイスボットが変更されると初期化されます。
+      </div>
       <div class="h-box buttonArea">
-        <ctrl-button @click="commitButtonOnClick">変更</ctrl-button>
-        <ctrl-button @click="cancelButtonOnClick">キャンセル</ctrl-button>
+        <ctrl-button @click="commitButtonOnClick">
+          変更
+        </ctrl-button>
+        <ctrl-button @click="cancelButtonOnClick">
+          キャンセル
+        </ctrl-button>
       </div>
     </div>
   </window-frame>
@@ -193,7 +214,6 @@ export default class EditCustomDiceBotTableWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "../common.scss";
 

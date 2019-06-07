@@ -6,8 +6,14 @@
     :disabled="disabled"
     :optionInfoList="optionInfoList"
   >
-    <option :disabled="!defaultSelectable" value="" v-if="defaultLabel !== undefined">{{defaultLabel}}</option>
-    <slot/>
+    <option
+      :disabled="!defaultSelectable"
+      value=""
+      v-if="defaultLabel !== undefined"
+    >
+      {{ defaultLabel }}
+    </option>
+    <slot />
   </ctrl-select>
 </template>
 

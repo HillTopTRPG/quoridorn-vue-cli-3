@@ -15,12 +15,18 @@
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様 - 操作">
-      <li>新規作成ボタンでサンプルダイスボットを追加して編集画面を開く</li>
+      <li>
+        新規作成ボタンでサンプルダイスボットを追加して編集画面を開く
+      </li>
       <li>
         コピー作成ボタンで表の選択中のダイスボットを表末尾にコピーして、それを編集する編集画面を開く
       </li>
-      <li>変更ボタンで表の選択中のダイスボットを編集する編集画面を開く</li>
-      <li>削除ボタンで表の選択中のダイスボットを削除</li>
+      <li>
+        変更ボタンで表の選択中のダイスボットを編集する編集画面を開く
+      </li>
+      <li>
+        削除ボタンで表の選択中のダイスボットを削除
+      </li>
       <li>↑ボタンで選択した行を上に移動</li>
       <li>↓ボタンで選択した行を下に移動</li>
       <li>閉じるボタンでその画面を閉じる</li>
@@ -92,5 +98,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped src="./spec.css"></style>

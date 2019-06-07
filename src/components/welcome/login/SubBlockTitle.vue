@@ -1,8 +1,14 @@
 <template>
-  <div v-if="paramRoomName" class="subBlockTitle" :class="{isRoomExist: !isRoomExist}">
+  <div
+    v-if="paramRoomName"
+    class="subBlockTitle"
+    :class="{ isRoomExist: !isRoomExist }"
+  >
     <span class="icon-arrow-right"></span>
-    <span v-if="isRoomExist">{{text}}</span>
-    <a href="javascript:void(0);" @click="onClickLink" v-if="!isRoomExist">{{text}}</a>
+    <span v-if="isRoomExist">{{ text }}</span>
+    <a href="javascript:void(0);" @click="onClickLink" v-if="!isRoomExist">
+      {{ text }}
+    </a>
   </div>
 </template>
 
@@ -37,4 +43,4 @@ export default class SubBlockTitle extends Vue {
 a {
   color: inherit;
 }
-</style>()
+</style>

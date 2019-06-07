@@ -2,78 +2,145 @@
   <fieldset class="root">
     <legend>部屋名を指定して入室する／新しい部屋をつくる</legend>
 
-    <div class="description" v-if="!paramRoomName">すでに部屋が作られているかどうかをチェックします。</div>
-    <div class="existMsg" v-if="!!paramRoomName">チェック完了：部屋名「{{paramRoomName}}」{{isRoomExist ? "に入室可能です" :
-      "はまだ作られていません"}}
+    <div class="description" v-if="!paramRoomName">
+      すでに部屋が作られているかどうかをチェックします。
+    </div>
+    <div class="existMsg" v-if="!!paramRoomName">
+      チェック完了：部屋名「{{ paramRoomName }}」{{
+        isRoomExist ? "に入室可能です" : "はまだ作られていません"
+      }}
     </div>
 
-    <label class="roomName">部屋名：<input ref="roomNameInput" type="text" v-model="roomName" placeholder="必須項目" @keypress.enter="commitRoomName"/>
+    <label class="roomName">
+      部屋名：<input
+        ref="roomNameInput"
+        type="text"
+        v-model="roomName"
+        placeholder="必須項目"
+        @keypress.enter="commitRoomName"
+      />
       <ctrl-button @click="commitRoomName">チェック</ctrl-button>
     </label>
 
     <!----------------------
      ! 部屋ができるのを待つ
      !--------------------->
-    <sub-block-title @open="openWaitRoom" text="部屋ができるのを待つ" v-if="!isRoomExist"/>
-    <div class="indentDescription description" v-if="paramRoomName && !isRoomExist">部屋が作られたら自動で入室します。それまでは仮部屋での待機となります。</div>
+    <sub-block-title
+      @open="openWaitRoom"
+      text="部屋ができるのを待つ"
+      v-if="!isRoomExist"
+    />
+
+    <div
+      class="indentDescription description"
+      v-if="paramRoomName && !isRoomExist"
+    >
+      部屋が作られたら自動で入室します。それまでは仮部屋での待機となります。
+    </div>
     <div class="subBlock waitRoom" v-if="isViewWait && !isRoomExist">
-      <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword"/></label>
+      <label class="roomPassword">
+        入室パスワード：
+        <input type="password" v-model="roomPassword" />
+      </label>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
           <label>
-            <player-type-select v-model="inputPlayerType"/>
-            <input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/>
+            <player-type-select v-model="inputPlayerType" />
+            <input
+              placeholder="プレイヤー名を入力（必須項目）"
+              type="text"
+              v-model="playerName"
+            />
           </label>
         </div>
-        <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
-        <div class="description">部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！</div>
+        <label class="playerPassword">
+          パスワード：<input type="password" v-model="playerPassword" />
+        </label>
+        <div class="description">
+          部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！
+        </div>
       </fieldset>
-      <ctrl-button @click="doWaitRoom"><i class="icon-home3"></i> 仮入室</ctrl-button>
+      <ctrl-button @click="doWaitRoom">
+        <i class="icon-home3"></i> 仮入室
+      </ctrl-button>
     </div>
 
     <!----------------------
      ! この部屋に入る
      !--------------------->
-    <sub-block-title @open="openNewRoom" text="この部屋に入る" v-if="isRoomExist"/>
+    <sub-block-title
+      @open="openNewRoom"
+      text="この部屋に入る"
+      v-if="isRoomExist"
+    />
     <div class="subBlock joinRoom isShow" v-if="isRoomExist">
-      <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword" @keypress.enter="roomProcess(false)"/></label>
-      <!--
-      <fieldset class="playerInfo">
-        <legend>あなたの情報</legend>
-        <div>
-          <label>権限：<player-type-select v-model="inputPlayerType"/><input placeholder="ユーザ名を入力（必須項目）" type="text" v-model="playerName"/></label>
-        </div>
-        <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
-        <div class="description">部屋内でのユーザ管理に使用します。パスワード忘れに注意！</div>
-        <div class="description">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
-      </fieldset>
-      -->
-      <ctrl-button @click="roomProcess(false)"><i class="icon-home3"></i> 入室</ctrl-button>
+      <label class="roomPassword">
+        入室パスワード：
+        <input
+          type="password"
+          v-model="roomPassword"
+          @keypress.enter="roomProcess(false)"
+        />
+      </label>
+      <ctrl-button @click="roomProcess(false)">
+        <i class="icon-home3"></i> 入室
+      </ctrl-button>
     </div>
 
     <!----------------------
      ! 新しい部屋をつくる
      !--------------------->
-    <sub-block-title @open="openNewRoom" text="新しい部屋をつくる"/>
-    <div class="indentDescription description" v-if="paramRoomName && !isRoomExist">「{{paramRoomName}}」は作成可能です。</div>
-    <div class="indentDescription description" v-if="paramRoomName && isRoomExist">「{{paramRoomName}}」はすでに作成済みです。<br>同じ名前の部屋はひとつのサーバでひとつしか作成できません。<br>部屋名を変更して、もう一度チェックしてください。
+    <sub-block-title @open="openNewRoom" text="新しい部屋をつくる" />
+    <div
+      class="indentDescription description"
+      v-if="paramRoomName && !isRoomExist"
+    >
+      「{{ paramRoomName }}」は作成可能です。
+    </div>
+    <div
+      class="indentDescription description"
+      v-if="paramRoomName && isRoomExist"
+    >
+      「{{
+        paramRoomName
+      }}」はすでに作成済みです。<br />同じ名前の部屋はひとつのサーバでひとつしか作成できません。<br />部屋名を変更して、もう一度チェックしてください。
     </div>
     <div class="subBlock newRoom" v-if="isViewNewRoom && !isRoomExist">
-      <label class="roomPassword">入室パスワード：<input type="password" v-model="roomPassword"/></label>
-      <label class="roomSystem">システム：
-        <dice-bot-select :outputFlg="true" v-model="currentSystem"/>
+      <label class="roomPassword">
+        入室パスワード：<input type="password" v-model="roomPassword" />
+      </label>
+      <label class="roomSystem">
+        システム：
+        <dice-bot-select :outputFlg="true" v-model="currentSystem" />
       </label>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
         <div>
-          <label><player-type-select v-model="inputPlayerType"/><input placeholder="プレイヤー名を入力（必須項目）" type="text" v-model="playerName"/></label>
+          <label>
+            <player-type-select v-model="inputPlayerType" />
+            <input
+              placeholder="プレイヤー名を入力（必須項目）"
+              type="text"
+              v-model="playerName"
+            />
+          </label>
         </div>
-        <label class="playerPassword">パスワード：<input type="password" v-model="playerPassword"/></label>
-        <div class="description">部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！</div>
-        <div class="description">権限の詳細は<a @click="onClickDescription" href="javascript:void(0);">こちら</a></div>
+        <label class="playerPassword">
+          パスワード：<input type="password" v-model="playerPassword" />
+        </label>
+        <div class="description">
+          部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！
+        </div>
+        <div class="description">
+          権限の詳細は<a @click="onClickDescription" href="javascript:void(0);"
+            >こちら</a
+          >
+        </div>
       </fieldset>
-      <ctrl-button @click="roomProcess(true)"><i class="icon-home3"></i> 作成</ctrl-button>
+      <ctrl-button @click="roomProcess(true)">
+        <i class="icon-home3"></i> 作成
+      </ctrl-button>
     </div>
   </fieldset>
 </template>
@@ -433,8 +500,7 @@ export default class CreateNewRoom extends Vue {
 }
 </script>
 
-<style scoped src="./login.css">
-</style>
+<style scoped src="./login.css"></style>
 
 <style scoped lang="scss">
 fieldset.root,

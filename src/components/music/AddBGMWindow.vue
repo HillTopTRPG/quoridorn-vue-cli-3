@@ -1,22 +1,33 @@
 <template>
-  <window-frame titleText="BGM追加画面" display-property="private.display.addBGMWindow" align="right-bottom" fixSize="300, 350" @open="initWindow">
+  <window-frame
+    titleText="BGM追加画面"
+    display-property="private.display.addBGMWindow"
+    align="right-bottom"
+    fixSize="300, 350"
+    @open="initWindow"
+  >
     <div class="contents" @contextmenu.prevent>
       <fieldset>
         <legend>読込</legend>
         <!-- URL -->
-        <label class="url"><span>URL</span>
-          <input type="text" v-model="url" ref="urlElm">
+        <label class="url">
+          <span>URL</span>
+          <input type="text" v-model="url" ref="urlElm" />
         </label>
       </fieldset>
       <fieldset>
         <legend>表示</legend>
         <div class="firstWide">
           <!-- 表示タイトル -->
-          <label class="titleStr"><span>タイトル</span><input type="text" v-model="title"></label>
+          <label class="titleStr">
+            <span>タイトル</span><input type="text" v-model="title" />
+          </label>
         </div>
         <div class="firstWide" v-if="!isYoutube">
           <!-- クレジットURL -->
-          <label class="creditUrl"><span>CreditURL</span><input type="text" v-model="creditUrl"></label>
+          <label class="creditUrl">
+            <span>CreditURL</span><input type="text" v-model="creditUrl" />
+          </label>
           <!-- クレジット取得 -->
           <ctrl-button class="getCredit" @click="getCredit">取得</ctrl-button>
         </div>
@@ -25,9 +36,14 @@
         <legend>再生</legend>
         <div>
           <!-- タグ -->
-          <label class="tag"><span title="再生中のBGMはタグによって一意になります">タグ</span><input type="text" v-model="tag" list="bgmTagComboboxValues"></label>
+          <label class="tag">
+            <span title="再生中のBGMはタグによって一意になります">タグ</span
+            ><input type="text" v-model="tag" list="bgmTagComboboxValues" />
+          </label>
           <datalist id="bgmTagComboboxValues">
-            <option v-for="tag in tags" :key="tag" :value="tag">{{tag}}</option>
+            <option v-for="tag in tags" :key="tag" :value="tag">
+              {{ tag }}
+            </option>
           </datalist>
           <!-- 音量 -->
           <volume-component
@@ -35,31 +51,78 @@
             @volume="setVolume"
             @mute="setIsMute"
             :mutable="false"
-            ref="volumeComponent"/>
+            ref="volumeComponent"
+          />
           <!-- プレビュー -->
           <ctrl-button class="preview" @click="preview">プレビュー</ctrl-button>
         </div>
         <div>
           <!-- 再生時間 -->
-          <label class="playLength"><span title="0で全て再生">時間</span><input type="number" min="0" step="0.1" max="10000" v-model="playLength"></label>
+          <label class="playLength">
+            <span title="0で全て再生">時間</span>
+            <input
+              type="number"
+              min="0"
+              step="0.1"
+              max="10000"
+              v-model="playLength"
+            />
+          </label>
           <!-- フェードイン -->
-          <label class="fadeIn"><span>fadeIn</span><input type="number" min="0" step="0.1" max="10" v-model="fadeIn" placeholder="秒"></label>
+          <label class="fadeIn">
+            <span>fadeIn</span>
+            <input
+              type="number"
+              min="0"
+              step="0.1"
+              max="10"
+              v-model="fadeIn"
+              placeholder="秒"
+            />
+          </label>
           <!-- フェードアウト -->
-          <label class="fadeOut"><span>fadeOut</span><input type="number" min="0" step="0.1" max="10" v-model="fadeOut" placeholder="秒"></label>
+          <label class="fadeOut">
+            <span>fadeOut</span>
+            <input
+              type="number"
+              min="0"
+              step="0.1"
+              max="10"
+              v-model="fadeOut"
+              placeholder="秒"
+            />
+          </label>
           <!-- 無限ループ -->
-          <span class="icon loop" :class="{active: isLoop}"><i class="icon-loop" @click="change('isLoop')" :title="'リピート再生' + (isLoop ? 'あり' : 'なし')"></i></span>
+          <span class="icon loop" :class="{ active: isLoop }">
+            <i
+              class="icon-loop"
+              @click="change('isLoop')"
+              :title="'リピート再生' + (isLoop ? 'あり' : 'なし')"
+            ></i>
+          </span>
         </div>
       </fieldset>
       <fieldset>
         <legend>チャット連動</legend>
         <div class="lastWide">
           <!-- チャット連動オプション -->
-          <label class="option"><ctrl-select v-model="chatLinkage" :optionInfoList="chatLinkageOptionInfoList"/></label>
+          <label class="option">
+            <ctrl-select
+              v-model="chatLinkage"
+              :optionInfoList="chatLinkageOptionInfoList"
+            />
+          </label>
           <!-- 検索文字 -->
           <label
             class="search"
-            v-show="chatLinkage === '1' || chatLinkage === '2'">
-            <input :placeholder="chatLinkage === 1 ? '' : 'Javascriptの正規表現'" type="text" v-model="chatLinkageSearch"></label>
+            v-show="chatLinkage === '1' || chatLinkage === '2'"
+          >
+            <input
+              :placeholder="chatLinkage === 1 ? '' : 'Javascriptの正規表現'"
+              type="text"
+              v-model="chatLinkageSearch"
+            />
+          </label>
         </div>
       </fieldset>
       <div class="buttonArea">
@@ -201,7 +264,6 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;
@@ -245,12 +307,12 @@ fieldset {
     border: 2px solid black;
     display: flex;
     justify-content: center;
-    align-content: start;
+    align-content: flex-start;
 
     &:before {
       display: flex;
       justify-content: center;
-      align-content: start;
+      align-content: flex-start;
       position: absolute;
       top: 50%;
       margin-top: calc(-12px / 2);
@@ -366,6 +428,6 @@ label {
 .buttonArea {
   display: flex;
   justify-content: center;
-  align-content: start;
+  align-content: flex-start;
 }
 </style>

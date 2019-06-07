@@ -1,9 +1,25 @@
 <template>
   <ContextFrame displayProperty="private.display.mapMaskContext">
-    <div class="item" @click.left.prevent="viewEditMapMask">変更</div>
-    <div class="item" @click.left.prevent="changeMapMaskLock" v-show="!mapMaskIsLock">固定</div>
-    <div class="item" @click.left.prevent="changeMapMaskLock" v-show="mapMaskIsLock">固定を解除</div>
-    <div class="item" @click.left.prevent="deleteMapMask">削除</div>
+    <div class="item" @click.left.prevent="viewEditMapMask">
+      変更
+    </div>
+    <div
+      class="item"
+      @click.left.prevent="changeMapMaskLock"
+      v-show="!mapMaskIsLock"
+    >
+      固定
+    </div>
+    <div
+      class="item"
+      @click.left.prevent="changeMapMaskLock"
+      v-show="mapMaskIsLock"
+    >
+      固定を解除
+    </div>
+    <div class="item" @click.left.prevent="deleteMapMask">
+      削除
+    </div>
   </ContextFrame>
 </template>
 
@@ -62,7 +78,3 @@ export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

@@ -1,5 +1,10 @@
 <template>
-  <spec-frame property="manualWindow" label-str="マニュアル" lastVersion="1.0.0b1" :isSpecFixed="false">
+  <spec-frame
+    property="manualWindow"
+    label-str="マニュアル"
+    lastVersion="1.0.0b1"
+    :isSpecFixed="false"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -12,7 +17,10 @@
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
       <li>パターン別の操作マニュアルを表示</li>
-      <li>「ようこそ」画面の「仕様一覧」に統合するか悩み中<span class="unFixed">[仕様未確定事項]</span></li>
+      <li>
+        「ようこそ」画面の「仕様一覧」に統合するか悩み中
+        <span class="unFixed">[仕様未確定事項]</span>
+      </li>
     </spec-item>
     <!----------------------
      ! ユーザ要望
@@ -24,7 +32,10 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>本機能自体が未実装<br>→ 仕様未定につき実装時期未定</li>
+      <li>
+        本機能自体が未実装
+        <br />→ 仕様未定につき実装時期未定
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
@@ -36,7 +47,9 @@
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -46,6 +59,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

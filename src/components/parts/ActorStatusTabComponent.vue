@@ -1,21 +1,22 @@
 <template>
   <div class="actor-status-tab-container">
-
     <!-- タブ -->
     <div class="actor-status-tabs" @contextmenu.prevent>
       <label class="tab">
         <actor-status-combo
           :statusList="actor.statusList"
           :selectedStatusList="statusList"
-          v-model="selectStatus"/>
+          v-model="selectStatus"
+        />
       </label>
       <label
         class="tab"
         v-for="(status, index) in statusList"
         :key="status.name"
         @click="selectTab(status.name)"
-        :class="{active: activeTabIndex === index}"
-      >{{status.name}}
+        :class="{ active: activeTabIndex === index }"
+      >
+        {{ status.name }}
         <span class="icon-cross" @click.stop="delTab(status.name)"></span>
       </label>
     </div>
@@ -24,7 +25,6 @@
     <div class="actor-status-contents">
       <slot :status="status"></slot>
     </div>
-
   </div>
 </template>
 
@@ -144,7 +144,6 @@ export default class ActorStatusTabComponent extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 $backColor: rgba(230, 230, 255, 1);
 .actor-status-tab-container {

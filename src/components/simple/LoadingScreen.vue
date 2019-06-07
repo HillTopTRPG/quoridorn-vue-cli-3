@@ -1,6 +1,7 @@
 <template>
   <div
-    @mousemove.stop class="loadingScreen"
+    @mousemove.stop
+    class="loadingScreen"
     v-if="isLoading"
     @contextmenu.prevent
   ></div>

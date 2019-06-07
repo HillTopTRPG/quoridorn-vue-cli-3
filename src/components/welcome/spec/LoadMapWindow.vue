@@ -1,17 +1,24 @@
 <template>
-  <spec-frame property="loadMapWindow" label-str="マップ切り替え" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame
+    property="loadMapWindow"
+    label-str="マップ切り替え"
+    lastVersion="1.0.0b1"
+    :isSpecFixed="true"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
     <spec-item class-str="operation" label-str="起動操作">
-        <li>画面上部メニューの「マップ」を選択</li>
-        <li>「マップ切り替え」を選択</li>
+      <li>画面上部メニューの「マップ」を選択</li>
+      <li>「マップ切り替え」を選択</li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>マップ状態保存機能で保存したデータを参照させることで、マップ状態を復元する</li>
+      <li>
+        マップ状態保存機能で保存したデータを参照させることで、マップ状態を復元する
+      </li>
       <li>
         復元時に、復元前に配置されていた以下のデータを削除するか選択する
         <ol>
@@ -31,7 +38,10 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>本機能自体が未実装<br>→ 初回リリースには含めない。しばらくは運用でカバーをお願いします。</li>
+      <li>
+        本機能自体が未実装
+        <br />→ 初回リリースには含めない。しばらくは運用でカバーをお願いします。
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
@@ -43,7 +53,9 @@
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -53,6 +65,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

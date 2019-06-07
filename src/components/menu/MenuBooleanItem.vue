@@ -1,7 +1,7 @@
 <template>
   <div class="item" @click="itemOnClick" @mouseenter="mouseEnter">
     <span class="check"><i v-show="propValue" class="icon-checkmark"></i></span>
-    <span><slot/></span>
+    <span><slot /></span>
   </div>
 </template>
 
@@ -32,7 +32,6 @@ export default class MenuBooleanItem extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .item {
   position: relative;

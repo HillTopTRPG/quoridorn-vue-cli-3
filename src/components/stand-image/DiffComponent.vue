@@ -1,30 +1,41 @@
 <template>
   <div class="container" @contextmenu.prevent>
-
     <!-- 画像 -->
     <div class="img-container">
-      <div class="img" v-bg-img="image" :class="{isReverse : isReverse}" @click="chooseImage"></div>
+      <div
+        class="img"
+        v-bg-img="image"
+        :class="{ isReverse: isReverse }"
+        @click="chooseImage"
+      ></div>
     </div>
 
     <!-- 数値情報 -->
     <div class="locate">
       <label>位置</label>
-      <label>X：<input type="number" v-model="x"></label>
-      <label>Y：<input type="number" v-model="y"></label>
-      <ctrl-select v-model="type" :optionInfoList="optionInfoList"/>
+      <label>X：<input type="number" v-model="x"/></label>
+      <label>Y：<input type="number" v-model="y"/></label>
+      <ctrl-select v-model="type" :optionInfoList="optionInfoList" />
     </div>
 
     <!-- アニメーション周期 -->
     <div class="range">
-      <label>表示時間{{viewTime}}</label>
-      <range-multiple-persent v-model="time"/>
+      <label>表示時間{{ viewTime }}</label>
+      <range-multiple-persent v-model="time" />
     </div>
 
     <span
       class="delete-button"
-      @click.prevent="deleteStandImageDiff({ key: actorKey, statusName: statusName, index: index })"
-    >削除</span>
-
+      @click.prevent="
+        deleteStandImageDiff({
+          key: actorKey,
+          statusName: statusName,
+          index: index
+        })
+      "
+    >
+      削除
+    </span>
   </div>
 </template>
 
@@ -251,7 +262,6 @@ export default class DiffComponent extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .container {
   position: relative;

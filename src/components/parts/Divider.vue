@@ -1,6 +1,7 @@
 <template>
-  <td class="divider"
-    :class="{isHover: hoverDevIndex === index}"
+  <td
+    class="divider"
+    :class="{ isHover: hoverDevIndex === index }"
     @dblclick.stop="doubleClick()"
     @mouseover="hoverDev(index)"
     @mouseout="hoverDev()"
@@ -61,7 +62,6 @@ export default class Divider extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .divider {
   background-color: rgb(183, 186, 188);

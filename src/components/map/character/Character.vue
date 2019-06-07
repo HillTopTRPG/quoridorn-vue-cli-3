@@ -4,7 +4,9 @@
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
-    @click.right.prevent="(e) => openContext(e, 'private.display.characterContext')"
+    @click.right.prevent="
+      e => openContext(e, 'private.display.characterContext')
+    "
     @mouseover="mouseover"
     @mouseout="mouseout"
     @dblclick="dblClick"
@@ -12,45 +14,77 @@
     @mouseup.left.stop="leftUp"
     @mousedown.right.stop="rightDown"
     @mouseup.right.stop="rightUp"
-    @touchstart="leftDown" @touchend="leftUp"
+    @touchstart="leftDown"
+    @touchend="leftUp"
     @touchcancel="leftUp"
     @contextmenu.prevent
   >
-    <range v-for="range in rangeList"
-           :key="range.key"
-           :type="type"
-           :objKey="objKey"
-           :distance="range.distance"
-           :distanceMode="range.distanceMode"
-           :isVision="range.isVision"
-           :color="range.color"
-           :borderColor="range.borderColor"
-           :targetColor="range.targetColor"
-           :lineWidth="range.lineWidth"
-    ></range>
+    <range
+      v-for="range in rangeList"
+      :key="range.key"
+      :type="type"
+      :objKey="objKey"
+      :distance="range.distance"
+      :distanceMode="range.distanceMode"
+      :isVision="range.isVision"
+      :color="range.color"
+      :borderColor="range.borderColor"
+      :targetColor="range.targetColor"
+      :lineWidth="range.lineWidth"
+    />
     <div class="checkPropertyArea">
       <div
         v-for="(checkObj, index) in checkPropertyList"
         :key="index"
         class="checkProperty"
-        :style="{ background: `radial-gradient(circle farthest-side at top left, white 10%, ${checkObj.color} 90%, black 120%)` }"
+        :style="{
+          background: `radial-gradient(
+            circle farthest-side at top left,
+            white 10%,
+            ${checkObj.color} 90%,
+            black 120%
+          )`
+        }"
       ></div>
     </div>
     <div class="numberPropertyArea">
-      <div v-for="(numObj, index) in numberPropertyList" :key="index" class="numberProperty">
+      <div
+        v-for="(numObj, index) in numberPropertyList"
+        :key="index"
+        class="numberProperty"
+      >
         <div class="bar">
-          <div :style="{ backgroundColor: numObj.color, width: numObj.ratio }"></div>
+          <div
+            :style="{
+              backgroundColor: numObj.color,
+              width: numObj.ratio
+            }"
+          ></div>
         </div>
-        <div class="value" :style="{ color: numObj.fontColor }">{{numObj.value}}</div>
+        <div class="value" :style="{ color: numObj.fontColor }">
+          {{ numObj.value }}
+        </div>
       </div>
     </div>
     <div class="selectHighlight" v-if="isViewHighlight"></div>
     <div class="border"></div>
-    <img class="image" v-img="imageObj.data" :class="{reverse : imageObj.isReverse}" draggable="false"/>
-    <div class="name">{{name}}</div>
-    <span class="rotate" v-show="isHover || isThisRolling" draggable="false"><i class="icon-redo2"
-      @mousedown.stop="rollStart" @mouseup.stop="rollEnd"
-      @touchstart.stop="rollStart" @touchend.stop="rollEnd" @touchcancel.stop="rollEnd"></i></span>
+    <img
+      class="image"
+      v-img="imageObj.data"
+      :class="{ reverse: imageObj.isReverse }"
+      draggable="false"
+    />
+    <div class="name">{{ name }}</div>
+    <span class="rotate" v-show="isHover || isThisRolling" draggable="false">
+      <i
+        class="icon-redo2"
+        @mousedown.stop="rollStart"
+        @mouseup.stop="rollEnd"
+        @touchstart.stop="rollStart"
+        @touchend.stop="rollEnd"
+        @touchcancel.stop="rollEnd"
+      ></i>
+    </span>
   </div>
 </template>
 
@@ -308,7 +342,6 @@ export default class Character extends PieceMixin {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .character {
   position: fixed;

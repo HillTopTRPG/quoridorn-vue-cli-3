@@ -6,7 +6,9 @@
     v-bg-img="'static/img/map/memo2.png'"
     @click.right.prevent="openContext"
     @contextmenu.prevent
-  >{{ publicMemoObj.title }}</div>
+  >
+    {{ publicMemoObj.title }}
+  </div>
 </template>
 
 <script lang="ts">

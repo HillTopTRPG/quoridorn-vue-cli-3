@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="loading"
-    v-show="isLoading"
-    @contextmenu.prevent
-  >
+  <div class="loading" v-show="isLoading" @contextmenu.prevent>
     <span>お待ちください</span>
     <span class="icon icon-spinner2"></span>
   </div>
@@ -36,7 +32,7 @@ export default class Loading extends Vue {
   width: 7rem;
   height: 7rem;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
   flex-direction: column;
   padding: 1rem;

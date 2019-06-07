@@ -1,9 +1,9 @@
 <template>
   <div class="loginContainer">
-    <create-room-from-room-data v-if="!isRoomExist && !isRoomJoined"/>
-    <create-new-room v-if="!isRoomJoined"/>
-    <room-info v-if="isRoomJoined"/>
-    <player-info v-if="isRoomJoined"/>
+    <create-room-from-room-data v-if="!isRoomExist && !isRoomJoined" />
+    <create-new-room v-if="!isRoomJoined" />
+    <room-info v-if="isRoomJoined" />
+    <player-info v-if="isRoomJoined" />
   </div>
 </template>
 
@@ -30,7 +30,6 @@ export default class Login extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .loginContainer {
   border: 1px solid #777777;
@@ -41,4 +40,4 @@ export default class Login extends Vue {
 fieldset:not(:first-child) {
   margin-top: 1em;
 }
-</style>()
+</style>

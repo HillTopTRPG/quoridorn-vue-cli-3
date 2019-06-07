@@ -1,19 +1,15 @@
 <template>
   <div class="imageSelector" @contextmenu.prevent>
-
     <!-- 画像選択エリア -->
     <div class="choseImage">
       <img
         v-for="image in useImageList"
-        :class="{active : value && (image.key === value.replace(':R', ''))}"
+        :class="{ active: value && image.key === value.replace(':R', '') }"
         :key="image.key"
         v-img="image.data"
         @click="selectTagImage(image.key)"
-        draggable="false"/>
-      <!--
-      <div class="tagImages">
-      </div>
-      -->
+        draggable="false"
+      />
     </div>
 
     <!-- 絞り込み情報 -->
@@ -21,7 +17,7 @@
       <div class="selectedImage">
         <label>タグ名：</label>
         <image-tag-select class="tagSelect" v-model="selectImageTag" />
-        <span>{{selectedTagIndexText}}</span>
+        <span>{{ selectedTagIndexText }}</span>
       </div>
       <ctrl-button>隠し画像</ctrl-button>
       <ctrl-button @click="doReverse">反</ctrl-button>

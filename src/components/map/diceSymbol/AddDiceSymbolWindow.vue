@@ -11,18 +11,29 @@
       <div class="control">
         <label>
           <span>ダイス目</span>
-          <input type="number" min="1" :max="faceNum" v-model="pips">
+          <input type="number" min="1" :max="faceNum" v-model="pips" />
         </label>
         <label>
           <span>ダイス種別</span>
-          <ctrl-select v-model="faceNum" :optionInfoList="faceNumOptionInfoList"/>
+          <ctrl-select
+            v-model="faceNum"
+            :optionInfoList="faceNumOptionInfoList"
+          />
         </label>
-        <label :style="{ visibility: (dice[faceNum] && dice[faceNum].length > 1) ? 'visible' : 'hidden' }">
+        <label
+          :style="{
+            visibility:
+              dice[faceNum] && dice[faceNum].length > 1 ? 'visible' : 'hidden'
+          }"
+        >
           <span></span>
-          <ctrl-select v-model="type" :optionInfoList="diceTypeOptionInfoList"/>
+          <ctrl-select
+            v-model="type"
+            :optionInfoList="diceTypeOptionInfoList"
+          />
         </label>
         <label>
-          <input type="checkbox" v-model="isHide">
+          <input type="checkbox" v-model="isHide" />
           <span>ダイス目を隠して置く</span>
         </label>
       </div>
@@ -149,7 +160,6 @@ export default class AddDiceSymbolWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "../../common.scss";
 

@@ -1,21 +1,45 @@
 <template>
   <context-frame displayProperty="private.display.diceSymbolContext">
     <template v-if="!isAbsoluteHide">
-      <div class="item" @click.left.prevent="openOnClick" v-if="isHide">ダイス目を公開する</div>
-      <div class="item" @click.left.prevent="diceRollOnClick">ダイスを振る</div>
-      <hr>
+      <div class="item" @click.left.prevent="openOnClick" v-if="isHide">
+        ダイス目を公開する
+      </div>
+
+      <div class="item" @click.left.prevent="diceRollOnClick">
+        ダイスを振る
+      </div>
+
+      <hr />
+
       <div
         v-for="pips in pipsList"
         :key="pips"
         class="item"
         @click.left.prevent="changePipsOnClick(pips)"
-      >ダイス目を{{pips}}に</div>
-      <hr v-if="!isHide">
-      <div class="item" @click.left.prevent="hideOnClick" v-if="!isHide">ダイス目を隠す</div>
-      <hr>
-      <div class="item" @click.left.prevent="deleteDiceOnClick">ダイスの削除</div>
+      >
+        ダイス目を{{ pips }}に
+      </div>
+
+      <hr v-if="!isHide" />
+
+      <div class="item" @click.left.prevent="hideOnClick" v-if="!isHide">
+        ダイス目を隠す
+      </div>
+
+      <hr />
+
+      <div class="item" @click.left.prevent="deleteDiceOnClick">
+        ダイスの削除
+      </div>
     </template>
-    <div class="item disabled" v-if="isAbsoluteHide" @click.left.prevent="closeContextOnClick">操作できません</div>
+
+    <div
+      class="item disabled"
+      v-if="isAbsoluteHide"
+      @click.left.prevent="closeContextOnClick"
+    >
+      操作できません
+    </div>
   </context-frame>
 </template>
 

@@ -6,13 +6,11 @@
       placeholder="状態"
       :value="localValue"
       @change="event => changeValue(event.target.value)"
-    >
+    />
     <datalist id="actorStatus">
-      <option
-        v-for="status in useStatusList"
-        :key="status"
-        :value="status"
-      >{{status}}</option>
+      <option v-for="status in useStatusList" :key="status" :value="status">
+        {{ status }}
+      </option>
     </datalist>
   </label>
 </template>

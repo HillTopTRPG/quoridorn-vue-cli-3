@@ -54,7 +54,3 @@ export default class ChitContext extends Mixins<WindowMixin>(WindowMixin) {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

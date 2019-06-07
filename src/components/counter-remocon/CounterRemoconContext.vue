@@ -1,13 +1,17 @@
 <template>
   <context-frame displayProperty="private.display.counterRemoconContext">
     <div class="item" @click.left.prevent="changeOnClick">ボタンの変更</div>
-    <hr>
+    <hr />
     <div class="item" @click.left.prevent="deleteOnClick">ボタンの削除</div>
-    <hr>
+    <hr />
     <div class="item" @click.left.prevent="copyOnClick">ボタンの複製</div>
-    <hr>
-    <div class="item" @click.left.prevent="moveRightOnClick">ボタンを【&emsp;&emsp;右→】へ</div>
-    <div class="item" @click.left.prevent="moveLeftOnClick">ボタンを【←左&emsp;&emsp;】へ</div>
+    <hr />
+    <div class="item" @click.left.prevent="moveRightOnClick">
+      ボタンを【&emsp;&emsp;右→】へ
+    </div>
+    <div class="item" @click.left.prevent="moveLeftOnClick">
+      ボタンを【←左&emsp;&emsp;】へ
+    </div>
   </context-frame>
 </template>
 

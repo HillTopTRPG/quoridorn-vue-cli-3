@@ -6,8 +6,7 @@
     dropzone="move"
     id="gameTable"
   >
-    <div :style="gridPaperStyle" @contextmenu.prevent>
-    </div>
+    <div :style="gridPaperStyle" @contextmenu.prevent></div>
 
     <div
       id="mapBoardFrame"
@@ -20,7 +19,7 @@
       @touchstart.prevent="leftDown"
       @contextmenu.prevent
     >
-      <map-board/>
+      <map-board />
     </div>
 
     <map-mask
@@ -70,7 +69,6 @@
       @rightUp="rightUp"
       type="diceSymbol"
     />
-
   </div>
 </template>
 
@@ -679,7 +677,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 #gameTable {
   position: fixed;

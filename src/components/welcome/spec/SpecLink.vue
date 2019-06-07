@@ -1,5 +1,7 @@
 <template>
-  <a :href="refProp" @click.prevent="openLink()" :title="titleStr"><slot></slot></a>
+  <a :href="refProp" @click.prevent="openLink()" :title="titleStr">
+    <slot />
+  </a>
 </template>
 
 <script lang="ts">
@@ -41,7 +43,6 @@ export default class SpecLink extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 a {
   text-decoration: none;

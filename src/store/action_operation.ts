@@ -89,7 +89,7 @@ export default {
           `<span style="color: ${color};"><b>`,
           name + useTargetText,
           "</b>：",
-          text.replace(/\r?\n/g, "<br>"),
+          text.replace(/\r?\n/g, "<br />"),
           "</span>"
         ].join("");
 

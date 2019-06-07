@@ -1,14 +1,43 @@
 <template>
-  <window-frame titleText="チャットフォント設定画面" display-property="private.display.settingChatFontWindow" align="center" fixSize="320, 132" @open="initWindow" @reset="initWindow">
+  <window-frame
+    titleText="チャットフォント設定画面"
+    display-property="private.display.settingChatFontWindow"
+    align="center"
+    fixSize="320, 132"
+    @open="initWindow"
+    @reset="initWindow"
+  >
     <div class="contents" @contextmenu.prevent>
       <div>この画面の操作は即時反映されます。</div>
-      <label v-if="members.length === 0">文字色<input type="color" :value="fontColor" @change="event => changePrivateFontColor(event)"></label>
-      <label v-if="members.length === 0">過去ログ反映<input type="checkbox" v-model="historyChange"></label>
-      <fieldset class="memberArea" v-for="member in members" :key="member.peerId">
-        <legend>{{getObj(member.playerKey).name || `(${member.peerId})`}}</legend>
+      <label v-if="members.length === 0">
+        文字色
+        <input
+          type="color"
+          :value="fontColor"
+          @change="event => changePrivateFontColor(event)"
+        />
+      </label>
+      <label v-if="members.length === 0">
+        過去ログ反映<input type="checkbox" v-model="historyChange" />
+      </label>
+      <fieldset
+        class="memberArea"
+        v-for="member in members"
+        :key="member.peerId"
+      >
+        <legend>
+          {{ getObj(member.playerKey).name || `(${member.peerId})` }}
+        </legend>
         <div>
-          <label>文字色<input type="color" :value="member.color" @change="event => changePeerFontColor(member.peerId, event)"></label>
-          <label>過去ログ反映<input type="checkbox" value="false"></label>
+          <label>
+            文字色
+            <input
+              type="color"
+              :value="member.color"
+              @change="event => changePeerFontColor(member.peerId, event)"
+            />
+          </label>
+          <label>過去ログ反映<input type="checkbox" value="false"/></label>
         </div>
       </fieldset>
       <div class="operateArea">
@@ -119,7 +148,6 @@ export default class SettingChatFontWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

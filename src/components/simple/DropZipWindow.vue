@@ -1,5 +1,10 @@
 <template>
-  <window-frame titleText="部屋データ読込" display-property="private.display.dropZipWindow" align="center" fixSize="300, 100">
+  <window-frame
+    titleText="部屋データ読込"
+    display-property="private.display.dropZipWindow"
+    align="center"
+    fixSize="300, 100"
+  >
     <div class="contents" @contextmenu.prevent>
       <div v-if="!saveDataList">部屋データを読み込んでいます...</div>
       <!-- TODO 初回リリース対応としては部分ロードはしない
@@ -15,10 +20,16 @@
         </div>
       </fieldset>
       -->
-      <div v-if="saveDataList">現段階では部分的ロードは行えません。<br>全てのデータをロードします。</div>
+      <div v-if="saveDataList">
+        現段階では部分的ロードは行えません。<br />全てのデータをロードします。
+      </div>
       <div class="operateArea">
-        <ctrl-button @click="commit" :disabled="!saveDataList">決定</ctrl-button>
-        <ctrl-button @click="cancel" :disabled="!saveDataList">キャンセル</ctrl-button>
+        <ctrl-button @click="commit" :disabled="!saveDataList">
+          決定
+        </ctrl-button>
+        <ctrl-button @click="cancel" :disabled="!saveDataList">
+          キャンセル
+        </ctrl-button>
       </div>
     </div>
   </window-frame>
@@ -189,7 +200,6 @@ export default class DropZipWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

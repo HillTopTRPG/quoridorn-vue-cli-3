@@ -6,8 +6,12 @@
     baseSize="300, 180"
     ref="window"
   >
-    <div class="contents" @contextmenu.prevent ref="contents" @click="contentsOnClick">
-
+    <div
+      class="contents"
+      @contextmenu.prevent
+      ref="contents"
+      @click="contentsOnClick"
+    >
       <!-- ボタン表示エリア -->
       <div class="buttonArea">
         <label
@@ -17,31 +21,30 @@
           <ctrl-button
             @click="event => remoconButtonOnClick(infoObj, event)"
             @click-right="event => openContext(event, infoObj.key)"
-          >{{infoObj.buttonName}}</ctrl-button>
+          >
+            {{ infoObj.buttonName }}
+          </ctrl-button>
         </label>
       </div>
 
       <!-- 操作エリア -->
       <div class="playOperationArea">
         <!-- セーブボタン -->
-        <ctrl-button
-          class="save"
-          @click="saveButtonOnClick"
-        >セーブ</ctrl-button>
+        <ctrl-button class="save" @click="saveButtonOnClick">
+          セーブ
+        </ctrl-button>
 
         <!-- ロードボタン -->
-        <ctrl-button
-          class="load"
-          @click="loadButtonOnClick"
-        >ロード</ctrl-button>
+        <ctrl-button class="load" @click="loadButtonOnClick">
+          ロード
+        </ctrl-button>
 
         <span style="flex: 1"></span>
 
         <!-- ボタン追加ボタン -->
-        <ctrl-button
-          class="add"
-          @click="addButtonOnClick"
-        >ボタン追加</ctrl-button>
+        <ctrl-button class="add" @click="addButtonOnClick">
+          ボタン追加
+        </ctrl-button>
       </div>
     </div>
     <div
@@ -50,7 +53,7 @@
       :style="{ left: selectBlock.x, top: selectBlock.y }"
       class="selectBlock"
     >
-      <span class="selectItem">{{selectBlock.label}}</span>
+      <span class="selectItem">{{ selectBlock.label }}</span>
       <span
         v-for="(item, itemIndex) in selectBlock.itemList"
         :key="`block${blockIndex}-item${itemIndex}`"
@@ -59,7 +62,9 @@
         :style="{ left: item.x, top: item.y }"
         class="selectItem"
         :class="{ isEnd: selectBlock.isEnd, isHover: item.isHover }"
-      >{{item.text}}</span>
+      >
+        {{ item.text }}
+      </span>
     </div>
   </window-frame>
 </template>
@@ -171,7 +176,7 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
       value > 0 ? `+${value}` : `${value}`;
 
     /**=================================================================================================================
-     * カウンター更新処理<br>
+     * カウンター更新処理<br />
      * カウンターリモコン指定情報の選択を全て終えた時に呼び出す
      * @param counterName
      * @param value
@@ -505,7 +510,6 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

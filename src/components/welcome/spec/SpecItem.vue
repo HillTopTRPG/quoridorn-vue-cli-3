@@ -1,8 +1,8 @@
 <template>
   <fieldset :class="classStr">
-    <legend>{{labelStr}}</legend>
+    <legend>{{ labelStr }}</legend>
     <ol>
-      <slot></slot>
+      <slot />
     </ol>
   </fieldset>
 </template>
@@ -16,6 +16,4 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

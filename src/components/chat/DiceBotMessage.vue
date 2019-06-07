@@ -68,9 +68,9 @@ export default class DiceBotMessage extends Vue {
             i--;
           }
         }
-        return sepList.join("、<br>");
+        return sepList.join("、<br />");
       })
-      .join("。<br>");
+      .join("。<br />");
   }
 
   /**
@@ -92,7 +92,6 @@ export default class DiceBotMessage extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "../common";
 

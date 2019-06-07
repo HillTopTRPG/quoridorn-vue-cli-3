@@ -1,5 +1,10 @@
 <template>
-  <spec-frame property="diceWindow" label-str="ダイス画面" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame
+    property="diceWindow"
+    label-str="ダイス画面"
+    lastVersion="1.0.0b1"
+    :isSpecFixed="true"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -13,8 +18,8 @@
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
       <li>
-        以下のダイスを表示し、選択するとそれを画面に追加。<br>
-        追加されたダイスを選択することでアニメーション付きでダイスロールを行う。<br>
+        以下のダイスを表示し、選択するとそれを画面に追加。<br />
+        追加されたダイスを選択することでアニメーション付きでダイスロールを行う。<br />
         ダイスロール結果はチャットに反映する。
         <ol>
           <li>４面ダイス</li>
@@ -36,7 +41,9 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>本機能自体が未実装<br>→ 優先順位低め。初回リリースには含めない。</li>
+      <li>
+        本機能自体が未実装<br />→ 優先順位低め。初回リリースには含めない。
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
@@ -48,7 +55,9 @@
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -58,6 +67,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

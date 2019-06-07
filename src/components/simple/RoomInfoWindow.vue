@@ -1,22 +1,47 @@
 <template>
-  <window-frame :titleText="`プレイルーム${roomName === '' ? '' : `「${roomName}」`}情報表示`" display-property="private.display.roomInfoWindow" align="center" fixSize="400, 310">
+  <window-frame
+    :titleText="
+      `プレイルーム${roomName === '' ? '' : `「${roomName}」`}情報表示`
+    "
+    display-property="private.display.roomInfoWindow"
+    align="center"
+    fixSize="400, 310"
+  >
     <div class="container" @contextmenu.prevent>
       <div v-if="playerList.length === 0">お部屋に接続していません。</div>
       <div class="inviteUrlArea" v-if="playerList.length > 0">
-        招待用URL：<input class="inviteUrl" type="text" readonly="readonly" :value="inviteUrl" />
+        招待用URL：
+        <input
+          class="inviteUrl"
+          type="text"
+          readonly="readonly"
+          :value="inviteUrl"
+        />
       </div>
       <ul v-if="playerList.length > 0">
         <li v-for="player in playerList" :key="player.key">
           <b v-if="player.key === playerKey">[あなた]</b>
-          <span>{{player.name}}</span>
-          <div class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createURL(player)"/></div>
+          <span>{{ player.name }}</span>
+          <div class="returnUrlArea">
+            復帰用URL：
+            <input
+              class="returnUrl"
+              type="text"
+              readonly="readonly"
+              :value="createURL(player)"
+            />
+          </div>
         </li>
       </ul>
 
       <!-- ダイスボット選択 -->
       <label>
         部屋のダイスボット：
-        <dice-bot-select ref="diceBot" v-model="currentDiceBotSystem" class="diceBotSystem"/>
+        <dice-bot-select
+          ref="diceBot"
+          v-model="currentDiceBotSystem"
+          class="diceBotSystem"
+        />
       </label>
 
       <div style="margin-top: 20px;">内容はもっと増やします！</div>
@@ -65,7 +90,6 @@ export default class RoomInfoWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .container {
   display: block;

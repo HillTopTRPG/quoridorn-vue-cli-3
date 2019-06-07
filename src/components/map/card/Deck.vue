@@ -1,17 +1,43 @@
 <template>
-  <div :style="containerStyle" class="deckContainer" v-if="deck.name" @contextmenu.prevent>
+  <div
+    :style="containerStyle"
+    class="deckContainer"
+    v-if="deck.name"
+    @contextmenu.prevent
+  >
     <fieldset>
-      <legend>{{deck.name}}</legend>
+      <legend>{{ deck.name }}</legend>
       <div class="refArea">
         【出典元情報】
-        <div v-if="deck.author">作者：{{deck.author}}</div>
-        <div v-if="deck.title">作品名：{{deck.title}}</div>
-        <div class="refUrlContainer"><a v-for="(ref, index) in deck.refs" :key="index" :href="ref.url" target="_blank" :title="createRefStr(ref, index)">{{createRefStr(ref, index)}}</a></div>
+        <div v-if="deck.author">作者：{{ deck.author }}</div>
+        <div v-if="deck.title">作品名：{{ deck.title }}</div>
+        <div class="refUrlContainer">
+          <a
+            v-for="(ref, index) in deck.refs"
+            :key="index"
+            :href="ref.url"
+            target="_blank"
+            :title="createRefStr(ref, index)"
+          >
+            {{ createRefStr(ref, index) }}
+          </a>
+        </div>
       </div>
       <div class="deck" ref="deck" :style="deckStyle">
-        <card :class="[card.key]" :index="index" :key="card.key" :objKey="card.key" :ref="card.key"
-              v-for="(card, index) in deckCardList"></card>
-        <card :index="deckHoverIndex" :isViewer="true" :objKey="deckHoverKey" ref="centerCard"/>
+        <card
+          :class="[card.key]"
+          :index="index"
+          :key="card.key"
+          :objKey="card.key"
+          :ref="card.key"
+          v-for="(card, index) in deckCardList"
+        />
+        <card
+          :index="deckHoverIndex"
+          :isViewer="true"
+          :objKey="deckHoverKey"
+          ref="centerCard"
+        />
         カードなし
       </div>
     </fieldset>
@@ -122,7 +148,6 @@ export default class Deck extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .deckContainer {
   position: absolute;

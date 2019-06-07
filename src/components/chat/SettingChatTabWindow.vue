@@ -1,17 +1,35 @@
 <template>
-  <window-frame titleText="チャットタブ設定画面" display-property="private.display.settingChatTabWindow" align="center" fixSize="320, 432" @open="initWindow" @reset="initWindow">
+  <window-frame
+    titleText="チャットタブ設定画面"
+    display-property="private.display.settingChatTabWindow"
+    align="center"
+    fixSize="320, 432"
+    @open="initWindow"
+    @reset="initWindow"
+  >
     <div class="contents" @contextmenu.prevent>
       <draggable v-model="tabs">
         <template v-for="(tab, index) in tabs">
           <label :key="tab.key">
-            <span v-if="tab.key === 'chatTab-0'">{{tab.name}}</span>
-            <input v-if="tab.key !== 'chatTab-0'" type="text" v-model="tab.name">
-            <ctrl-button v-if="tab.key !== 'chatTab-0'" @click="delTab(tab.key, index)">削除</ctrl-button>
+            <span v-if="tab.key === 'chatTab-0'">{{ tab.name }}</span>
+            <input
+              v-if="tab.key !== 'chatTab-0'"
+              type="text"
+              v-model="tab.name"
+            />
+            <ctrl-button
+              v-if="tab.key !== 'chatTab-0'"
+              @click="delTab(tab.key, index)"
+            >
+              削除
+            </ctrl-button>
           </label>
         </template>
       </draggable>
       <ctrl-button @click="addTab">追加</ctrl-button>
-      <label>タブを斜めにする<input type="checkbox" v-model="isTabVertical"></label>
+      <label>
+        タブを斜めにする<input type="checkbox" v-model="isTabVertical" />
+      </label>
       <div class="operateArea">
         <ctrl-button @click="commit">変更</ctrl-button>
         <ctrl-button @click="cancel">キャンセル</ctrl-button>
@@ -101,7 +119,6 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

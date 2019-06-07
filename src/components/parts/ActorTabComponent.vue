@@ -1,27 +1,28 @@
 <template>
   <div class="actor-tab-container">
-
     <!-- タブ -->
     <div class="actor-tabs" @contextmenu.prevent>
       <label class="tab">
-        <self-actor-select :selectedActorList="standActorList" v-model="selectActorKey"/>
+        <self-actor-select
+          :selectedActorList="standActorList"
+          v-model="selectActorKey"
+        />
       </label>
       <label
         class="tab"
         v-for="(actor, index) in standActorList"
         :key="actor.key"
         @click="selectTab(actor.key)"
-        :class="{active: activeTabIndex === index}"
-      >{{getViewName(actor.key)}}
+        :class="{ active: activeTabIndex === index }"
+      >
+        {{ getViewName(actor.key) }}
         <span class="icon-cross" @click.stop="delTab(actor.key)"></span>
       </label>
     </div>
-
     <!-- 内容 -->
     <div class="actor-contents">
       <slot :actor="actor"></slot>
     </div>
-
   </div>
 </template>
 
@@ -88,7 +89,6 @@ export default class ActorTabComponent extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 $backColor: rgba(230, 255, 230, 1);
 .actor-tab-container {

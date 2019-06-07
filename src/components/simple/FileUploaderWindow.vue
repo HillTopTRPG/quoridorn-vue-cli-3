@@ -19,26 +19,47 @@
           @mouseenter="imageOnHover(image.key)"
           @mouseleave="imageOnHover()"
         >
-          <img v-img="image.image" alt="">
-          <span class="icon-cross" @click="deleteImageOnClick(image.key)"></span>
+          <img v-img="image.image" alt="" />
+          <span
+            class="icon-cross"
+            @click="deleteImageOnClick(image.key)"
+          ></span>
         </div>
       </div>
 
       <div class="ctrl-type-1">
         <label>対応画像：JPEG/GIF/PNG</label>
-        <ctrl-select :disabled="true" :optionInfoList="[ { key: null, value: '', text: '部屋専用のみ', disabled: true } ]"/>
-        <ctrl-button @click="passwordButtonOnClick">隠し画像パスワード設定</ctrl-button>
+        <ctrl-select
+          :disabled="true"
+          :optionInfoList="[
+            {
+              key: null,
+              value: '',
+              text: '部屋専用のみ',
+              disabled: true
+            }
+          ]"
+        />
+        <ctrl-button @click="passwordButtonOnClick">
+          隠し画像パスワード設定
+        </ctrl-button>
       </div>
 
       <div class="ctrl-type-1">
-        <label for="fileUploader-tag">付与するタグ（半角・全角スペースで区切り）：</label>
-        <input type="text" id="fileUploader-tag" v-model="inputImageTag">
-        <image-tag-select class="tagSelect" v-model="selectImageTag"/>
+        <label for="fileUploader-tag">
+          付与するタグ（半角・全角スペースで区切り）：
+        </label>
+        <input type="text" id="fileUploader-tag" v-model="inputImageTag" />
+        <image-tag-select class="tagSelect" v-model="selectImageTag" />
       </div>
 
       <div class="ctrl-type-2">
-        <ctrl-file-selector @change="fileOnChange">アップロード対象画像選択</ctrl-file-selector>
-        <ctrl-button :disabled="!useImageList.length" @click="commitOnClick">アップロード</ctrl-button>
+        <ctrl-file-selector @change="fileOnChange">
+          アップロード対象画像選択
+        </ctrl-file-selector>
+        <ctrl-button :disabled="!useImageList.length" @click="commitOnClick">
+          アップロード
+        </ctrl-button>
         <ctrl-button @click="cancelOnClick">閉じる</ctrl-button>
       </div>
     </div>
@@ -207,7 +228,6 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "../common.scss";
 

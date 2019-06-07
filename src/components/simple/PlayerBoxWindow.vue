@@ -1,15 +1,28 @@
 <template>
-  <window-frame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
+  <window-frame
+    titleText="プレイヤーボックス画面"
+    display-property="private.display.playerBoxWindow"
+    align="center"
+    fixSize="300, 400"
+  >
     <div class="contents" @contextmenu.prevent>
-      <label class="playerSelect"><player-select v-model="currentPlayerKey"/>のプレイヤーボックス</label>
+      <label class="playerSelect">
+        <player-select v-model="currentPlayerKey" />のプレイヤーボックス
+      </label>
       <label class="playerFontColor">
         チャット文字色
         <input
           type="color"
           :value="getPlayer ? getPlayer.fontColor : ''"
-          @change="(event) => changePlayerFontColor(event.target.value, event.target.nextElementSibling.firstElementChild.checked)"
+          @change="
+            event =>
+              changePlayerFontColor(
+                event.target.value,
+                event.target.nextElementSibling.firstElementChild.checked
+              )
+          "
         />
-        <label>過去ログ反映<input type="checkbox" checked /></label>
+        <label>過去ログ反映<input type="checkbox" checked/></label>
       </label>
       <!-----------------
        ! マップ
@@ -17,7 +30,14 @@
       <fieldset class="field map">
         <legend>マップにいる</legend>
         <ul class="objList">
-          <li v-for="character in getMapObjectList({ kind: 'character', place: 'field', playerKey: currentPlayerKey })" :key="character.key">
+          <li
+            v-for="character in getMapObjectList({
+              kind: 'character',
+              place: 'field',
+              playerKey: currentPlayerKey
+            })"
+            :key="character.key"
+          >
             <character-chip :type="character.kind" :objKey="character.key" />
             <fieldset class="fontColorArea">
               <legend>チャット文字色</legend>
@@ -29,11 +49,26 @@
                 />
                 <input
                   type="color"
-                  :value="character.fontColorType === '0' ? getPlayer ? getPlayer.fontColor : '' : character.fontColor"
-                  @change="event => changeCharacterFontColor(character.key, event.target.value, event.target.parentNode.nextElementSibling.firstElementChild.checked)"
-                  :disabled="character.fontColorType === '0'"/>
+                  :value="
+                    character.fontColorType === '0'
+                      ? getPlayer
+                        ? getPlayer.fontColor
+                        : ''
+                      : character.fontColor
+                  "
+                  @change="
+                    event =>
+                      changeCharacterFontColor(
+                        character.key,
+                        event.target.value,
+                        event.target.parentNode.nextElementSibling
+                          .firstElementChild.checked
+                      )
+                  "
+                  :disabled="character.fontColorType === '0'"
+                />
               </label>
-              <label>過去ログ反映<input type="checkbox" checked /></label>
+              <label>過去ログ反映<input type="checkbox" checked/></label>
             </fieldset>
           </li>
           <!--
@@ -54,7 +89,14 @@
       <fieldset class="field waiting" v-if="currentPlayerKey === playerKey">
         <legend>キャラクター待合室にいる</legend>
         <ul class="objList">
-          <li v-for="character in getMapObjectList({ kind: 'character', place: 'waiting', playerKey: currentPlayerKey })" :key="character.key">
+          <li
+            v-for="character in getMapObjectList({
+              kind: 'character',
+              place: 'waiting',
+              playerKey: currentPlayerKey
+            })"
+            :key="character.key"
+          >
             <character-chip :type="character.kind" :objKey="character.key" />
           </li>
         </ul>
@@ -65,7 +107,14 @@
       <fieldset class="field graveyard" v-if="currentPlayerKey === playerKey">
         <legend>墓場にいる</legend>
         <ul class="objList">
-          <li v-for="character in getMapObjectList({ kind: 'character', place: 'graveyard', playerKey: currentPlayerKey })" :key="character.key">
+          <li
+            v-for="character in getMapObjectList({
+              kind: 'character',
+              place: 'graveyard',
+              playerKey: currentPlayerKey
+            })"
+            :key="character.key"
+          >
             <character-chip :type="character.kind" :objKey="character.key" />
           </li>
           <!--
@@ -191,7 +240,6 @@ export default class PlayerBoxWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

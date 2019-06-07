@@ -1,14 +1,16 @@
 <template>
-  <div
-    class="public-memo-fukidashi"
-    :style="style"
-  >
-    <span class="title" v-html="publicMemoObj.title.replace(/\n/g, '<br>')"></span>
+  <div class="public-memo-fukidashi" :style="style">
+    <span
+      class="title"
+      v-html="publicMemoObj.title.replace(/\n/g, '<br />')"
+    ></span>
     <ol>
       <li v-for="(tabObj, tabIndex) in publicMemoObj.tabList" :key="tabIndex">
-        <span>{{tabObj.tabName}}</span>
-        <template v-if="!tabObj.back.contentsList.length && isHide(tabObj.front)">
-          <br><span>（閲覧不可）</span>
+        <span>{{ tabObj.tabName }}</span>
+        <template
+          v-if="!tabObj.back.contentsList.length && isHide(tabObj.front)"
+        >
+          <br /><span>（閲覧不可）</span>
         </template>
         <ul v-if="tabObj.back.contentsList.length">
           <li>

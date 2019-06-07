@@ -4,19 +4,25 @@
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="chitStyle"
     :title="description"
-    @click.right.prevent="(e) => openContext(e, 'private.display.chitContext')"
+    @click.right.prevent="e => openContext(e, 'private.display.chitContext')"
     @mouseover="mouseover"
     @mouseout="mouseout"
     @mousedown.left.stop="leftDown"
     @mouseup.left.stop="leftUp"
     @mousedown.right.stop="rightDown"
     @mouseup.right.stop="rightUp"
-    @touchstart="leftDown" @touchend="leftUp"
+    @touchstart="leftDown"
+    @touchend="leftUp"
     @touchcancel="leftUp"
     @contextmenu.prevent
   >
     <div class="border"></div>
-    <img class="image" v-img="getKeyObj(imageList, imageKey).data" :class="{reverse : isReverse}" draggable="false"/>
+    <img
+      class="image"
+      v-img="getKeyObj(imageList, imageKey).data"
+      :class="{ reverse: isReverse }"
+      draggable="false"
+    />
   </div>
 </template>
 
@@ -64,7 +70,6 @@ export default class Chit extends PieceMixin {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .chit {
   /*

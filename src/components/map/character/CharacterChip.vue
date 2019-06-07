@@ -4,18 +4,21 @@
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
-    @click.right.prevent="(e) => openContext(e, 'private.display.characterContext')"
+    @click.right.prevent="
+      e => openContext(e, 'private.display.characterContext')
+    "
     @mouseover="mouseover"
     @mouseout="mouseout"
     @contextmenu.prevent
   >
     <div class="border"></div>
     <img
-      class="image" v-img="imageObj.data"
-      :class="{reverse : imageObj.isReverse}"
+      class="image"
+      v-img="imageObj.data"
+      :class="{ reverse: imageObj.isReverse }"
       draggable="false"
     />
-    <div class="name">{{name}}</div>
+    <div class="name">{{ name }}</div>
   </div>
 </template>
 
@@ -71,7 +74,6 @@ export default class CharacterChip extends PieceMixin {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .character-chip {
   /*position: fixed;*/

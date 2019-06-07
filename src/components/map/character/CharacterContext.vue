@@ -1,15 +1,41 @@
 <template>
   <context-frame displayProperty="private.display.characterContext">
     <div class="item" @click.left.prevent="viewEditCharacter">変更</div>
-    <hr>
-    <div class="item" v-if="place !== 'field'" @click.left.prevent="moveToField">マップに移動</div>
-    <div class="item" v-if="place !== 'waiting'" @click.left.prevent="moveToWaitRoom">キャラクター待合室に移動</div>
-    <div class="item" v-if="place !== 'graveyard'" @click.left.prevent="moveToGraveyard">墓場に移動（削除）</div>
-    <hr>
-    <div class="item" @click.left.prevent="copyCharacter">複製</div>
-    <template v-if="characterContextObjKey !== null && getObj(characterContextObjKey).url">
-      <hr>
-      <div class="item" @click.left.prevent="openRefURL">データ参照先URLを開く</div>
+    <hr />
+    <div
+      class="item"
+      v-if="place !== 'field'"
+      @click.left.prevent="moveToField"
+    >
+      マップに移動
+    </div>
+    <div
+      class="item"
+      v-if="place !== 'waiting'"
+      @click.left.prevent="moveToWaitRoom"
+    >
+      キャラクター待合室に移動
+    </div>
+    <div
+      class="item"
+      v-if="place !== 'graveyard'"
+      @click.left.prevent="moveToGraveyard"
+    >
+      墓場に移動（削除）
+    </div>
+    <hr />
+    <div class="item" @click.left.prevent="copyCharacter">
+      複製
+    </div>
+    <template
+      v-if="
+        characterContextObjKey !== null && getObj(characterContextObjKey).url
+      "
+    >
+      <hr />
+      <div class="item" @click.left.prevent="openRefURL">
+        データ参照先URLを開く
+      </div>
     </template>
   </context-frame>
 </template>
@@ -76,7 +102,3 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

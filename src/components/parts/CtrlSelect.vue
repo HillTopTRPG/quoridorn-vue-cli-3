@@ -1,9 +1,5 @@
 <template>
-  <label
-    class="ctrl-select-wrapper"
-    :disabled="disabled"
-    @contextmenu.prevent
-  >
+  <label class="ctrl-select-wrapper" :disabled="disabled" @contextmenu.prevent>
     <select
       v-model="localValue"
       ref="select"
@@ -15,7 +11,9 @@
         :key="optionInfo.key"
         :value="optionInfo.value"
         :disabled="optionInfo.disabled"
-      >{{optionInfo.text}}</option>
+      >
+        {{ optionInfo.text }}
+      </option>
     </select>
     <div class="background-area"></div>
   </label>

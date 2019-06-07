@@ -1,11 +1,32 @@
 <template>
-  <window-frame titleText="キャラクター置き場" display-property="private.display.addCharacterWindow" align="center" fixSize="200, 200" @open="open">
+  <window-frame
+    titleText="キャラクター置き場"
+    display-property="private.display.addCharacterWindow"
+    align="center"
+    fixSize="200, 200"
+    @open="open"
+  >
     <div class="container" @contextmenu.prevent>
-      <div class="name">{{name}}</div>
-      <div class="image"><img class="img" v-img="imageObj.data" @dragstart="dragStart" draggable="true" :class="{reverse : imageObj.isReverse}" @mousedown.stop/></div>
+      <div class="name">{{ name }}</div>
+      <div class="image">
+        <img
+          class="img"
+          v-img="imageObj.data"
+          @dragstart="dragStart"
+          draggable="true"
+          :class="{ reverse: imageObj.isReverse }"
+          @mousedown.stop
+        />
+      </div>
       <div class="controlArea">
-        <label><input type="checkbox" v-model="is_Continuous"/>複数作成</label>
-        <span>連番：</span><input type="number" min="0" v-model="continuous_Num" :disabled="!isContinuous"/>
+        <label><input type="checkbox" v-model="is_Continuous" />複数作成</label>
+        <span>連番：</span
+        ><input
+          type="number"
+          min="0"
+          v-model="continuous_Num"
+          :disabled="!isContinuous"
+        />
       </div>
     </div>
   </window-frame>
@@ -130,7 +151,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .container {
   display: block;

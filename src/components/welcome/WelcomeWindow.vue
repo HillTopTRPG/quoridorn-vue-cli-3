@@ -11,85 +11,128 @@
       <!----------------------------------------------------------------------------------
        ! ロゴ
        !--------------------------------------------------------------------------------->
-      <logo/>
+      <logo />
 
       <!----------------------------------------------------------------------------------
        ! タブ
        !--------------------------------------------------------------------------------->
       <div class="tab_wrap">
-        <input id="welcomeWindow-tab1" type="radio" name="tab_btn" value="1" v-model="tabNum">
-        <input id="welcomeWindow-tab2" type="radio" name="tab_btn" value="2" v-model="tabNum">
-        <input id="welcomeWindow-tab3" type="radio" name="tab_btn" value="3" v-model="tabNum">
-        <input id="welcomeWindow-tab4" type="radio" name="tab_btn" value="4" v-model="tabNum">
+        <input
+          id="welcomeWindow-tab1"
+          type="radio"
+          name="tab_btn"
+          value="1"
+          v-model="tabNum"
+        />
+        <input
+          id="welcomeWindow-tab2"
+          type="radio"
+          name="tab_btn"
+          value="2"
+          v-model="tabNum"
+        />
+        <input
+          id="welcomeWindow-tab3"
+          type="radio"
+          name="tab_btn"
+          value="3"
+          v-model="tabNum"
+        />
+        <input
+          id="welcomeWindow-tab4"
+          type="radio"
+          name="tab_btn"
+          value="4"
+          v-model="tabNum"
+        />
 
         <div class="tab_area" @contextmenu.prevent>
-          <label class="tab1_label" for="welcomeWindow-tab1">ログイン</label>
-          <label class="tab2_label" for="welcomeWindow-tab2">仕様一覧</label>
-          <label class="tab3_label" for="welcomeWindow-tab3">出典元情報</label>
-          <label class="tab4_label" for="welcomeWindow-tab4">開発支援</label>
+          <label class="tab1_label" for="welcomeWindow-tab1">
+            ログイン
+          </label>
+          <label class="tab2_label" for="welcomeWindow-tab2">
+            仕様一覧
+          </label>
+          <label class="tab3_label" for="welcomeWindow-tab3">
+            出典元情報
+          </label>
+          <label class="tab4_label" for="welcomeWindow-tab4">
+            開発支援
+          </label>
         </div>
         <div class="panel_area">
           <!--------------------------------
            ! タブ１ - ログイン
            !------------------------------->
           <div id="panel1" class="tab_panel">
-            <login/>
+            <login />
           </div>
           <!--------------------------------
            ! タブ２ - 仕様一覧
            !------------------------------->
           <div id="panel2" class="tab_panel">
             <div class="spec-header">
-              <ctrl-button class="open" @click="specAll(true)">全て開く</ctrl-button>
-              <ctrl-button class="close" @click="specAll(false)">全て閉じる</ctrl-button>
+              <ctrl-button class="open" @click="specAll(true)">
+                全て開く
+              </ctrl-button>
+              <ctrl-button class="close" @click="specAll(false)">
+                全て閉じる
+              </ctrl-button>
             </div>
             <div class="menu">
-              <environment/><!-- 動作環境 -->
-              <menu-bar/><!-- メインメニュー -->
-              <save/><!-- セーブ機能 -->
-              <load/><!-- ロード機能 -->
-              <chat-window/><!-- チャット画面 -->
-              <dice-window/><!-- ダイス画面 -->
-              <player-box-window/><!-- プレイヤーボックス画面 -->
-              <initiative-window/><!-- イニシアティブ画面 -->
-              <counter-remocon-window-spec/><!-- カウンターリモコン画面 -->
-              <change-font-size-window/><!-- フォントサイズ調整画面 -->
-              <reset-all-window/><!-- ウィンドウ配置初期化機能 -->
-              <add-character-window/><!-- キャラクター追加画面 -->
-              <add-range-window/><!-- 範囲追加画面 -->
-              <add-chit-window/><!-- チット追加画面 -->
-              <graveyard-window/><!-- 墓場画面 -->
-              <waiting-room-window/><!-- キャラクター待合室画面 -->
-              <edit-map-window/><!-- マップ変更画面 -->
-              <edit-floor-tile-mode/><!-- フロアタイル変更モード -->
-              <add-map-mask-window/><!-- マップマスク追加機能 -->
-              <create-easy-map-window/><!-- 簡易マップ作成機能 -->
-              <save-map-window/><!-- マップ状態保存画面 -->
-              <load-map-window/><!-- マップ切り替え画面 -->
-              <file-uploader-window-spec/><!-- ファイルアップローダー画面 -->
-              <edit-image-tag-window/><!-- (画像)タグ編集画面 -->
-              <delete-image-window/><!-- 画像削除画面 -->
-              <welcome-window-spec/><!-- ようこそ画面 -->
-              <version-window/><!-- バージョン画面 -->
-              <manual-window/><!-- マニュアル画面 -->
-              <official-site-link/><!-- オフィシャルサイトへ -->
-              <room-info-window/><!-- プレイルーム情報表示画面 -->
-              <add-public-memo-window/><!-- 共有メモ追加画面 -->
-              <logout/><!-- ログアウト -->
-              <setting-b-g-m-window-spec/><!-- BGM設定画面 -->
-              <add-edit-b-g-m-window-spec/><!-- BGM追加・編集画面 -->
-              <add-dice-symbol-window-spec/><!-- ダイスシンボル追加画面 -->
+              <environment /><!-- 動作環境 -->
+              <menu-bar /><!-- メインメニュー -->
+              <save /><!-- セーブ機能 -->
+              <load /><!-- ロード機能 -->
+              <chat-window /><!-- チャット画面 -->
+              <dice-window /><!-- ダイス画面 -->
+              <player-box-window /><!-- プレイヤーボックス画面 -->
+              <initiative-window /><!-- イニシアティブ画面 -->
+              <counter-remocon-window-spec /><!-- カウンターリモコン画面 -->
+              <change-font-size-window /><!-- フォントサイズ調整画面 -->
+              <reset-all-window /><!-- ウィンドウ配置初期化機能 -->
+              <add-character-window /><!-- キャラクター追加画面 -->
+              <add-range-window /><!-- 範囲追加画面 -->
+              <add-chit-window /><!-- チット追加画面 -->
+              <graveyard-window /><!-- 墓場画面 -->
+              <waiting-room-window /><!-- キャラクター待合室画面 -->
+              <edit-map-window /><!-- マップ変更画面 -->
+              <edit-floor-tile-mode /><!-- フロアタイル変更モード -->
+              <add-map-mask-window /><!-- マップマスク追加機能 -->
+              <create-easy-map-window /><!-- 簡易マップ作成機能 -->
+              <save-map-window /><!-- マップ状態保存画面 -->
+              <load-map-window /><!-- マップ切り替え画面 -->
+              <file-uploader-window-spec /><!-- ファイルアップローダー画面 -->
+              <edit-image-tag-window /><!-- (画像)タグ編集画面 -->
+              <delete-image-window /><!-- 画像削除画面 -->
+              <welcome-window-spec /><!-- ようこそ画面 -->
+              <version-window /><!-- バージョン画面 -->
+              <manual-window /><!-- マニュアル画面 -->
+              <official-site-link /><!-- オフィシャルサイトへ -->
+              <room-info-window /><!-- プレイルーム情報表示画面 -->
+              <add-public-memo-window /><!-- 共有メモ追加画面 -->
+              <logout /><!-- ログアウト -->
+              <setting-b-g-m-window-spec /><!-- BGM設定画面 -->
+              <add-edit-b-g-m-window-spec /><!-- BGM追加・編集画面 -->
+              <add-dice-symbol-window-spec /><!-- ダイスシンボル追加画面 -->
             </div>
-            <span class="toTop" @click="scrollTo()"><span class="rotate90">＜</span><span>TOP</span></span>
+            <span class="toTop" @click="scrollTo()">
+              <span class="rotate90">＜</span>
+              <span>TOP</span>
+            </span>
           </div>
           <!--------------------------------
            ! タブ３ - 出典元情報
            !------------------------------->
-          <div id="panel3" class="tab_panel"><Source/></div>
+          <div id="panel3" class="tab_panel">
+            <Source />
+          </div>
           <!--------------------------------
            ! タブ４ - 開発支援
            !------------------------------->
-          <div id="panel4" class="tab_panel"><dev-support/></div>
+          <div id="panel4" class="tab_panel">
+            <dev-support />
+          </div>
         </div>
       </div>
       <!-- tab_wrap -->
@@ -218,7 +261,6 @@ export default class WelcomeWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   /*position: absolute;*/

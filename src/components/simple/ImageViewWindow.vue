@@ -6,7 +6,7 @@
     baseSize="418, 339"
   >
     <div class="contents">
-      <img :src="imageData" alt="">
+      <img :src="imageData" alt="" />
     </div>
   </window-frame>
 </template>
@@ -33,7 +33,6 @@ export default class ImageViewWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "../common.scss";
 

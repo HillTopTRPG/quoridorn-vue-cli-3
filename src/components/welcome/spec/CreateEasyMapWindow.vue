@@ -1,5 +1,10 @@
 <template>
-  <spec-frame property="createEasyMapWindow" label-str="簡易マップ作成" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame
+    property="createEasyMapWindow"
+    label-str="簡易マップ作成"
+    lastVersion="1.0.0b1"
+    :isSpecFixed="true"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -11,7 +16,9 @@
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>マス目を色(透過度つき)で塗りつぶす機能</li>
+      <li>
+        マス目を色(透過度つき)で塗りつぶす機能
+      </li>
       <li>
         以下の３つの機能で塗りつぶし操作を行う
         <ol>
@@ -33,7 +40,9 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>本機能自体が未実装<br>→ ちょっと大変なので初回リリースには含めない。</li>
+      <li>
+        本機能自体が未実装<br />→ ちょっと大変なので初回リリースには含めない。
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
@@ -45,7 +54,9 @@
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -55,6 +66,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

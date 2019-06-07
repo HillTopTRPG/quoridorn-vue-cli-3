@@ -15,7 +15,7 @@
           v-img="currentImage"
           @dragstart="dragStart"
           draggable="true"
-          :class="{isReverse : isReverse}"
+          :class="{ isReverse: isReverse }"
           @mousedown.stop
         />
       </div>
@@ -26,9 +26,19 @@
         class="imageSelector"
       />
 
-      <div class="rowsNum"><label>縦マス：</label><input type="number" min="1" class="size" v-model="rows"/></div>
-      <div class="columnsNum"><label>横マス：</label><input type="number" min="1" class="size" v-model="columns"/></div>
-      <textarea class="otherText" v-model="description" placeholder="説明"></textarea>
+      <div class="rowsNum">
+        <label>縦マス：</label>
+        <input type="number" min="1" class="size" v-model="rows" />
+      </div>
+      <div class="columnsNum">
+        <label>横マス：</label>
+        <input type="number" min="1" class="size" v-model="columns" />
+      </div>
+      <textarea
+        class="otherText"
+        v-model="description"
+        placeholder="説明"
+      ></textarea>
     </div>
   </window-frame>
 </template>
@@ -103,7 +113,6 @@ export default class AddChitWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .container {
   display: grid;

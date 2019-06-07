@@ -11,28 +11,31 @@
     <div class="contents" @contextmenu.prevent>
       <label>
         <span class="label">ボタン名:</span>
-        <input type="text" v-model="buttonName">
+        <input type="text" v-model="buttonName" />
       </label>
       <label>
         <span class="label">キャラクター{0}:</span>
-        <character-select v-model="target" class="full" :placeList="[]"/>
+        <character-select v-model="target" class="full" :placeList="[]" />
       </label>
       <label>
         <span class="label">カウンター名{1}:</span>
-        <counter-select v-model="counterName" class="full"/>
+        <counter-select v-model="counterName" class="full" />
       </label>
       <label>
         <span class="label">修正値{2}:</span>
-        <ctrl-select v-model="modifyType" :optionInfoList="modifyTypeOptionInfoList"/>
-        <input type="text" v-model="modifyValue">
+        <ctrl-select
+          v-model="modifyType"
+          :optionInfoList="modifyTypeOptionInfoList"
+        />
+        <input type="text" v-model="modifyValue" />
       </label>
       <label>
         <span class="label">表示メッセージ:</span>
-        <input type="text" v-model="message">
+        <input type="text" v-model="message" />
       </label>
       <label>
         <span class="label">例:</span>
-        <span class="full example">{{exampleText}}</span>
+        <span class="full example">{{ exampleText }}</span>
       </label>
       <div class="operationArea">
         <ctrl-button @click="commitButtonOnClick">設定</ctrl-button>
@@ -264,7 +267,6 @@ export default class CounterRemoconEditorWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

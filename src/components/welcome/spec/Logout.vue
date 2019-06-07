@@ -1,5 +1,10 @@
 <template>
-  <spec-frame property="logout" label-str="ログアウト機能" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <spec-frame
+    property="logout"
+    label-str="ログアウト機能"
+    lastVersion="1.0.0b1"
+    :isSpecFixed="true"
+  >
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -10,7 +15,10 @@
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>部屋から抜けてまっさらなQuoridornの初期画面に戻る。<br>→ ページリロードするのでマップオブジェクトも引き継がない。</li>
+      <li>
+        部屋から抜けてまっさらなQuoridornの初期画面に戻る。
+        <br />→ ページリロードするのでマップオブジェクトも引き継がない。
+      </li>
     </spec-item>
     <!----------------------
      ! ユーザ要望
@@ -34,7 +42,9 @@
      ! 関連項目
      !--------------------->
     <spec-item class-str="ref" label-str="関連項目">
-      <li><spec-link property="menuBar" title-str="">メインメニュー</spec-link></li>
+      <li>
+        <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
+      </li>
     </spec-item>
   </spec-frame>
 </template>
@@ -44,6 +54,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped src="./spec.css">
-</style>
+<style scoped src="./spec.css"></style>

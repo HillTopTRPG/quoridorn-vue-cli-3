@@ -11,13 +11,13 @@
   >
     <!-- コンテンツ -->
     <div class="_contents" :style="{ fontSize: fontSize + 'px' }" @wheel.stop>
-      <slot></slot>
+      <slot />
     </div>
 
     <!-- タイトルバー -->
     <div
       class="window-title"
-      :class="{fix : isFix}"
+      :class="{ fix: isFix }"
       @mousedown.left.prevent="event => move(event, true)"
       @mouseup.left.prevent="event => move(event, false)"
       @touchstart.prevent="event => move(event, true, true)"
@@ -25,18 +25,22 @@
       @touchcancel.prevent="event => move(event, false, true)"
       @contextmenu.prevent
     >
-
       <!-- タイトル文言 -->
       <div>
-        <span>{{titleText}}</span>
-        <span class="message" v-if="message">{{message}}</span>
+        <span>{{ titleText }}</span>
+        <span class="message" v-if="message">{{ message }}</span>
       </div>
 
       <!-- 文字サイズ変更 -->
-      <label
-        v-if="fontSizeBar"
-        class="fontSizeSlider"
-      >文字サイズ{{fontSize}}px<input type="range" min="10" max="18" v-model="fontSize" @mousedown.stop>
+      <label v-if="fontSizeBar" class="fontSizeSlider">
+        文字サイズ{{ fontSize }}px
+        <input
+          type="range"
+          min="10"
+          max="18"
+          v-model="fontSize"
+          @mousedown.stop
+        />
       </label>
     </div>
 
@@ -46,19 +50,33 @@
       v-if="!isFix"
       @mousedown.left.prevent="event => resize(event, 'corner-left-top', true)"
       @mouseup.left.prevent="event => resize(event, 'corner-left-top', false)"
-      @touchstart.prevent="event => resize(event, 'corner-left-top', true, true)"
+      @touchstart.prevent="
+        event => resize(event, 'corner-left-top', true, true)
+      "
       @touchend.prevent="event => resize(event, 'corner-left-top', false, true)"
-      @touchcancel.prevent="event => resize(event, 'corner-left-top', false, true)"
+      @touchcancel.prevent="
+        event => resize(event, 'corner-left-top', false, true)
+      "
       @contextmenu.prevent
     ></div>
     <div
       class="corner-left-bottom"
       v-if="!isFix"
-      @mousedown.left.prevent="event => resize(event, 'corner-left-bottom', true)"
-      @mouseup.left.prevent="event => resize(event, 'corner-left-bottom', false)"
-      @touchstart.prevent="event => resize(event, 'corner-left-bottom', true, true)"
-      @touchend.prevent="event => resize(event, 'corner-left-bottom', false, true)"
-      @touchcancel.prevent="event => resize(event, 'corner-left-bottom', false, true)"
+      @mousedown.left.prevent="
+        event => resize(event, 'corner-left-bottom', true)
+      "
+      @mouseup.left.prevent="
+        event => resize(event, 'corner-left-bottom', false)
+      "
+      @touchstart.prevent="
+        event => resize(event, 'corner-left-bottom', true, true)
+      "
+      @touchend.prevent="
+        event => resize(event, 'corner-left-bottom', false, true)
+      "
+      @touchcancel.prevent="
+        event => resize(event, 'corner-left-bottom', false, true)
+      "
       @contextmenu.prevent
     ></div>
     <div
@@ -66,18 +84,35 @@
       v-if="!isFix"
       @mousedown.left.prevent="event => resize(event, 'corner-right-top', true)"
       @mouseup.left.prevent="event => resize(event, 'corner-right-top', false)"
-      @touchstart.prevent="event => resize(event, 'corner-right-top', true, true)"
-      @touchend.prevent="event => resize(event, 'corner-right-top', false, true)"
-      @touchcancel.prevent="event => resize(event, 'corner-right-top', false, true)"
+      @touchstart.prevent="
+        event => resize(event, 'corner-right-top', true, true)
+      "
+      @touchend.prevent="
+        event => resize(event, 'corner-right-top', false, true)
+      "
+      @touchcancel.prevent="
+        event => resize(event, 'corner-right-top', false, true)
+      "
       @contextmenu.prevent
     ></div>
     <div
-      class="corner-right-bottom" v-if="!isFix"
-      @mousedown.left.prevent="event => resize(event, 'corner-right-bottom', true)"
-      @mouseup.left.prevent="event => resize(event, 'corner-right-bottom', false)"
-      @touchstart.prevent="event => resize(event, 'corner-right-bottom', true, true)"
-      @touchend.prevent="event => resize(event, 'corner-right-bottom', false, true)"
-      @touchcancel.prevent="event => resize(event, 'corner-right-bottom', false, true)"
+      class="corner-right-bottom"
+      v-if="!isFix"
+      @mousedown.left.prevent="
+        event => resize(event, 'corner-right-bottom', true)
+      "
+      @mouseup.left.prevent="
+        event => resize(event, 'corner-right-bottom', false)
+      "
+      @touchstart.prevent="
+        event => resize(event, 'corner-right-bottom', true, true)
+      "
+      @touchend.prevent="
+        event => resize(event, 'corner-right-bottom', false, true)
+      "
+      @touchcancel.prevent="
+        event => resize(event, 'corner-right-bottom', false, true)
+      "
       @contextmenu.prevent
     ></div>
     <div
@@ -123,10 +158,7 @@
 
     <!-- 閉じるボタン -->
     <span v-if="!isBanClose" @contextmenu.prevent>
-      <i
-        class="icon-cross window-close"
-        @click.left.prevent="closeWindow"
-      ></i>
+      <i class="icon-cross window-close" @click.left.prevent="closeWindow"></i>
     </span>
 
     <!-- 立ち絵 -->
@@ -431,8 +463,6 @@ export default class WindowFrame extends Vue {
           /* Nothing */
         }
       }
-      /*
-        */
       if (!iFrameElm.onmousemove) {
         iFrameElm.onmousemove = mouseMoveListener;
       }
@@ -612,7 +642,6 @@ export default class WindowFrame extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import "./common.scss";
 

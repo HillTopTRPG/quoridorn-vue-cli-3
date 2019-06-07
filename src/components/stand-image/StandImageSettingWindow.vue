@@ -7,7 +7,13 @@
   >
     <div class="contents">
       <actor-tab-component @change="changeActor">
-        <actor-status-tab-component slot-scope="{ actor }" v-if="actor" :actor="actor" @change="changeStatus" ref="actorStatusTabComponent">
+        <actor-status-tab-component
+          slot-scope="{ actor }"
+          v-if="actor"
+          :actor="actor"
+          @change="changeStatus"
+          ref="actorStatusTabComponent"
+        >
           <template slot-scope="{ status }" v-if="status">
             <div class="actorSetting">
               <label>
@@ -23,14 +29,28 @@
 
               <span
                 class="delete-button"
-                @click.prevent="doDeleteActorStatus({ key: actorKey, statusName: status.name })"
+                @click.prevent="
+                  doDeleteActorStatus({
+                    key: actorKey,
+                    statusName: status.name
+                  })
+                "
                 v-if="!status.standImage.isSystemLock"
-              >状態の削除</span>
+              >
+                状態の削除
+              </span>
             </div>
             <div class="tab-contents">
-              <div class="disable-overlay" v-if="status.standImage.ref || status.standImage.isSystemLock">
-                <span v-if="status.standImage.ref">状態「{{status.standImage.ref}}」のデータを参照しています</span>
-                <span v-if="status.standImage.isSystemLock">初期データとして必要なため<br>編集できません</span>
+              <div
+                class="disable-overlay"
+                v-if="status.standImage.ref || status.standImage.isSystemLock"
+              >
+                <span v-if="status.standImage.ref">
+                  状態「{{ status.standImage.ref }}」のデータを参照しています
+                </span>
+                <span v-if="status.standImage.isSystemLock">
+                  初期データとして必要なため<br />編集できません
+                </span>
               </div>
               <div class="base">
                 <label>ベース</label>
@@ -44,39 +64,50 @@
                 />
 
                 <div>
-                  <label>プレビュー
+                  <label>
+                    プレビュー
                     <input
                       type="checkbox"
                       v-model="isPreview"
                       :disabled="status.standImage.isSystemLock"
-                    >
+                    />
                   </label>
                   <ctrl-button
                     @click="addDiff()"
                     :disabled="status.standImage.isSystemLock"
-                  >差分追加</ctrl-button>
+                  >
+                    差分追加
+                  </ctrl-button>
                 </div>
-                <label>サイズの自動調整
+                <label>
+                  サイズの自動調整
                   <input
                     type="checkbox"
                     :checked="getViewStatus(status).standImage.autoResize"
                     @change="event => changeAutoResize(event.target.checked)"
                     :disabled="status.standImage.isSystemLock || true"
-                  >
+                  />
                 </label>
-                <label>アニメーション：
+                <label>
+                  アニメーション：
                   <input
                     type="number"
                     :value="getViewStatus(status).standImage.animationLength"
-                    @change="event => changeAnimationLength(parseInt(event.target.value, 10))"
+                    @change="
+                      event =>
+                        changeAnimationLength(parseInt(event.target.value, 10))
+                    "
                     min="0"
                     max="99"
                     :disabled="status.standImage.isSystemLock"
-                  >
-                  秒</label>
+                  />
+                  秒
+                </label>
                 <!--
                 -->
-                <label>表示位置（{{getViewStatus(status).standImage.locate}}）</label>
+                <label>
+                  表示位置（{{ getViewStatus(status).standImage.locate }}）
+                </label>
                 <label>
                   左
                   <input
@@ -84,23 +115,29 @@
                     min="1"
                     max="12"
                     :value="getViewStatus(status).standImage.locate"
-                    @input="event => changeLocate(parseInt(event.target.value, 10))"
+                    @input="
+                      event => changeLocate(parseInt(event.target.value, 10))
+                    "
                     :disabled="status.standImage.isSystemLock"
-                  >右
+                  />右
                 </label>
               </div>
               <div class="diff">
                 <label>差分</label>
                 <div class="v-scroll">
                   <diff-component
-                    v-for="(diff, index) in getViewStatus(status).standImage.diffList"
+                    v-for="(diff, index) in getViewStatus(status).standImage
+                      .diffList"
                     :key="index"
                     :actorKey="actor.key"
                     :statusName="getViewStatus(status).name"
                     :diff="diff"
                     :index="index"
-                    :animationLength="getViewStatus(status).standImage.animationLength"
-                    ref="diffList"/>
+                    :animationLength="
+                      getViewStatus(status).standImage.animationLength
+                    "
+                    ref="diffList"
+                  />
                 </div>
               </div>
             </div>
@@ -385,7 +422,6 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

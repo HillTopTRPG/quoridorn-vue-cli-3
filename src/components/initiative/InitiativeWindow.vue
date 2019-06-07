@@ -10,23 +10,26 @@
     <div class="contents">
       <div class="playOperationArea" @contextmenu.prevent>
         <!-- 拡大ボタン -->
-        <ctrl-button
-          @click="arrangeWindowSize(true)"
-          v-if="isWindowViewScroll"
-        >◁︎拡大</ctrl-button>
+        <ctrl-button @click="arrangeWindowSize(true)" v-if="isWindowViewScroll">
+          ◁︎拡大
+        </ctrl-button>
 
         <!-- 縮小ボタン -->
         <ctrl-button
           @click="arrangeWindowSize(false)"
           v-if="!isWindowViewScroll"
           :disabled="baseWindowWidth === 0"
-        >縮小▷︎</ctrl-button>
+        >
+          縮小▷︎
+        </ctrl-button>
 
         <!-- 空白 -->
         <div style="flex: 1;"></div>
 
         <!-- 設定ボタン -->
-        <ctrl-button class="setting" @click="openSettingWindow">設定</ctrl-button>
+        <ctrl-button class="setting" @click="openSettingWindow">
+          設定
+        </ctrl-button>
       </div>
       <div class="playOperationArea" @contextmenu.prevent>
         <!-- 戻るボタン -->
@@ -34,14 +37,14 @@
           class="back"
           @click="roundBack"
           :disabled="round === 0 || backDisabled"
-        >戻る</ctrl-button>
+        >
+          戻る
+        </ctrl-button>
 
         <!-- 次へボタン -->
-        <ctrl-button
-          class="next"
-          @click="roundNext"
-          :disabled="round === 0"
-        >次へ</ctrl-button>
+        <ctrl-button class="next" @click="roundNext" :disabled="round === 0">
+          次へ
+        </ctrl-button>
 
         <!-- 空白 -->
         <div style="flex: 1;"></div>
@@ -51,160 +54,319 @@
           class="start"
           @click="battleStart"
           :disabled="sortCharacterList.length === 0"
-        >戦闘開始</ctrl-button>
+        >
+          戦闘開始
+        </ctrl-button>
 
         <!-- 戦闘終了ボタン -->
-        <ctrl-button
-          class="end"
-          @click="battleEnd"
-          :disabled="round === 0"
-        >戦闘終了</ctrl-button>
+        <ctrl-button class="end" @click="battleEnd" :disabled="round === 0">
+          戦闘終了
+        </ctrl-button>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
           <thead @contextmenu.prevent>
-          <tr>
-            <!-- 順番 -->
-            <th :style="colStyle(0)">順番</th>
+            <tr>
+              <!-- 順番 -->
+              <th :style="colStyle(0)">順番</th>
 
-            <!-- イニシアティブ -->
-            <divider :index="0" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <th :style="colStyle(1)" title="イニシアティブ">イニシアティブ</th>
+              <!-- イニシアティブ -->
+              <divider
+                :index="0"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <th :style="colStyle(1)" title="イニシアティブ">
+                イニシアティブ
+              </th>
 
-            <!-- 修正（イニシアティブ同値時） -->
-            <divider :index="1" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <th :style="colStyle(2)" title="修正（イニシアティブ同値時比較用）">修正（イニシアティブ同値時比較用）</th>
+              <!-- 修正（イニシアティブ同値時） -->
+              <divider
+                :index="1"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <th
+                :style="colStyle(2)"
+                title="修正（イニシアティブ同値時比較用）"
+              >
+                修正（イニシアティブ同値時比較用）
+              </th>
 
-            <!-- 名前 -->
-            <divider :index="2" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <th :style="colStyle(3)" title="名前">名前</th>
+              <!-- 名前 -->
+              <divider
+                :index="2"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <th :style="colStyle(3)" title="名前">名前</th>
 
-            <!-- 追加パラメータ -->
-            <template v-for="(property, index) in propertyList">
-              <divider :key="`th-${index}-divider`" :index="3 + index" @doubleClick="doubleClick" prop="initiativeWindow"/>
-              <th :key="`th-${index}`" :style="colStyle(4 + index)" :title="property.property">{{property.property}}</th>
-            </template>
+              <!-- 追加パラメータ -->
+              <template v-for="(property, index) in propertyList">
+                <divider
+                  :key="`th-${index}-divider`"
+                  :index="3 + index"
+                  @doubleClick="doubleClick"
+                  prop="initiativeWindow"
+                />
+                <th
+                  :key="`th-${index}`"
+                  :style="colStyle(4 + index)"
+                  :title="property.property"
+                >
+                  {{ property.property }}
+                </th>
+              </template>
 
-            <!-- その他 -->
-            <divider :index="3 + propertyList.length" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <th :style="colStyle(4 + propertyList.length)" title="その他">その他</th>
-          </tr>
+              <!-- その他 -->
+              <divider
+                :index="3 + propertyList.length"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <th :style="colStyle(4 + propertyList.length)" title="その他">
+                その他
+              </th>
+            </tr>
           </thead>
           <tbody>
-          <!-- ===============================================================
-            コンテンツ
-          -->
-          <tr v-for="character in sortCharacterList"
+            <!-- ===============================================================
+              コンテンツ
+            -->
+            <tr
+              v-for="character in sortCharacterList"
               :key="character.key"
               @click="selectLine(character.key)"
-              :class="{ isActive: selectLineKey === character.key, roundPlayer: round && character.key === roundPlayerKey }"
-          >
-            <!-- 順番 -->
-            <td :style="colStyle(0)"><span v-if="round && character.key === roundPlayerKey">●</span></td>
-
-            <!-- イニシアティブ -->
-            <divider :index="0" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(1)"><label>
-              <input
-                type="number"
-                :value="getInitiative(character.key)"
-                @change="event => setInitiative(character.key, parseInt(event.target.value))"
-              >
-            </label></td>
-
-            <!-- 修正（イニシアティブ同値時） -->
-            <divider :index="1" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(2)"><label>
-              <input
-                type="number"
-                :value="getSubInitiative(character.key)"
-                @change="event => setSubInitiative(character.key, parseInt(event.target.value))"
-              >
-            </label></td>
-
-            <!-- 名前 -->
-            <divider :index="2" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(3)" class="selectable">{{character.name}}</td>
-
-            <!-- 追加パラメータ -->
-            <template v-for="(property, index) in propertyList">
-              <divider :key="`td-${index}-divider`" :index="3 + index" @doubleClick="doubleClick" prop="initiativeWindow"/>
-              <td :key="`td-${index}`" :style="colStyle(4 + index)">
-                <label v-if="property.type === 'min'">
-                  <input
-                    type="number"
-                    :value="getPropValue(character.key, index)"
-                    :max="getMax(character.key, index + 1)"
-                    @input="event => setMin(character.key, index, parseInt(event.target.value, 10))"
-                    @change="event => arrangeMin(character.key, index, parseInt(event.target.value, 10))"
-                    :class="{ isError: getMax(character.key, index + 1) < getPropValue(character.key, index) }"
-                  >
-                </label>
-                <label v-if="property.type === 'number'">
-                  <input
-                    type="number"
-                    :min="getMin(character.key, index)"
-                    :value="getPropValue(character.key, index)"
-                    :max="getMax(character.key, index)"
-                    @input="event => setPropValue(character.key, index, parseInt(event.target.value, 10))"
-                    :class="{ isError: getPropValue(character.key, index) < getMin(character.key, index) || getMax(character.key, index) < getPropValue(character.key, index) }"
-                  >
-                </label>
-                <label v-if="property.type === 'max'">
-                  <input
-                    type="number"
-                    :min="getMin(character.key, index - 1)"
-                    :value="getPropValue(character.key, index)"
-                    @input="event => setMax(character.key, index, parseInt(event.target.value, 10))"
-                    @change="event => arrangeMax(character.key, index, parseInt(event.target.value, 10))"
-                    :class="{ isError: getPropValue(character.key, index) < getMin(character.key, index - 1) }"
-                  >
-                </label>
-                <color-check-box
-                  v-if="property.type === 'checkbox'"
-                  type="checkbox"
-                  :color="property.color"
-                  :checked="getPropValue(character.key, index)"
-                  @change="checked => setPropValue(character.key, index, checked)"
-                />
+              :class="{
+                isActive: selectLineKey === character.key,
+                roundPlayer: round && character.key === roundPlayerKey
+              }"
+            >
+              <!-- 順番 -->
+              <td :style="colStyle(0)">
+                <span v-if="round && character.key === roundPlayerKey">●</span>
               </td>
-            </template>
 
-            <!-- その他 -->
-            <divider :index="3 + propertyList.length" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(4 + propertyList.length)">
-              <label><textarea :value="character.text" readonly></textarea></label>
-            </td>
-          </tr>
-          <tr class="space">
-            <!-- 順番 -->
-            <td :style="colStyle(0)"></td>
+              <!-- イニシアティブ -->
+              <divider
+                :index="0"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <td :style="colStyle(1)">
+                <label>
+                  <input
+                    type="number"
+                    :value="getInitiative(character.key)"
+                    @change="
+                      event =>
+                        setInitiative(
+                          character.key,
+                          parseInt(event.target.value)
+                        )
+                    "
+                  />
+                </label>
+              </td>
 
-            <!-- イニシアティブ -->
-            <divider :index="0" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(1)"></td>
+              <!-- 修正（イニシアティブ同値時） -->
+              <divider
+                :index="1"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <td :style="colStyle(2)">
+                <label>
+                  <input
+                    type="number"
+                    :value="getSubInitiative(character.key)"
+                    @change="
+                      event =>
+                        setSubInitiative(
+                          character.key,
+                          parseInt(event.target.value)
+                        )
+                    "
+                  />
+                </label>
+              </td>
 
-            <!-- 修正（イニシアティブ同値時） -->
-            <divider :index="1" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(2)"></td>
+              <!-- 名前 -->
+              <divider
+                :index="2"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <td :style="colStyle(3)" class="selectable">
+                {{ character.name }}
+              </td>
 
-            <!-- 名前 -->
-            <divider :index="2" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(3)"></td>
+              <!-- 追加パラメータ -->
+              <template v-for="(property, index) in propertyList">
+                <divider
+                  :key="`td-${index}-divider`"
+                  :index="3 + index"
+                  @doubleClick="doubleClick"
+                  prop="initiativeWindow"
+                />
+                <td :key="`td-${index}`" :style="colStyle(4 + index)">
+                  <label v-if="property.type === 'min'">
+                    <input
+                      type="number"
+                      :value="getPropValue(character.key, index)"
+                      :max="getMax(character.key, index + 1)"
+                      @input="
+                        event =>
+                          setMin(
+                            character.key,
+                            index,
+                            parseInt(event.target.value, 10)
+                          )
+                      "
+                      @change="
+                        event =>
+                          arrangeMin(
+                            character.key,
+                            index,
+                            parseInt(event.target.value, 10)
+                          )
+                      "
+                      :class="{
+                        isError:
+                          getMax(character.key, index + 1) <
+                          getPropValue(character.key, index)
+                      }"
+                    />
+                  </label>
+                  <label v-if="property.type === 'number'">
+                    <input
+                      type="number"
+                      :min="getMin(character.key, index)"
+                      :value="getPropValue(character.key, index)"
+                      :max="getMax(character.key, index)"
+                      @input="
+                        event =>
+                          setPropValue(
+                            character.key,
+                            index,
+                            parseInt(event.target.value, 10)
+                          )
+                      "
+                      :class="{
+                        isError:
+                          getPropValue(character.key, index) <
+                            getMin(character.key, index) ||
+                          getMax(character.key, index) <
+                            getPropValue(character.key, index)
+                      }"
+                    />
+                  </label>
+                  <label v-if="property.type === 'max'">
+                    <input
+                      type="number"
+                      :min="getMin(character.key, index - 1)"
+                      :value="getPropValue(character.key, index)"
+                      @input="
+                        event =>
+                          setMax(
+                            character.key,
+                            index,
+                            parseInt(event.target.value, 10)
+                          )
+                      "
+                      @change="
+                        event =>
+                          arrangeMax(
+                            character.key,
+                            index,
+                            parseInt(event.target.value, 10)
+                          )
+                      "
+                      :class="{
+                        isError:
+                          getPropValue(character.key, index) <
+                          getMin(character.key, index - 1)
+                      }"
+                    />
+                  </label>
+                  <color-check-box
+                    v-if="property.type === 'checkbox'"
+                    type="checkbox"
+                    :color="property.color"
+                    :checked="getPropValue(character.key, index)"
+                    @change="
+                      checked => setPropValue(character.key, index, checked)
+                    "
+                  />
+                </td>
+              </template>
 
-            <!-- 追加パラメータ -->
-            <template v-for="(property, index) in propertyList">
-              <divider :key="`space-${index}-divider`" :index="3 + index" @doubleClick="doubleClick" prop="initiativeWindow"/>
-              <td :key="`space-${index}`" :style="colStyle(4 + index)"></td>
-            </template>
+              <!-- その他 -->
+              <divider
+                :index="3 + propertyList.length"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <td :style="colStyle(4 + propertyList.length)">
+                <label>
+                  <textarea :value="character.text" readonly></textarea>
+                </label>
+              </td>
+            </tr>
+            <tr class="space">
+              <!-- 順番 -->
+              <td :style="colStyle(0)"></td>
 
-            <!-- その他 -->
-            <divider :index="3 + propertyList.length" @doubleClick="doubleClick" prop="initiativeWindow"/>
-            <td :style="colStyle(4 + propertyList.length)"></td>
-          </tr>
+              <!-- イニシアティブ -->
+              <divider
+                :index="0"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <td :style="colStyle(1)"></td>
+
+              <!-- 修正（イニシアティブ同値時） -->
+              <divider
+                :index="1"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <td :style="colStyle(2)"></td>
+
+              <!-- 名前 -->
+              <divider
+                :index="2"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <td :style="colStyle(3)"></td>
+
+              <!-- 追加パラメータ -->
+              <template v-for="(property, index) in propertyList">
+                <divider
+                  :key="`space-${index}-divider`"
+                  :index="3 + index"
+                  @doubleClick="doubleClick"
+                  prop="initiativeWindow"
+                />
+                <td :key="`space-${index}`" :style="colStyle(4 + index)"></td>
+              </template>
+
+              <!-- その他 -->
+              <divider
+                :index="3 + propertyList.length"
+                @doubleClick="doubleClick"
+                prop="initiativeWindow"
+              />
+              <td :style="colStyle(4 + propertyList.length)"></td>
+            </tr>
           </tbody>
         </table>
-        <span class="widthScale" ref="widthScale" style="visibility: hidden"></span>
+        <span
+          class="widthScale"
+          ref="widthScale"
+          style="visibility: hidden"
+        ></span>
       </div>
       <div class="operateArea">
         <ctrl-button @click="editButtonOnClick">変更</ctrl-button>
@@ -706,7 +868,6 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

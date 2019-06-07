@@ -1,16 +1,14 @@
 <template>
-  <label
-    class="ctrl-button-wrapper"
-    :disabled="disabled"
-    @contextmenu.prevent
-  >
+  <label class="ctrl-button-wrapper" :disabled="disabled" @contextmenu.prevent>
     <input
       type="button"
       :disabled="disabled"
       @click.left.stop.prevent="buttonOnClickLeft"
       @click.right.stop.prevent="buttonOnClickRight"
-    >
-    <span class="front-area"><slot/></span>
+    />
+    <span class="front-area">
+      <slot />
+    </span>
     <span class="background-area"></span>
   </label>
 </template>

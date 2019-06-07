@@ -8,20 +8,25 @@
   >
     <div class="contents">
       <div class="message" @contextmenu.prevent>
-        カウンターに使用するパラメータ名をスペース区切りで入力してください。<br>
-        先頭に＊（全角・半角どちらでも可）を付けて記述するとチェック欄になります。<br>
+        カウンターに使用するパラメータ名をスペース区切りで入力してください。<br />
+        先頭に＊（全角・半角どちらでも可）を付けて記述するとチェック欄になります。<br />
         （最小）＜カウンター名＜（最大）で上下限を設定。「？」を指定すると個別に設定可能。
       </div>
       <div class="message example">
         <span @contextmenu.prevent>例）</span>
-        <span class="selectable"> -15&lt;HP&lt;?&#12288;?&lt;MP&lt;99&#12288;AC&#12288;侵食率&#12288;ポシビリティ&#12288;*毒&#12288;＊転倒</span>
-        <br>
+        <span class="selectable">
+          -15&lt;HP&lt;?&#12288;?&lt;MP&lt;99&#12288;AC&#12288;侵食率&#12288;ポシビリティ&#12288;*毒&#12288;＊転倒
+        </span>
+        <br />
       </div>
       <div class="message" @contextmenu.prevent>
         （注）この設定は同一プレイルームの全員に影響します。
       </div>
-      <label @contextmenu.prevent>カウンター名一覧：<input type="text" v-model="format"></label>
-      <hr>
+      <label @contextmenu.prevent>
+        カウンター名一覧：
+        <input type="text" v-model="format" />
+      </label>
+      <hr />
       <div class="operationArea" @contextmenu.prevent>
         <ctrl-button @click="commit">決定</ctrl-button>
         <ctrl-button @click="cancel">キャンセル</ctrl-button>
@@ -77,7 +82,6 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contents {
   position: absolute;

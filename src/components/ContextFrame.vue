@@ -6,7 +6,7 @@
     @mouseleave.prevent="windowClose(displayProperty)"
     @contextmenu.prevent
   >
-    <slot/>
+    <slot />
   </div>
 </template>
 
@@ -62,7 +62,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .context {
   position: fixed;

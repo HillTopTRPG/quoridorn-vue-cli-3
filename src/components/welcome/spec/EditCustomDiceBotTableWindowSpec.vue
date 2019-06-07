@@ -18,13 +18,19 @@
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
       <li>「コマンド名」はチャットに反応する文字</li>
-      <li>「ダイス」はBCDiceが反応できるコマンド</li>
-      <li>「表タイトル」はその独自ダイスボットにつける名前</li>
+      <li>
+        「ダイス」はBCDiceが反応できるコマンド
+      </li>
+      <li>
+        「表タイトル」はその独自ダイスボットにつける名前
+      </li>
       <li>「ゲームシステム」はメモ程度の情報</li>
       <li>
         「表内容」は全角半角どちらでもいいのでコロン(：)で区切って、コロンの左が「BCDiceの結果のうち一番右の"→"の右の部分」、コロンの右がその独自ダイスボットとしての結果となるように記述していくこと。
       </li>
-      <li>「表内容」の過分は無視され、不足分は「該当値なし」が結果となる。</li>
+      <li>
+        「表内容」の過分は無視され、不足分は「該当値なし」が結果となる。
+      </li>
     </spec-item>
     <!----------------------
      ! ユーザ要望
@@ -67,5 +73,4 @@ import SpecMixin from "./SpecMixin";
 export default { mixins: [SpecMixin] };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped src="./spec.css"></style>
