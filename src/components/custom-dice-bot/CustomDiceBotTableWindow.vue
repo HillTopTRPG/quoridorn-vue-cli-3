@@ -145,7 +145,6 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
         const tableContentsArr = [];
         for (const prop in tableContents) {
           if (!tableContents.hasOwnProperty(prop)) continue;
-          window.console.log(prop, tableContents[prop]);
           tableContentsArr.push(`${prop}:${tableContents[prop]}`);
         }
         customDiceBot.tableContents = tableContentsArr.join("\n");
@@ -210,13 +209,18 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
       return;
     }
 
-    const customDiceBotObj = JSON.parse(
+    const kind = this.selectLineKey.split("-")[0];
+
+    const useList =
+      kind === "customDiceBotRoomSys"
+        ? this.customDiceBotRoomSysList
+        : this.customDiceBotList;
+    const customDiceBotObj: any = JSON.parse(
       JSON.stringify(
-        this.customDiceBotList.filter(
-          (bot: any) => bot.key === this.selectLineKey
-        )[0]
+        useList.filter((bot: any) => bot.key === this.selectLineKey)[0]
       )
     );
+
     customDiceBotObj.propName = "customDiceBot";
     customDiceBotObj.kind = "customDiceBot";
     this.addListObj(customDiceBotObj);
@@ -243,6 +247,7 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
     }
 
     this.deleteListObj({ key: this.selectLineKey, propName: "customDiceBot" });
+    this.selectLine("");
   }
 
   private cancelButtonOnClick(): void {

@@ -135,14 +135,19 @@
         <spec-link property="menuBar" title-str="">メインメニュー</spec-link>
       </li>
       <li>
-        <spec-link property="customDiceBotTableWindowSpec" title-str=""
-          >ダイスボット用表管理</spec-link
-        >
+        <spec-link property="customDiceBotTableWindowSpec" title-str="">
+          ダイスボット用表管理
+        </spec-link>
       </li>
       <li>
-        <spec-link property="settingBgmWindowSpec" title-str=""
-          >BGM設定画面</spec-link
-        >
+        <spec-link property="settingBgmWindowSpec" title-str="">
+          BGM設定画面
+        </spec-link>
+      </li>
+      <li>
+        <spec-link property="standImageSettingWindowSpec" title-str="">
+          立ち絵設定
+        </spec-link>
       </li>
     </spec-item>
   </spec-frame>

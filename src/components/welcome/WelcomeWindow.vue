@@ -115,6 +115,8 @@
               <setting-b-g-m-window-spec /><!-- BGM設定画面 -->
               <add-edit-b-g-m-window-spec /><!-- BGM追加・編集画面 -->
               <add-dice-symbol-window-spec /><!-- ダイスシンボル追加画面 -->
+              <stand-image-setting-window-spec /><!-- 立ち絵設定画面 -->
+              <custom-dice-bot-table-window-spec /><!-- ダイスボット用表管理 -->
             </div>
             <span class="toTop" @click="scrollTo()">
               <span class="rotate90">＜</span>
@@ -188,6 +190,8 @@ import CounterRemoconWindowSpec from "@/components/welcome/spec/CounterRemoconWi
 import SettingBGMWindowSpec from "@/components/welcome/spec/SettingBGMWindowSpec.vue";
 import AddEditBGMWindowSpec from "@/components/welcome/spec/AddEditBGMWindowSpec.vue";
 import AddDiceSymbolWindowSpec from "@/components/welcome/spec/AddDiceSymbolWindowSpec.vue";
+import CustomDiceBotTableWindowSpec from "@/components/welcome/spec/CustomDiceBotTableWindowSpec.vue";
+import StandImageSettingWindowSpec from "@/components/welcome/spec/StandImageSettingWindowSpec.vue";
 
 @Component({
   components: {
@@ -231,7 +235,9 @@ import AddDiceSymbolWindowSpec from "@/components/welcome/spec/AddDiceSymbolWind
     Source,
     DevSupport,
     SettingBGMWindowSpec,
-    AddEditBGMWindowSpec
+    AddEditBGMWindowSpec,
+    CustomDiceBotTableWindowSpec,
+    StandImageSettingWindowSpec
   }
 })
 export default class WelcomeWindow extends Mixins<WindowMixin>(WindowMixin) {
