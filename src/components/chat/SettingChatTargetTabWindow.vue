@@ -129,6 +129,7 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   @Getter("getObj") private getObj: any;
   @Getter("playerKey") private playerKey: any;
   @Getter("chatActorKey") private chatActorKey: any;
+  @Getter("isChatTabVertical") private isChatTabVertical: any;
 
   private addButtonOnClick() {
     this.addGroupTargetTab({ ownerKey: this.getChatFromKey() }).then(() => {
@@ -313,8 +314,7 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   }
 
   private get isTabVertical() {
-    return this.$store.state.private.display.settingChatTargetTabWindow
-      .isTabVertical;
+    return this.isChatTabVertical;
   }
   private set isTabVertical(flg: boolean) {
     this.setProperty({

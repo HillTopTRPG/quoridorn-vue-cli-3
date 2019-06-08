@@ -127,6 +127,7 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
   @Action("setProperty") private setProperty: any;
   @Action("addListObj") private addListObj: any;
   @Action("deleteListObj") private deleteListObj: any;
+  @Getter("loadYaml") private loadYaml: any;
   @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
@@ -137,37 +138,70 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
   @Getter("diceSystemList") private diceSystemList: any;
 
   private addButtonOnClick(): void {
-    this.addListObj({
-      propName: "customDiceBot",
-      kind: "customDiceBot",
-      commandName: "NM",
-      diceRoll: "1d10",
-      tableTitle: "未練表",
-      diceBotSystem: "Nechronica",
-      tableContents: [
-        "1:【嫌悪】[発狂：敵対認識]敵に当たらない攻撃の全てが、射程内なら嫌悪の対象に命中する",
-        "2:【独占】[発狂：独占衝動]戦闘開始時と終了時に１つずつ、対象はパーツを選んで損傷しなければならない",
-        "3:【依存】[発狂：幼児退行]最大行動値減少(-2)",
-        "4:【執着】[発狂：追尾監視]戦闘開始時と終了時に１つずつ、対象はあなたへの未練に狂気点を得る",
-        "5:【恋心】[発狂：自傷行動]戦闘開始時と終了時に１つずつ、あなたはパーツを選んで損傷する",
-        "6:【対抗】[発狂：過剰競争]戦闘開始時と終了時に１つずつ、あなたは狂気点を追加で得る",
-        "7:【友情】[発狂：共鳴依存]セッション終了時、あなたは部位ごとに「対象がその部位で損傷しているパーツの数」になるまでパーツを損傷する",
-        "8:【保護】[発狂：常時密着]対象のいるエリアへの移動を最優先で行う。同じエリアにいるなら、同カウントに同エリアに対してしか移動できない",
-        "9:【憧憬】[発狂：贋作妄想]対象のいるエリアに移動できない。また、対象が同じエリアにいるなら離れなければならない。",
-        "10:【信頼】[発狂：疑心暗鬼]あなた以外の全ての姉妹の最大行動値に-1"
-      ].join("\n")
-    }).then(() => {
-      const lastKey: string = this.customDiceBotList[
-        this.customDiceBotList.length - 1
-      ].key;
-      this.setProperty({
-        property: "private.display.editCustomDiceBotTableWindow.objKey",
-        value: lastKey,
-        logOff: true
-      }).then(() => {
-        this.windowOpen("private.display.editCustomDiceBotTableWindow");
+    this.loadYaml("/static/conf/system/default/customDiceBot.yaml")
+      .then((customDiceBot: any) => {
+        // 読み込めた場合
+        const tableContents: any = customDiceBot!.tableContents;
+        const tableContentsArr = [];
+        for (const prop in tableContents) {
+          if (!tableContents.hasOwnProperty(prop)) continue;
+          window.console.log(prop, tableContents[prop]);
+          tableContentsArr.push(`${prop}:${tableContents[prop]}`);
+        }
+        customDiceBot.tableContents = tableContentsArr.join("\n");
+
+        this.addListObj({
+          propName: "customDiceBot",
+          kind: "customDiceBot",
+          commandName: customDiceBot.commandName,
+          diceRoll: customDiceBot.diceRoll,
+          tableTitle: customDiceBot.tableTitle,
+          diceBotSystem: "DiceBot",
+          tableContents: tableContentsArr.join("\n")
+        }).then(() => {
+          const lastKey: string = this.customDiceBotList[
+            this.customDiceBotList.length - 1
+          ].key;
+          this.setProperty({
+            property: "private.display.editCustomDiceBotTableWindow.objKey",
+            value: lastKey,
+            logOff: true
+          }).then(() => {
+            this.windowOpen("private.display.editCustomDiceBotTableWindow");
+          });
+        });
+      })
+      .catch((err: any) => {
+        window.console.log(err);
+
+        this.addListObj({
+          propName: "customDiceBot",
+          kind: "customDiceBot",
+          commandName: "PGT",
+          diceRoll: "1d6",
+          tableTitle: "ペンギン属表(Penguin's Generic name Table)",
+          diceBotSystem: "DiceBot",
+          tableContents: [
+            "1:コウテイペンギン属（学名：Aptenodytes）。学名の意味：「翼のない潜水者」。コウテイペンギン／キングペンギン",
+            "2:アデリーペンギン属（学名：Aygoscelis）。学名の意味：「尻についた肢（あし）」。アデリーペンギン／ジェンツーペンギン／ヒゲペンギン",
+            "3:フンボルトペンギン属（学名：Spheniscus）。学名の意味：「楔のような」。ガラパゴスペンギン／ケープペンギン／フンボルトペンギン／マゼランペンギン",
+            "4:マカロニペンギン属（学名：Eudyptes）。学名の意味：「優れた潜水者」。フィヨルドランドペンギン／シュレーターペンギン／スネアーズペンギン／マカロニペンギン／ロイヤルペンギン／イワトビペンギン",
+            "5:キンメペンギン属（学名：Megadyptes）。学名の意味：「大型の潜水者」。キンメペンギン（一種一属の固有種）",
+            "6:コガタペンギン属（学名：Eudyptula）。学名の意味：「非常に小さい」「優れた潜水者」。コガタペンギン／ハネジロペンギン"
+          ].join("\n")
+        }).then(() => {
+          const lastKey: string = this.customDiceBotList[
+            this.customDiceBotList.length - 1
+          ].key;
+          this.setProperty({
+            property: "private.display.editCustomDiceBotTableWindow.objKey",
+            value: lastKey,
+            logOff: true
+          }).then(() => {
+            this.windowOpen("private.display.editCustomDiceBotTableWindow");
+          });
+        });
       });
-    });
   }
 
   private copyButtonOnClick(): void {
@@ -256,7 +290,7 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
   }
 
   private getSystemName(systemKey: string) {
-    if (systemKey === "DiceBot") return "ダイスボット指定なし";
+    if (systemKey === "DiceBot") return "指定なし";
     const systemObj: any = this.diceSystemList.filter(
       (systemObj: any) => systemObj.system === systemKey
     )[0];

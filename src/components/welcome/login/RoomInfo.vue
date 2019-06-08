@@ -72,9 +72,8 @@ export default class RoomInfo extends Vue {
     const text = event.target.parentNode.previousElementSibling.value;
     if (!execCopy(text)) {
       alert("テキストをコピーできませんでした。\n" + text);
-    } else {
-      alert(text);
     }
+    alert(text);
   }
 }
 </script>

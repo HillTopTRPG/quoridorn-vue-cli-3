@@ -63,6 +63,7 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
   @Action("updateChatTab") private updateChatTab: any;
   @Action("deleteChatTab") private deleteChatTab: any;
   @Getter("chatTabs") private chatTabs: any;
+  @Getter("isChatTabVertical") private isChatTabVertical: any;
 
   private tabs: any[] = [];
   private addIndex: number = -1;
@@ -71,6 +72,7 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
 
   private initWindow() {
     this.tabs = this.chatTabs.concat();
+    this.isTabVertical = this.isChatTabVertical;
   }
 
   private addTab() {

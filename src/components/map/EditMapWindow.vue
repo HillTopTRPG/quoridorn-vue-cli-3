@@ -372,8 +372,11 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private watchBase(property: string, value: any) {
+    const index = this.storeMap.list.findIndex(
+      (mapObj: any) => mapObj.key === this.currentMap.key
+    );
     this.setProperty({
-      property,
+      property: `public.map.list.${index}.${property}`,
       value,
       logOff: true
     });
@@ -381,72 +384,72 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   @Watch("edit.imageTag")
   private onChangeEditImageTag(imageTag: string) {
-    this.watchBase("public.map.imageTag", imageTag);
+    this.watchBase("imageTag", imageTag);
   }
 
   @Watch("edit.imageKey")
   private onChangeEditImageKey(imageKey: string) {
-    this.watchBase("public.map.imageKey", imageKey);
+    this.watchBase("imageKey", imageKey);
   }
 
   @Watch("edit.isReverse")
   private onChangeEditIsReverse(isReverse: boolean) {
-    this.watchBase("public.map.isReverse", isReverse);
+    this.watchBase("isReverse", isReverse);
   }
 
   @Watch("edit.marginGridSize")
   private onChangeEditMarginGridSize(marginGridSize: string) {
-    this.watchBase("public.map.margin.gridSize", parseInt(marginGridSize, 10));
+    this.watchBase("margin.gridSize", parseInt(marginGridSize, 10));
   }
 
   @Watch("edit.isUseGridColor")
   private onChangeEditIsUseGridColor(isUseGridColor: boolean) {
-    this.watchBase("public.map.margin.isUseGridColor", isUseGridColor);
+    this.watchBase("margin.isUseGridColor", isUseGridColor);
   }
 
   @Watch("edit.isUseImage")
   private onChangeEditIsUseImage(isUseImage: boolean) {
-    this.watchBase("public.map.margin.isUseImage", isUseImage);
+    this.watchBase("margin.isUseImage", isUseImage);
   }
 
   @Watch("edit.marginGridColor")
   private onChangeEditMarginGridColor(marginGridColor: string) {
-    this.watchBase("public.map.margin.gridColor", marginGridColor);
+    this.watchBase("margin.gridColor", marginGridColor);
   }
 
   @Watch("edit.maskColor")
   private onChangeEditMaskColor(maskColor: string) {
-    this.watchBase("public.map.margin.maskColor", maskColor);
+    this.watchBase("margin.maskColor", maskColor);
   }
 
   @Watch("edit.maskAlpha")
   private onChangeEditMaskAlpha(maskAlpha: string) {
-    this.watchBase("public.map.margin.maskAlpha", parseFloat(maskAlpha));
+    this.watchBase("margin.maskAlpha", parseFloat(maskAlpha));
   }
 
   @Watch("edit.borderWidth")
   private onChangeEditBorderWidth(borderWidth: string) {
-    this.watchBase("public.map.margin.borderWidth", parseInt(borderWidth, 10));
+    this.watchBase("margin.borderWidth", parseInt(borderWidth, 10));
   }
 
   @Watch("edit.totalColumn")
   private onChangeEditTotalColumn(totalColumn: string) {
-    this.watchBase("public.map.grid.totalColumn", parseInt(totalColumn, 10));
+    this.watchBase("grid.totalColumn", parseInt(totalColumn, 10));
   }
 
   @Watch("edit.totalRow")
   private onChangeEditTotalRow(totalRow: string) {
-    this.watchBase("public.map.grid.totalRow", parseInt(totalRow, 10));
+    this.watchBase("grid.totalRow", parseInt(totalRow, 10));
   }
 
   @Watch("edit.gridColor")
   private onChangeEditGridColor(gridColor: string) {
-    this.watchBase("public.map.grid.color", gridColor);
+    this.watchBase("grid.color", gridColor);
   }
 
   @Watch("edit.backgroundColor")
   private onChangeEditBackgroundColor(backgroundColor: string) {
-    this.watchBase("public.map.background", backgroundColor);
+    this.watchBase("background", backgroundColor);
   }
 }
 </script>

@@ -208,7 +208,10 @@ $hover-border-color: #0092ed;
     }
 
     &.unRead {
-      background-color: yellow;
+      .corner-container .corner,
+      .text {
+        background: yellow none;
+      }
     }
 
     &.hover {

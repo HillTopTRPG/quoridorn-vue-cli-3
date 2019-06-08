@@ -86,7 +86,9 @@ export default {
           useTargetText = targetName === "全体" ? "" : " > " + targetName;
         }
         const viewHtml = [
-          `<span style="color: ${color};"><b>`,
+          `<span style="color: ${color};`,
+          isDiceBot ? " background-color: #eee;" : "",
+          `"><b>`,
           name + useTargetText,
           "</b>：",
           text.replace(/\r?\n/g, "<br />"),
@@ -181,6 +183,121 @@ export default {
         isNotice: false,
         logOff: true
       });
+    },
+
+    /** ========================================================================
+     * チャットタブ追加処理
+     */
+    addChatTab: (
+      { dispatch }: { dispatch: Function },
+      payload: any
+    ): string => {
+      return dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doAddChatTab"
+      });
+    },
+    doAddChatTab: (
+      { rootState }: { rootState: any },
+      {
+        name,
+        isActive = false,
+        isHover = false,
+        unRead = 0,
+        order = rootState.public.chat.tab.list.length
+      }: {
+        name: string | undefined;
+        isActive: boolean | undefined;
+        isHover: boolean | undefined;
+        unRead: number | undefined;
+        order: number;
+      }
+    ) => {
+      const key = `chatTab-${++rootState.public.chat.tab.maxKey}`;
+      const publicTab = {
+        key: key,
+        name: name
+      };
+      const privateTab = {
+        key: key,
+        isActive: isActive,
+        isHover: isHover,
+        unRead: unRead,
+        order: order
+      };
+      rootState.public.chat.tab.list.push(publicTab);
+      rootState.private.chat.tab.push(privateTab);
+      Vue.set(rootState.public.chat.logs, key, []);
+    },
+
+    /** ========================================================================
+     * チャットタブ更新処理
+     */
+    updateChatTab: (
+      { dispatch }: { dispatch: Function },
+      payload: any
+    ): string => {
+      return dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doUpdateChatTab"
+      });
+    },
+    doUpdateChatTab: (
+      { rootState }: { rootState: any },
+      {
+        key,
+        name = undefined,
+        isActive = undefined,
+        isHover = undefined,
+        unRead = undefined
+      }: {
+        key: string;
+        name: string | undefined;
+        isActive: boolean | undefined;
+        isHover: boolean | undefined;
+        unRead: number | undefined;
+      }
+    ) => {
+      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
+        (tab: any) => tab.key === key
+      );
+      const publicTab = rootState.public.chat.tab.list[publicTabIndex];
+      const privateTabIndex = rootState.private.chat.tab.findIndex(
+        (tab: any) => tab.key === key
+      );
+      const privateTab = rootState.private.chat.tab[publicTabIndex];
+      if (name !== undefined) publicTab.name = name;
+      if (isActive !== undefined) privateTab.isActive = isActive;
+      if (isHover !== undefined) privateTab.isHover = isHover;
+      if (unRead !== undefined) privateTab.isActive = unRead;
+      rootState.public.chat.tab.list.splice(publicTabIndex, 1, publicTab);
+      rootState.private.chat.tab.splice(privateTabIndex, 1, privateTab);
+    },
+
+    /** ========================================================================
+     * チャットタブ削除処理
+     */
+    deleteChatTab: (
+      { dispatch }: { dispatch: Function },
+      payload: any
+    ): string => {
+      return dispatch("sendNoticeOperation", {
+        value: payload,
+        method: "doDeleteChatTab"
+      });
+    },
+    doDeleteChatTab: (
+      { rootState }: { rootState: any },
+      { key }: { key: string }
+    ) => {
+      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
+        (tab: any) => tab.key === key
+      );
+      const privateTabIndex = rootState.private.chat.tab.findIndex(
+        (tab: any) => tab.key === key
+      );
+      rootState.public.chat.tab.list.splice(publicTabIndex, 1);
+      rootState.private.chat.tab.splice(privateTabIndex, 1);
     },
 
     /** ========================================================================

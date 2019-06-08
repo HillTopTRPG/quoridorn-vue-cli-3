@@ -27,7 +27,7 @@
               readonly="readonly"
               :value="createUrl(player)"
             />
-            <ctrl-button class="copy" @click="event => doCopy(event)">
+            <ctrl-button class="copy" @click="doCopy">
               コピー
             </ctrl-button>
           </label>
@@ -61,7 +61,8 @@ export default class RoomInfo extends Vue {
    * @param event
    */
   doCopy(event: any): void {
-    const text = event.target.previousElementSibling.value;
+    // const text = event.target.previousElementSibling.value;
+    const text = event.target.parentNode.previousElementSibling.value;
     if (!execCopy(text)) {
       alert("テキストをコピーできませんでした。");
     }

@@ -876,6 +876,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (this.addBrackets) {
       text = `「${text}」`;
     }
+    this.currentMessage = "";
 
     // 出力先タブ決定
     let outputTab = this.outputTab;
@@ -928,7 +929,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
           } else {
             // bcdiceとして結果は取れなかった
           }
-          this.currentMessage = "";
 
           this.setProperty({
             property: `public.chat.diceBotMessage`,
@@ -1011,11 +1011,10 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     // -------------------
     const commandStr = text
       .split(new RegExp("\\s+"))[0]
-      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, s =>
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s: string) =>
         String.fromCharCode(s.charCodeAt(0) - 65248)
       )
       .toLowerCase();
-    window.console.log("commandStr：", commandStr);
     const customDiceBotObj: any = this.customDiceBotList.filter(
       (customDiceBotObj: any) =>
         customDiceBotObj.commandName.toLowerCase() === commandStr
@@ -1088,7 +1087,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
             logOff: true
           });
 
-          this.currentMessage = "";
           this.addChatLog({
             name: this.getViewName(this.chatActorKey),
             text,

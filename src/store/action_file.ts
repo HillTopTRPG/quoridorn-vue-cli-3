@@ -5,6 +5,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import JSZip from "jszip";
 import saveAs from "file-saver";
+import moment from "moment";
 
 Vue.use(Vuex);
 
@@ -212,12 +213,8 @@ export default {
       const zip = new JSZip();
       zip.file("save.json", JSON.stringify(saveData, undefined, 2));
       zip.generateAsync({ type: "blob" }).then((blob: any) => {
-        const d = new Date();
-        saveAs(
-          blob,
-          `Quoridorn_${d.getFullYear()}${d.getMonth() +
-            1}${d.getDate()}_${d.getHours()}${d.getMinutes()}${d.getSeconds()}.zip`
-        );
+        const dateStr = moment().format("YYYYMMDD_hhmmss");
+        saveAs(blob, `Quoridorn_${dateStr}.zip`);
       });
     },
 
@@ -337,20 +334,33 @@ export default {
               .map(addObj => {
                 const type = addObj.key.split("-")[0];
 
-                // image参照の差分ロード
-                let useImageList: string = addObj.useImageList;
-                if (useImageList) {
-                  useImageList.split("|").forEach(useImage => {
-                    const matchResult = useImage.match(/image-\$([0-9]+)/);
-                    if (matchResult) {
-                      useImageList = useImageList.replace(
-                        matchResult[0],
-                        imageList[parseInt(matchResult[1])]
-                      );
-                    }
-                  });
-                }
-                addObj.useImageList = useImageList;
+                // // image参照の差分ロード
+                // let useImageList: string = addObj.useImageList;
+                // if (useImageList) {
+                //   useImageList.split("|").forEach(useImage => {
+                //     const matchResult = useImage.match(/image-\$([0-9]+)/);
+                //     if (matchResult) {
+                //       useImageList = useImageList.replace(
+                //         matchResult[0],
+                //         imageList[parseInt(matchResult[1])]
+                //       );
+                //     }
+                //   });
+                // }
+                // addObj.useImageList = useImageList;
+
+                let addObjStr = JSON.stringify(addObj);
+                addObjStr = addObjStr.replace(
+                  /image-\$[0-9]+/g,
+                  (str: string) => {
+                    const index: number = parseInt(
+                      str.replace("image-$", ""),
+                      10
+                    );
+                    return imageList[index];
+                  }
+                );
+                addObj = JSON.parse(addObjStr);
 
                 // グループチャットデータのロード
                 if (type === "groupTargetTab") {
@@ -377,6 +387,7 @@ export default {
       };
 
       const roomName = publicData.room.name;
+      const system = publicData.room.system;
       if (!dropZipRoomCreate) {
         // 部屋を作らないシンプルなロード
         importFunc().then(() => {});
@@ -456,7 +467,8 @@ export default {
                   playerName: payload.playerName,
                   playerPassword: payload.playerPassword,
                   playerType: payload.playerType || "PL",
-                  fontColor: payload.fontColor
+                  fontColor: payload.fontColor,
+                  system
                 })
               )
               .then(() => dispatch("loading", false))

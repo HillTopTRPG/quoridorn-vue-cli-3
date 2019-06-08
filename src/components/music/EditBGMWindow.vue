@@ -168,13 +168,11 @@
 </template>
 
 <script lang="ts">
-import WindowFrame from "../WindowFrame";
-import WindowMixin from "../WindowMixin";
-import CtrlButton from "../parts/CtrlButton";
-import CtrlSelect from "../parts/CtrlSelect";
-import VolumeComponent from "./component/VolumeComponent";
-
-import { mapState, mapActions } from "vuex";
+import WindowFrame from "../WindowFrame.vue";
+import WindowMixin from "../WindowMixin.vue";
+import CtrlButton from "../parts/CtrlButton.vue";
+import CtrlSelect from "../parts/CtrlSelect.vue";
+import VolumeComponent from "./component/VolumeComponent.vue";
 
 import { Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
@@ -196,10 +194,10 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private creditUrl: string = "";
   private tag: string = "";
   private isLoop: boolean = false;
-  private fadeIn: number = 0;
-  private fadeOut: number = 0;
-  private start: number = 0;
-  private end: number = 0;
+  private fadeIn: number | string = 0;
+  private fadeOut: number | string = 0;
+  private start: number | string = 0;
+  private end: number | string = 0;
   private isMute: boolean = false;
   private volume: number = 0.8;
   private options: any[] = [
@@ -218,7 +216,7 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private initWindow() {
     const key = this.key;
-    const bgmObj = this.bgmList.filter(bgmObj => bgmObj.key === key)[0];
+    const bgmObj = this.bgmList.filter((bgmObj: any) => bgmObj.key === key)[0];
     if (!bgmObj) {
       alert("そのBGMは既に削除されたようです。");
       this.windowClose("private.display.editBGMWindow");
@@ -236,7 +234,10 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.end = bgmObj.end;
     this.isMute = bgmObj.isMute;
     this.volume = Math.floor(parseFloat(bgmObj.volume) * 100) / 100;
-    this.$refs.volumeComponent.setVolume(this.volume);
+
+    const volumeComponentElm: VolumeComponent = this.$refs
+      .volumeComponent as VolumeComponent;
+    volumeComponentElm!.setVolume(this.volume);
     this.chatLinkage = bgmObj.chatLinkage;
     this.chatLinkageSearch = bgmObj.chatLinkageSearch;
   }
@@ -248,17 +249,18 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       creditUrl: this.creditUrl,
       tag: this.tag,
       isLoop: this.isLoop,
-      start: parseInt(this.start, 10),
-      end: parseInt(this.end, 10),
-      fadeIn: Math.floor(parseFloat(this.fadeIn) * 10) / 10,
-      fadeOut: Math.floor(parseFloat(this.fadeOut) * 10) / 10,
-      playLength: Math.floor(parseFloat(this.playLength) * 10) / 10,
+      start: parseInt(String(this.start), 10),
+      end: parseInt(String(this.end), 10),
+      fadeIn: Math.floor(parseFloat(String(this.fadeIn)) * 10) / 10,
+      fadeOut: Math.floor(parseFloat(String(this.fadeOut)) * 10) / 10,
       isMute: this.isMute,
       volume: this.volume,
       chatLinkage: this.chatLinkage,
       chatLinkageSearch: this.chatLinkageSearch
     };
-    const index = this.bgmList.findIndex(bgmObj => bgmObj.key === this.key);
+    const index = this.bgmList.findIndex(
+      (bgmObj: any) => bgmObj.key === this.key
+    );
     this.setProperty({
       property: `public.bgm.list.${index}`,
       value: bgmObj,
@@ -280,23 +282,25 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     alert("未実装の機能です");
   }
 
-  private change(param) {
+  private change(this: any, param: string) {
     this[param] = !this[param];
   }
 
-  private setIsMute(isMute) {
+  private setIsMute(isMute: boolean) {
     this.isMute = isMute;
   }
 
-  private setVolume(volume) {
+  private setVolume(volume: string) {
     this.volume = Math.floor(parseFloat(volume) * 100) / 100;
   }
 
   @Watch("isHideUrl")
-  private onChangeIsHideUrl(isHideUrl) {
+  private onChangeIsHideUrl(isHideUrl: boolean) {
     if (!isHideUrl) {
       this.url = "";
-      setTimeout(() => this.$refs.urlElm.focus(), 0);
+
+      const urlElm: HTMLInputElement = this.$refs.urlElm as HTMLInputElement;
+      setTimeout(() => urlElm!.focus(), 0);
     }
   }
 
@@ -443,14 +447,10 @@ label {
 .tag input {
   width: 52px;
 }
-.playLength,
 .fadeIn,
 .fadeOut {
   flex: 1;
   margin-right: 5px;
-}
-.playLength input {
-  width: 45px;
 }
 .fadeIn input,
 .fadeOut input {

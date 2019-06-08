@@ -6,10 +6,7 @@
       diceSystemList.map(systemObj => ({
         key: systemObj.system,
         value: systemObj.system,
-        text:
-          systemObj.system !== 'DiceBot'
-            ? systemObj.name
-            : 'ダイスボット指定なし'
+        text: systemObj.system !== 'DiceBot' ? systemObj.name : '指定なし'
       }))
     "
   />

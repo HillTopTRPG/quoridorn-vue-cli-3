@@ -118,6 +118,19 @@ export default class DiceSymbolContext extends Mixins<WindowMixin>(
 
   private openOnClick() {
     this.changeListObj({ key: this.objKey, isHide: false });
+
+    const diceObj: any = this.getObj(this.objKey);
+    const ownerPlayer: any = this.getObj(diceObj.owner);
+    let text: string = [
+      "「",
+      ownerPlayer.name,
+      "」のダイスがオープンされました。出目は",
+      diceObj.pips,
+      `(${diceObj.faceNum}面ダイス)です`
+    ].join("");
+    // ログに出力
+    this.addChatLog({ text, isDiceBot: true });
+
     this.windowClose("private.display.diceSymbolContext");
   }
 

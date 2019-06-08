@@ -755,6 +755,9 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
 
     const propertyObj: any = {};
     propertyObj[prop.property] = value;
+
+    window.console.log(objKey, prop.property, value);
+
     this.changeListObj({
       key: objKey,
       isNotice: true,
@@ -869,17 +872,17 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
 </script>
 
 <style scoped lang="scss">
+@import "../common.scss";
+
 .contents {
   position: absolute;
   height: 100%;
   width: 100%;
   font-size: 12px;
-  display: flex;
-  flex-direction: column;
+  @include flex-box(column, normal, normal);
 
   .playOperationArea {
-    display: flex;
-    flex-direction: row;
+    @include flex-box(row, normal, normal);
 
     button {
       font-size: 10px;
@@ -899,9 +902,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   .operateArea {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    @include flex-box(row, center, center);
   }
 }
 

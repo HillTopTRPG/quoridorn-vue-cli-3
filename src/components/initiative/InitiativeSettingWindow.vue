@@ -83,6 +83,8 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
 </script>
 
 <style scoped lang="scss">
+@import "../common.scss";
+
 .contents {
   position: absolute;
   height: 100%;

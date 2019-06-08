@@ -37,6 +37,11 @@ export default class ColorCheckBox extends Vue {
   @Emit("change")
   onChange(checked: boolean) {}
 
+  @Watch("checked")
+  private onChangeChecked(checked: boolean) {
+    this.value = checked;
+  }
+
   private value: boolean = false;
 }
 </script>

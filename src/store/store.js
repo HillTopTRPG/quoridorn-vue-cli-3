@@ -302,13 +302,13 @@ export default new Vuex.Store({
             })
             .then(isExist => {
               const baseArg = {
-                roomName: roomName,
-                roomPassword: roomPassword,
-                playerName: playerName,
-                playerPassword: playerPassword,
-                playerType: playerType,
+                roomName,
+                roomPassword,
+                playerName,
+                playerPassword,
+                playerType,
                 fontColor: "#000000",
-                system: system,
+                system,
                 isWait: false
               };
               // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
@@ -470,67 +470,6 @@ export default new Vuex.Store({
       }
       const target = getters.getStateValue(property);
       target.splice(0, target.length);
-    },
-    addChatTab: (
-      { rootState },
-      {
-        name,
-        isActive = false,
-        isHover = false,
-        unRead = 0,
-        order = rootState.public.chat.tab.list.length
-      }
-    ) => {
-      const key = `chatTab-${++rootState.public.chat.tab.maxKey}`;
-      const publicTab = {
-        key: key,
-        name: name
-      };
-      const privateTab = {
-        key: key,
-        isActive: isActive,
-        isHover: isHover,
-        unRead: unRead,
-        order: order
-      };
-      rootState.public.chat.tab.list.push(publicTab);
-      rootState.private.chat.tab.push(privateTab);
-      Vue.set(rootState.public.chat.logs, key, []);
-    },
-    updateChatTab: (
-      { rootState },
-      {
-        key,
-        name = undefined,
-        isActive = undefined,
-        isHover = undefined,
-        unRead = undefined
-      }
-    ) => {
-      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
-        tab => tab.key === key
-      );
-      const publicTab = rootState.public.chat.tab.list[publicTabIndex];
-      const privateTabIndex = rootState.private.chat.tab.findIndex(
-        tab => tab.key === key
-      );
-      const privateTab = rootState.private.chat.tab[publicTabIndex];
-      if (name !== undefined) publicTab.name = name;
-      if (isActive !== undefined) privateTab.isActive = isActive;
-      if (isHover !== undefined) privateTab.isHover = isHover;
-      if (unRead !== undefined) privateTab.isActive = unRead;
-      rootState.public.chat.tab.list.splice(publicTabIndex, 1, publicTab);
-      rootState.private.chat.tab.splice(privateTabIndex, 1, privateTab);
-    },
-    deleteChatTab: ({ rootState }, { key }) => {
-      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
-        tab => tab.key === key
-      );
-      const privateTabIndex = rootState.private.chat.tab.findIndex(
-        tab => tab.key === key
-      );
-      rootState.public.chat.tab.list.splice(publicTabIndex, 1);
-      rootState.private.chat.tab.splice(privateTabIndex, 1);
     }
   },
   mutations: {
@@ -560,7 +499,8 @@ export default new Vuex.Store({
             typeof value === "function"
           ) {
             // if (!logOff) window.console.log("【2】propProc", JSON.parse(JSON.stringify(target[prop])), "=", value);
-            target[prop] = value;
+            // XXX target[prop] = value;
+            Vue.set(target, prop, value);
           } else {
             const propProc2 = (target, props) => {
               for (const prop in props) {
@@ -568,15 +508,18 @@ export default new Vuex.Store({
                 const val = props[prop];
                 // if (!logOff) window.console.log("【4】propProc2", JSON.parse(JSON.stringify(target)), prop, val, props);
                 if (!(val instanceof Object) || typeof val === "function") {
-                  target[prop] = val;
+                  // XXX target[prop] = val;
+                  Vue.set(target, prop, val);
                 } else if (val instanceof Array) {
-                  target[prop] = val;
+                  // XXX target[prop] = val;
+                  Vue.set(target, prop, val);
                   if (val.length > 0) {
                     val.splice(0, 1, val[0]);
                   }
                 } else {
                   if (!target[prop]) {
-                    target[prop] = {};
+                    // XXX target[prop] = {};
+                    Vue.set(target, prop, {});
                   }
                   // if (!logOff) window.console.log("【6】call propProc2", JSON.parse(JSON.stringify(target[prop])), "=", val);
                   propProc2(target[prop], val);
@@ -590,7 +533,8 @@ export default new Vuex.Store({
               }
             };
             if (!target[prop]) {
-              target[prop] = {};
+              // XXX target[prop] = {};
+              Vue.set(target, prop, {});
             }
             // if (!logOff) window.console.log("【3】call propProc2", JSON.parse(JSON.stringify(target[prop])), value);
             propProc2(target[prop], value);
