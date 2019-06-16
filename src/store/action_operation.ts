@@ -71,11 +71,8 @@ export default {
               const index: number = standImageList.findIndex(
                 (standImageObj: any) => standImageObj.actorKey === actorKey
               );
-              if (index < 0) {
-                standImageList.push(standImageObj);
-              } else {
-                standImageList.splice(index, 1, standImageObj);
-              }
+              if (index >= 0) standImageList.splice(index, 1);
+              standImageList.push(standImageObj);
             }
           }
         }

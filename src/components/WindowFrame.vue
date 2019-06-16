@@ -169,7 +169,7 @@
       :standImage="standImage.standImage"
       :drawDiff="true"
       @click="clickStandImage(standImage.standImage, index)"
-      :style="standImageStyle(standImage.standImage)"
+      :style="standImageStyle(standImage.standImage, index)"
       @contextmenu.prevent
     />
   </div>
@@ -482,11 +482,12 @@ export default class WindowFrame extends Vue {
     this.standImageList.splice(index, 1);
   }
 
-  standImageStyle(standImage: any): any {
+  standImageStyle(standImage: any, index: number): any {
     const locate = standImage.locate;
     const mpx: number = (192 * (locate - 1)) / 12;
     return {
-      left: `calc((100% - 192px) * ${locate - 1} / 11)`
+      left: `calc((100% - 192px) * ${locate - 1} / 11)`,
+      zIndex: index + 2
     };
   }
 

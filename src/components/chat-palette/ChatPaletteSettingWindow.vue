@@ -1,7 +1,7 @@
 <template>
   <window-frame
-    titleText="立ち絵設定"
-    display-property="private.display.standImageSettingWindow"
+    titleText="チャットパレット"
+    display-property="private.display.chatPaletteSettingWindow"
     align="center"
     fixSize="676, 540"
   >
@@ -173,7 +173,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
     StandImageComponent
   }
 })
-export default class StandImageSettingWindow extends Mixins<WindowMixin>(
+export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
   WindowMixin
 ) {
   @Action("setProperty") private setProperty: any;

@@ -293,7 +293,6 @@ export default {
       diceSymbolContext: {
         command: null,
         isDisplay: false,
-        zIndex: 1,
         x: 0,
         y: 0,
         objKey: null
@@ -319,6 +318,11 @@ export default {
         isDisplay: false,
         zIndex: 1,
         objKey: null
+      },
+      chatPaletteSettingWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1
       }
     }
   } /* end of state */,

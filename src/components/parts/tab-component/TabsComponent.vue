@@ -101,7 +101,8 @@ export default class TabsComponent extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import "../common";
+@import "../../common";
+
 $background-gradient: linear-gradient(
   to bottom,
   rgba(240, 240, 240, 1),

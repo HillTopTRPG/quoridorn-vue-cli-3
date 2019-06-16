@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import ActorStatusCombo from "@/components/parts/ActorStatusCombo.vue";
+import ActorStatusCombo from "../ActorStatusCombo.vue";
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 

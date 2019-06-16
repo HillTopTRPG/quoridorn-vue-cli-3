@@ -389,23 +389,13 @@ export default class Menu extends Vue {
 
   /** 墓場 */
   clickGraveyard(): void {
-    this.setProperty({
-      property: "private.display.unSupportWindow.title",
-      value: "墓地",
-      logOff: true
-    });
-    this.windowOpen("private.display.unSupportWindow");
+    alert("「墓場」はプレイヤーボックス画面に統合されました。");
     this.menuClick();
   }
 
   /** キャラクター待合室 */
   clickWaitingRoom(): void {
-    this.setProperty({
-      property: "private.display.unSupportWindow.title",
-      value: "待合室",
-      logOff: true
-    });
-    this.windowOpen("private.display.unSupportWindow");
+    alert("「キャラクター待合室」はプレイヤーボックス画面に統合されました。");
     this.menuClick();
   }
 

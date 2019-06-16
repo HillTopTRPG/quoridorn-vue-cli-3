@@ -382,8 +382,12 @@
               v-model="currentMessage"
               @input="onInput"
               @blur="textAreaOnBlur"
-              @keydown.up="event => chatOptionSelectChange('up', event)"
-              @keydown.down="event => chatOptionSelectChange('down', event)"
+              @keydown.up.prevent.self.stop="
+                event => chatOptionSelectChange('up', event)
+              "
+              @keydown.down.prevent.self.stop="
+                event => chatOptionSelectChange('down', event)
+              "
               @keydown.esc.prevent="textAreaOnPressEsc"
               @keypress.enter.prevent="event => sendMessage(event, true)"
               @keyup.enter.prevent="event => sendMessage(event, false)"
@@ -427,7 +431,7 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
-import TabsComponent from "@/components/parts/TabsComponent.vue";
+import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
 
 @Component({
   components: {
@@ -446,7 +450,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") private setProperty: any;
   @Action("sendRoomData") private sendRoomData: any;
   @Action("sendBcdiceServer") private sendBcdiceServer: any;
-  @Mutation("updateActorKey") private updateActorKey: any;
+  @Action("updateActorKey") private updateActorKey: any;
   @Mutation("addSecretDice") private addSecretDice: any;
   @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
@@ -503,7 +507,14 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   @Watch("chatActorKey", { deep: true, immediate: true })
   private onChangeChatActorKey(chatActorKey: any) {
-    this.statusName = "◆";
+    const actor: any = this.getObj(chatActorKey);
+    if (!actor) return;
+    const status: any = actor.statusList.filter(
+      (status: any) => status.name === this.statusName
+    )[0];
+    if (!status) {
+      this.statusName = "◆";
+    }
   }
 
   /**
@@ -615,10 +626,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       );
       const newValue = arrangeIndex(this.useCommandActorList, index);
 
-      this.updateActorKey(newValue.key);
-
-      // window.console.log(this.statusName, "->", newValue.statusName);
       this.statusName = newValue.statusName;
+      this.updateActorKey(newValue.key);
     }
 
     // 発言先の選択の場合
@@ -813,8 +822,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
    * チャットパレット設定ボタンクリックイベントハンドラ
    */
   private chatPaletteSettingButtonOnClick(): void {
-    // TODO
-    alert("未実装です。");
+    this.windowOpen("private.display.chatPaletteSettingWindow");
   }
 
   /**

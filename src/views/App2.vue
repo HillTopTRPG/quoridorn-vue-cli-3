@@ -73,6 +73,7 @@
     <custom-dice-bot-table-window />
     <edit-custom-dice-bot-table-window />
     <dice-bot-message />
+    <chat-palette-setting-window />
   </div>
 </template>
 
@@ -138,6 +139,7 @@ import FileUploaderWindow from "@/components/simple/FileUploaderWindow.vue";
 import CustomDiceBotTableWindow from "@/components/custom-dice-bot/CustomDiceBotTableWindow.vue";
 import EditCustomDiceBotTableWindow from "@/components/custom-dice-bot/EditCustomDiceBotTableWindow.vue";
 import DiceBotMessage from "@/components/chat/DiceBotMessage.vue";
+import ChatPaletteSettingWindow from "@/components/chat-palette/ChatPaletteSettingWindow.vue";
 
 @Component({
   components: {
@@ -197,7 +199,8 @@ import DiceBotMessage from "@/components/chat/DiceBotMessage.vue";
     FileUploaderWindow,
     CustomDiceBotTableWindow,
     EditCustomDiceBotTableWindow,
-    DiceBotMessage
+    DiceBotMessage,
+    ChatPaletteSettingWindow
   }
 })
 export default class App2 extends Vue {
