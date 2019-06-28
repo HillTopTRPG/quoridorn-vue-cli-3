@@ -323,6 +323,12 @@ export default {
         command: null,
         isDisplay: false,
         zIndex: 1
+      },
+      selectNewOwnerWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: null
       }
     }
   } /* end of state */,
@@ -514,6 +520,15 @@ export default {
     counterRemoconEditorKey: (state: any) =>
       state.display.counterRemoconEditorWindow.objKey,
     remoconContextKey: (state: any) =>
-      state.display.counterRemoconContext.remoconKey
+      state.display.counterRemoconContext.remoconKey,
+    isGameMaster: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
+      const self = rootGetters.getObj(state.self.playerKey);
+      return self ? self.type === "GM" : false;
+    }
   }
 };

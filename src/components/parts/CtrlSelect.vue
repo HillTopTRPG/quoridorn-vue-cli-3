@@ -4,7 +4,11 @@
       v-model="localValue"
       ref="select"
       :disabled="disabled"
-      :style="{ webkitTextFillColor: fontColor, mozTextFillColor: fontColor }"
+      :style="{
+        webkitTextFillColor: fontColor,
+        mozTextFillColor: fontColor,
+        maxWidth: maxWidth ? `${maxWidth}em` : undefined
+      }"
     >
       <option
         v-for="optionInfo in optionInfoList"
@@ -32,6 +36,9 @@ export default class CtrlSelect extends Mixins<SelectMixin>(SelectMixin) {
 
   @Prop({ type: Array, required: true })
   private optionInfoList!: any[];
+
+  @Prop({ type: Number, default: 0 })
+  private maxWidth!: number;
 
   private fontColor: string = "";
 

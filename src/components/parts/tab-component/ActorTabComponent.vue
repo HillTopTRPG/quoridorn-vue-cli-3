@@ -26,7 +26,7 @@
         v-for="(actor, index) in standActorList"
         :key="actor.key"
         :class="{
-          active: activeTabIndex === index,
+          active: actor.key === activeId,
           isDiagonal: isDiagonal,
           isHover: actor.key === hoverTabKey,
           isLast: index === standActorList.length - 1
@@ -35,7 +35,7 @@
         <div
           class="corner-container"
           v-if="isDiagonal"
-          @mousedown.prevent="selectTab(actor.key, true)"
+          @mousedown.prevent="selectTab(actor.key)"
           @mouseenter.prevent="hoverTab(actor.key)"
           @mouseleave.prevent="hoverTab('')"
         >
@@ -44,7 +44,7 @@
 
         <div
           class="tab-container"
-          @mousedown.prevent="selectTab(actor.key, true)"
+          @mousedown.prevent="selectTab(actor.key)"
           @mouseenter.prevent="hoverTab(actor.key)"
           @mouseleave.prevent="hoverTab('')"
         >
@@ -60,32 +60,30 @@
       </label>
 
       <!-- 選択されて表示状態となっているタブ -->
-      <label
-        class="tab"
-        v-for="(optionTab, index) in optionTabInfo"
-        :key="index"
-        @click="selectTab(optionTab.text, false)"
-        @mouseenter.prevent="hoverTab(optionTab.text)"
-        @mouseleave.prevent="hoverTab('')"
-        :class="{
-          active: activeTabIndex === index + standActorList.length,
-          isDiagonal: isDiagonal,
-          isHover: optionTab.text === hoverTabKey,
-          isLast: index === optionTabInfo.length - 1
-        }"
-      >
-        {{ optionTab.text }}
-        <span
-          class="icon-eye-blocked"
-          @click.stop="delTab(actor.key)"
-          v-if="optionTab.text === hoverTabKey"
-        ></span>
-      </label>
+      <div class="option-tab-container">
+        <label
+          class="tab plane-tab"
+          v-for="(optionTab, index) in optionTabInfo"
+          :key="index"
+          @click="selectTab(optionTab.text)"
+          @mouseenter.prevent="hoverTab(optionTab.text)"
+          @mouseleave.prevent="hoverTab('')"
+          :class="{
+            active: optionTab.text === activeId,
+            isDiagonal: isDiagonal,
+            isHover: optionTab.text === hoverTabKey,
+            isLast: index === optionTabInfo.length - 1
+          }"
+        >
+          {{ optionTab.text }}
+        </label>
+      </div>
     </div>
 
     <!-- 内容 -->
     <div class="container">
-      <slot :actor="actor"></slot>
+      <slot name="actor" :actor="actor"></slot>
+      <slot name="option" :option="actor ? null : activeId"></slot>
     </div>
   </div>
 </template>
@@ -114,19 +112,13 @@ export default class ActorTabComponent extends Vue {
   @Getter("getObj") private getObj: any;
 
   private standActorList: any[] = [];
-  private activeTabIndex: number = -1;
+  private activeId: string = "";
   private selectActorKey: string = "";
   private isDiagonal: boolean = false;
   private hoverTabKey: string = "";
 
-  private selectTab(actorKey: string, isActor: boolean) {
-    if (isActor) {
-      this.activeTabIndex = this.standActorList.findIndex(
-        actor => actor.key === actorKey
-      );
-    } else {
-      // TODO
-    }
+  private selectTab(activeId: string) {
+    this.activeId = activeId;
   }
 
   private hoverTab(actorKey: string) {
@@ -137,15 +129,22 @@ export default class ActorTabComponent extends Vue {
     const index = this.standActorList.findIndex(
       actor => actor.key === actorKey
     );
-    this.activeTabIndex--;
-    if (this.activeTabIndex < 0) this.activeTabIndex = 0;
     this.standActorList.splice(index, 1);
+
+    if (this.standActorList.length === 0) {
+      this.activeId = "";
+      return;
+    }
+
+    this.activeId = this.standActorList[
+      index < this.standActorList.length ? index : index - 1
+    ].key;
   }
 
   @Emit("change")
   public change(value: string) {}
 
-  @Watch("activeTabIndex")
+  @Watch("activeId")
   private onChangeActiveTabIndex(value: number) {
     const actor: any = this.actor;
     this.change(actor ? actor.key : null);
@@ -155,11 +154,13 @@ export default class ActorTabComponent extends Vue {
   private onChangeSelectActorKey(selectActorKey: string) {
     if (selectActorKey) {
       const actor = this.getObj(selectActorKey);
+
+      // 先頭に追加
       this.standActorList.unshift(actor);
-      this.activeTabIndex++;
+      this.activeId = "";
       setTimeout(() => {
         this.selectActorKey = "";
-        this.activeTabIndex = 0;
+        this.activeId = selectActorKey;
         this.hoverTabKey = "";
       }, 0);
     }
@@ -170,8 +171,9 @@ export default class ActorTabComponent extends Vue {
   }
 
   private get actor(): any {
-    if (this.activeTabIndex === -1) return null;
-    return this.standActorList[this.activeTabIndex];
+    return this.standActorList.filter(
+      (actor: any) => actor.key === this.activeId
+    )[0];
   }
 }
 </script>
@@ -202,10 +204,32 @@ $backColorUnSelect: #c0d0c0;
   outline: none;
   font-size: 11px;
   padding-left: 1em;
-  min-height: 2em;
+  min-height: calc(2em + 2px);
 
   &.isDiagonal {
     padding-left: 0;
+  }
+
+  .option-tab-container {
+    position: absolute;
+    right: 11em;
+    z-index: 11;
+
+    .tab.plane-tab {
+      @include flex-box(row, center, center);
+      cursor: pointer;
+      padding: 0.2em 0.5em;
+      background-color: #ccc;
+      border: 1px solid gray;
+      border-radius: 5px 5px 0 0;
+      box-sizing: border-box;
+      z-index: 13;
+      margin-right: -1px;
+
+      &.active {
+        border-bottom-color: transparent;
+      }
+    }
   }
 
   .tab {
@@ -268,20 +292,6 @@ $backColorUnSelect: #c0d0c0;
       }
     }
 
-    &.plane-tab {
-      @include flex-box(row, center, center);
-      position: absolute;
-      right: 3em;
-      cursor: pointer;
-      padding: 0.2em 0.5em;
-      background-color: #ccc;
-      border: 1px solid gray;
-      border-radius: 5px 5px 0 0;
-      box-sizing: border-box;
-      z-index: 13;
-      margin-right: -1px;
-    }
-
     &.addButton {
       @include flex-box(row, center, center);
       position: absolute;
@@ -293,6 +303,7 @@ $backColorUnSelect: #c0d0c0;
       border: 1px solid gray;
       border-radius: 5px 5px 0 0;
       box-sizing: border-box;
+      margin-right: 0;
 
       .icon-arrow-up-right2 {
         border: 1px solid black;
@@ -310,7 +321,7 @@ $backColorUnSelect: #c0d0c0;
       }
     }
 
-    &.isDiagonal {
+    &.isDiagonal:not(.plane-tab) {
       width: calc(2.82em);
 
       .tab-container {
@@ -385,6 +396,7 @@ $backColorUnSelect: #c0d0c0;
     }
 
     &.active {
+      &.plane-tab,
       .corner-container .corner,
       .tab-container {
         background-color: $backColor;

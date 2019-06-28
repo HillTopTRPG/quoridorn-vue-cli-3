@@ -318,7 +318,6 @@ export default {
       }
 
       // 受け取ったpublic情報でローカルを更新する
-      window.console.log(value);
       const volatileList = value.chat.tab.list.map(
         (tabObj: any, index: number) => ({
           key: tabObj.key,

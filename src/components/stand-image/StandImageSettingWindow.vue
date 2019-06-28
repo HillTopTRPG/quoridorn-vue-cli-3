@@ -8,6 +8,7 @@
     <div class="contents">
       <actor-tab-component @change="changeActor">
         <actor-status-tab-component
+          slot="actor"
           slot-scope="{ actor }"
           v-if="actor"
           :actor="actor"
@@ -505,7 +506,7 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
 .tab-contents {
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: calc(100% - 3.5em);
   background-color: white;
   margin: 0 0.5em 0.5em 1em;
   border: 1px dotted #666666;
