@@ -3,7 +3,7 @@
     titleText="チャットパレット編集画面"
     display-property="private.display.editChatPaletteWindow"
     align="center"
-    fixSize="676, 540"
+    fixSize="338, 540"
     :fontSizeBar="true"
     @open="open"
     @reset="open"

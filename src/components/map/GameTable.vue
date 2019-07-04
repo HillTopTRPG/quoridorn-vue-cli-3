@@ -428,11 +428,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.fontColorType = "0";
       pieceObj.fontColor = "";
       pieceObj.chatPalette = {
-        list: [
-          "チャパレテスト（キャラクター）",
-          "まだ変数は使えないよ！！",
-          "頑張って作ってます！！"
-        ]
+        list: []
       };
       pieceObj.statusList = [
         {

@@ -254,11 +254,7 @@ export default {
           fontColor,
           type,
           chatPalette: {
-            list: [
-              "チャパレテスト（プレイヤー）",
-              "Quoridornのチャットパレット鋭意製作中！",
-              "＼＼\\٩( 'ω' )و //／／"
-            ]
+            list: []
           },
           statusList: [
             {

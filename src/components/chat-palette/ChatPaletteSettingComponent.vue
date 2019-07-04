@@ -17,7 +17,7 @@
 
         <label class="operationLine">
           <label>
-            出力先：
+            出力先
             <chat-tab-select v-model="sendTab" />
           </label>
           <ctrl-button @click="edit(actor)">編集</ctrl-button>

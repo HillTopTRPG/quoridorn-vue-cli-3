@@ -117,6 +117,7 @@
               <add-dice-symbol-window-spec /><!-- ダイスシンボル追加画面 -->
               <stand-image-setting-window-spec /><!-- 立ち絵設定画面 -->
               <custom-dice-bot-table-window-spec /><!-- ダイスボット用表管理 -->
+              <chat-palette-setting-window-spec /><!-- チャットパレット画面 -->
             </div>
             <span class="toTop" @click="scrollTo()">
               <span class="rotate90">＜</span>
@@ -192,9 +193,11 @@ import AddEditBGMWindowSpec from "@/components/welcome/spec/AddEditBGMWindowSpec
 import AddDiceSymbolWindowSpec from "@/components/welcome/spec/AddDiceSymbolWindowSpec.vue";
 import CustomDiceBotTableWindowSpec from "@/components/welcome/spec/CustomDiceBotTableWindowSpec.vue";
 import StandImageSettingWindowSpec from "@/components/welcome/spec/StandImageSettingWindowSpec.vue";
+import ChatPaletteSettingWindowSpec from "@/components/welcome/spec/ChatPaletteSettingWindowSpec.vue";
 
 @Component({
   components: {
+    ChatPaletteSettingWindowSpec,
     CtrlButton,
     AddDiceSymbolWindowSpec,
     CounterRemoconWindowSpec,

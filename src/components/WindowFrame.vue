@@ -42,6 +42,14 @@
           @mousedown.stop
         />
       </label>
+
+      <!-- 閉じるボタン -->
+      <span v-if="!isBanClose" @contextmenu.prevent>
+        <i
+          class="icon-cross window-close"
+          @click.left.prevent="closeWindow"
+        ></i>
+      </span>
     </div>
 
     <!-- サイズ変更つまみ -->
@@ -155,11 +163,6 @@
       @touchcancel.prevent="event => resize(event, 'side-bottom', false, true)"
       @contextmenu.prevent
     ></div>
-
-    <!-- 閉じるボタン -->
-    <span v-if="!isBanClose" @contextmenu.prevent>
-      <i class="icon-cross window-close" @click.left.prevent="closeWindow"></i>
-    </span>
 
     <!-- 立ち絵 -->
     <stand-image-component
@@ -673,7 +676,7 @@ export default class WindowFrame extends Vue {
 }
 
 .window-title {
-  @include flex-box(row, center, center);
+  @include flex-box(row, space-between, center);
   position: absolute;
   top: 0;
   left: 0;
@@ -685,6 +688,8 @@ export default class WindowFrame extends Vue {
   font-size: 12px;
   font-weight: bold;
   white-space: nowrap;
+  padding: 0 0.5em;
+  box-sizing: border-box;
 
   &.fix {
     background: linear-gradient(
@@ -692,10 +697,8 @@ export default class WindowFrame extends Vue {
       rgba(142, 226, 186, 0.8)
     );
   }
-  > div {
-    position: absolute;
-    left: 5px;
 
+  > div {
     > span:not(:first-child) {
       margin-left: 0.5em;
       padding: 0 0.5em;
@@ -705,24 +708,69 @@ export default class WindowFrame extends Vue {
       background-color: white;
     }
   }
-}
 
-.window-close {
-  position: absolute;
-  top: 3px;
-  right: 8px;
-  padding: 3px;
-  font-size: 8px;
-  border: 2px solid rgba(0, 0, 0, 0.5);
-  color: rgba(0, 0, 0, 0.5);
-  transform-origin: right;
-  transform: scale(0.8);
-  cursor: pointer;
-  white-space: nowrap;
+  .fontSizeSlider {
+    @include flex-box(row, center, center);
+    font-size: 10px;
+    color: #444;
 
-  &:hover {
-    border-color: black;
-    color: black;
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: linear-gradient(
+        to bottom,
+        rgb(160, 166, 162) 0%,
+        rgb(201, 199, 200) 100%
+      );
+      height: 0.4em;
+      width: 100%;
+      border-radius: 0.3em;
+      border: 1px solid rgb(167, 167, 167);
+      border-top: 1px solid rgb(105, 110, 106);
+      box-sizing: border-box;
+
+      &:focus,
+      &:active {
+        outline: none;
+      }
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        position: relative;
+        width: 1em;
+        height: 1em;
+        display: block;
+        background-image: linear-gradient(
+          to bottom,
+          rgb(242, 248, 246) 0%,
+          rgb(242, 248, 246) 50%,
+          rgb(230, 240, 239) 51%,
+          rgb(230, 240, 239) 100%
+        );
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        border: 1px solid rgb(167, 167, 167);
+      }
+    }
+  }
+
+  .window-close {
+    display: block;
+    padding: 3px;
+    font-size: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 0.5);
+    transform-origin: right;
+    transform: scale(0.8) translateX(0);
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      border-color: black;
+      color: black;
+    }
   }
 }
 
@@ -807,51 +855,6 @@ export default class WindowFrame extends Vue {
   cursor: se-resize;
 }
 
-.fontSizeSlider {
-  @include flex-box(row, center, center);
-  font-size: 10px;
-
-  input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    background-image: linear-gradient(
-      to bottom,
-      rgb(160, 166, 162) 0%,
-      rgb(201, 199, 200) 100%
-    );
-    height: 0.4em;
-    width: 100%;
-    border-radius: 0.3em;
-    border: 1px solid rgb(167, 167, 167);
-    border-top: 1px solid rgb(105, 110, 106);
-    box-sizing: border-box;
-
-    &:focus,
-    &:active {
-      outline: none;
-    }
-
-    &::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      cursor: pointer;
-      position: relative;
-      width: 1em;
-      height: 1em;
-      display: block;
-      background-image: linear-gradient(
-        to bottom,
-        rgb(242, 248, 246) 0%,
-        rgb(242, 248, 246) 50%,
-        rgb(230, 240, 239) 51%,
-        rgb(230, 240, 239) 100%
-      );
-      border-radius: 50%;
-      -webkit-border-radius: 50%;
-      border: 1px solid rgb(167, 167, 167);
-    }
-  }
-}
 .standImage {
   width: 192px;
   height: 256px;
