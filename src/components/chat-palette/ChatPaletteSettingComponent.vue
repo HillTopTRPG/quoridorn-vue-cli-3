@@ -16,9 +16,14 @@
         </label>
 
         <label class="operationLine">
+          <label>
+            出力先：
+            <chat-tab-select v-model="sendTab" />
+          </label>
           <ctrl-button @click="edit(actor)">編集</ctrl-button>
-          <ctrl-button @click="exportData(actor)">セーブ</ctrl-button>
-          <ctrl-button @click="importData(actor)">ロード</ctrl-button>
+          <div class="spacer"></div>
+          <ctrl-button @click="doExport(actor)">セーブ</ctrl-button>
+          <ctrl-button @click="doImport(actor)">ロード</ctrl-button>
         </label>
 
         <ul class="chat-palette">
@@ -51,9 +56,11 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
+import ChatTabSelect from "@/components/parts/select/ChatTabSelect.vue";
 
 @Component({
   components: {
+    ChatTabSelect,
     CtrlButton,
     ActorTabComponent
   }
@@ -70,6 +77,7 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
   private actorKey: string = "";
   private chatTemporarily: string = "";
   private selectedIndex: number = -1;
+  private sendTab: string = "";
 
   private changeActor(actorKey: string): void {
     this.actorKey = actorKey;
@@ -86,6 +94,7 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
     }
     this.addChatLog({
       name: this.getViewName(actor.key),
+      tab: this.sendTab ? this.sendTab : undefined,
       text,
       actorKey: actor.key,
       owner: actor.key
@@ -107,19 +116,52 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
    * チャットパレットを編集する
    * @param actor
    */
-  private edit(actor: any) {}
+  private edit(actor: any) {
+    this.setProperty({
+      property: "private.display.editChatPaletteWindow.objKey",
+      value: actor.key,
+      logOff: true
+    }).then(() => {
+      this.windowOpen("private.display.editChatPaletteWindow");
+    });
+  }
 
   /**
    * チャットパレットをセーブする
    * @param actor
    */
-  private exportData(actor: any) {}
+  private doExport(actor: any) {
+    window.console.log("doExport");
+    const data = {
+      saveData: {
+        lines: actor.chatPalette.list
+      },
+      saveDataTypeName: "Quoridorn_ChatPalette01"
+    };
+    const blob = new Blob([JSON.stringify(data, null, "  ")], {
+      type: "application/json"
+    });
+    const url = URL.createObjectURL(blob);
+
+    const anchor = document.createElement("a");
+    anchor.download = `チャットパレット_${actor.name}.json`;
+    anchor.href = url;
+    anchor.click();
+  }
 
   /**
    * チャットパレットをロードする
    * @param actor
    */
-  private importData(actor: any) {}
+  private doImport(actor: any) {
+    this.setProperty({
+      property: "private.display.importChatPaletteWindow.objKey",
+      value: actor.key,
+      logOff: true
+    }).then(() => {
+      this.windowOpen("private.display.importChatPaletteWindow");
+    });
+  }
 }
 </script>
 
@@ -141,12 +183,32 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
     }
   }
 
+  .operationLine {
+    @include flex-box(row, center, stretch);
+    padding-right: 0.5em;
+    margin-top: 0.5em;
+
+    > * {
+      margin-left: 0.5em;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+  }
+
   .chat-palette-frame {
     @include flex-box(column, stretch, center);
+    position: relative;
     flex: 1;
 
-    ul {
+    > *:not(.chat-palette) {
+      font-size: 12px;
+    }
+
+    ul.chat-palette {
       @include flex-box(column, stretch, center);
+      position: relative;
       list-style: none;
       padding: 0;
       margin: 0.5em 0;
@@ -154,10 +216,13 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
       border-top: solid 1px #777;
       border-bottom: solid 1px #777;
       flex: 1;
+      max-width: 327px;
+      overflow: auto;
 
       li {
-        @include flex-box(row, flex-start, center);
+        @include inline-flex-box(row, flex-start, center);
         height: 2em;
+        min-height: 2em;
 
         &:not(.space) {
           &:nth-child(even) {

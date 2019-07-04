@@ -22,14 +22,14 @@
 </template>
 
 <script lang="ts">
-import WindowFrame from "../../WindowFrame";
-import WindowMixin from "../../WindowMixin";
-import CtrlSelect from "../../parts/CtrlSelect";
+import WindowFrame from "../../WindowFrame.vue";
+import WindowMixin from "../../WindowMixin.vue";
+import CtrlSelect from "../../parts/CtrlSelect.vue";
+import PlayerSelect from "../../parts/select/PlayerSelect.vue";
+import CtrlButton from "../../parts/CtrlButton.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
-import PlayerSelect from "../../parts/select/PlayerSelect.vue";
-import CtrlButton from "../../parts/CtrlButton.vue";
 
 @Component({
   components: {

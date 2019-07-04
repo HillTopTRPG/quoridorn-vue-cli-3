@@ -75,6 +75,8 @@
     <dice-bot-message />
     <chat-palette-setting-window />
     <select-new-owner-window />
+    <edit-chat-palette-window />
+    <import-chat-palette-window />
   </div>
 </template>
 
@@ -142,6 +144,8 @@ import EditCustomDiceBotTableWindow from "@/components/custom-dice-bot/EditCusto
 import DiceBotMessage from "@/components/chat/DiceBotMessage.vue";
 import ChatPaletteSettingWindow from "@/components/chat-palette/ChatPaletteSettingWindow.vue";
 import SelectNewOwnerWindow from "@/components/map/character/SelectNewOwnerWindow.vue";
+import EditChatPaletteWindow from "@/components/chat-palette/EditChatPaletteWindow.vue";
+import ImportChatPaletteWindow from "@/components/chat-palette/ImportChatPaletteWindow.vue";
 
 @Component({
   components: {
@@ -203,7 +207,9 @@ import SelectNewOwnerWindow from "@/components/map/character/SelectNewOwnerWindo
     EditCustomDiceBotTableWindow,
     DiceBotMessage,
     ChatPaletteSettingWindow,
-    SelectNewOwnerWindow
+    SelectNewOwnerWindow,
+    EditChatPaletteWindow,
+    ImportChatPaletteWindow
   }
 })
 export default class App2 extends Vue {

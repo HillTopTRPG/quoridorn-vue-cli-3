@@ -190,7 +190,6 @@ $backColorUnSelect: #c0d0c0;
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  font-size: 12px;
   display: flex;
   flex-direction: column;
 }

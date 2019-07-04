@@ -329,6 +329,18 @@ export default {
         isDisplay: false,
         zIndex: 1,
         objKey: null
+      },
+      editChatPaletteWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: null
+      },
+      importChatPaletteWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: null
       }
     }
   } /* end of state */,
