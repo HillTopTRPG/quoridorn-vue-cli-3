@@ -249,10 +249,13 @@ export default {
         // window.console.log(`Add player key:${playerKey} name:${name}`);
         rootGetters.playerList.push({
           key: playerKey,
-          name: name,
-          password: password,
-          fontColor: fontColor,
-          type: type,
+          name,
+          password,
+          fontColor,
+          type,
+          chatPalette: {
+            list: []
+          },
           statusList: [
             {
               name: "◆",
