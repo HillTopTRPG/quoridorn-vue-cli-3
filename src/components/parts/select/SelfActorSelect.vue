@@ -1,5 +1,9 @@
 <template>
-  <ctrl-select v-model="localValue" :optionInfoList="optionInfoList" />
+  <ctrl-select
+    v-model="localValue"
+    :optionInfoList="optionInfoList"
+    :maxWidth="7"
+  />
 </template>
 
 <script lang="ts">

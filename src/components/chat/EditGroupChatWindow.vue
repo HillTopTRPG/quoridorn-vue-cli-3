@@ -19,6 +19,7 @@
             <ctrl-select
               v-model="targetTab"
               :optionInfoList="targetTabOptionInfoList"
+              :maxWidth="11"
             />
           </label>
           <label>全体<input type="checkbox" v-model="isAll"/></label>
@@ -369,6 +370,7 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
 
 label {
   display: flex;
+  align-items: center;
   margin-top: 5px;
 
   input[type="text"] {

@@ -382,8 +382,12 @@
               v-model="currentMessage"
               @input="onInput"
               @blur="textAreaOnBlur"
-              @keydown.up="event => chatOptionSelectChange('up', event)"
-              @keydown.down="event => chatOptionSelectChange('down', event)"
+              @keydown.up.prevent.self.stop="
+                event => chatOptionSelectChange('up', event)
+              "
+              @keydown.down.prevent.self.stop="
+                event => chatOptionSelectChange('down', event)
+              "
               @keydown.esc.prevent="textAreaOnPressEsc"
               @keypress.enter.prevent="event => sendMessage(event, true)"
               @keyup.enter.prevent="event => sendMessage(event, false)"
@@ -427,7 +431,7 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Vue, Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
-import TabsComponent from "@/components/parts/TabsComponent.vue";
+import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
 
 @Component({
   components: {
@@ -446,7 +450,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") private setProperty: any;
   @Action("sendRoomData") private sendRoomData: any;
   @Action("sendBcdiceServer") private sendBcdiceServer: any;
-  @Mutation("updateActorKey") private updateActorKey: any;
+  @Action("updateActorKey") private updateActorKey: any;
+  @Action("sendChatLog") private sendChatLog: any;
   @Mutation("addSecretDice") private addSecretDice: any;
   @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
@@ -503,7 +508,14 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   @Watch("chatActorKey", { deep: true, immediate: true })
   private onChangeChatActorKey(chatActorKey: any) {
-    this.statusName = "◆";
+    const actor: any = this.getObj(chatActorKey);
+    if (!actor) return;
+    const status: any = actor.statusList.filter(
+      (status: any) => status.name === this.statusName
+    )[0];
+    if (!status) {
+      this.statusName = "◆";
+    }
   }
 
   /**
@@ -615,10 +627,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       );
       const newValue = arrangeIndex(this.useCommandActorList, index);
 
-      this.updateActorKey(newValue.key);
-
-      // window.console.log(this.statusName, "->", newValue.statusName);
       this.statusName = newValue.statusName;
+      this.updateActorKey(newValue.key);
     }
 
     // 発言先の選択の場合
@@ -813,8 +823,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
    * チャットパレット設定ボタンクリックイベントハンドラ
    */
   private chatPaletteSettingButtonOnClick(): void {
-    // TODO
-    alert("未実装です。");
+    this.windowOpen("private.display.chatPaletteSettingWindow");
   }
 
   /**
@@ -868,9 +877,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       return;
     }
 
-    // 文字色決定
-    // const color = this.getChatColor(this.chatActorKey);
-
     // 括弧をつけるオプション
     let text = this.currentMessage;
     if (this.addBrackets) {
@@ -878,240 +884,14 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
     this.currentMessage = "";
 
-    // 出力先タブ決定
-    let outputTab = this.outputTab;
-    if (outputTab === null) {
-      outputTab = this.activeChatTab;
-    }
-
-    // -------------------
-    // ダイスBot処理
-    // -------------------
-    const outputNormalChat = (commandStr: string) => {
-      if (!/[@><+-/*=0-9a-zA-Z()"?^$]+/.test(commandStr)) {
-        // -------------------
-        // プレイヤー発言
-        // -------------------
-        this.addChatLog({
-          name: this.getViewName(this.chatActorKey),
-          text,
-          // color,
-          tab: outputTab,
-          actorKey: this.chatActorKey,
-          statusName: this.statusName,
-          target: this.chatTarget,
-          owner: this.chatActorKey
-        });
-        return;
-      }
-      this.sendBcdiceServer({
-        system: this.currentDiceBotSystem,
-        command: commandStr
-      })
-        .then((json: any) => {
-          let isDiceRoll: boolean = false;
-          let isSecretDice: boolean = false;
-          let diceRollResult: string | null = null;
-          let dices: any = null;
-
-          if (json.ok) {
-            // bcdiceとして結果が取れた
-            const resultStr: string = json.result;
-            isSecretDice = json.secret;
-            dices = json.dices;
-
-            window.console.log(json);
-
-            diceRollResult = resultStr
-              .replace(/(^: )/g, "")
-              .replace(/＞/g, "→");
-            isDiceRoll = true;
-          } else {
-            // bcdiceとして結果は取れなかった
-          }
-
-          this.setProperty({
-            property: `public.chat.diceBotMessage`,
-            value: {
-              // message: "",
-              isView: false
-            },
-            isNotice: true,
-            logOff: true
-          });
-          if (isDiceRoll && isSecretDice) {
-            // -------------------
-            // シークレットダイス
-            // -------------------
-            this.addChatLog({
-              name: this.getViewName(this.chatActorKey),
-              text: `シークレットダイス`,
-              // color: color,
-              tab: outputTab,
-              actorKey: this.chatActorKey,
-              statusName: this.statusName,
-              target: this.chatTarget,
-              owner: this.chatActorKey
-            });
-
-            // 隠しダイスロール結果画面に反映
-            this.addSecretDice({
-              name: this.getViewName(this.chatActorKey),
-              diceBot: this.currentDiceBotSystem,
-              text,
-              diceRollResult: diceRollResult,
-              // color: color,
-              tab: outputTab,
-              actorKey: this.chatActorKey,
-              statusName: this.statusName,
-              target: this.chatTarget,
-              owner: this.chatActorKey,
-              dices
-            });
-          } else {
-            // -------------------
-            // プレイヤー発言
-            // -------------------
-            this.addChatLog({
-              name: this.getViewName(this.chatActorKey),
-              text,
-              // color,
-              tab: outputTab,
-              actorKey: this.chatActorKey,
-              statusName: this.statusName,
-              target: this.chatTarget,
-              owner: this.chatActorKey
-            });
-            if (isDiceRoll) {
-              // -------------------
-              // ダイスロール結果
-              // -------------------
-              this.addChatLog({
-                name: this.currentDiceBotSystem,
-                text: diceRollResult,
-                // color,
-                tab: outputTab,
-                actorKey: this.chatActorKey,
-                statusName: this.statusName,
-                target: this.chatTarget,
-                owner: this.chatActorKey,
-                dices,
-                isDiceBot: true
-              });
-            }
-          }
-        })
-        .catch((err: any) => {
-          window.console.error(err);
-        });
-    };
-
-    // -------------------
-    // 独自ダイスBot処理
-    // -------------------
-    const commandStr = text
-      .split(new RegExp("\\s+"))[0]
-      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s: string) =>
-        String.fromCharCode(s.charCodeAt(0) - 65248)
-      )
-      .toLowerCase();
-    const customDiceBotObj: any = this.customDiceBotList.filter(
-      (customDiceBotObj: any) =>
-        customDiceBotObj.commandName.toLowerCase() === commandStr
-    )[0];
-    const customDiceBotRoomSysObj: any = this.customDiceBotRoomSysList.filter(
-      (customDiceBotObj: any) =>
-        customDiceBotObj.commandName.toLowerCase() === commandStr
-    )[0];
-    const useCustomDiceBotObj = customDiceBotObj || customDiceBotRoomSysObj;
-    if (!useCustomDiceBotObj) {
-      // 独自ダイスボットが見つからなかったので通常のチャット処理
-      outputNormalChat(commandStr);
-    } else {
-      // 独自ダイスボットが見つかった
-      const diceRoll = useCustomDiceBotObj.diceRoll;
-      const tableTitle = useCustomDiceBotObj.tableTitle;
-      const diceBotSystem = useCustomDiceBotObj.diceBotSystem;
-      const tableContents = useCustomDiceBotObj.tableContents;
-      const customTableInfoList: any[] = tableContents
-        .split(/[\r\n]+/)
-        .map((lineStr: string) => {
-          const matchResult: any = lineStr.match(/^([^:：]+)[:：](.+)$/);
-          if (!matchResult) return null;
-          const key: string = matchResult[1];
-          const value: string = matchResult[2];
-          return { key, value };
-        })
-        .filter((info: any) => info);
-
-      this.sendBcdiceServer({ system: diceBotSystem, command: diceRoll }).then(
-        (json: any) => {
-          let diceRollResult: string | null = null;
-          let diceResultStr: string | null = null;
-          let dices: any[] | null = null;
-          if (json.ok) {
-            // bcdiceとして結果が取れた
-            const resultStr: string = json.result;
-            dices = json.dices;
-            diceRollResult = resultStr.replace(/^.*＞ */, "");
-            let sum = 0;
-            diceResultStr = dices!
-              .map((dice: any) => {
-                sum += dice.value;
-                return dice.value;
-              })
-              .join(",");
-            diceResultStr = `(${sum}[${diceResultStr}])`;
-          }
-
-          const customDiceBotResult = customTableInfoList.filter(
-            customTableInfo => customTableInfo.key === diceRollResult
-          )[0];
-
-          const customDiceBotResultText: string = [
-            tableTitle,
-            diceResultStr,
-            " → ",
-            customDiceBotResult ? customDiceBotResult.value : "該当値なし"
-          ].join("");
-
-          this.setProperty({
-            property: `public.chat.diceBotMessage`,
-            value: {
-              message: customDiceBotResult
-                ? customDiceBotResult.value
-                : ["該当値なし", diceRollResult].join("\n"),
-              isView: true
-            },
-            isNotice: true,
-            logOff: true
-          });
-
-          this.addChatLog({
-            name: this.getViewName(this.chatActorKey),
-            text,
-            // color,
-            tab: outputTab,
-            actorKey: this.chatActorKey,
-            statusName: this.statusName,
-            target: this.chatTarget,
-            owner: this.chatActorKey
-          });
-          this.addChatLog({
-            name: diceBotSystem,
-            text: customDiceBotResultText,
-            // color,
-            tab: outputTab,
-            actorKey: this.chatActorKey,
-            statusName: this.statusName,
-            target: this.chatTarget,
-            owner: this.chatActorKey,
-            dices,
-            isDiceBot: true
-          });
-        }
-      );
-    }
+    this.sendChatLog({
+      actorKey: this.chatActorKey,
+      text,
+      outputTab: this.outputTab,
+      statusName: this.statusName,
+      chatTarget: this.chatTarget,
+      currentDiceBotSystem: this.currentDiceBotSystem
+    });
   }
 
   /**
@@ -1160,7 +940,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         });
       })
       .catch((err: any) => {
-        window.console.log(err);
+        // window.console.log(err);
         // 初期化
         this.setProperty({
           property: "public.customDiceBot.roomSysList",

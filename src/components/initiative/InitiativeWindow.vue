@@ -401,7 +401,6 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") private setProperty: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("changeListObj") private changeListObj: any;
-  @Mutation("updateActorKey") private updateActorKey: any;
   @Getter("getMapObjectList") private getMapObjectList: any;
   @Getter("getObj") private getObj: any;
   @Getter("round") private round: any;

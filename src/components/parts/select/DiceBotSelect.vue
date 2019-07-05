@@ -9,6 +9,7 @@
         text: systemObj.system !== 'DiceBot' ? systemObj.name : '指定なし'
       }))
     "
+    :maxWidth="19"
   />
 </template>
 

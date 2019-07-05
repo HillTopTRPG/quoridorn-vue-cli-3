@@ -247,6 +247,7 @@ export default {
                     delete saveData.public.room.password;
                     delete saveData.public.player;
                     delete saveData.public.chat;
+                    delete saveData.public.customDiceBot;
                   }
                   zipList.push({
                     fileName: zipFile.name,

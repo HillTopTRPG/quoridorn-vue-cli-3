@@ -8,15 +8,15 @@
         {{ files.length ? "" : "未選択" }}
         <span v-for="file in files" :key="file.name">{{ file.name }}</span>
       </div>
+      <input
+        ref="fileChooser"
+        type="file"
+        style="display: none;"
+        accept=".zip"
+        multiple
+        @change="selectFile"
+      />
     </div>
-    <input
-      ref="fileChooser"
-      type="file"
-      style="display: none;"
-      accept=".zip"
-      multiple
-      @change="event => selectFile(event)"
-    />
     <ctrl-button @click="commit"><i class="icon-home3"></i> 作成</ctrl-button>
   </fieldset>
 </template>

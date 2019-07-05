@@ -318,7 +318,17 @@ export default {
       }
 
       // 受け取ったpublic情報でローカルを更新する
-      rootState.public = value;
+      const volatileList = value.chat.tab.list.map(
+        (tabObj: any, index: number) => ({
+          key: tabObj.key,
+          isActive: index === 0,
+          isHover: false,
+          unRead: 0,
+          order: 0
+        })
+      );
+      Vue.set(rootState.private.chat, "tab", volatileList);
+      Vue.set(rootState, "public", value);
 
       const showInputWindow = () => {
         // 情報を入力してもらう

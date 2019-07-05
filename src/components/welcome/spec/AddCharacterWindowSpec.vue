@@ -2,7 +2,7 @@
   <spec-frame
     property="addCharacterWindow"
     label-str="キャラクター追加画面"
-    lastVersion="1.0.0b1"
+    lastVersion="1.0.0b14"
     :isSpecFixed="true"
   >
     <!----------------------
@@ -39,6 +39,7 @@
       </li>
       <li>追加後に編集可能</li>
       <li>追加後に削除可能</li>
+      <li>追加後にGMはオーナー権限を変更可</li>
     </spec-item>
     <!----------------------
      ! ユーザ要望

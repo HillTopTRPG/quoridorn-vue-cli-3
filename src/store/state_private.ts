@@ -68,7 +68,6 @@ export default {
       resourceWindow: { command: null, isDisplay: false, zIndex: 1 },
       chatPaletteWindow: { command: null, isDisplay: false, zIndex: 1 },
       counterRemoConWindow: { command: null, isDisplay: false, zIndex: 1 },
-      functionListWindow: { command: null, isDisplay: false, zIndex: 1 },
       addMapMaskWindow: { command: null, isDisplay: false, zIndex: 1 },
       editMapMaskWindow: {
         command: null,
@@ -293,7 +292,6 @@ export default {
       diceSymbolContext: {
         command: null,
         isDisplay: false,
-        zIndex: 1,
         x: 0,
         y: 0,
         objKey: null
@@ -315,6 +313,29 @@ export default {
         // テーブル形式用データここまで
       },
       editCustomDiceBotTableWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: null
+      },
+      chatPaletteSettingWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1
+      },
+      selectNewOwnerWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: null
+      },
+      editChatPaletteWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        objKey: null
+      },
+      importChatPaletteWindow: {
         command: null,
         isDisplay: false,
         zIndex: 1,
@@ -510,6 +531,15 @@ export default {
     counterRemoconEditorKey: (state: any) =>
       state.display.counterRemoconEditorWindow.objKey,
     remoconContextKey: (state: any) =>
-      state.display.counterRemoconContext.remoconKey
+      state.display.counterRemoconContext.remoconKey,
+    isGameMaster: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
+      const self = rootGetters.getObj(state.self.playerKey);
+      return self ? self.type === "GM" : false;
+    }
   }
 };

@@ -470,6 +470,9 @@ export default new Vuex.Store({
       }
       const target = getters.getStateValue(property);
       target.splice(0, target.length);
+    },
+    updateActorKey: ({ commit }, actorKey) => {
+      return commit("updateActorKey", actorKey);
     }
   },
   mutations: {
