@@ -68,7 +68,6 @@ export default {
       resourceWindow: { command: null, isDisplay: false, zIndex: 1 },
       chatPaletteWindow: { command: null, isDisplay: false, zIndex: 1 },
       counterRemoConWindow: { command: null, isDisplay: false, zIndex: 1 },
-      functionListWindow: { command: null, isDisplay: false, zIndex: 1 },
       addMapMaskWindow: { command: null, isDisplay: false, zIndex: 1 },
       editMapMaskWindow: {
         command: null,

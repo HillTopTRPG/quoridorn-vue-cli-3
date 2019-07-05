@@ -232,7 +232,7 @@
       <hr />
       <menu-boolean-item
         @click="menuClick"
-        property="private.display.chatPaletteWindow"
+        property="private.display.chatPaletteSettingWindow"
       >
         チャットパレット表示
       </menu-boolean-item>
@@ -248,7 +248,6 @@
      !-------------------------------------------------->
     <div class="hoverMenu hoverMenu9" v-show="isShow('デモ')">
       <div class="item" @click="clickDevHistory">開発履歴</div>
-      <div class="item" @click="clickViewFunction">現時点の仕様</div>
       <hr />
       <div class="item" @click="clickBufForm">不具合の報告</div>
     </div>
@@ -517,12 +516,7 @@ export default class Menu extends Vue {
 
   /** オフィシャルサイトへ */
   clickOfficialSite(): void {
-    this.setProperty({
-      property: "private.display.unSupportWindow.title",
-      value: "公式サイト",
-      logOff: true
-    });
-    this.windowOpen("private.display.unSupportWindow");
+    window.open("http://mihikari.sakura.ne.jp/quoridorn/official/#/", "_blank");
     this.menuClick();
   }
 
@@ -532,12 +526,6 @@ export default class Menu extends Vue {
   /** 開発履歴 */
   clickDevHistory(): void {
     this.windowOpen("private.display.devLogWindow");
-    this.menuClick();
-  }
-
-  /** 現時点の仕様 */
-  clickViewFunction(): void {
-    this.windowOpen("private.display.functionListWindow");
     this.menuClick();
   }
 

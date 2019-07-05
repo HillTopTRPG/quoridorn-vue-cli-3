@@ -10,21 +10,34 @@
         slot-scope="{ actor }"
         v-if="actor"
       >
-        <label class="sendLine">
-          <input type="text" v-model="chatTemporarily" />
-          <ctrl-button @click="sendLine(actor, null)">送信</ctrl-button>
-        </label>
-
-        <label class="operationLine">
+        <div class="operationLine">
           <label>
-            出力先
+            タブ
             <chat-tab-select v-model="sendTab" />
           </label>
-          <ctrl-button @click="edit(actor)">編集</ctrl-button>
+
+          <label>
+            グルチャ
+            <group-chat-tab-select v-model="chatTarget" />
+          </label>
+        </div>
+
+        <div class="sendLine">
+          <input type="text" v-model="chatTemporarily" />
+          <ctrl-button @click="sendLine(actor, null)">送信</ctrl-button>
+        </div>
+
+        <div class="optionLine">
+          <!-- ステータス選択 -->
+          <label>
+            状態
+            <actor-status-select :actorKey="actor.key" v-model="statusName" />
+          </label>
           <div class="spacer"></div>
+          <ctrl-button @click="edit(actor)">編集</ctrl-button>
           <ctrl-button @click="doExport(actor)">セーブ</ctrl-button>
           <ctrl-button @click="doImport(actor)">ロード</ctrl-button>
-        </label>
+        </div>
 
         <ul class="chat-palette">
           <li
@@ -57,9 +70,16 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import ChatTabSelect from "@/components/parts/select/ChatTabSelect.vue";
+import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
+import { Prop, Watch } from "vue-property-decorator";
+import DiceBotSelect from "@/components/parts/select/DiceBotSelect.vue";
+import GroupChatTabSelect from "@/components/parts/select/GroupChatTabSelect.vue";
 
 @Component({
   components: {
+    GroupChatTabSelect,
+    DiceBotSelect,
+    ActorStatusSelect,
     ChatTabSelect,
     CtrlButton,
     ActorTabComponent
@@ -68,7 +88,10 @@ import ChatTabSelect from "@/components/parts/select/ChatTabSelect.vue";
 export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
   WindowMixin
 ) {
-  @Action("addChatLog") private addChatLog: any;
+  @Prop({ type: String, required: true })
+  private currentDiceBotSystem!: string;
+
+  @Action("sendChatLog") private sendChatLog: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Getter("getViewName") private getViewName: any;
@@ -78,9 +101,24 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
   private chatTemporarily: string = "";
   private selectedIndex: number = -1;
   private sendTab: string = "";
+  private statusName: string = "◆";
+  /** 発言先 */
+  private chatTarget: string = "groupTargetTab-0";
 
   private changeActor(actorKey: string): void {
     this.actorKey = actorKey;
+  }
+
+  @Watch("actorKey", { deep: true, immediate: true })
+  private onChangeActorKey(actorKey: any) {
+    const actor: any = this.getObj(actorKey);
+    if (!actor) return;
+    const status: any = actor.statusList.filter(
+      (status: any) => status.name === this.statusName
+    )[0];
+    if (!status) {
+      this.statusName = "◆";
+    }
   }
 
   /**
@@ -92,12 +130,13 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
     if (!text) {
       text = this.chatTemporarily;
     }
-    this.addChatLog({
-      name: this.getViewName(actor.key),
-      tab: this.sendTab ? this.sendTab : undefined,
-      text,
+    this.sendChatLog({
       actorKey: actor.key,
-      owner: actor.key
+      text,
+      outputTab: this.sendTab ? this.sendTab : undefined,
+      statusName: this.statusName,
+      chatTarget: this.chatTarget,
+      currentDiceBotSystem: this.currentDiceBotSystem
     });
     this.chatTemporarily = "";
   }
@@ -183,8 +222,22 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
     }
   }
 
+  .optionLine {
+    @include flex-box(row, flex-start, stretch);
+    padding-right: 0.5em;
+    margin-top: 0.5em;
+
+    > * {
+      margin-left: 0.5em;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+  }
+
   .operationLine {
-    @include flex-box(row, center, stretch);
+    @include flex-box(row, space-between, stretch);
     padding-right: 0.5em;
     margin-top: 0.5em;
 

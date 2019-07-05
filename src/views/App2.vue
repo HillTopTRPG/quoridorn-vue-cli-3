@@ -18,7 +18,6 @@
     <un-support-window />
     <game-table-context />
     <dev-log-window />
-    <function-list-window />
     <public-memo-window />
     <add-character-setting-window />
     <add-character-window />
@@ -92,7 +91,6 @@ import MapMaskContext from "../components/map/mapMask/MapMaskContext.vue";
 import UnSupportWindow from "../components/UnSupportWindow.vue";
 import GameTableContext from "../components/map/GameTableContext.vue";
 import DevLogWindow from "../components/simple/DevLogWindow.vue";
-import FunctionListWindow from "../components/simple/FunctionListWindow.vue";
 import PublicMemoWindow from "../components/public-memo/PublicMemoWindow.vue";
 import AddCharacterSettingWindow from "../components/map/character/AddCharacterSettingWindow.vue";
 import AddCharacterWindow from "../components/map/character/AddCharacterWindow.vue";
@@ -159,7 +157,6 @@ import ImportChatPaletteWindow from "@/components/chat-palette/ImportChatPalette
     UnSupportWindow,
     GameTableContext,
     DevLogWindow,
-    FunctionListWindow,
     PublicMemoWindow,
     AddCharacterSettingWindow,
     AddCharacterWindow,

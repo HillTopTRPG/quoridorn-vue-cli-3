@@ -17,6 +17,248 @@ Vue.use(Vuex);
  */
 export default {
   actions: {
+    sendChatLog: (
+      { dispatch, rootGetters }: { dispatch: Function; rootGetters: any },
+      payload: any
+    ) => {
+      const actorKey: string = payload.actorKey || rootGetters.chatActorKey;
+      const text: string = payload.text;
+      const outputTab: string = payload.outputTab || rootGetters.activeChatTab;
+      const statusName: string = payload.statusName || "◆";
+      const chatTarget: string = payload.chatTarget || "groupTargetTab-0";
+      const currentDiceBotSystem: string =
+        payload.currentDiceBotSystem || "DiceBot";
+
+      // -------------------
+      // ダイスBot処理
+      // -------------------
+      const outputNormalChat = (commandStr: string) => {
+        if (!/[@><+-/*=0-9a-zA-Z()"?^$]+/.test(commandStr)) {
+          // -------------------
+          // プレイヤー発言
+          // -------------------
+          dispatch("addChatLog", {
+            name: rootGetters.getViewName(actorKey),
+            text,
+            // color,
+            tab: outputTab,
+            actorKey: actorKey,
+            statusName,
+            target: chatTarget,
+            owner: actorKey
+          });
+          return;
+        }
+        dispatch("sendBcdiceServer", {
+          system: currentDiceBotSystem,
+          command: commandStr
+        })
+          .then((json: any) => {
+            let isDiceRoll: boolean = false;
+            let isSecretDice: boolean = false;
+            let diceRollResult: string | null = null;
+            let dices: any = null;
+
+            if (json.ok) {
+              // bcdiceとして結果が取れた
+              const resultStr: string = json.result;
+              isSecretDice = json.secret;
+              dices = json.dices;
+
+              window.console.log(json);
+
+              diceRollResult = resultStr
+                .replace(/(^: )/g, "")
+                .replace(/＞/g, "→");
+              isDiceRoll = true;
+            } else {
+              // bcdiceとして結果は取れなかった
+            }
+
+            dispatch("setProperty", {
+              property: `public.chat.diceBotMessage`,
+              value: {
+                // message: "",
+                isView: false
+              },
+              isNotice: true,
+              logOff: true
+            });
+            if (isDiceRoll && isSecretDice) {
+              // -------------------
+              // シークレットダイス
+              // -------------------
+              dispatch("addChatLog", {
+                name: rootGetters.getViewName(actorKey),
+                text: `シークレットダイス`,
+                // color: color,
+                tab: outputTab,
+                actorKey: actorKey,
+                statusName: statusName,
+                target: chatTarget,
+                owner: actorKey
+              });
+
+              // 隠しダイスロール結果画面に反映
+              dispatch("addSecretDice", {
+                name: rootGetters.getViewName(actorKey),
+                diceBot: currentDiceBotSystem,
+                text,
+                diceRollResult: diceRollResult,
+                // color: color,
+                tab: outputTab,
+                actorKey: actorKey,
+                statusName: statusName,
+                target: chatTarget,
+                owner: actorKey,
+                dices
+              });
+            } else {
+              // -------------------
+              // プレイヤー発言
+              // -------------------
+              dispatch("addChatLog", {
+                name: rootGetters.getViewName(actorKey),
+                text,
+                // color,
+                tab: outputTab,
+                actorKey: actorKey,
+                statusName: statusName,
+                target: chatTarget,
+                owner: actorKey
+              });
+              if (isDiceRoll) {
+                // -------------------
+                // ダイスロール結果
+                // -------------------
+                dispatch("addChatLog", {
+                  name: currentDiceBotSystem,
+                  text: diceRollResult,
+                  // color,
+                  tab: outputTab,
+                  actorKey: actorKey,
+                  statusName: statusName,
+                  target: chatTarget,
+                  owner: actorKey,
+                  dices,
+                  isDiceBot: true
+                });
+              }
+            }
+          })
+          .catch((err: any) => {
+            window.console.error(err);
+          });
+      };
+
+      // -------------------
+      // 独自ダイスBot処理
+      // -------------------
+      const commandStr = text
+        .split(new RegExp("\\s+"))[0]
+        .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s: string) =>
+          String.fromCharCode(s.charCodeAt(0) - 65248)
+        )
+        .toLowerCase();
+      const customDiceBotObj: any = rootGetters.customDiceBotList.filter(
+        (customDiceBotObj: any) =>
+          customDiceBotObj.commandName.toLowerCase() === commandStr
+      )[0];
+      const customDiceBotRoomSysObj: any = rootGetters.customDiceBotRoomSysList.filter(
+        (customDiceBotObj: any) =>
+          customDiceBotObj.commandName.toLowerCase() === commandStr
+      )[0];
+      const useCustomDiceBotObj = customDiceBotObj || customDiceBotRoomSysObj;
+      if (!useCustomDiceBotObj) {
+        // 独自ダイスボットが見つからなかったので通常のチャット処理
+        outputNormalChat(commandStr);
+      } else {
+        // 独自ダイスボットが見つかった
+        const diceRoll = useCustomDiceBotObj.diceRoll;
+        const tableTitle = useCustomDiceBotObj.tableTitle;
+        const diceBotSystem = useCustomDiceBotObj.diceBotSystem;
+        const tableContents = useCustomDiceBotObj.tableContents;
+        const customTableInfoList: any[] = tableContents
+          .split(/[\r\n]+/)
+          .map((lineStr: string) => {
+            const matchResult: any = lineStr.match(/^([^:：]+)[:：](.+)$/);
+            if (!matchResult) return null;
+            const key: string = matchResult[1];
+            const value: string = matchResult[2];
+            return { key, value };
+          })
+          .filter((info: any) => info);
+
+        dispatch("sendBcdiceServer", {
+          system: diceBotSystem,
+          command: diceRoll
+        }).then((json: any) => {
+          let diceRollResult: string | null = null;
+          let diceResultStr: string | null = null;
+          let dices: any[] | null = null;
+          if (json.ok) {
+            // bcdiceとして結果が取れた
+            const resultStr: string = json.result;
+            dices = json.dices;
+            diceRollResult = resultStr.replace(/^.*＞ */, "");
+            let sum = 0;
+            diceResultStr = dices!
+              .map((dice: any) => {
+                sum += dice.value;
+                return dice.value;
+              })
+              .join(",");
+            diceResultStr = `(${sum}[${diceResultStr}])`;
+          }
+
+          const customDiceBotResult = customTableInfoList.filter(
+            customTableInfo => customTableInfo.key === diceRollResult
+          )[0];
+
+          const customDiceBotResultText: string = [
+            tableTitle,
+            diceResultStr,
+            " → ",
+            customDiceBotResult ? customDiceBotResult.value : "該当値なし"
+          ].join("");
+
+          dispatch("setProperty", {
+            property: `public.chat.diceBotMessage`,
+            value: {
+              message: customDiceBotResult
+                ? customDiceBotResult.value
+                : ["該当値なし", diceRollResult].join("\n"),
+              isView: true
+            },
+            isNotice: true,
+            logOff: true
+          });
+
+          dispatch("addChatLog", {
+            name: rootGetters.getViewName(actorKey),
+            text,
+            // color,
+            tab: outputTab,
+            actorKey: actorKey,
+            statusName: statusName,
+            target: chatTarget,
+            owner: actorKey
+          });
+          dispatch("addChatLog", {
+            name: diceBotSystem,
+            text: customDiceBotResultText,
+            // color,
+            tab: outputTab,
+            actorKey: actorKey,
+            statusName: statusName,
+            target: chatTarget,
+            owner: actorKey,
+            dices,
+            isDiceBot: true
+          });
+        });
+      }
+    },
     /** ========================================================================
      * チャットログを追加する
      */
