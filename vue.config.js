@@ -6,6 +6,18 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 
 module.exports = {
   baseUrl: process.env.VUE_APP_BASE_URL,
+  pages: {
+    index: {
+      entry: "src/main.ts", // エントリーポイントとなるjs
+      template: "public/index.html", // テンプレートのHTML
+      filename: "index.html" // build時に出力されるファイル名
+    },
+    chatLog: {
+      entry: "src/chatLog.ts",
+      template: "public/chatLog.html",
+      filename: "chatLog.html"
+    }
+  },
   devServer: {
     watchOptions: {
       poll: true

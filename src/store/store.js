@@ -9,6 +9,7 @@ import stateSetting from "./state_setting";
 import actionFile from "./action_file";
 import actionPeer from "./action_peer.ts";
 import actionOperation from "./action_operation.ts";
+import saveChat from "./action_save_chat.ts";
 import { getFileNameArgList, getUrlParam } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
 import yaml from "js-yaml";
@@ -29,7 +30,8 @@ export default new Vuex.Store({
     setting: stateSetting,
     file: actionFile,
     peer: actionPeer,
-    operation: actionOperation
+    operation: actionOperation,
+    saveChat: saveChat
   },
   state: {
     // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）

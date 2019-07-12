@@ -452,6 +452,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("sendBcdiceServer") private sendBcdiceServer: any;
   @Action("updateActorKey") private updateActorKey: any;
   @Action("sendChatLog") private sendChatLog: any;
+  @Action("saveChatLogHtml") private saveChatLogHtml: any;
   @Mutation("addSecretDice") private addSecretDice: any;
   @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
@@ -817,6 +818,15 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private cutInSettingButtonOnClick(): void {
     // TODO
     alert("未実装です。");
+
+    // TODO テストコード
+    const data = {
+      title: "Joe",
+      calc: () => {
+        return 2 + 4;
+      }
+    };
+    this.saveChatLogHtml(data);
   }
 
   /**
