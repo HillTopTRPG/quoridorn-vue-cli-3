@@ -1,20 +1,62 @@
 #/bin/bash
 
 # バージョン番号を指定してzipファイルを生成するスクリプト
-
+echo -n "VERSION_NUM?>"
 read VERSION_NUM
 
 ZIP_NORMAL="quoridorn-$VERSION_NUM"
 ZIP_GZ="quoridorn-$VERSION_NUM-gz"
 
-echo $ZIP_NORMAL
-echo $ZIP_GZ
-
-if [ ! -f "dist" ];
+# distフォルダ存在チェック
+if [[ ! -d "dist" ]];
 then
   echo "dist folder is not found."
   exit 1
 fi
 
-cp -r dist ZIP_NORMAL
-cp -r dist ZIP_GZ
+# フォルダコピー
+copyTo() {
+    # フォルダが既に存在する場合は削除
+    if [[ -d $2 ]];
+    then
+      rm -rf $2
+    fi
+
+    # フォルダコピー
+    cp -r $1 $2
+}
+copyTo dist "../$ZIP_NORMAL"
+copyTo dist "../$ZIP_GZ"
+
+# ファイルの削除
+cd ../
+find ./ -name '.DS_Store' -type f -ls -delete
+pwd
+
+# 個別削除
+find "$ZIP_NORMAL" -name '*.gz' -type f -ls -delete
+find "$ZIP_GZ/js" -name 'chatLog.*.js' -type f -ls -delete
+find "$ZIP_GZ/js" -name 'chunk-vendors.*.js' -type f -ls -delete
+find "$ZIP_GZ/js" -name 'index.*.js' -type f -ls -delete
+find "$ZIP_GZ/static" -name 'jquery.js' -type f -ls -delete
+find "$ZIP_GZ/static/icomoon/fonts" -name 'icomoon.eot' -type f -ls -delete
+find "$ZIP_GZ/static/icomoon/fonts" -name 'icomoon.ttf' -type f -ls -delete
+find "$ZIP_GZ/static/lib" -name 'dinamic-js-load.js' -type f -ls -delete
+find "$ZIP_GZ/static/lib" -name 'YoutubeManager.js' -type f -ls -delete
+
+# zip化
+createZip() {
+    # zipファイルが既に存在する場合は削除
+    if [[ -f "$1.zip" ]];
+    then
+      rm -rf "$1.zip"
+    fi
+
+    # zip化
+    zip -r "$1.zip" $1
+}
+createZip ${ZIP_NORMAL}
+createZip ${ZIP_GZ}
+
+
+
