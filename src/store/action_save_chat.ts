@@ -20,7 +20,7 @@ export default {
      * @param data
      */
     saveChatLogHtml({ dispatch }: { dispatch: any }, data: any) {
-      fetch("/static/chatLog.html")
+      fetch(`${process.env.BASE_URL}/static/chatLogTemplate.html`)
         .then(res => res.text())
         .then(text => {
           const content = Mustache.render(text, data);

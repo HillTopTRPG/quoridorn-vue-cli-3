@@ -1,9 +1,12 @@
-#/bin/bash
+#!/bin/bash
 
 # バージョン番号を指定してzipファイルを生成するスクリプト
-echo -n "VERSION_NUM?>"
+
+# プロンプト入力
+/bin/echo -n "VERSION_NUM?>"
 read VERSION_NUM
 
+# ファイル名
 ZIP_NORMAL="quoridorn-$VERSION_NUM"
 ZIP_GZ="quoridorn-$VERSION_NUM-gz"
 
@@ -31,10 +34,11 @@ copyTo dist "../$ZIP_GZ"
 # ファイルの削除
 cd ../
 find ./ -name '.DS_Store' -type f -ls -delete
-pwd
 
 # 個別削除
 find "$ZIP_NORMAL" -name '*.gz' -type f -ls -delete
+rm "$ZIP_NORMAL/chatLog.html"
+rm "$ZIP_GZ/chatLog.html"
 find "$ZIP_GZ/js" -name 'chatLog.*.js' -type f -ls -delete
 find "$ZIP_GZ/js" -name 'chunk-vendors.*.js' -type f -ls -delete
 find "$ZIP_GZ/js" -name 'index.*.js' -type f -ls -delete
