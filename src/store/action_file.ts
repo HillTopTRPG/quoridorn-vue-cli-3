@@ -307,7 +307,7 @@ export default {
           logOff: true
         }).then(() => {
           dispatch("setInitiativeParams", {
-            format: rootState.public.initiative.rowStr.trim()
+            format: rootState.rowStr.trim()
           });
         });
 
@@ -365,7 +365,7 @@ export default {
 
                 // グループチャットデータのロード
                 if (type === "groupTargetTab") {
-                  rootGetters.groupTargetTab.list.push({
+                  rootGetters.groupTargetTabList.push({
                     key: `groupTargetTab-${++rootGetters.groupTargetTab
                       .maxKey}`,
                     isSecret: addObj.isSecret,

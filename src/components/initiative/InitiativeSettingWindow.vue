@@ -40,7 +40,7 @@ import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
 
-import { Action } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
@@ -55,6 +55,8 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
   @Action("setProperty") private setProperty: any;
   @Action("windowClose") private windowClose: any;
   @Action("setInitiativeParams") private setInitiativeParams: any;
+  @Getter("rowStr") private rowStr: any;
+
   private format: string = "";
 
   initWindow() {
@@ -77,7 +79,7 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
   }
 
   get value(): string {
-    return this.$store.state.public.initiative.rowStr;
+    return this.rowStr;
   }
 }
 </script>

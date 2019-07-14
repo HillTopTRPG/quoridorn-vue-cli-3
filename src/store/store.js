@@ -3,19 +3,18 @@
 // import "bcdice-js/lib/preload-dicebots"
 import Vue from "vue";
 import Vuex from "vuex";
-import statePrivate from "./state_private.ts";
-import statePublic from "./state_public.ts";
+import statePrivate from "./state_private";
+import statePublic from "./state_public";
 import stateSetting from "./state_setting";
 import actionFile from "./action_file";
-import actionPeer from "./action_peer.ts";
-import actionOperation from "./action_operation.ts";
+import actionPeer from "./action_peer";
+import actionOperation from "./action_operation";
 import saveChat from "./action_save_chat.ts";
 import { getFileNameArgList, getUrlParam } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
 import yaml from "js-yaml";
 import moment from "moment";
 const CryptoJS = require("crypto-js");
-// const moment = require("moment");
 
 Vue.use(Vuex);
 

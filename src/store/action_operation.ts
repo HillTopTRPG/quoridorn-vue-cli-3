@@ -1079,7 +1079,7 @@ export default {
       { rootGetters }: { rootGetters: any },
       payload: any
     ) => {
-      rootGetters.groupTargetTab.list.push({
+      rootGetters.groupTargetTabList.push({
         key: `groupTargetTab-${++rootGetters.groupTargetTab.maxKey}`,
         isSecret: false,
         name: "",
@@ -1110,7 +1110,7 @@ export default {
         return;
       }
       const obj = rootGetters.getObj(payload.key);
-      const list = rootGetters.groupTargetTab.list;
+      const list = rootGetters.groupTargetTabList;
       list.splice(list.indexOf(obj), 1);
     },
 
@@ -1264,13 +1264,13 @@ export default {
         }
       );
     },
-    groupTargetTabList: (
+    groupTargetTabListFiltered: (
       state: any,
       getters: any,
       rootState: any,
       rootGetters: any
     ) => {
-      return rootGetters.groupTargetTab.list.filter((tab: any) => {
+      return rootGetters.groupTargetTabList.filter((tab: any) => {
         if (tab.isAll) return true;
         const filterObj = tab.group.filter((targetKey: string) => {
           if (targetKey === getters.chatActorKey) return true;

@@ -16,19 +16,43 @@ export default {
   actions: {
     /** ========================================================================
      * HTML形式でチャットログをダウンロードする
+     * @param rootState
+     * @param rootGetters
      * @param dispatch
      * @param data
      */
-    saveChatLogHtml({ dispatch }: { dispatch: any }, data: any) {
-      fetch(`${process.env.BASE_URL}/static/chatLogTemplate.html`)
-        .then(res => res.text())
-        .then(text => {
-          const content = Mustache.render(text, data);
-          const blob = new Blob([content], { type: "text/html" });
-          const dateStr = moment().format("YYYYMMDD_hhmmss");
-          saveAs(blob, `Quoridorn_chatLog_${dateStr}.html`);
-        })
-        .catch(err => window.console.log(err));
+    saveChatLogHtml(
+      {
+        rootState,
+        rootGetters,
+        dispatch
+      }: { rootState: any; dispatch: any; rootGetters: any },
+      data: any
+    ) {
+      const chatData = rootGetters.chatLogs;
+      window.console.log(chatData);
+      return;
+
+      // Promise.resolve()
+      //   // テンプレートファイル読み込み
+      //   .then(() =>
+      //     fetch(`${process.env.BASE_URL}/static/chatLogTemplate.html`).then(
+      //       res => res.text()
+      //     )
+      //   )
+      //
+      //   // テンプレートエンジン
+      //   .then((templateStr: string) => Mustache.render(templateStr, data))
+      //
+      //   // HTML出力
+      //   .then((contents: string) => {
+      //     const blob = new Blob([contents], { type: "text/html" });
+      //     const dateStr = moment().format("YYYYMMDD_hhmmss");
+      //     saveAs(blob, `Quoridorn_chatLog_${dateStr}.html`);
+      //   })
+      //
+      //   // エラー処理
+      //   .catch((err: any) => window.console.error(err));
     }
   }
 };

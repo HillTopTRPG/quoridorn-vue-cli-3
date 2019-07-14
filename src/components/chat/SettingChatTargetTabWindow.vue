@@ -130,6 +130,7 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   @Getter("playerKey") private playerKey: any;
   @Getter("chatActorKey") private chatActorKey: any;
   @Getter("isChatTabVertical") private isChatTabVertical: any;
+  @Getter("groupTargetTabList") private groupTargetTabList: any;
 
   private addButtonOnClick() {
     this.addGroupTargetTab({ ownerKey: this.getChatFromKey() }).then(() => {
@@ -254,23 +255,21 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   }
 
   private get groupTargetTabList() {
-    return this.$store.state.public.chat.groupTargetTab.list.filter(
-      (tab: any) => {
-        if (tab.isAll) return true;
-        const targetList = tab.group
-          .map((g: string) => this.getObj(g))
-          .filter((obj: any) => {
-            const kind = obj.key.split("-")[0];
-            if (kind === "player") {
-              if (obj.key === this.playerKey) return true;
-            } else {
-              if (obj.owner === this.playerKey) return true;
-            }
-            return false;
-          });
-        return targetList.length > 0;
-      }
-    );
+    return this.groupTargetTabList.filter((tab: any) => {
+      if (tab.isAll) return true;
+      const targetList = tab.group
+        .map((g: string) => this.getObj(g))
+        .filter((obj: any) => {
+          const kind = obj.key.split("-")[0];
+          if (kind === "player") {
+            if (obj.key === this.playerKey) return true;
+          } else {
+            if (obj.owner === this.playerKey) return true;
+          }
+          return false;
+        });
+      return targetList.length > 0;
+    });
   }
 
   /* Start 列幅可変テーブルのプロパティ */

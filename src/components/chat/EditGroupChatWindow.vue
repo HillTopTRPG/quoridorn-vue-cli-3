@@ -113,6 +113,7 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
   @Getter("chatTabs") private chatTabs: any;
   @Getter("playerList") private playerList: any;
   @Getter("getMapObjectList") private getMapObjectList: any;
+  @Getter("groupTargetTabList") private groupTargetTabList: any;
 
   private isSecret: boolean = false;
   private name: string = "";
@@ -271,10 +272,6 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
     return this.groupTargetTabList.filter(
       (tab: any) => tab.key === this.objKey
     )[0];
-  }
-
-  private get groupTargetTabList() {
-    return this.$store.state.public.chat.groupTargetTab.list;
   }
 
   /* Start 列幅可変テーブルのプロパティ */

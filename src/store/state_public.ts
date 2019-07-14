@@ -1,466 +1,72 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
 import Vuex from "vuex";
-// // @ts-ignore
-// import imageList from "@/assets/conf/image.yaml";
+import state_public_common from "@/store/public/state_public_common";
+import state_public_bgm from "@/store/public/state_public_bgm";
+import state_public_setting from "@/store/public/state_public_setting";
+import state_public_map from "@/store/public/state_public_map";
+import state_public_deck from "@/store/public/state_public_deck";
+import state_public_counter_remocon from "@/store/public/state_public_counter_remocon";
+import state_public_room from "@/store/public/state_public_room";
+import state_public_custom_dice_bot from "@/store/public/state_public_custom_dice_bot";
+import state_public_image from "@/store/public/state_public_image";
+import state_public_initiative from "@/store/public/state_public_initiative";
+import state_public_public_memo from "@/store/public/state_public_public_memo";
+import state_public_chat from "@/store/public/state_public_chat";
+import state_public_player from "@/store/public/state_public_player";
+import state_public_chit from "@/store/public/state_public_chit";
+import state_public_character from "@/store/public/state_public_character";
+import state_public_map_mask from "@/store/public/state_public_map_mask";
+import state_public_dice_symbol from "@/store/public/state_public_dice_symbol";
 
 Vue.use(Vuex);
 
-/**
- * Store
- */
 export default {
-  // publicデータは、ルーム参加者に展開したりデータ保存に利用するデータ
+  modules: {
+    common: state_public_common,
+    bgm: state_public_bgm,
+    setting: state_public_setting,
+    map: state_public_map,
+    deck: state_public_deck,
+    counterRemocon: state_public_counter_remocon,
+    room: state_public_room,
+    customDiceBot: state_public_custom_dice_bot,
+    image: state_public_image,
+    initiative: state_public_initiative,
+    publicMemo: state_public_public_memo,
+    chat: state_public_chat,
+    player: state_public_player,
+    chit: state_public_chit,
+    character: state_public_character,
+    mapMask: state_public_map_mask,
+    diceSymbol: state_public_dice_symbol
+  },
   state: {
-    /** 設定(public) */
-    setting: {
-      /** マス目を表示するか */
-      gridLine: true,
-      /** 座標を表示するか */
-      gridId: true,
-      /** 回転マーカーを表示するかどうか */
-      pieceRotateMarker: true,
-      /** マス目に合わせて動かすかどうか */
-      isFitGrid: true
-    },
-
     /** 操作履歴 */
-    historyList: [],
-
-    /** BGM */
-    bgm: {
-      list: [],
-      maxKey: -1
-    },
-
-    /** 画像 */
-    image: {
-      /** 画像のタグ */
-      tags: {
-        list: [
-          { key: "imgTag-0", name: "(全て)" },
-          { key: "imgTag-1", name: "マップ" },
-          { key: "imgTag-2", name: "キャラクター" },
-          { key: "imgTag-3", name: "フロアタイル" },
-          { key: "imgTag-4", name: "立ち絵" }
-        ],
-        maxKey: 4
-      },
-
-      /** 画像のプリセットデータ */
-      list: [],
-      maxKey: -1
-    },
-
-    /** デッキ */
-    deck: {
-      cards: {
-        list: [],
-        maxKey: -1
-      },
-      name: null,
-      back: null,
-      width: 0,
-      height: 0,
-      author: null,
-      title: null,
-      refs: []
-    },
-
-    /** マップ */
-    map: {
-      list: [
-        {
-          key: `map-0`,
-          imageTag: "imgTag-1",
-          imageKey: "image-0",
-          isReverse: false,
-          margin: {
-            gridSize: 5,
-            gridColor: "#FFFFFF",
-            maskColor: "#145014",
-            maskAlpha: 0.1,
-            isUseGridColor: true,
-            isUseImage: false,
-            borderWidth: 10
-          },
-          grid: { totalColumn: 20, totalRow: 15, size: 48, color: "#000000" },
-          background: "#92A8B3"
-        }
-      ],
-      isEditing: null,
-      maxKey: 0,
-      current: "map-0"
-    },
-
-    /** 部屋情報 */
-    room: { name: "", members: [], system: "DiceBot", password: "" },
-
-    /** プレイヤー */
-    player: { list: [] },
-
-    /** マップマスク */
-    mapMask: { list: [], maxKey: -1 },
-
-    /** キャラクター */
-    character: { list: [], maxKey: -1 },
-
-    /** チット */
-    chit: { list: [], maxKey: -1 },
-
-    /** ダイスシンボル */
-    diceSymbol: { list: [], maxKey: -1 },
-
-    /** カスタムダイスボット */
-    customDiceBot: { list: [], maxKey: -1, roomSysList: [] },
-
-    /** キャラクタープロパティ */
-    initiative: {
-      round: 0,
-      roundPlayerKey: "",
-      propertyList: [],
-      rowStr: ""
-    },
-
-    /** カウンターリモコン */
-    counterRemocon: {
-      list: [
-        {
-          key: "counterRemocon-0",
-          buttonName: "万能",
-          target: "",
-          counterName: "",
-          modifyType: "2",
-          modifyValue: "",
-          message: "{0}の{1}を{2}した{4}",
-          exampleText: "[選択キャラ]の[選択項目]を0した（[選択項目]：3->3）"
-        }
-      ],
-      maxKey: 0
-    },
-
-    /** チャット */
-    chat: {
-      /** チャットのタブ */
-      tab: {
-        list: [{ key: "chatTab-0", name: "メイン" }],
-        maxKey: 0,
-        isVertical: false
-      },
-      /** グループチャットのタブ */
-      groupTargetTab: {
-        list: [
-          {
-            key: "groupTargetTab-0",
-            isSecret: false,
-            name: "全体",
-            targetTab: null,
-            isAll: true,
-            group: []
-          }
-        ],
-        maxKey: 0
-      },
-
-      /** チャットのリスト */
-      logs: {
-        "chatTab-0": [
-          {
-            owner: "SYSTEM",
-            viewHtml:
-              '<span style="color: red;"><b>SYSTEM</b>：こちらデモ版です。</span>'
-          }
-        ]
-      },
-
-      /** 入力中のルームメイトのpeerId一覧 */
-      inputting: {},
-
-      diceBotMessage: {
-        isView: false,
-        message: ""
-      }
-    },
-
-    /** 共有メモ */
-    publicMemo: {
-      maxKey: 0,
-      list: []
-    }
-  } /* end of state */,
-
-  actions: {
-    /**
-     * プレイヤーを追加する
-     * @param dispatch
-     * @param commit
-     * @param rootGetters
-     * @param peerId
-     * @param name
-     * @param password
-     * @param fontColor
-     * @param type
-     * @param isWait
-     * @returns {*}
-     */
-    addPlayer: (
-      {
-        dispatch,
-        commit,
-        rootGetters
-      }: { dispatch: Function; commit: Function; rootGetters: any },
-      {
-        peerId,
-        name,
-        password = "",
-        type,
-        fontColor,
-        isWait
-      }: {
-        peerId: string;
-        name: string;
-        password: string;
-        type: string;
-        fontColor: string;
-        isWait: boolean;
-      }
-    ): any => {
-      const playerIndex: number = rootGetters.playerList.findIndex((p: any) => {
-        return p.name === name;
-      });
-      const player =
-        playerIndex > -1 ? rootGetters.playerList[playerIndex] : null;
-      const playerKey: string = player ? player.key : `player-${name}`;
-
-      const isSelf = rootGetters.peerId(isWait) === peerId;
-      if (isSelf) {
-        commit("updateActorKey", playerKey);
-        commit("updatePlayerKey", playerKey);
-      }
-
-      rootGetters.members.push({
-        peerId: peerId,
-        playerKey: playerKey
-      });
-
-      if (!player) {
-        // window.console.log(`Add player key:${playerKey} name:${name}`);
-        rootGetters.playerList.push({
-          key: playerKey,
-          name,
-          password,
-          fontColor,
-          type,
-          chatPalette: {
-            list: []
-          },
-          statusList: [
-            {
-              name: "◆",
-              standImage: {
-                ref: "",
-                base: "",
-                baseTag: "",
-                autoResize: false,
-                animationLength: 0,
-                locate: 1,
-                diffList: [],
-                isSystemLock: true
-              }
-            }
-          ]
-        });
-      } else {
-        // privateデータの復元
-        const privateData = player.private;
-        if (privateData && isSelf) {
-          const peerId = rootGetters.peerId(isWait);
-          dispatch("setProperty", {
-            property: "private",
-            value: privateData,
-            isNotice: false,
-            logOff: true
-          }).then(() => {
-            commit("updatePeerId", { peerId: peerId, isWait: isWait });
-          });
-        }
-      }
-    },
-
-    /**
-     * ルームメンバを空にする
-     * @param commit
-     * @returns {*}
-     */
-    emptyMember: ({ commit }: { commit: Function }) => commit("emptyMember"),
-
-    /**
-     * 画像のタブの構成を変更する
-     * @param commit
-     * @param payload
-     * @returns {*}
-     */
-    imageTagChange: ({ commit }: { commit: Function }, payload: any) =>
-      commit("imageTagChange", payload),
-
-    /**
-     * NOTICE_INPUT
-     * ルームメンバの入力中状態の通知
-     * @param commit
-     * @param state
-     * @param key
-     * @param target
-     */
-    noticeInput: (
-      { commit, state }: { commit: Function; state: any },
-      { key, target }: { key: string; target: any }
-    ) => {
-      // 即時入力カウントアップ
-      commit("inputPeerId", { key: key, add: 1 });
-      // 少し経ったらカウントダウン
-      setTimeout(() => {
-        commit("inputPeerId", { key: key, add: -1 });
-      }, 400);
-    }
-  } /* end of actions */,
-
-  mutations: {
-    /**
-     * ルームメンバを空にする
-     * @param state
-     * @returns { *[] }
-     */
-    emptyMember: (state: any) =>
-      state.room.members.splice(0, state.room.members.length),
-
-    /**
-     * ルームメンバの入力中状態の変化
-     * @param state
-     * @param key
-     * @param add
-     */
-    inputPeerId(
-      this: any,
-      state: any,
-      { key, add }: { key: string; add: number }
-    ) {
-      // プロパティが無ければ、リアクティブになる形式で登録をする
-      if (!state.chat.inputting[key]) {
-        this._vm.$set(state.chat.inputting, key, 0);
-      }
-      // 値の足し込み
-      state.chat.inputting[key] += add;
-    },
-
-    /**
-     * 画像のタブの構成を変更する
-     * @param state
-     * @param key
-     * @param imageList
-     */
-    imageTagChange(
-      state: any,
-      { key, imageList }: { key: string; imageList: any[] }
-    ) {
-      const useTexts: any[] = [];
-      /* eslint no-control-regex: 0 */
-      const regExp = new RegExp("[　\t \r\n,]+", "g");
-      // window.console.log(imageList)
-      imageList.forEach((imageObj: any) => {
-        Array.prototype.push.apply(
-          useTexts,
-          imageObj.currentTag.replace(regExp, ",").split(",")
-        );
-      });
-
-      let addList = useTexts.concat(); // 配列をシャロ―コピー
-      const deleteList = state.image.tags.list.filter((tag: any) => {
-        // 「(全て)」は消させない
-        if (tag.key === "imgTag-0") {
-          return;
-        }
-
-        let findFlg = false;
-        const filteredList = useTexts.filter(txt => txt === tag.name);
-        if (filteredList.length > 0) {
-          findFlg = true;
-          addList = addList.filter(item => item !== filteredList[0]);
-        }
-        if (!findFlg) {
-          state.image.list.forEach((imageObj: any) => {
-            if (findFlg) return;
-            const filteredList = imageObj.tag
-              .split(",")
-              .filter((imgTag: any) => imgTag === tag.name);
-            if (filteredList.length > 0) {
-              findFlg = true;
-            }
-          });
-        }
-        return !findFlg;
-      });
-      // 削除リストに基づいてタグを消していく
-      deleteList.forEach((delTagObj: any) =>
-        state.image.tags.list.splice(
-          state.image.tags.list.indexOf(delTagObj),
-          1
-        )
-      );
-      // 追加リストに基づいてタグを追加していく
-      let maxKey = state.image.tags.maxKey;
-      addList.forEach(add => {
-        // 欠番を埋める方式は不採用
-        state.image.tags.list.push({
-          name: add,
-          key: `imgTag-${++maxKey}`
-        });
-      });
-      state.image.tags.maxKey = maxKey;
-      // セレクトボックスに表示される項目は、入力された内容の末尾の指定を使う
-      const imageObj = imageList.filter(imageObj => imageObj.key === key)[0];
-      const tagTexts = imageObj.currentTag.replace(regExp, ",").split(",");
-      imageObj.selectTag = tagTexts[tagTexts.length - 1];
-      // リアクティブ発火
-      imageList.splice(imageList.indexOf(imageObj), 1, imageObj);
-    }
-  } /* end of mutations */,
-
+    historyList: []
+  },
+  actions: {},
+  mutations: {},
   getters: {
     /**
      * すべての障害物を取得
      * @param state
+     * @param getters
+     * @param rootState
+     * @param rootGetters
      */
-    getAllObstacle: (state: any) => {
-      // TODO obstacle属性の作成
-      return state.character.list
+    getAllObstacle: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
+      // TODO 衝突属性判定(isObstacle)
+      return rootGetters.characterList
         .filter((o: any) => o.place === "field")
-        .concat(state.chit.list.filter((o: any) => o.place === "field"))
-        .concat(state.mapMask.list.filter((o: any) => o.place === "field"));
-    },
-
-    /**
-     * グリッドに合わせるかどうか
-     * @param state
-     * @returns { boolean }
-     */
-    isFitGrid: (state: any) => state.setting.isFitGrid,
-
-    currentMap: (state: any) =>
-      state.map.list.filter((map: any) => map.key === state.map.current)[0],
-
-    /**
-     * 現在の背景画像
-     * @param state
-     * @param getter
-     * @returns {*}
-     */
-    getBackgroundImage: (state: any, getter: any) => {
-      const imageObj = state.image.list.filter(
-        (image: any) => image.key === getter.currentMap.imageKey
-      )[0];
-      return imageObj ? imageObj.data : null;
+        .concat(rootGetters.chitList.filter((o: any) => o.place === "field"))
+        .concat(
+          rootGetters.mapMaskList.filter((o: any) => o.place === "field")
+        );
     },
 
     getSelfActors: (
@@ -469,29 +75,34 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
-      const player = getters.playerList.filter(
+      const player = rootGetters.playerList.filter(
         (p: any) => p.key === rootGetters.playerKey
       )[0];
       if (player) {
         return [
           player,
-          ...state.character.list.filter(
+          ...rootGetters.characterList.filter(
             (character: any) => character.owner === player.key
           )
         ];
       } else {
-        return [{ name: "名無し", type: "PL" }, ...state.character.list];
+        return [{ name: "名無し", type: "PL" }, ...rootGetters.characterList];
       }
     },
 
-    getAllActors: (state: any, getters: any) => {
+    getAllActors: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => {
       const actorList: any[] = [];
 
-      getters.playerList.forEach((player: any) => {
+      rootGetters.playerList.forEach((player: any) => {
         actorList.push(player);
         Array.prototype.push.apply(
           actorList,
-          state.character.list.filter(
+          rootGetters.characterList.filter(
             (character: any) => character.owner === player.key
           )
         );
@@ -500,23 +111,29 @@ export default {
       return actorList;
     },
 
-    getObj: (state: any) => (key: string): any => {
+    getObj: (state: any, getters: any, rootState: any, rootGetters: any) => (
+      key: string
+    ): any => {
       if (!key) return null;
       const kind = key.split("-")[0];
       const filterFunc: Function = (obj: any) => obj.key === key;
       if (kind === "groupTargetTab") {
         // グループチャットタブ
-        return state.chat.groupTargetTab.list.filter(filterFunc)[0];
+        return rootGetters.groupTargetTabList.filter(filterFunc)[0];
       } else if (kind === "imgTag") {
         // イメージタグ
-        return state.image.tags.list.filter(filterFunc)[0];
+        return rootGetters.imageTagList.filter(filterFunc)[0];
       } else {
         // その他
-        return state[kind] ? state[kind].list.filter(filterFunc)[0] : undefined;
+        return rootState.public[kind]
+          ? rootState.public[kind].list.filter(filterFunc)[0]
+          : undefined;
       }
     },
 
-    delObj: (state: any) => (key: string): void => {
+    delObj: (state: any, getters: any, rootState: any, rootGetters: any) => (
+      key: string
+    ): void => {
       if (!key) return;
       const kind = key.split("-")[0];
       let list: any[] = [];
@@ -524,10 +141,10 @@ export default {
         list.findIndex(obj => obj.key === key);
       if (kind === "groupTargetTab") {
         // グループチャットタブ
-        list = state.chat.groupTargetTab.list;
+        list = rootGetters.groupTargetTabList;
       } else {
         // その他
-        list = state[kind].list;
+        list = rootState.public[kind].list;
       }
       const index = findIndexFunc(list);
       if (index > -1) {
@@ -540,40 +157,13 @@ export default {
       if (!obj) return "名無し(PL)";
       const kind = obj.key.split("-")[0];
       if (kind === "player") {
-        // プレイヤー
-        const type = obj.type;
-        return `${obj.name}(${type})`;
+        return `${obj.name}(${obj.type})`;
       } else {
         return obj.name;
       }
     },
-    chatLogs: (state: any): any[] => state.chat.logs,
-    playerList: (state: any): any[] => state.player.list,
-    inputting: (state: any): any => state.chat.inputting,
-    marginGridColor: (state: any, getter: any): string =>
-      getter.currentMap.margin.gridColor,
-    marginMaskColor: (state: any, getter: any): string =>
-      getter.currentMap.margin.maskColor,
-    marginMaskAlpha: (state: any, getter: any): number =>
-      getter.currentMap.margin.maskAlpha,
-    isUseGridColor: (state: any, getter: any): boolean =>
-      getter.currentMap.margin.isUseGridColor,
-    isUseImage: (state: any, getter: any): boolean =>
-      getter.currentMap.margin.isUseImage,
-    columns: (state: any, getter: any): number =>
-      getter.currentMap.grid.totalColumn,
-    rows: (state: any, getter: any): number => getter.currentMap.grid.totalRow,
-    gridSize: (state: any, getter: any): number => getter.currentMap.grid.size,
-    borderWidth: (state: any, getter: any): number =>
-      getter.currentMap.margin.borderWidth,
-    marginGridSize: (state: any, getter: any): number =>
-      getter.currentMap.margin.gridSize,
-    roomName: (state: any): string => state.room.name,
-    roomPassword: (state: any): string => state.room.password,
-    members: (state: any): any[] => state.room.members,
-    deck: (state: any): any => state.deck,
-    deckCardList: (state: any): any[] => state.deck.cards.list,
-    getMapObjectList: (state: any) => ({
+
+    getMapObjectList: (state: any, getters: any, rootState: any) => ({
       kind,
       place = "",
       playerKey = ""
@@ -582,72 +172,27 @@ export default {
       place: string;
       playerKey: string;
     }): any[] => {
-      const list: any[] = state[kind].list;
-      if (!place && !playerKey) {
-        return list;
-      } else {
-        return list.filter((target: any) => {
-          if (playerKey && target.owner !== playerKey) return false;
-          return !(place && target.place !== place);
-        });
-      }
+      const list: any[] = rootState.public[kind].list;
+      if (!place && !playerKey) return list;
+      return list.filter((target: any) => {
+        if (playerKey && target.owner !== playerKey) return false;
+        return !(place && target.place !== place);
+      });
     },
-    getMembers: (state: any, getters: any) => (playerKey: string): any[] => {
+
+    getMembers: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => (playerKey: string): any[] => {
       const player = getters.getObj(playerKey);
       if (!player) return [];
-      return getters.members.filter(
+      return rootGetters.members.filter(
         (member: any) => member.playerKey === player.key
       );
     },
-    getPlayer: (state: any, getters: any) => (peerId: string): any => {
-      const member = getters.members.filter(
-        (member: any) => member.peerId === peerId
-      )[0];
-      if (!member) return null;
-      return getters.getObj(member.playerKey);
-    },
-    inviteUrl: (state: any, getters: any): string => {
-      const baseUrl = location.href.replace(/\?.+$/, "");
-      const params: string[] = [];
-      params.push(`roomName=${getters.roomName}`);
-      params.push(`roomPassword=${getters.roomPassword}`);
-      params.push(`system=${getters.roomSystem}`);
-      return `${baseUrl}?${params.join("&")}`;
-    },
-    isMapEditing: (state: any, getter: any): boolean =>
-      getter.currentMap.isEditing,
-    groupTargetTab: (state: any): any => state.chat.groupTargetTab,
-    isDrawGridLine: (state: any): boolean => state.setting.gridLine,
-    isDrawGridId: (state: any): boolean => state.setting.gridId,
-    gridColor: (state: any, getter: any): string =>
-      getter.currentMap.grid.color,
-    isReverse: (state: any, getter: any): boolean =>
-      getter.currentMap.isReverse,
-    canvasSize(state: any, getter: any) {
-      return {
-        w: getter.columns * getter.gridSize,
-        h: getter.rows * getter.gridSize
-      };
-    },
-    getChatColor: (state: any, getter: any) => (actorKey: string) => {
-      const actor = getter.getSelfActors.filter(
-        (actor: any) => actor.key === actorKey
-      )[0];
-      let color = "black";
-      if (actor) {
-        if (actor.key.split("-")[0] === "character") {
-          if (actor.fontColorType === "0") {
-            // プレイヤーと同じ色を使う
-            color = getter.getSelfActors[0].color;
-          } else {
-            color = actor.fontColor;
-          }
-        } else {
-          color = actor.fontColor;
-        }
-      }
-      return color;
-    },
+
     getOwnerKey: (state: any, getter: any) => (actorKey: string) => {
       let ownerKey: string | undefined = undefined;
 
@@ -663,53 +208,6 @@ export default {
       }
       return ownerKey;
     },
-    bgmList: (state: any) => state.bgm.list,
-    imageTagList: (state: any) => state.image.tags.list,
-    imageList: (state: any) => state.image.list,
-    backgroundColor: (state: any, getter: any) => getter.currentMap.background,
-    round: (state: any) => state.initiative.round,
-    roundPlayerKey: (state: any) => state.initiative.roundPlayerKey,
-    propertyList: (state: any) => state.initiative.propertyList,
-    publicCounterRemocon: (state: any) => state.counterRemocon,
-    publicCounterRemoconList: (state: any) => state.counterRemocon.list,
-    roomSystem: (state: any) => state.room.system,
-    publicMemo: (state: any) => state.publicMemo,
-    historyList: (state: any) => state.historyList,
-    imageListTagStringList: (state: any, getter: any): string[] => {
-      const resultList: string[] = [];
-      const regExp = new RegExp("[ 　]+", "g");
-      getter.imageList.forEach((imageObj: any) => {
-        const tagList: string[] = imageObj.tag.split(regExp);
-        tagList.forEach(imageTagStr => {
-          const index = resultList.findIndex(result => result === imageTagStr);
-          if (index < 0) resultList.push(imageTagStr);
-        });
-      });
-      return resultList;
-    },
-    imageListFromTagKey: (state: any, getter: any): Function => (
-      tagKey: string
-    ): any[] => {
-      // (全て)なら全部
-      if (tagKey === "imgTag-0") return getter.imageList;
-
-      return getter.imageList.filter(
-        (obj: any) =>
-          obj.tag
-            .split(" ")
-            .map(
-              (tagName: string) =>
-                getter.imageTagList.filter(
-                  (imageTag: any) => imageTag.name === tagName
-                )[0]
-            )
-            .filter((imageObj: any) => imageObj.key === tagKey)[0]
-      );
-    },
-    customDiceBotList: (state: any) => state.customDiceBot.list,
-    customDiceBotRoomSysList: (state: any) => state.customDiceBot.roomSysList,
-    diceBotMessageText: (state: any) => state.chat.diceBotMessage.message,
-    diceBotMessageView: (state: any) => state.chat.diceBotMessage.isView,
-    isChatTabVertical: (state: any) => state.chat.tab.isVertical
-  } /* end of getters */
+    historyList: (state: any) => state.historyList
+  }
 };

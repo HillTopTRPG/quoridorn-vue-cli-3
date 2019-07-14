@@ -155,7 +155,7 @@
           <tabs-component
             class="group"
             :tabIndex="chatTabs.length + 13"
-            :tabList="groupTargetTabList"
+            :tabList="groupTargetTabListFiltered"
             :activeChatTab="chatTarget"
             :hoverChatTab="hoverChatTargetTab"
             :isVertical="isTargetTabVertical"
@@ -460,7 +460,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("chatLogList") private chatLogList: any;
   @Getter("chatTabs") private chatTabs: any;
   @Getter("playerList") private playerList: any;
-  @Getter("groupTargetTabList") private groupTargetTabList: any;
+  @Getter("groupTargetTabListFiltered") private groupTargetTabListFiltered: any;
   @Getter("members") private members: any;
   @Getter("inputting") private inputting: any;
   @Getter("createInputtingMsg") private createInputtingMsg: any;
