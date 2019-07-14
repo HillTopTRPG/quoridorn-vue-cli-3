@@ -1,24 +1,17 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
-import Vuex from "vuex";
 import {
-  qLog,
   toInitiativeObjList,
   arrangeInitiativeWidthList
 } from "@/components/common/Utility";
 
-Vue.use(Vuex);
-
-/**
- * Store
- * @type { Vuex }
- */
 export default {
   actions: {
     sendChatLog: (
-      { dispatch, rootGetters }: { dispatch: Function; rootGetters: any },
+      {
+        dispatch,
+        commit,
+        rootGetters
+      }: { dispatch: Function; commit: Function; rootGetters: any },
       payload: any
     ) => {
       const actorKey: string = payload.actorKey || rootGetters.chatActorKey;
@@ -100,7 +93,7 @@ export default {
               });
 
               // 隠しダイスロール結果画面に反映
-              dispatch("addSecretDice", {
+              commit("addSecretDice", {
                 name: rootGetters.getViewName(actorKey),
                 diceBot: currentDiceBotSystem,
                 text,

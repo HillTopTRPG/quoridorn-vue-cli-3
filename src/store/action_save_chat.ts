@@ -33,6 +33,7 @@ export default {
       window.console.log(chatData);
       return;
 
+      // TODO 一時的な書き換え
       // Promise.resolve()
       //   // テンプレートファイル読み込み
       //   .then(() =>

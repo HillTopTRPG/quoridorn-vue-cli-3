@@ -41,7 +41,6 @@ export default class SecretDiceWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") private windowOpen: any;
   @Action("windowClose") private windowClose: any;
   @Action("addChatLog") private addChatLog: any;
-  @Mutation("addSecretDice") private addSecretDice: any;
   @Mutation("delSecretDice") private delSecretDice: any;
   @Getter("secretDiceList") private secretDiceList: any;
 

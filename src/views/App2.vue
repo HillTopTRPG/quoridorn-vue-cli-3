@@ -35,7 +35,6 @@
     <edit-b-g-m-window />
     <add-b-g-m-window />
     <setting-chat-tab-window />
-    <setting-chat-font-window />
     <card-context />
     <welcome-window />
     <version-window />
@@ -108,7 +107,6 @@ import JukeboxWindow from "../components/music/JukeboxWindow.vue";
 import EditBGMWindow from "../components/music/EditBGMWindow.vue";
 import AddBGMWindow from "../components/music/AddBGMWindow.vue";
 import SettingChatTabWindow from "../components/chat/SettingChatTabWindow.vue";
-import SettingChatFontWindow from "../components/chat/SettingChatFontWindow.vue";
 import CardContext from "../components/map/card/CardContext.vue";
 import WelcomeWindow from "../components/welcome/WelcomeWindow.vue";
 import VersionWindow from "../components/simple/VersionWindow.vue";
@@ -129,7 +127,7 @@ import CounterRemoconEditorWindow from "@/components/counter-remocon/CounterRemo
 import CounterRemoconContext from "@/components/counter-remocon/CounterRemoconContext.vue";
 
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { Action, Getter, Mutation } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 import ImageViewWindow from "@/components/simple/ImageViewWindow.vue";
 import PublicMemoTile from "@/components/public-memo/PublicMemoTile.vue";
 import PublicMemoFukidashi from "@/components/public-memo/PublicMemoFukidashi.vue";
@@ -174,7 +172,6 @@ import ImportChatPaletteWindow from "@/components/chat-palette/ImportChatPalette
     EditBGMWindow,
     AddBGMWindow,
     SettingChatTabWindow,
-    SettingChatFontWindow,
     CardContext,
     WelcomeWindow,
     VersionWindow,
@@ -215,7 +212,7 @@ export default class App2 extends Vue {
   @Getter("backgroundColor") private backgroundColor: any;
   @Getter("publicMemo") private publicMemo: any;
 
-  mounted() {
+  private mounted() {
     // bcdiceの使用準備
     this.onMount();
 
@@ -249,12 +246,12 @@ export default class App2 extends Vue {
     };
   }
 
-  onWheel(this: any, event: any) {
+  private onWheel(this: any, event: any) {
     this.$refs["gameTable"].onWheel(event.wheelDelta);
   }
 
   @Watch("backgroundColor", { immediate: true })
-  onChangeBackgroundColor(backgroundColor: string): void {
+  private onChangeBackgroundColor(backgroundColor: string): void {
     document.body.style.backgroundColor = backgroundColor;
   }
 }

@@ -64,7 +64,6 @@ export default class TabsComponent extends Vue {
   @Prop({ type: Function, required: true })
   private textFunc!: Function;
 
-  @Action("chatTabSelect") private chatTabSelect: any;
   @Action("setProperty") private setProperty: any;
   @Getter("chatTabs") private chatTabs: any;
 

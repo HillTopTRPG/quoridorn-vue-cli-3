@@ -40,7 +40,7 @@ export default {
       isView: false,
       message: ""
     }
-  } /* end of state */,
+  },
   actions: {},
   mutations: {},
   getters: {
@@ -48,27 +48,22 @@ export default {
     inputting: (state: any): any => state.inputting,
     groupTargetTab: (state: any): any => state.groupTargetTab,
     groupTargetTabList: (state: any): any => state.groupTargetTab.list,
-    getChatColor: (state: any, getter: any) => (actorKey: string) => {
-      const actor = getter.getSelfActors.filter(
+    getChatColor: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => (actorKey: string) => {
+      const actor = rootGetters.getSelfActors.filter(
         (actor: any) => actor.key === actorKey
       )[0];
-      let color = "black";
-      if (actor) {
-        if (actor.key.split("-")[0] === "character") {
-          if (actor.fontColorType === "0") {
-            // プレイヤーと同じ色を使う
-            color = getter.getSelfActors[0].color;
-          } else {
-            color = actor.fontColor;
-          }
-        } else {
-          color = actor.fontColor;
-        }
-      }
-      return color;
+      if (!actor) return "black";
+      if (actor.fontColorType === "0")
+        return rootGetters.getSelfActors[0].color;
+      return actor.fontColor;
     },
     diceBotMessageText: (state: any) => state.diceBotMessage.message,
     diceBotMessageView: (state: any) => state.diceBotMessage.isView,
     isChatTabVertical: (state: any) => state.tab.isVertical
-  } /* end of getters */
+  }
 };

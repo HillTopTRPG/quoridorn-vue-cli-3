@@ -85,7 +85,6 @@
             :tabindex="chatTabs.length + 6"
           ></i>
         </span>
-        <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="chatFontSettingButtonOnClick" :tabindex="chatTabs.length + 9"></i></span>-->
         <span class="icon">
           <i
             class="icon-cloud-check"
@@ -445,7 +444,6 @@ import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
 })
 export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("addChatLog") private addChatLog: any;
-  @Action("chatTabSelect") private chatTabSelect: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("sendRoomData") private sendRoomData: any;
@@ -453,7 +451,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("updateActorKey") private updateActorKey: any;
   @Action("sendChatLog") private sendChatLog: any;
   @Action("saveChatLogHtml") private saveChatLogHtml: any;
-  @Mutation("addSecretDice") private addSecretDice: any;
+  @Mutation("chatTabSelect") private chatTabSelect: any;
   @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
@@ -464,7 +462,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("members") private members: any;
   @Getter("inputting") private inputting: any;
   @Getter("createInputtingMsg") private createInputtingMsg: any;
-  @Getter("fontColor") private fontColor: any;
   @Getter("chatTargetList") private chatTargetList: any;
   @Getter("activeChatTab") private activeChatTab: any;
   @Getter("hoverChatTab") private hoverChatTab: any;
@@ -780,13 +777,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private chatLogDeleteButtonOnClick(): void {
     // TODO
     alert("未実装です。");
-  }
-
-  /**
-   * グループチャットタグ追加ボタンクリックイベントハンドラ
-   */
-  private chatFontSettingButtonOnClick(): void {
-    this.windowOpen("private.display.settingChatFontWindow");
   }
 
   /**

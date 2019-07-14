@@ -1,5 +1,3 @@
-import Vue from "vue";
-import Vuex from "vuex";
 import state_public_common from "@/store/public/state_public_common";
 import state_public_bgm from "@/store/public/state_public_bgm";
 import state_public_setting from "@/store/public/state_public_setting";
@@ -17,8 +15,6 @@ import state_public_chit from "@/store/public/state_public_chit";
 import state_public_character from "@/store/public/state_public_character";
 import state_public_map_mask from "@/store/public/state_public_map_mask";
 import state_public_dice_symbol from "@/store/public/state_public_dice_symbol";
-
-Vue.use(Vuex);
 
 export default {
   modules: {
