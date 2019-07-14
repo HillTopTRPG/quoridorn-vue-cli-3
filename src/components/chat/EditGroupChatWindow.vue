@@ -108,7 +108,6 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("addGroupTargetTab") private addGroupTargetTab: any;
-  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("chatTabs") private chatTabs: any;
   @Getter("playerList") private playerList: any;

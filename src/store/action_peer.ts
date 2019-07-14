@@ -628,9 +628,10 @@ export default {
     joinPlayer(
       {
         dispatch,
+        commit,
         rootGetters,
         rootState
-      }: { dispatch: Function; rootGetters: any; rootState: any },
+      }: { dispatch: Function; commit: Function; rootGetters: any; rootState: any },
       {
         roomName,
         roomPassword,
@@ -655,7 +656,7 @@ export default {
     ) {
       return new Promise((resolve: Function, reject: Function) => {
         // メンバーのリセット
-        dispatch("emptyMember");
+        commit("emptyMember");
 
         const room = rootGetters.webRtcRoom(isWait);
 

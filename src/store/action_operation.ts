@@ -343,7 +343,7 @@ export default {
         const logObj = {
           owner: payload.owner,
           target: target,
-          from: from,
+          from,
           viewHtml: viewHtml,
           isDiceBot: isDiceBot
         };
@@ -395,11 +395,11 @@ export default {
       target.fontColor = color;
       if (!historyChange) return;
       const change: any = {};
-      for (const tab in rootState.public.chat.logs) {
-        if (!rootState.public.chat.logs.hasOwnProperty(tab)) continue;
+      for (const tab in rootGetters.chatLogs) {
+        if (!rootGetters.chatLogs.hasOwnProperty(tab)) continue;
         const changeTab: any = {};
         change[tab] = changeTab;
-        rootState.public.chat.logs[tab].forEach((log: any, index: number) => {
+        rootGetters.chatLogs[tab].forEach((log: any, index: number) => {
           if (log.owner !== target.key) return;
           changeTab[index] = {
             viewHtml: log.viewHtml.replace(
@@ -430,7 +430,7 @@ export default {
       });
     },
     doAddChatTab: (
-      { rootState }: { rootState: any },
+      { rootState, rootGetters }: { rootState: any; rootGetters: any },
       {
         name,
         isActive = false,
@@ -459,7 +459,7 @@ export default {
       };
       rootState.public.chat.tab.list.push(publicTab);
       rootState.private.chat.tab.push(privateTab);
-      Vue.set(rootState.public.chat.logs, key, []);
+      Vue.set(rootGetters.chatLogs, key, []);
     },
 
     /** ========================================================================
@@ -1214,7 +1214,7 @@ export default {
           // this.$set(state.chat.logs, tabsTab.name, [])
           const newLogs = { ...rootGetters.chatLogs };
           newLogs[tabsTab.key] = [];
-          rootState.public.chat.logs = newLogs;
+          rootGetters.chatLogs = newLogs;
           // state.chat.logs[tabsTab.name] = []
         }
       });
@@ -1288,7 +1288,12 @@ export default {
         if (filterObj.length > 0) return true;
       });
     },
-    createInputtingMsg: () => (name: string) => `${name}が入力中...`,
+    createInputtingMsg: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => (name: string) => `${rootGetters.getViewName(name)}が入力中...`,
     chatTargetList: (
       state: any,
       getters: any,

@@ -156,9 +156,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 })
 export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowClose") private windowClose: any;
-  @Action("windowOpen") private windowOpen: any;
   @Action("addListObj") private addListObj: any;
-  @Getter("bgmList") private bgmList: any;
   @Getter("playerKey") private playerKey: any;
 
   private isYoutube: boolean = false;
@@ -183,7 +181,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private chatLinkage: string = "0";
   private chatLinkageSearch: string = "";
 
-  initWindow(this: any): void {
+  private initWindow(this: any): void {
     this.isYoutube = false;
     this.url = "";
     this.title = "";
@@ -204,7 +202,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     setTimeout(() => urlElm.focus(), 0);
   }
 
-  commit(): void {
+  private commit(): void {
     this.addListObj({
       propName: "bgm",
       kind: "bgm",
@@ -225,27 +223,27 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.windowClose("private.display.addBGMWindow");
   }
 
-  cancel(): void {
+  private cancel(): void {
     this.windowClose("private.display.addBGMWindow");
   }
 
-  getCredit(): void {
+  private getCredit(): void {
     this.creditUrl = this.url.replace(/^(https?:\/\/[^/]+).+$/, "$1");
   }
 
-  preview() {
+  private preview() {
     alert("未実装の機能です");
   }
 
-  change(this: any, param: string): void {
+  private change(this: any, param: string): void {
     this[param] = !this[param];
   }
 
-  setIsMute(isMute: boolean): void {
+  private setIsMute(isMute: boolean): void {
     this.isMute = isMute;
   }
 
-  setVolume(volume: string): void {
+  private setVolume(volume: string): void {
     this.volume = Math.floor(parseFloat(volume) * 100) / 100;
   }
 
@@ -258,7 +256,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   @Watch("url")
-  onChangeUrl(url: string): void {
+  private onChangeUrl(url: string): void {
     this.isYoutube = /www\.youtube\.com/.test(url);
   }
 }

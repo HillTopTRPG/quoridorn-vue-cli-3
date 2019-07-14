@@ -1,4 +1,3 @@
-import state_public_common from "@/store/public/state_public_common";
 import state_public_bgm from "@/store/public/state_public_bgm";
 import state_public_setting from "@/store/public/state_public_setting";
 import state_public_map from "@/store/public/state_public_map";
@@ -18,7 +17,6 @@ import state_public_dice_symbol from "@/store/public/state_public_dice_symbol";
 
 export default {
   modules: {
-    common: state_public_common,
     bgm: state_public_bgm,
     setting: state_public_setting,
     map: state_public_map,

@@ -471,7 +471,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("isWait") private isWait: any;
   @Getter("chatActorKey") private chatActorKey: any;
   @Getter("roomSystem") private roomSystem: any;
-  @Getter("getChatColor") private getChatColor: any;
   @Getter("customDiceBotList") private customDiceBotList: any;
   @Getter("customDiceBotRoomSysList") private customDiceBotRoomSysList: any;
   @Getter("loadYaml") private loadYaml: any;

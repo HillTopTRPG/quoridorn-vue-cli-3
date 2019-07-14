@@ -128,7 +128,6 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
   @Action("addListObj") private addListObj: any;
   @Action("deleteListObj") private deleteListObj: any;
   @Getter("loadYaml") private loadYaml: any;
-  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("playerKey") private playerKey: any;

@@ -72,7 +72,6 @@ export default class DiffComponent extends Vue {
   @Action("windowOpen") private windowOpen: any;
   @Action("editStandImageDiff") private editStandImageDiff: any;
   @Action("deleteStandImageDiff") private deleteStandImageDiff: any;
-  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("imageList") private imageList: any;

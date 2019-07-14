@@ -133,7 +133,6 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   @Action("setProperty") private setProperty: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("windowClose") private windowClose: any;
-  @Getter("parseColor") private parseColor: any;
   @Getter("imageList") private imageList: any;
 
   private selectImage: string = "image-1";

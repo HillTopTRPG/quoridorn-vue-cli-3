@@ -107,7 +107,6 @@ export default class ActorTabComponent extends Vue {
   })
   private optionTabInfo!: any[];
 
-  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
 

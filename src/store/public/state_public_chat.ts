@@ -41,8 +41,45 @@ export default {
       message: ""
     }
   },
-  actions: {},
-  mutations: {},
+  actions: {
+    /**
+     * NOTICE_INPUT
+     * ルームメンバの入力中状態の通知
+     * @param commit
+     * @param key
+     */
+    noticeInput: (
+      { commit }: { commit: Function },
+      { key }: { key: string }
+    ) => {
+      // 即時入力カウントアップ
+      commit("inputPeerId", { key: key, add: 1 });
+      // 少し経ったらカウントダウン
+      setTimeout(() => {
+        commit("inputPeerId", { key: key, add: -1 });
+      }, 400);
+    }
+  },
+  mutations: {
+    /**
+     * ルームメンバの入力中状態の変化
+     * @param state
+     * @param key
+     * @param add
+     */
+    inputPeerId(
+      this: any,
+      state: any,
+      { key, add }: { key: string; add: number }
+    ) {
+      // プロパティが無ければ、リアクティブになる形式で登録をする
+      if (!state.inputting[key]) {
+        this._vm.$set(state.inputting, key, 0);
+      }
+      // 値の足し込み
+      state.inputting[key] += add;
+    }
+  },
   getters: {
     chatLogs: (state: any): any[] => state.logs,
     inputting: (state: any): any => state.inputting,
@@ -54,7 +91,7 @@ export default {
       rootState: any,
       rootGetters: any
     ) => (actorKey: string) => {
-      const actor = rootGetters.getSelfActors.filter(
+      const actor = rootGetters.getAllActors.filter(
         (actor: any) => actor.key === actorKey
       )[0];
       if (!actor) return "black";

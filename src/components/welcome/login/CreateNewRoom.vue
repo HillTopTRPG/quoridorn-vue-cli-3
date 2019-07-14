@@ -165,7 +165,6 @@ import { Action, Getter, Mutation } from "vuex-class";
 export default class CreateNewRoom extends Vue {
   @Action("setProperty") private setProperty: any;
   @Action("checkRoomName") private checkRoomName: any;
-  @Action("emptyMember") private emptyMember: any;
   @Action("windowClose") private windowClose: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("loading") private loading: any;
