@@ -201,9 +201,9 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private isMute: boolean = false;
   private volume: number = 0.8;
   private options: any[] = [
-    { value: 0, label: "なし" },
-    { value: 1, label: "末尾文字" },
-    { value: 2, label: "正規表現" }
+    { value: "0", label: "なし" },
+    { value: "1", label: "末尾文字" },
+    { value: "2", label: "正規表現" }
   ];
   private tags: string[] = ["BGM", "SE"];
   private chatLinkage: string = "0";
