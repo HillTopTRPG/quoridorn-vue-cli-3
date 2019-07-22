@@ -260,7 +260,7 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
     }
 
     ul.chat-palette {
-      @include flex-box(column, stretch, center);
+      @include flex-box(column, stretch, flex-start);
       position: relative;
       list-style: none;
       padding: 0;
