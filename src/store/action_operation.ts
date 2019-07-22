@@ -273,6 +273,7 @@ export default {
       payload: any
     ) => {
       let text = payload.text;
+
       if (!text.startsWith("@")) {
         const activeChatTab = rootGetters.activeChatTab;
 
@@ -284,13 +285,13 @@ export default {
           payload.from || rootGetters.getOwnerKey(rootGetters.chatActorKey);
         const target = payload.target;
         const isDiceBot: boolean = payload.isDiceBot || false;
+        const statusName = payload.statusName || "◆";
 
         /*
          * 立ち絵の表示
          */
         const actor: any = rootGetters.getObj(actorKey);
         if (actor) {
-          const statusName = payload.statusName || "◆";
           const status: any = actor.statusList.filter(
             (status: any) => status.name === statusName
           )[0];
@@ -342,10 +343,12 @@ export default {
 
         const logObj = {
           owner: payload.owner,
-          target: target,
+          target,
           from,
-          viewHtml: viewHtml,
-          isDiceBot: isDiceBot
+          actorKey,
+          viewHtml,
+          statusName,
+          isDiceBot
         };
         // 未読カウントアップ
         if (tab !== activeChatTab) {
@@ -356,7 +359,7 @@ export default {
           tabObj.unRead++;
           rootGetters.chatTabsOption.splice(index, 1, tabObj);
         }
-        rootState.public.chat.logs[tab].push(logObj);
+        rootGetters.chatLogs[tab].push(logObj);
       }
 
       // チャット文字連携処理
@@ -400,7 +403,7 @@ export default {
         const changeTab: any = {};
         change[tab] = changeTab;
         rootGetters.chatLogs[tab].forEach((log: any, index: number) => {
-          if (log.owner !== target.key) return;
+          if (log.actorKey !== target.key) return;
           changeTab[index] = {
             viewHtml: log.viewHtml.replace(
               /^(<span style="color: )([^;]+)(;">)/,

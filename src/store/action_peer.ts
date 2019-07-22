@@ -613,6 +613,7 @@ export default {
      * 入室手続きを始める
      *=========================================================================
      * @param dispatch
+     * @param commit
      * @param rootGetters
      * @param rootState
      * @param roomName
@@ -631,7 +632,12 @@ export default {
         commit,
         rootGetters,
         rootState
-      }: { dispatch: Function; commit: Function; rootGetters: any; rootState: any },
+      }: {
+        dispatch: Function;
+        commit: Function;
+        rootGetters: any;
+        rootState: any;
+      },
       {
         roomName,
         roomPassword,
@@ -1124,6 +1130,7 @@ export default {
         from: rootGetters.systemLog.from,
         color: rootGetters.systemLog.color,
         tab: rootGetters.systemLog.tab,
+        target: "groupTargetTab-0",
         owner: rootGetters.systemLog.owner
       });
 
