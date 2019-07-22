@@ -182,6 +182,23 @@
           </tabs-component>
 
           <!----------------
+           ! チャットオプション（単位）
+           !--------------->
+          <div
+            class="optionTable dep"
+            v-if="unitList.length"
+            @contextmenu.prevent
+          >
+            <table>
+              <tr v-for="unit in unitList" :key="unit.unit">
+                <th>{{ unit.name }}</th>
+                <th>({{ unit.unit }})</th>
+                <td>{{ unit.value }}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!----------------
            ! チャットオプション（送信者）
            !--------------->
           <div
@@ -427,10 +444,11 @@ import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
 import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
 
-import { Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
+import { conversion } from "@/components/common/Utility";
 
 @Component({
   components: {
@@ -443,7 +461,6 @@ import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
   }
 })
 export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
-  @Action("addChatLog") private addChatLog: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("sendRoomData") private sendRoomData: any;
@@ -494,6 +511,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private secretTarget: string = "";
   /** 入力中のルームメンバーのpeerIdの配列 */
   private inputtingPeerIdList: any[] = [];
+
+  private unitList: any = [];
 
   private volatileFrom: string = "";
   private volatileStatusName: string = "";
@@ -586,6 +605,19 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         isWait: this.isWait
       });
     }
+
+    const matchResult = text.match(/@?([0-9.e-]+) *(.+)/);
+    if (matchResult) {
+      const num: number = matchResult[1];
+      const unit: string = matchResult[2];
+
+      const result: any[] = conversion(num, unit);
+      if (result) {
+        this.unitList = result;
+        return;
+      }
+    }
+    this.unitList = [];
   }
 
   /**
@@ -864,6 +896,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     }
     if (this.currentMessage === "") return;
 
+    // 単位を初期化
+    this.unitList = [];
+
     // チャット送信オプション選択中のEnterは特別仕様
     if (this.chatOptionSelectMode) {
       if (this.chatOptionSelectMode) this.currentMessage = "";
@@ -1063,10 +1098,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 @import "../common";
 
 .container {
+  @include flex-box(column, normal, normal);
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
   position: relative;
   overflow: visible;
 }
@@ -1096,11 +1130,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 
 .oneLine {
-  display: flex;
-  flex-direction: row;
+  @include flex-box(row, flex-start, center);
   flex-wrap: nowrap;
-  justify-content: left;
-  align-items: center;
   height: 26px;
   min-height: 26px;
   padding: 3px 0;
@@ -1113,10 +1144,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 
 .sendLine {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
+  @include flex-box(row, center, center);
 
   .label {
     width: 100%;
@@ -1124,9 +1152,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   > *:not(.tabs) {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    @include flex-box(row, flex-end, center);
     height: 42px;
     min-height: 42px;
   }
@@ -1157,12 +1183,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 
 .chatOption {
-  display: flex;
+  @include flex-box(column, flex-start, center);
   height: 3.6em;
   padding: 0.2em 0 0.2em 0.4em;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
   border-radius: 5px 0 0 5px;
   border: 1px solid gray;
   border-right: 1px dashed gray;
@@ -1216,9 +1239,7 @@ textarea {
   font-size: 10px;
 
   div {
-    display: inline-flex;
-    justify-content: left;
-    align-items: center;
+    @include inline-flex-box(row, flex-start, center);
   }
 }
 
@@ -1312,36 +1333,68 @@ i.icon-target {
   z-index: 1000;
   max-height: 22.8em;
   overflow-y: auto;
+
+  .ope {
+    color: #777;
+  }
+
+  > span {
+    line-height: 1.8em;
+  }
+
+  ul {
+    padding: 0;
+    margin: 0.5em 0 0;
+    list-style: none;
+  }
+
+  li {
+    padding: 0.2em 0.8em;
+    line-height: 1.6em;
+  }
+
+  .selected {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
 }
 
-.chatOptionSelector .ope {
-  color: #777;
-}
+.optionTable {
+  padding: 0.5em;
+  background-color: lightgreen;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  cursor: default;
+  z-index: 1000;
+  max-height: 26em;
+  overflow-y: auto;
 
-.chatOptionSelector > span {
-  line-height: 1.8em;
-}
+  table {
+    padding: 0;
+    margin: 0;
+    border-collapse: collapse;
+  }
 
-.chatOptionSelector ul {
-  padding: 0;
-  margin: 0.5em 0 0;
-  list-style: none;
-}
+  tr:first-child {
+    th,
+    td {
+      border-top-color: transparent;
+    }
+  }
 
-.chatOptionSelector li {
-  padding: 0.2em 0.8em;
-  line-height: 1.6em;
-}
-
-.chatOptionSelector .selected {
-  background-color: rgba(255, 255, 255, 0.8);
+  th,
+  td {
+    padding: 0;
+    line-height: 2em;
+    text-align: left;
+    vertical-align: center;
+    border-top: dashed 1px black;
+  }
 }
 
 .bracketOption {
   flex: 1;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  @include flex-box(row, flex-end, center);
   padding-right: 3em;
 }
 </style>

@@ -1,3 +1,8 @@
+import { all, create } from "mathjs";
+
+const config = {};
+const math = create(all, config);
+
 /**
  * URLパラメータ取得処理
  *
@@ -119,6 +124,169 @@ export function qLog(...a: any): void {
     }
   });
   window.console.log(format, ...logs);
+}
+
+export function conversion(num: number, unitName: string): any {
+  const convertTable = [
+    {
+      name: ["mm", "mm", "millimeter", "㍉", "㍉㍍", "ミリメートル"],
+      base: "Length"
+    },
+    {
+      name: ["cm", "cm", "centimeter", "㌢", "㌢㍍", "センチメートル"],
+      base: "Length"
+    },
+    { name: ["m", "m", "meter", "㍍", "メートル"], base: "Length" },
+    { name: ["km", "km", "kilometer", "㌔㍍", "キロメートル"], base: "Length" },
+    { name: ["in", "in", "inch", "㌅", "インチ"], base: "Length" },
+    { name: ["ft", "ft", "foot", "㌳", "フィート"], base: "Length" },
+    { name: ["yd", "yd", "yard", "㍎", "ヤード"], base: "Length" },
+    { name: ["mi", "mi", "mile", "マイル"], base: "Length" },
+    { name: ["li", "li", "link", "リンク"], base: "Length" },
+    { name: ["rd", "rd", "rod", "ロッド"], base: "Length" },
+    { name: ["ch", "ch", "chain", "チェーン"], base: "Length" },
+    { name: ["angstrom", "Å", "オングストローム"], base: "Length" },
+    { name: ["mil", "mil", "ミル"], base: "Length" },
+    // { name: ["寸"], base: "Length" },
+    // { name: ["尺"], base: "Length" },
+    // { name: ["里"], base: "Length" },
+    {
+      name: ["mm2", "mm²", "㎟", "平方㍉㍍", "平方ミリメートル"],
+      base: "Surface area"
+    },
+    {
+      name: ["cm2", "cm²", "㎠", "平方㌢㍍", "平方メートル"],
+      base: "Surface area"
+    },
+    {
+      name: ["m2", "m²", "㎡", "平方㍍", "平方メートル"],
+      base: "Surface area"
+    },
+    {
+      name: ["km2", "km²", "㎢", "平方㌔㍍", "平方キロメートル"],
+      base: "Surface area"
+    },
+    {
+      name: ["sqin", "in²", "sq in", "平方㌅", "平方インチ"],
+      base: "Surface area"
+    },
+    {
+      name: ["sqft", "ft²", "sq ft", "平方㌳", "平方フィート"],
+      base: "Surface area"
+    },
+    {
+      name: ["sqyd", "yd²", "sq yd", "平方㍎", "平方ヤード"],
+      base: "Surface area"
+    },
+    { name: ["sqmi", "mi²", "sq mi", "平方マイル"], base: "Surface area" },
+    { name: ["sqrd", "rd²", "sq rd", "平方ロッド"], base: "Surface area" },
+    { name: ["sqch", "ch²", "sq ch", "平方チェイン"], base: "Surface area" },
+    { name: ["sqmil", "mil²", "sq mil", "平方ミル"], base: "Surface area" },
+    { name: ["acre", "ac", "エーカー"], base: "Surface area" },
+    { name: ["hectare", "ha", "㌶", "ヘクタール"], base: "Surface area" },
+    // { name: ["a", "アール"], base: "Surface area" },
+    // { name: ["坪", "歩"], base: "Surface area" },
+    // { name: ["畝"], base: "Surface area" },
+    // { name: ["反"], base: "Surface area" },
+    // { name: ["町"], base: "Surface area" },
+    { name: ["mm3", "mm³", "平方㍉㍍", "立方ミリメートル"], base: "Volume" },
+    {
+      name: ["cm3", "cm³", "平方㌢㍍", "平方㌢", "立方センチメートル"],
+      base: "Volume"
+    },
+    { name: ["m3", "m³", "㎥", "平方㍍", "立方メートル"], base: "Volume" },
+    {
+      name: ["km3", "km³", "平方㌖", "平方㌔㍍", "立方キロメートル"],
+      base: "Volume"
+    },
+    {
+      name: ["l", "L", "ℓ", "lt", "liter", "litre", "㍑", "リットル"],
+      base: "Volume"
+    },
+    { name: ["cc", "cc", "㏄", "シーシー"], base: "Volume" },
+    { name: ["cuin", "in³", "cu in", "平方㌅", "立方インチ"], base: "Volume" },
+    {
+      name: ["cuft", "ft³", "cu ft", "平方㌳", "立方フィート"],
+      base: "Volume"
+    },
+    { name: ["cuyd", "yd³", "cu yd", "平方㍎", "立方ヤード"], base: "Volume" },
+    { name: ["teaspoon", "tsp", "小さじ"], base: "Volume" },
+    { name: ["tablespoon", "tbsp", "大さじ"], base: "Volume" },
+    { name: ["minim", "min", "ミニム"], base: "Volume" },
+    {
+      name: ["fldr", "fldr", "fluiddram", "fl dr", "液量ドラム"],
+      base: "Volume"
+    },
+    {
+      name: ["floz", "floz", "fluidounce", "fl oz", "液量オンス"],
+      base: "Volume"
+    },
+    { name: ["gi", "gi", "gill", "ジル"], base: "Volume" },
+    { name: ["cp", "cp", "cup", "カップ"], base: "Volume" },
+    { name: ["pt", "pt", "pint", "パイント"], base: "Volume" },
+    { name: ["qt", "qt", "quart", "クォート"], base: "Volume" },
+    { name: ["gal", "gal", "gallon", "ガロン"], base: "Volume" },
+    {
+      name: ["bbl", "bbl", "beerbarrel", "バレル", "米液量バレル"],
+      base: "Volume"
+    },
+    { name: ["obl", "obl", "oilbarrel", "石油用バレル"], base: "Volume" },
+    { name: ["hogshead", "hogshead", "ホッグスヘッド"], base: "Volume" },
+    { name: ["gtt", "gtt", "drop", "ドロップ"], base: "Volume" },
+    // { name: ["pk", "peck", "ペック"], base: "Volume" },
+    // { name: ["升"], base: "Volume" },
+    // { name: ["合"], base: "Volume" },
+    // { name: ["斗"], base: "Volume" },
+    // { name: ["石"], base: "Volume" },
+    { name: ["mg", "mg", "milligram", "㍉㌘", "ミリグラム"], base: "Mass" },
+    { name: ["g", "g", "gram", "㌘", "グラム"], base: "Mass" },
+    {
+      name: ["kg", "kg", "kilogram", "㌔㌘", "㌕", "キログラム"],
+      base: "Mass"
+    },
+    { name: ["ton", "t", "tonne", "㌧", "トン"], base: "Mass" },
+    { name: ["gr", "gr", "grain", "グレーン"], base: "Mass" },
+    { name: ["dr", "dr", "dram", "ドラム"], base: "Mass" },
+    { name: ["oz", "oz", "ounce", "オンス"], base: "Mass" },
+    { name: ["lb", "lb", "lbm", "lbs", "poundmass", "ポンド"], base: "Mass" },
+    {
+      name: ["cwt", "cwt", "hundredweight", "ハンドレッドウェイト"],
+      base: "Mass"
+    }
+  ];
+
+  const getUnit: Function = (unitName: string): any => {
+    return convertTable.filter(
+      (unit: any) => unit.name.filter((name: string) => name === unitName)[0]
+    )[0];
+  };
+  const filteredUnit = getUnit(unitName);
+  if (!filteredUnit) return null;
+
+  const base = filteredUnit.base;
+  const name = filteredUnit.name[0];
+
+  return convertTable
+    .filter((unit: any) => unit.base === base && unit.name[0] !== name)
+    .map((targetUnit: any) => targetUnit.name[0])
+    .map((unit: string) => `${num}${name} to ${unit}`)
+    // .map((unit: string) => {
+    //   window.console.log(unit);
+    //   return unit;
+    // })
+    .map((unit: string) => math.eval(unit).format())
+    .map((result: string) => {
+      // window.console.log(result);
+      const mr: any = result.match(/([^ ]+) (.+)/);
+      const floatValue: number = parseFloat(mr[1]);
+      const unitStr: string = mr[2];
+      const unit: any = getUnit(unitStr);
+      return {
+        value: floatValue,
+        name: unit.name[unit.name.length - 1],
+        unit: unit.name[1]
+      };
+    });
 }
 
 /**

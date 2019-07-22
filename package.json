@@ -11,6 +11,7 @@
     "set-skyway-key": "scripts/set-skyway-key.sh"
   },
   "dependencies": {
+    "@types/mathjs": "^6.0.0",
     "ajv": "^6.10.0",
     "ajv-keywords": "^3.4.0",
     "compression-webpack-plugin": "^2.0.0",
@@ -19,6 +20,7 @@
     "js-yaml": "^3.13.1",
     "json-loader": "^0.5.7",
     "jszip": "^3.1.5",
+    "mathjs": "^6.0.3",
     "moment": "^2.24.0",
     "mustache": "^3.0.1",
     "skyway-js": "^1.1.19",
