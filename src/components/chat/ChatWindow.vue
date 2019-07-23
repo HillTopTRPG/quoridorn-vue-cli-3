@@ -606,9 +606,13 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       });
     }
 
-    const matchResult = text.match(/@?([0-9.e-]+) *(.+)/);
+    const matchResult = text.match(/@?([０-９0-9.e-]+) *(.+)/);
     if (matchResult) {
-      const num: number = matchResult[1];
+      const num: number = parseFloat(
+        matchResult[1].replace(/[０-９]/g, (s: string) =>
+          String.fromCharCode(s.charCodeAt(0) - 0xfee0)
+        )
+      );
       const unit: string = matchResult[2];
 
       const result: any[] = conversion(num, unit);
