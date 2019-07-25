@@ -345,6 +345,8 @@ export default {
           owner: payload.owner,
           target,
           from,
+          text,
+          actor,
           actorKey,
           viewHtml,
           statusName,

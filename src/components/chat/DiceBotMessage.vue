@@ -92,7 +92,7 @@ export default class DiceBotMessage extends Vue {
           isNotice: false,
           logOff: true
         });
-      }, 4000);
+      }, 5000);
     } else {
       if (this.timer !== null) {
         clearTimeout(this.timer);

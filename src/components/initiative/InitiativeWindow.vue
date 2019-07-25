@@ -939,7 +939,7 @@ td {
     outline: none;
     overflow: hidden;
     line-height: 2em;
-    padding-top: 0.5em;
+    padding-top: 0.2em;
     padding-left: 0.2em;
   }
 }

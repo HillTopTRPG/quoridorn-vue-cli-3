@@ -215,7 +215,12 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
       tabName: event.target.value,
       front: {
         targetList: [],
-        contentsList: []
+        contentsList: [
+          {
+            kind: "text",
+            text: "テキスト"
+          }
+        ]
       },
       back: {
         targetList: [],
