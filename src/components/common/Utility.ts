@@ -126,6 +126,18 @@ export function qLog(...a: any): void {
   window.console.log(format, ...logs);
 }
 
+export function saveJson(name: string, data: any): void {
+  const blob = new Blob([JSON.stringify(data, null, "  ")], {
+    type: "application/json"
+  });
+  const url = URL.createObjectURL(blob);
+
+  const anchor = document.createElement("a");
+  anchor.download = `${name}.json`;
+  anchor.href = url;
+  anchor.click();
+}
+
 export function conversion(num: number, unitName: string): any {
   const convertTable = [
     {
@@ -266,27 +278,29 @@ export function conversion(num: number, unitName: string): any {
   const base = filteredUnit.base;
   const name = filteredUnit.name[0];
 
-  return convertTable
-    .filter((unit: any) => unit.base === base && unit.name[0] !== name)
-    .map((targetUnit: any) => targetUnit.name[0])
-    .map((unit: string) => `${num}${name} to ${unit}`)
-    // .map((unit: string) => {
-    //   window.console.log(unit);
-    //   return unit;
-    // })
-    .map((unit: string) => math.eval(unit).format())
-    .map((result: string) => {
-      // window.console.log(result);
-      const mr: any = result.match(/([^ ]+) (.+)/);
-      const floatValue: number = parseFloat(mr[1]);
-      const unitStr: string = mr[2];
-      const unit: any = getUnit(unitStr);
-      return {
-        value: floatValue,
-        name: unit.name[unit.name.length - 1],
-        unit: unit.name[1]
-      };
-    });
+  return (
+    convertTable
+      .filter((unit: any) => unit.base === base && unit.name[0] !== name)
+      .map((targetUnit: any) => targetUnit.name[0])
+      .map((unit: string) => `${num}${name} to ${unit}`)
+      // .map((unit: string) => {
+      //   window.console.log(unit);
+      //   return unit;
+      // })
+      .map((unit: string) => math.eval(unit).format())
+      .map((result: string) => {
+        // window.console.log(result);
+        const mr: any = result.match(/([^ ]+) (.+)/);
+        const floatValue: number = parseFloat(mr[1]);
+        const unitStr: string = mr[2];
+        const unit: any = getUnit(unitStr);
+        return {
+          value: floatValue,
+          name: unit.name[unit.name.length - 1],
+          unit: unit.name[1]
+        };
+      })
+  );
 }
 
 /**

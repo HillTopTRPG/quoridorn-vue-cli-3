@@ -50,6 +50,7 @@ import publicMemoContextStore from "@/store/private/display/publicMemoContextSto
 import diceSymbolContextStore from "@/store/private/display/diceSymbolContextStore";
 import customDiceBotTableWindowStore from "@/store/private/display/customDiceBotTableWindowStore";
 import unSupportWindowStore from "@/store/private/display/unSupportWindowStore";
+import importBGMWindowStore from "@/store/private/display/importBGMWindowStore";
 
 export default {
   modules: {
@@ -99,6 +100,7 @@ export default {
     secretDiceWindow: secretDiceWindowStore,
     selectNewOwnerWindow: selectNewOwnerWindowStore,
     settingBGMWindow: settingBGMWindowStore,
+    importBGMWindow: importBGMWindowStore,
     settingChatTabWindow: settingChatTabWindowStore,
     settingChatTargetTabWindow: settingChatTargetTabWindowStore,
     standImageSettingWindow: standImageSettingWindowStore,

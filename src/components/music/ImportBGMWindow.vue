@@ -1,14 +1,24 @@
 <template>
   <window-frame
-    titleText="BGM設定画面"
-    display-property="private.display.settingBGMWindow"
+    titleText="BGMインポート画面"
+    display-property="private.display.importBGMWindow"
     align="center"
     fixSize="394, 334"
     @open="initWindow"
   >
     <div class="contents" @contextmenu.prevent>
       <div class="playOperationArea">
-        <ctrl-button @click="doPlay">送信</ctrl-button>
+        <ctrl-button @click="chooseFile">ファイルを選択</ctrl-button>
+        <div class="description">
+          {{ file ? file.name : "未選択" }}
+        </div>
+        <input
+          ref="fileChooser"
+          type="file"
+          style="display: none;"
+          accept=".json"
+          @input="selectFile"
+        />
         <span class="space"></span>
         <ctrl-button @click="doPreview">プレビュー(自分のみ)</ctrl-button>
       </div>
@@ -17,19 +27,19 @@
           <thead>
             <tr>
               <th :style="colStyle(0)">連動</th>
-              <divider :index="0" prop="settingBGMWindow" />
+              <divider :index="0" prop="importBGMWindow" />
               <th :style="colStyle(1)">タグ</th>
-              <divider :index="1" prop="settingBGMWindow" />
+              <divider :index="1" prop="importBGMWindow" />
               <th :style="colStyle(2)">種別</th>
-              <divider :index="2" prop="settingBGMWindow" />
+              <divider :index="2" prop="importBGMWindow" />
               <th :style="colStyle(3)">タイトル</th>
-              <divider :index="3" prop="settingBGMWindow" />
+              <divider :index="3" prop="importBGMWindow" />
               <th :style="colStyle(4)">時間</th>
-              <divider :index="4" prop="settingBGMWindow" />
+              <divider :index="4" prop="importBGMWindow" />
               <th :style="colStyle(5)">繰</th>
-              <divider :index="5" prop="settingBGMWindow" />
+              <divider :index="5" prop="importBGMWindow" />
               <th :style="colStyle(6)">音量</th>
-              <divider :index="6" prop="settingBGMWindow" />
+              <divider :index="6" prop="importBGMWindow" />
               <th :style="colStyle(7)">fade</th>
             </tr>
           </thead>
@@ -47,9 +57,9 @@
               <td :style="colStyle(0)" :title="linkageStr(bgmObj)">
                 {{ bgmObj.chatLinkage > 0 ? "あり" : "なし" }}
               </td>
-              <divider :index="0" prop="settingBGMWindow" />
+              <divider :index="0" prop="importBGMWindow" />
               <td :style="colStyle(1)">{{ bgmObj.tag }}</td>
-              <divider :index="1" prop="settingBGMWindow" />
+              <divider :index="1" prop="importBGMWindow" />
               <td :style="colStyle(2)">
                 <i class="icon-stop2" v-if="!bgmObj.url"></i>
                 <i class="icon-youtube2" v-if="isYoutube(bgmObj.url)"></i>
@@ -63,61 +73,55 @@
                   "
                 ></i>
               </td>
-              <divider :index="2" prop="settingBGMWindow" />
+              <divider :index="2" prop="importBGMWindow" />
               <td :style="colStyle(3)" class="selectable">
                 {{ bgmObj.title }}
               </td>
-              <divider :index="3" prop="settingBGMWindow" />
+              <divider :index="3" prop="importBGMWindow" />
               <td :style="colStyle(4)">
                 {{ bgmObj.url ? convertSecond(bgmObj.start, bgmObj.end) : "-" }}
               </td>
-              <divider :index="4" prop="settingBGMWindow" />
+              <divider :index="4" prop="importBGMWindow" />
               <td :style="colStyle(5)">
                 <i class="icon-loop" v-if="bgmObj.url && bgmObj.isLoop"></i
                 >{{ bgmObj.url && bgmObj.isLoop ? "" : "-" }}
               </td>
-              <divider :index="5" prop="settingBGMWindow" />
+              <divider :index="5" prop="importBGMWindow" />
               <td :style="colStyle(6)">
                 {{ bgmObj.url ? bgmObj.volume * 100 : "-" }}
               </td>
-              <divider :index="6" prop="settingBGMWindow" />
+              <divider :index="6" prop="importBGMWindow" />
               <td :style="colStyle(7)" :title="fadeTitle(bgmObj)">
                 {{ bgmObj.url ? fadeStr(bgmObj) : "-" }}
               </td>
             </tr>
             <tr class="space">
               <td :style="colStyle(0)"></td>
-              <divider :index="0" prop="settingBGMWindow" />
+              <divider :index="0" prop="importBGMWindow" />
               <td :style="colStyle(1)"></td>
-              <divider :index="1" prop="settingBGMWindow" />
+              <divider :index="1" prop="importBGMWindow" />
               <td :style="colStyle(2)"></td>
-              <divider :index="2" prop="settingBGMWindow" />
+              <divider :index="2" prop="importBGMWindow" />
               <td :style="colStyle(3)"></td>
-              <divider :index="3" prop="settingBGMWindow" />
+              <divider :index="3" prop="importBGMWindow" />
               <td :style="colStyle(4)"></td>
-              <divider :index="4" prop="settingBGMWindow" />
+              <divider :index="4" prop="importBGMWindow" />
               <td :style="colStyle(5)"></td>
-              <divider :index="5" prop="settingBGMWindow" />
+              <divider :index="5" prop="importBGMWindow" />
               <td :style="colStyle(6)"></td>
-              <divider :index="6" prop="settingBGMWindow" />
+              <divider :index="6" prop="importBGMWindow" />
               <td :style="colStyle(7)"></td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="operateArea">
-        <ctrl-button @click="doAdd">追加</ctrl-button>
-        <ctrl-button @click="doModify">変更</ctrl-button>
-        <ctrl-button @click="doCopy">コピー</ctrl-button>
         <ctrl-button @click="doDelete">削除</ctrl-button>
         <ctrl-button @click="doUp">↑</ctrl-button>
         <ctrl-button @click="doDown">↓</ctrl-button>
-        <template v-if="isGameMaster">
-          <div class="space"></div>
-          <ctrl-button @click="doSave">保存</ctrl-button>
-          <ctrl-button @click="doImport">ロード</ctrl-button>
-        </template>
-        <!--<label><input type="checkbox" @change="changeSortMode" />並べ替え許可</label>-->
+        <div class="space"></div>
+        <import-type-radio v-model="importType" name="bgmImportType" />
+        <ctrl-button @click="doImport">取り込む</ctrl-button>
       </div>
     </div>
   </window-frame>
@@ -132,16 +136,69 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { saveJson } from "@/components/common/Utility";
+import ImportTypeRadio from "@/components/parts/ImportTypeRadio.vue";
+import { Watch } from "vue-property-decorator";
 
-@Component({ components: { CtrlButton, WindowFrame, Divider } })
-export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
+@Component({
+  components: { ImportTypeRadio, CtrlButton, WindowFrame, Divider }
+})
+export default class ImportBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") setProperty: any;
   @Action("windowOpen") windowOpen: any;
   @Action("addListObj") addListObj: any;
   @Action("deleteListObj") deleteListObj: any;
   @Action("moveListObj") moveListObj: any;
-  @Getter("bgmList") bgmList: any;
-  @Getter("isGameMaster") private isGameMaster: any;
+  @Action("importBgmList") importBgmList: any;
+
+  private bgmList: any[] = [];
+  private importType: string = "1";
+  private file: File | null = null;
+
+  private chooseFile(this: any): void {
+    const fileChooser: HTMLElement = this.$refs.fileChooser;
+    fileChooser.click();
+  }
+
+  private selectFile(event: any) {
+    if (event.target.files.length === 0) return;
+    this.file = event.target.files[0];
+  }
+
+  @Watch("file")
+  private onChangeFile(file: File) {
+    this.bgmList = [];
+    if (!file) return;
+
+    //FileReaderのインスタンスを作成する
+    const reader = new FileReader();
+
+    //ファイルの中身を取得後に処理を行う
+    reader.addEventListener("load", () => {
+      const text: string = reader.result as string;
+
+      const nameSplit: string[] = file.name.split(".");
+      const ext: string = nameSplit[nameSplit.length - 1];
+
+      try {
+        const json = JSON.parse(text);
+        if (ext === "json" && json.saveDataTypeName === "Quoridorn_BGM_01") {
+          this.bgmList = json.saveData;
+        } else {
+          alert("ファイルフォーマットが違います");
+        }
+      } catch (err) {
+        alert("ファイルフォーマットが違います");
+      }
+    });
+
+    //読み込んだファイルの中身を取得する
+    reader.readAsText(file);
+  }
+
+  @Watch("importType", { immediate: true })
+  private onChangeImportType(importType: string) {
+    window.console.log(importType);
+  }
 
   private isYoutube(url: string) {
     return /www\.youtube\.com/.test(url);
@@ -153,7 +210,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private initWindow(): void {
     this.setProperty({
-      property: "private.display.settingBGMWindow.selectLineKey",
+      property: "private.display.importBGMWindow.selectLineKey",
       value: -1,
       logOff: true
     });
@@ -167,40 +224,6 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.playBGM(true);
   }
 
-  private doAdd(): void {
-    this.windowOpen("private.display.addBGMWindow");
-  }
-
-  private doModify(): void {
-    if (!this.selectLineKey) {
-      alert("BGMを選択してください");
-      return;
-    }
-    this.setProperty({
-      property: "private.display.editBGMWindow.key",
-      value: this.selectLineKey,
-      logOff: true
-    });
-    this.windowOpen("private.display.editBGMWindow");
-  }
-
-  private doCopy(): void {
-    if (!this.selectLineKey) {
-      alert("BGMを選択してください");
-      return;
-    }
-    const bgmObj = JSON.parse(
-      JSON.stringify(
-        this.bgmList.filter(
-          (bgmObj: any) => bgmObj.key === this.selectLineKey
-        )[0]
-      )
-    );
-    bgmObj.propName = "bgm";
-    bgmObj.kind = "bgm";
-    this.addListObj(bgmObj);
-  }
-
   private doDelete(): void {
     if (!this.selectLineKey) {
       alert("BGMを選択してください");
@@ -211,13 +234,9 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     );
     const nextIndex: number =
       index === this.bgmList.length - 1 ? index - 1 : index;
-    this.deleteListObj({
-      key: this.selectLineKey,
-      propName: "bgm"
-    }).then(() => {
-      if (nextIndex === -1) return;
-      this.selectLine(this.bgmList[nextIndex].key);
-    });
+    this.bgmList.splice(index, 1);
+    if (nextIndex === -1) return;
+    this.selectLine(this.bgmList[nextIndex].key);
   }
 
   private doUp(): void {
@@ -228,10 +247,10 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     const index = this.bgmList.findIndex(
       (bgm: any) => bgm.key === this.selectLineKey
     );
-    this.moveListObj({
-      key: this.selectLineKey,
-      afterIndex: index - 1
-    });
+    const obj = this.bgmList.splice(index, 1)[0];
+
+    const nextIndex: number = index === 0 ? this.bgmList.length : index - 1;
+    this.bgmList.splice(nextIndex, 0, obj);
   }
 
   private doDown(): void {
@@ -242,38 +261,27 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     const index = this.bgmList.findIndex(
       (bgm: any) => bgm.key === this.selectLineKey
     );
-    this.moveListObj({
-      key: this.selectLineKey,
-      afterIndex: index + 1
-    });
-  }
+    const obj = this.bgmList.splice(index, 1)[0];
 
-  private doSave(): void {
-    const data: any = {
-      saveDataTypeName: "Quoridorn_BGM_01",
-      saveData: this.bgmList
-    };
-    window.console.log(JSON.stringify(data, null, "    "));
-    saveJson("bgm", data);
+    const nextIndex: number = index === this.bgmList.length ? 0 : index + 1;
+    this.bgmList.splice(nextIndex, 0, obj);
   }
 
   private doImport(): void {
-    this.windowOpen("private.display.importBGMWindow");
+    this.importBgmList({
+      bgmList: this.bgmList,
+      addType: this.importType
+    }).then(() => {
+      this.file = null;
+      const fileChooser: HTMLInputElement = this.$refs
+        .fileChooser as HTMLInputElement;
+      fileChooser.value = "";
+    });
   }
-
-  // changeSortMode(event) {
-  //   const val = event.target.checked;
-  //   window.console.log(`changeSortMode: ${val}`);
-  //   if (val) {
-  //     setTimeout(() => {
-  //       alert("未実装の機能です。");
-  //     }, 20);
-  //   }
-  // }
 
   private selectLine(bgmKey: string): void {
     this.setProperty({
-      property: "private.display.settingBGMWindow.selectLineKey",
+      property: "private.display.importBGMWindow.selectLineKey",
       value: bgmKey,
       logOff: true
     });
@@ -283,7 +291,6 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     const addBgmObj: any = this.bgmList.find(
       (bgmObj: any) => bgmObj.key === this.selectLineKey
     );
-    window.console.log(addBgmObj, this.selectLineKey, this.bgmList);
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
       logOff: true,
@@ -302,7 +309,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
         paramObj[this.movingIndex] = afterLeftWidth;
         paramObj[this.movingIndex + 1] = afterRightWidth;
         this.setProperty({
-          property: "private.display.settingBGMWindow.widthList",
+          property: "private.display.importBGMWindow.widthList",
           value: paramObj,
           logOff: true
         });
@@ -312,7 +319,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private moveDevEnd(): void {
     this.setProperty({
-      property: "private.display.settingBGMWindow",
+      property: "private.display.importBGMWindow",
       value: {
         hoverDevIndex: -1,
         movingIndex: -1,
@@ -335,27 +342,27 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   /* Start 列幅可変テーブルのプロパティ */
   private get selectLineKey(): string {
-    return this.$store.state.private.display.settingBGMWindow.selectLineKey;
+    return this.$store.state.private.display.importBGMWindow.selectLineKey;
   }
 
   private get widthList(): number[] {
-    return this.$store.state.private.display.settingBGMWindow.widthList;
+    return this.$store.state.private.display.importBGMWindow.widthList;
   }
 
   private get movingIndex(): number {
-    return this.$store.state.private.display.settingBGMWindow.movingIndex;
+    return this.$store.state.private.display.importBGMWindow.movingIndex;
   }
 
   private get startX(): number {
-    return this.$store.state.private.display.settingBGMWindow.startX;
+    return this.$store.state.private.display.importBGMWindow.startX;
   }
 
   private get startLeftWidth(): number {
-    return this.$store.state.private.display.settingBGMWindow.startLeftWidth;
+    return this.$store.state.private.display.importBGMWindow.startLeftWidth;
   }
 
   private get startRightWidth(): number {
-    return this.$store.state.private.display.settingBGMWindow.startRightWidth;
+    return this.$store.state.private.display.importBGMWindow.startRightWidth;
   }
 
   private get colStyle(): any {
@@ -397,17 +404,16 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
 </script>
 
 <style scoped lang="scss">
+@import "../common.scss";
 .contents {
+  @include flex-box(column, normal, normal);
   position: absolute;
   height: 100%;
   width: 100%;
   font-size: 12px;
-  display: flex;
-  flex-direction: column;
 
   > div {
-    display: flex;
-    flex-direction: row;
+    @include flex-box(row, normal, normal);
 
     > .space {
       display: block;
@@ -420,19 +426,21 @@ button {
   border-radius: 5px;
   cursor: pointer;
 }
-
 .playOperationArea {
-  margin-bottom: 5px;
+  @include flex-box(row, normal, normal);
+  margin-bottom: 0.5em;
+
+  .space {
+    flex: 1;
+  }
 
   button {
     margin-bottom: 5px;
   }
 }
-
 .operateArea {
-  display: flex;
+  @include flex-box(row, center, normal);
   margin-top: 5px;
-  text-align: center;
 
   > * {
     margin-right: 0.5em;
@@ -489,9 +497,7 @@ table {
     }
 
     i {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include flex-box(row, center, center);
     }
   }
 

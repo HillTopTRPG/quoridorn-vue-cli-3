@@ -74,6 +74,7 @@ import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
 import { Prop, Watch } from "vue-property-decorator";
 import DiceBotSelect from "@/components/parts/select/DiceBotSelect.vue";
 import GroupChatTabSelect from "@/components/parts/select/GroupChatTabSelect.vue";
+import { saveJson } from "@/components/common/Utility";
 
 @Component({
   components: {
@@ -170,22 +171,13 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
    * @param actor
    */
   private doExport(actor: any) {
-    window.console.log("doExport");
     const data = {
       saveData: {
         lines: actor.chatPalette.list
       },
       saveDataTypeName: "Quoridorn_ChatPalette01"
     };
-    const blob = new Blob([JSON.stringify(data, null, "  ")], {
-      type: "application/json"
-    });
-    const url = URL.createObjectURL(blob);
-
-    const anchor = document.createElement("a");
-    anchor.download = `チャットパレット_${actor.name}.json`;
-    anchor.href = url;
-    anchor.click();
+    saveJson(`チャットパレット_${actor.name}`, data);
   }
 
   /**

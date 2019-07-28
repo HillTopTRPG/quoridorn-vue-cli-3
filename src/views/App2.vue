@@ -75,6 +75,7 @@
     <select-new-owner-window />
     <edit-chat-palette-window />
     <import-chat-palette-window />
+    <import-b-g-m-window />
   </div>
 </template>
 
@@ -142,9 +143,11 @@ import ChatPaletteSettingWindow from "@/components/chat-palette/ChatPaletteSetti
 import SelectNewOwnerWindow from "@/components/map/character/SelectNewOwnerWindow.vue";
 import EditChatPaletteWindow from "@/components/chat-palette/EditChatPaletteWindow.vue";
 import ImportChatPaletteWindow from "@/components/chat-palette/ImportChatPaletteWindow.vue";
+import ImportBGMWindow from "@/components/music/ImportBGMWindow.vue";
 
 @Component({
   components: {
+    ImportBGMWindow,
     DiceSymbolContext,
     GameTable,
     ChatWindow,
