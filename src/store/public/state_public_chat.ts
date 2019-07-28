@@ -27,8 +27,12 @@ export default {
       "chatTab-0": [
         {
           owner: "SYSTEM",
-          viewHtml:
-            '<span style="color: red;"><b>SYSTEM</b>：こちらデモ版です。</span>'
+          from: "SYSTEM",
+          target: "groupTargetTab-0",
+          text: "こちらデモ版です。",
+          color: "red",
+          statusName: "◆",
+          isDiceBot: false
         }
       ]
     },
@@ -95,8 +99,11 @@ export default {
         (actor: any) => actor.key === actorKey
       )[0];
       if (!actor) return "black";
-      if (actor.fontColorType === "0")
-        return rootGetters.getSelfActors[0].color;
+      if (actor.fontColorType === "0") {
+        const owner = rootGetters.getObj(actor.owner);
+        window.console.log(owner);
+        return owner.fontColor;
+      }
       return actor.fontColor;
     },
     diceBotMessageText: (state: any) => state.diceBotMessage.message,

@@ -148,7 +148,7 @@ export default {
 
     getViewName: (state: any, getters: any) => (key: string): string => {
       const obj = getters.getObj(key);
-      if (!obj) return "名無し(PL)";
+      if (!obj) return key;
       const kind = obj.key.split("-")[0];
       if (kind === "player") {
         return `${obj.name}(${obj.type})`;

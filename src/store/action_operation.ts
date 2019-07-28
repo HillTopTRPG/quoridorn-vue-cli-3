@@ -319,15 +319,6 @@ export default {
             const targetName = rootGetters.getObj(target).name;
             useTargetText = targetName === "全体" ? "" : " > " + targetName;
           }
-          const viewHtml = [
-            `<span style="color: ${color};`,
-            isDiceBot ? " background-color: #eee;" : "",
-            `"><b>`,
-            name + useTargetText,
-            "</b>：",
-            text.replace(/\r?\n/g, "<br />"),
-            "</span>"
-          ].join("");
 
           // ダイスボットメッセージの表示判定
           if (isDiceBot && !/^[^→]+→[ →0-9,[\]]+$/.test(text)) {
@@ -349,7 +340,6 @@ export default {
             text,
             color,
             actorType: actor ? actor.type : undefined,
-            viewHtml,
             statusName,
             isDiceBot
           };
@@ -410,13 +400,8 @@ export default {
         const changeTab: any = {};
         change[tab] = changeTab;
         rootGetters.chatLogs[tab].forEach((log: any, index: number) => {
-          if (log.actorKey !== target.key) return;
-          changeTab[index] = {
-            viewHtml: log.viewHtml.replace(
-              /^(<span style="color: )([^;]+)(;">)/,
-              `$1${color}$3`
-            )
-          };
+          if (log.from !== target.key) return;
+          changeTab[index] = { color };
         });
       }
       dispatch("setProperty", {
@@ -1239,6 +1224,7 @@ export default {
     ) => {
       return rootGetters.chatLogs[rootGetters.activeChatTab].filter(
         (log: any) => {
+          log.name = rootGetters.getViewName(log.from);
           if (log.owner === rootGetters.playerKey) return true;
           if (!log.target) return true;
           if (log.target === "groupTargetTab-0") return true;

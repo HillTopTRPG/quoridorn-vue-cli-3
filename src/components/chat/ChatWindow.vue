@@ -26,11 +26,12 @@
        ! チャットログ
        !--------------->
       <ul id="chatLog" class="selectable" @wheel.stop>
-        <li
-          v-for="(chatLog, index) in chatLogList"
-          v-html="chatLog.viewHtml"
-          :key="index"
-        ></li>
+        <li v-for="(chatLog, index) in chatLogList" :key="index">
+          <span :style="{ color: chatLog.color }"
+            ><b>{{ chatLog.name }}</b
+            >：{{ chatLog.text }}</span
+          >
+        </li>
       </ul>
 
       <!----------------
