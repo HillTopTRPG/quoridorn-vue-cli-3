@@ -279,24 +279,6 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
       : tab.group.map((g: string) => this.getViewName(g)).join(", ");
   }
 
-  private get groupTargetTabList() {
-    return this.groupTargetTabList.filter((tab: any) => {
-      if (tab.isAll) return true;
-      const targetList = tab.group
-        .map((g: string) => this.getObj(g))
-        .filter((obj: any) => {
-          const kind = obj.key.split("-")[0];
-          if (kind === "player") {
-            if (obj.key === this.playerKey) return true;
-          } else {
-            if (obj.owner === this.playerKey) return true;
-          }
-          return false;
-        });
-      return targetList.length > 0;
-    });
-  }
-
   /* Start 列幅可変テーブルのプロパティ */
   private get selectLineKey() {
     return this.$store.state.private.display.settingChatTargetTabWindow

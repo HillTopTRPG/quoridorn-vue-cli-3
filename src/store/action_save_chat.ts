@@ -29,31 +29,33 @@ export default {
       }: { rootState: any; dispatch: any; rootGetters: any },
       data: any
     ) {
-      const chatData = rootGetters.chatLogs;
-      window.console.log(chatData);
-      return;
+      const dateStr = moment().format("YYYYMMDD_hhmmss");
+      const title = `Quoridorn_chatLog_${dateStr}`;
+
+      data.title = title;
+
+      window.console.log(data);
 
       // TODO 一時的な書き換え
-      // Promise.resolve()
-      //   // テンプレートファイル読み込み
-      //   .then(() =>
-      //     fetch(`${process.env.BASE_URL}/static/chatLogTemplate.html`).then(
-      //       res => res.text()
-      //     )
-      //   )
-      //
-      //   // テンプレートエンジン
-      //   .then((templateStr: string) => Mustache.render(templateStr, data))
-      //
-      //   // HTML出力
-      //   .then((contents: string) => {
-      //     const blob = new Blob([contents], { type: "text/html" });
-      //     const dateStr = moment().format("YYYYMMDD_hhmmss");
-      //     saveAs(blob, `Quoridorn_chatLog_${dateStr}.html`);
-      //   })
-      //
-      //   // エラー処理
-      //   .catch((err: any) => window.console.error(err));
+      Promise.resolve()
+        // テンプレートファイル読み込み
+        .then(() =>
+          fetch(`${process.env.BASE_URL}/static/chatLogTemplate.html`).then(
+            res => res.text()
+          )
+        )
+
+        // テンプレートエンジン
+        .then((templateStr: string) => Mustache.render(templateStr, data))
+
+        // HTML出力
+        .then((contents: string) => {
+          const blob = new Blob([contents], { type: "text/html" });
+          saveAs(blob, `${title}.html`);
+        })
+
+        // エラー処理
+        .catch((err: any) => window.console.error(err));
     }
   }
 };

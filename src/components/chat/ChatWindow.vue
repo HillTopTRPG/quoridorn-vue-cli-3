@@ -493,6 +493,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("customDiceBotRoomSysList") private customDiceBotRoomSysList: any;
   @Getter("loadYaml") private loadYaml: any;
   @Getter("isChatTabVertical") private isChatTabVertical: any;
+  @Getter("chatLogs") private chatLogs: any;
+  @Getter("getAllActors") private getAllActors: any;
+  @Getter("groupTargetTabList") private groupTargetTabList: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;
@@ -847,10 +850,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
     // TODO テストコード
     const data = {
-      title: "Joe",
-      calc: () => {
-        return 2 + 4;
-      }
+      chatLogs: JSON.stringify(this.chatLogs),
+      actors: JSON.stringify(this.getAllActors),
+      groupTargets: JSON.stringify(this.groupTargetTabList)
     };
     this.saveChatLogHtml(data);
   }

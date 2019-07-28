@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <script type="text/javascript">
     <!-- // javascript
-    const title = "{{ title }}";
-    const calc = "{{ calc }}";
-    window.console.log(title);
-    window.console.log(calc);
+    window.chatLogs = "{{ chatLogs }}".replace(/&quot;/g, '"');
+    window.actors = "{{ actors }}".replace(/&quot;/g, '"');
+    window.groupTargets = "{{ groupTargets }}".replace(/&quot;/g, '"');
+    window.console.log(JSON.parse(window.chatLogs));
+    window.console.log(JSON.parse(window.actors));
+    window.console.log(JSON.parse(window.groupTargets));
     //-->
   </script>
-
-  <title>タイトル</title>
+  <title>{{ title }}</title>
 </head>
 <body>
   <div id="app"></div>

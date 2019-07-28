@@ -13,10 +13,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Emit } from "vue-property-decorator";
+import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 
-@Component({})
-export default class ImportTypeRadio {
+@Component
+export default class ImportTypeRadio extends Vue {
   @Prop({ type: String, required: true })
   protected name!: string;
 
