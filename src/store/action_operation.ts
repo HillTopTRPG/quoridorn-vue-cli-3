@@ -38,7 +38,7 @@ export default {
             actorKey: actorKey,
             statusName,
             target: chatTarget,
-            owner: actorKey
+            from: actorKey
           });
           return;
         }
@@ -89,7 +89,7 @@ export default {
                 actorKey: actorKey,
                 statusName: statusName,
                 target: chatTarget,
-                owner: actorKey
+                from: actorKey
               });
 
               // 隠しダイスロール結果画面に反映
@@ -103,7 +103,7 @@ export default {
                 actorKey: actorKey,
                 statusName: statusName,
                 target: chatTarget,
-                owner: actorKey,
+                from: actorKey,
                 dices
               });
             } else {
@@ -118,7 +118,7 @@ export default {
                 actorKey: actorKey,
                 statusName: statusName,
                 target: chatTarget,
-                owner: actorKey
+                from: actorKey
               });
               if (isDiceRoll) {
                 // -------------------
@@ -132,7 +132,7 @@ export default {
                   actorKey: actorKey,
                   statusName: statusName,
                   target: chatTarget,
-                  owner: actorKey,
+                  from: actorKey,
                   dices,
                   isDiceBot: true
                 });
@@ -235,7 +235,7 @@ export default {
             actorKey: actorKey,
             statusName: statusName,
             target: chatTarget,
-            owner: actorKey
+            from: actorKey
           });
           dispatch("addChatLog", {
             name: diceBotSystem,
@@ -245,7 +245,7 @@ export default {
             actorKey: actorKey,
             statusName: statusName,
             target: chatTarget,
-            owner: actorKey,
+            from: actorKey,
             dices,
             isDiceBot: true
           });
@@ -259,6 +259,7 @@ export default {
       { dispatch, rootGetters }: { dispatch: Function; rootGetters: any },
       payload: any
     ) => {
+      payload.owner = payload.owner || rootGetters.playerKey;
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddChatLog"
@@ -274,98 +275,102 @@ export default {
     ) => {
       let text = payload.text;
 
-      if (!text.startsWith("@")) {
-        const activeChatTab = rootGetters.activeChatTab;
+      try {
+        if (!text.startsWith("@")) {
+          const activeChatTab = rootGetters.activeChatTab;
 
-        const actorKey = payload.actorKey || rootGetters.chatActorKey;
-        const name = payload.name || rootGetters.getViewName(actorKey);
-        const color = payload.color || rootGetters.getChatColor(actorKey);
-        const tab = payload.tab || activeChatTab;
-        const from =
-          payload.from || rootGetters.getOwnerKey(rootGetters.chatActorKey);
-        const target = payload.target;
-        const isDiceBot: boolean = payload.isDiceBot || false;
-        const statusName = payload.statusName || "◆";
+          const owner = payload.owner;
+          const from = payload.from || rootGetters.chatActorKey;
+          const name = payload.name || rootGetters.getViewName(from);
+          const color = payload.color || rootGetters.getChatColor(from);
+          const tab = payload.tab || activeChatTab;
+          const target = payload.target;
+          const isDiceBot: boolean = payload.isDiceBot || false;
+          const statusName = payload.statusName || "◆";
 
-        /*
-         * 立ち絵の表示
-         */
-        const actor: any = rootGetters.getObj(actorKey);
-        if (actor) {
-          const status: any = actor.statusList.filter(
-            (status: any) => status.name === statusName
-          )[0];
-          if (status) {
-            const standImageList: any =
-              rootGetters.display.chatWindow.standImageList;
-            if (status.standImage.base || status.standImage.diffList.length) {
-              const standImageObj = {
-                actorKey: actorKey,
-                statusName: statusName,
-                standImage: status.standImage
-              };
-              const index: number = standImageList.findIndex(
-                (standImageObj: any) => standImageObj.actorKey === actorKey
-              );
-              if (index >= 0) standImageList.splice(index, 1);
-              standImageList.push(standImageObj);
+          /*
+           * 立ち絵の表示
+           */
+          const actor: any = rootGetters.getObj(from);
+          if (actor) {
+            const status: any = actor.statusList.filter(
+              (status: any) => status.name === statusName
+            )[0];
+            if (status) {
+              const standImageList: any =
+                rootGetters.display.chatWindow.standImageList;
+              if (status.standImage.base || status.standImage.diffList.length) {
+                const standImageObj = {
+                  actorKey: from,
+                  statusName: statusName,
+                  standImage: status.standImage
+                };
+                const index: number = standImageList.findIndex(
+                  (standImageObj: any) => standImageObj.actorKey === from
+                );
+                if (index >= 0) standImageList.splice(index, 1);
+                standImageList.push(standImageObj);
+              }
             }
           }
+
+          let useTargetText: string = "";
+          if (target) {
+            const targetName = rootGetters.getObj(target).name;
+            useTargetText = targetName === "全体" ? "" : " > " + targetName;
+          }
+          const viewHtml = [
+            `<span style="color: ${color};`,
+            isDiceBot ? " background-color: #eee;" : "",
+            `"><b>`,
+            name + useTargetText,
+            "</b>：",
+            text.replace(/\r?\n/g, "<br />"),
+            "</span>"
+          ].join("");
+
+          // ダイスボットメッセージの表示判定
+          if (isDiceBot && !/^[^→]+→[ →0-9,[\]]+$/.test(text)) {
+            dispatch("setProperty", {
+              property: `public.chat.diceBotMessage`,
+              value: {
+                message: text.replace(/^[^→]+→ */, ""),
+                isView: true
+              },
+              isNotice: true,
+              logOff: true
+            });
+          }
+
+          const logObj = {
+            owner,
+            from,
+            target,
+            text,
+            color,
+            actorType: actor ? actor.type : undefined,
+            viewHtml,
+            statusName,
+            isDiceBot
+          };
+          window.console.log(JSON.stringify(logObj, null, "    "));
+          // 未読カウントアップ
+          if (tab !== activeChatTab) {
+            const index = rootGetters.chatTabsOption.findIndex(
+              (tabObj: any) => tabObj.key === tab
+            );
+            const tabObj = rootGetters.chatTabsOption[index];
+            tabObj.unRead++;
+            rootGetters.chatTabsOption.splice(index, 1, tabObj);
+          }
+          rootGetters.chatLogs[tab].push(logObj);
         }
 
-        let useTargetText: string = "";
-        if (target) {
-          const targetName = rootGetters.getObj(target).name;
-          useTargetText = targetName === "全体" ? "" : " > " + targetName;
-        }
-        const viewHtml = [
-          `<span style="color: ${color};`,
-          isDiceBot ? " background-color: #eee;" : "",
-          `"><b>`,
-          name + useTargetText,
-          "</b>：",
-          text.replace(/\r?\n/g, "<br />"),
-          "</span>"
-        ].join("");
-
-        // ダイスボットメッセージの表示判定
-        if (isDiceBot && !/^[^→]+→[ →0-9,[\]]+$/.test(text)) {
-          dispatch("setProperty", {
-            property: `public.chat.diceBotMessage`,
-            value: {
-              message: text.replace(/^[^→]+→ */, ""),
-              isView: true
-            },
-            isNotice: true,
-            logOff: true
-          });
-        }
-
-        const logObj = {
-          owner: payload.owner,
-          target,
-          from,
-          text,
-          actor,
-          actorKey,
-          viewHtml,
-          statusName,
-          isDiceBot
-        };
-        // 未読カウントアップ
-        if (tab !== activeChatTab) {
-          const index = rootGetters.chatTabsOption.findIndex(
-            (tabObj: any) => tabObj.key === tab
-          );
-          const tabObj = rootGetters.chatTabsOption[index];
-          tabObj.unRead++;
-          rootGetters.chatTabsOption.splice(index, 1, tabObj);
-        }
-        rootGetters.chatLogs[tab].push(logObj);
+        // チャット文字連携処理
+        dispatch("chatLinkage", text);
+      } catch (err) {
+        window.console.error(err);
       }
-
-      // チャット文字連携処理
-      dispatch("chatLinkage", text);
     },
 
     /** ========================================================================
@@ -1068,7 +1073,7 @@ export default {
      * グループチャットの追加
      */
     addGroupTargetTab: ({ dispatch }: { dispatch: Function }, payload: any) => {
-      dispatch("sendNoticeOperation", {
+      return dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddGroupTargetTab"
       });
@@ -1234,7 +1239,7 @@ export default {
     ) => {
       return rootGetters.chatLogs[rootGetters.activeChatTab].filter(
         (log: any) => {
-          if (log.from === rootGetters.playerKey) return true;
+          if (log.owner === rootGetters.playerKey) return true;
           if (!log.target) return true;
           if (log.target === "groupTargetTab-0") return true;
           const kind = log.target.split("-")[0];
@@ -1268,29 +1273,24 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
-      return rootGetters.groupTargetTabList.filter((tab: any) => {
-        if (tab.isAll) return true;
-        const filterObj = tab.group.filter((targetKey: string) => {
-          if (targetKey === getters.chatActorKey) return true;
-          const characterList = rootGetters.getMapObjectList({
-            kind: "character"
-          });
-          if (getters.chatActorKey.split("-")[0] === "player") {
-            const targetCharacter = characterList
-              .filter(
-                (character: any) => character.owner === getters.chatActorKey
-              )
-              .filter((character: any) => character.key === targetKey)[0];
-            if (targetCharacter) return true;
-          } else if (getters.chatActorKey.split("-")[0] === "character") {
-            const targetCharacter = characterList.filter(
-              (character: any) => character.key === getters.chatActorKey
-            )[0];
-            if (targetCharacter) return true;
-          }
-          return false;
-        });
-        if (filterObj.length > 0) return true;
+      const playerKey: string = rootGetters.playerKey;
+      const fieldCharacters: any[] = rootGetters.getMapObjectList({
+        kind: "character",
+        place: "field",
+        playerKey
+      });
+      return getters.groupTargetTabList.filter((gtt: any) => {
+        if (gtt.isAll) return true;
+        if (gtt.group.findIndex((g: string) => g === playerKey) >= 0)
+          return true;
+        if (
+          gtt.group.findIndex(
+            (g: string) =>
+              fieldCharacters.findIndex((c: any) => c.key === g) >= 0
+          ) >= 0
+        )
+          return true;
+        return false;
       });
     },
     createInputtingMsg: (
@@ -1305,10 +1305,16 @@ export default {
       rootState: any,
       rootGetters: any
     ) => {
+      const playerKey: string = rootGetters.playerKey;
+      const fieldCharacters: any[] = rootGetters.getMapObjectList({
+        kind: "character",
+        place: "field",
+        playerKey
+      });
       return [
-        ...getters.groupTargetTabList,
+        ...rootGetters.groupTargetTabListFiltered,
         ...rootGetters.playerList,
-        ...rootGetters.getMapObjectList({ kind: "character", place: "field" })
+        ...fieldCharacters
       ];
     },
     mapMaskIsLock: (

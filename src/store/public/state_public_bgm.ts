@@ -10,10 +10,7 @@ export default {
     /**
      * BGMをインポートする
      */
-    importBgmList: (
-      { dispatch }: { dispatch: Function; },
-      payload: any
-    ) => {
+    importBgmList: ({ dispatch }: { dispatch: Function }, payload: any) => {
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doImportBgmList"

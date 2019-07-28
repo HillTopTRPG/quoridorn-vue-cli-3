@@ -184,10 +184,10 @@ export default {
         dispatch("addChatLog", {
           name: rootGetters.systemLog.name,
           text: `${player.name} が退室しました。`,
-          from: rootGetters.systemLog.from,
           color: rootGetters.systemLog.color,
           tab: rootGetters.systemLog.tab,
-          owner: rootGetters.systemLog.owner
+          from: rootGetters.systemLog.from,
+          owner: rootGetters.systemLog.from
         });
       }
     },
@@ -866,19 +866,19 @@ export default {
       const room = rootGetters.webRtcRoom(payload.isWait);
       if (!room) return;
       if (payload && payload.type !== "NOTICE_INPUT") {
-        // const msgList: any[] = [];
-        // msgList.push(`TYPE: ${payload.type}`);
-        // if (payload.type === "DO_METHOD") {
-        //   msgList.push("METHOD:");
-        //   msgList.push(payload.method);
-        // }
-        // msgList.push("VALUE:");
-        // msgList.push(payload.value);
-        // msgList.push("targets:");
-        // msgList.push(payload.targets);
-        // msgList.push("this.peerId:");
-        // msgList.push(rootGetters.peerId(payload.isWait));
-        // qLog("RoomData送信 =>", ...msgList);
+        const msgList: any[] = [];
+        msgList.push(`TYPE: ${payload.type}`);
+        if (payload.type === "DO_METHOD") {
+          msgList.push("METHOD:");
+          msgList.push(payload.method);
+        }
+        msgList.push("VALUE:");
+        msgList.push(payload.value);
+        msgList.push("targets:");
+        msgList.push(payload.targets);
+        msgList.push("this.peerId:");
+        msgList.push(rootGetters.peerId(payload.isWait));
+        qLog("RoomData送信 =>", ...msgList);
       }
       room.send(payload);
     },
@@ -1127,11 +1127,11 @@ export default {
       dispatch("addChatLog", {
         name: rootGetters.systemLog.name,
         text: `${playerName} が入室しました。`,
-        from: rootGetters.systemLog.from,
         color: rootGetters.systemLog.color,
         tab: rootGetters.systemLog.tab,
         target: "groupTargetTab-0",
-        owner: rootGetters.systemLog.owner
+        from: rootGetters.systemLog.from,
+        owner: rootGetters.systemLog.from
       });
 
       dispatch("windowOpen", "private.display.playerBoxWindow");

@@ -44,7 +44,7 @@ export default {
       name: "SYSTEM",
       color: "red",
       tab: "chatTab-0",
-      owner: "SYSTEM"
+      from: "SYSTEM"
     }
   } /* end of state */,
 
@@ -119,6 +119,7 @@ export default {
             });
           // .catch(err => { /* 無視 */ }); // reject(err)
         } catch (error) {
+          window.console.error(error);
           // 無視
         }
       });

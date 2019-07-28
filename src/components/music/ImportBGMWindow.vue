@@ -195,11 +195,6 @@ export default class ImportBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     reader.readAsText(file);
   }
 
-  @Watch("importType", { immediate: true })
-  private onChangeImportType(importType: string) {
-    window.console.log(importType);
-  }
-
   private isYoutube(url: string) {
     return /www\.youtube\.com/.test(url);
   }

@@ -952,6 +952,16 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       .filter((obj: any) => obj.key !== this.chatActorKey)[0];
   }
 
+  @Watch("groupTargetTabListFiltered", { deep: true })
+  private onChangeGroupTargetTabListFiltered(
+    groupTargetTabListFiltered: any[]
+  ) {
+    const chatTarget = groupTargetTabListFiltered.filter(
+      (tabObj: any) => tabObj.key === this.chatTarget
+    )[0];
+    if (!chatTarget) this.chatTarget = "groupTargetTab-0";
+  }
+
   @Watch("roomSystem")
   private onChangeRoomSystem(roomSystem: string) {
     this.currentDiceBotSystem = roomSystem;

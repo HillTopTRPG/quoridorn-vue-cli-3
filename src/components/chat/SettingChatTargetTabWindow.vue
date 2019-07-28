@@ -6,9 +6,10 @@
     :fixSize="`${windowSize.w}, ${windowSize.h}`"
   >
     <div class="contents" @contextmenu.prevent>
-      <div>
+      <div class="operationArea">
         <ctrl-button @click="addButtonOnClick">追加</ctrl-button>
         <ctrl-button @click="delButtonOnClick">削除</ctrl-button>
+        <div class="space"></div>
         <label>
           タブを斜めにする<input type="checkbox" v-model="isTabVertical" />
         </label>
@@ -76,7 +77,7 @@
               <td :style="colStyle(4)">
                 <ctrl-button
                   @click="edit(groupTargetTab.key)"
-                  :disabled="groupTargetTab.key === 'groupTargetTab-0'"
+                  :disabled="!isEditableTab(groupTargetTab.key)"
                 >
                   編集
                 </ctrl-button>
@@ -131,6 +132,30 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   @Getter("chatActorKey") private chatActorKey: any;
   @Getter("isChatTabVertical") private isChatTabVertical: any;
   @Getter("groupTargetTabList") private groupTargetTabList: any;
+  @Getter("getMapObjectList") private getMapObjectList: any;
+
+  private isEditableTab(key: string): boolean {
+    if (key === "groupTargetTab-0") return false;
+
+    const tabObj: any = this.groupTargetTabList.find(
+      (tabObj: any) => tabObj.key === key
+    );
+
+    const playerKey: string = this.playerKey;
+    const fieldCharacters: any[] = this.getMapObjectList({
+      kind: "character",
+      place: "field",
+      playerKey
+    });
+
+    const actor = tabObj.group.filter(
+      (g: any) =>
+        g === playerKey ||
+        fieldCharacters.findIndex((c: any) => c.key === g) >= 0
+    )[0];
+
+    return actor;
+  }
 
   private addButtonOnClick() {
     this.addGroupTargetTab({ ownerKey: this.getChatFromKey() }).then(() => {
@@ -326,15 +351,26 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
 </script>
 
 <style scoped lang="scss">
+@import "../common.scss";
+
 .contents {
+  @include flex-box(column, normal, normal);
   position: absolute;
   height: 100%;
   width: 100%;
   font-size: 12px;
 }
 
-label {
-  display: flex;
+.operationArea {
+  @include flex-box(row, normal, normal);
+
+  .space {
+    flex: 1;
+  }
+
+  label {
+    display: flex;
+  }
 }
 
 .operateArea {

@@ -182,7 +182,6 @@ export default class CreateNewRoom extends Vue {
   @Getter("isRoomExist") private isRoomExist: any;
   @Getter("peerId") private peerId: any;
   @Getter("roles") private roles: any;
-  @Getter("systemLog") private systemLog: any;
 
   /*
    * data
