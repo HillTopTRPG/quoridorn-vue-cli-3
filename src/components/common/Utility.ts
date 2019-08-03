@@ -278,6 +278,8 @@ export function conversion(num: number, unitName: string): any {
   const base = filteredUnit.base;
   const name = filteredUnit.name[0];
 
+  // window.console.log(num, unitName, base, name);
+
   return (
     convertTable
       .filter((unit: any) => unit.base === base && unit.name[0] !== name)

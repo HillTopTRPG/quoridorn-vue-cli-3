@@ -11,6 +11,7 @@ export default {
   state: {
     /** バージョン */
     version: "1.0.0b15",
+    magicWord: "I walk slowly, but I never walk backward.",
     /** 接続情報 */
     connect: {
       skywayKey: "",
@@ -42,10 +43,33 @@ export default {
     ],
     systemLog: {
       name: "SYSTEM",
-      color: "red",
+      colorKey: "color-SYSTEM",
+      color: "#000",
       tab: "chatTab-0",
       from: "SYSTEM"
-    }
+    },
+    chatFormats: [
+      {
+        label: "[リセット]",
+        chatText: "[[style]]"
+      },
+      {
+        label: "太文字",
+        chatText: "[[style:b]]"
+      },
+      {
+        label: "イタリック",
+        chatText: "[[style:i]]"
+      },
+      {
+        label: "赤文字",
+        chatText: "[[style:#f00]]"
+      },
+      {
+        label: "赤文字（太文字）",
+        chatText: "[[style:#f00:b]]"
+      }
+    ]
   } /* end of state */,
 
   actions: {
@@ -129,10 +153,12 @@ export default {
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,
+    magicWord: (state: any) => state.magicWord,
     chatOptionPagingSize: () => 8,
     skywayKey: (state: any) => state.connect.skywayKey,
     connectType: (state: any) => state.connect.type,
     version: (state: any) => state.version,
-    bcdiceServer: (state: any) => state.bcdiceServer
+    bcdiceServer: (state: any) => state.bcdiceServer,
+    chatFormats: (state: any) => state.chatFormats
   }
 };

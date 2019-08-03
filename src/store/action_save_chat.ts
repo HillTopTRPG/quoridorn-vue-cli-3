@@ -16,24 +16,20 @@ export default {
   actions: {
     /** ========================================================================
      * HTML形式でチャットログをダウンロードする
-     * @param rootState
      * @param rootGetters
-     * @param dispatch
-     * @param data
      */
-    saveChatLogHtml(
-      {
-        rootState,
-        rootGetters,
-        dispatch
-      }: { rootState: any; dispatch: any; rootGetters: any },
-      data: any
-    ) {
+    saveChatLogHtml({ rootGetters }: { rootGetters: any }) {
       const dateStr = moment().format("YYYYMMDD_hhmmss");
       const title = `Quoridorn_chatLog_${dateStr}`;
 
-      data.title = title;
-
+      const data = {
+        chatLogs: JSON.stringify(rootGetters.chatLogs),
+        actors: JSON.stringify(rootGetters.getAllActors),
+        groupTargetTabList: JSON.stringify(rootGetters.groupTargetTabList),
+        chatTabList: JSON.stringify(rootGetters.chatTabList),
+        title,
+        mode: "dev"
+      };
       window.console.log(data);
 
       // TODO 一時的な書き換え

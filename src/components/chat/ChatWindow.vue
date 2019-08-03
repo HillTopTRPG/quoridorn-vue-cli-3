@@ -8,9 +8,9 @@
   >
     <div class="container">
       <!----------------
-       ! タブ
+       ! チャットログ
        !--------------->
-      <tabs-component
+      <chat-log-viewer
         :tabIndex="0"
         :tabList="chatTabs"
         :activeChatTab="activeChatTab"
@@ -20,19 +20,9 @@
         @onSelect="chatTabOnSelect"
         @onHover="chatTabOnHover"
         @editTab="tabAddButtonOnClick"
+        :chatLogList="chatLogList"
+        :colorMap="colorMap"
       />
-
-      <!----------------
-       ! チャットログ
-       !--------------->
-      <ul id="chatLog" class="selectable" @wheel.stop>
-        <li v-for="(chatLog, index) in chatLogList" :key="index">
-          <span :style="{ color: chatLog.color }"
-            ><b>{{ chatLog.name }}</b
-            >：{{ chatLog.text }}</span
-          >
-        </li>
-      </ul>
 
       <!----------------
        ! 操作盤
@@ -88,10 +78,18 @@
         </span>
         <span class="icon">
           <i
+            class="icon-file-text"
+            title="チャットログ保存"
+            @click="chatLogExportButtonOnClick"
+            :tabindex="chatTabs.length + 7"
+          ></i>
+        </span>
+        <span class="icon">
+          <i
             class="icon-cloud-check"
             title="点呼・投票設定"
             @click="rollCallSettingButtonOnClick"
-            :tabindex="chatTabs.length + 7"
+            :tabindex="chatTabs.length + 8"
           ></i>
         </span>
         <span class="icon">
@@ -99,7 +97,7 @@
             class="icon-bell"
             title="目覚ましアラーム設定"
             @click="alermSettingButtonOnClick"
-            :tabindex="chatTabs.length + 8"
+            :tabindex="chatTabs.length + 9"
           ></i>
         </span>
         <span class="icon">
@@ -107,7 +105,7 @@
             class="icon-music"
             title="BGMの設定"
             @click="bgmSettingButtonOnClick"
-            :tabindex="chatTabs.length + 9"
+            :tabindex="chatTabs.length + 10"
           ></i>
         </span>
         <span class="icon">
@@ -115,7 +113,7 @@
             class="icon-film"
             title="カットイン設定"
             @click="cutInSettingButtonOnClick"
-            :tabindex="chatTabs.length + 10"
+            :tabindex="chatTabs.length + 11"
           ></i>
         </span>
         <span class="icon">
@@ -123,7 +121,7 @@
             class="icon-list2"
             title="チャットパレット設定"
             @click="chatPaletteSettingButtonOnClick"
-            :tabindex="chatTabs.length + 11"
+            :tabindex="chatTabs.length + 12"
           ></i>
         </span>
         <span class="icon">
@@ -131,7 +129,7 @@
             class="icon-accessibility"
             title="立ち絵設定"
             @click="standImageSettingButtonOnClick"
-            :tabindex="chatTabs.length + 12"
+            :tabindex="chatTabs.length + 13"
           ></i>
         </span>
         <span class="icon">
@@ -139,7 +137,7 @@
             class="icon-target"
             title="射界設定"
             @click="rangeSettingButtonOnClick"
-            :tabindex="chatTabs.length + 13"
+            :tabindex="chatTabs.length + 14"
           ></i>
         </span>
       </label>
@@ -154,7 +152,7 @@
            !--------------->
           <tabs-component
             class="group"
-            :tabIndex="chatTabs.length + 13"
+            :tabIndex="chatTabs.length + 14"
             :tabList="groupTargetTabListFiltered"
             :activeChatTab="chatTarget"
             :hoverChatTab="hoverChatTargetTab"
@@ -176,7 +174,7 @@
               <input
                 type="checkbox"
                 v-model="addBrackets"
-                :tabindex="chatTabs.length + chatTabs.length + 15"
+                :tabindex="chatTabs.length + chatTabs.length + 16"
               />
               発言時に「」を付与
             </label>
@@ -374,6 +372,63 @@
             </ul>
           </div>
 
+          <!----------------
+           ! チャットオプション（対象）
+           !--------------->
+          <div
+            class="chatOptionSelector dep"
+            v-if="chatOptionSelectMode === 'chatFormat'"
+            @contextmenu.prevent
+          >
+            <span
+              >以降の文字を…{{
+                chatOptionPageMaxNum > 1
+                  ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})`
+                  : ""
+              }}</span
+            >
+            <ul>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1"
+              >
+                [末尾へ]
+              </li>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1"
+              >
+                [前へ]
+              </li>
+              <li
+                v-for="target in chatOptionPagingList"
+                :key="target.label"
+                :class="{ selected: partsFormat === target.label }"
+                tabindex="-1"
+              >
+                {{ target.label }}
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum !== chatOptionPageMaxNum
+                "
+              >
+                [次へ]
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum === chatOptionPageMaxNum
+                "
+              >
+                [先頭へ]
+              </li>
+            </ul>
+          </div>
+
           <!-- チャット入力エリア -->
           <label class="chatInputArea">
             <span
@@ -408,14 +463,17 @@
               @keydown.esc.prevent="textAreaOnPressEsc"
               @keypress.enter.prevent="event => sendMessage(event, true)"
               @keyup.enter.prevent="event => sendMessage(event, false)"
-              :tabindex="chatTabs.length + chatTabs.length + 16"
-              :placeholder="'メッセージ（改行はShift + Enter）'"
+              :tabindex="chatTabs.length + chatTabs.length + 17"
+              :placeholder="
+                `メッセージ（改行はShift + Enter）\n部分フォント変更は \&quot;&\&quot; を入力`
+              "
             ></textarea>
           </label>
         </div>
         <ctrl-button
-          :tabindex="chatTabs.length + chatTabs.length + 17"
+          :tabindex="chatTabs.length + chatTabs.length + 18"
           @contextmenu.prevent
+          @click="sendMessage(null, true)"
           >送信</ctrl-button
         >
       </div>
@@ -450,9 +508,11 @@ import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
 import { conversion } from "@/components/common/Utility";
+import ChatLogViewer from "@/components/chat/ChatLogViewer.vue";
 
 @Component({
   components: {
+    ChatLogViewer,
     TabsComponent,
     CtrlButton,
     CtrlSelect,
@@ -493,9 +553,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("customDiceBotRoomSysList") private customDiceBotRoomSysList: any;
   @Getter("loadYaml") private loadYaml: any;
   @Getter("isChatTabVertical") private isChatTabVertical: any;
-  @Getter("chatLogs") private chatLogs: any;
-  @Getter("getAllActors") private getAllActors: any;
-  @Getter("groupTargetTabList") private groupTargetTabList: any;
+  @Getter("colorMap") private colorMap: any;
+  @Getter("chatFormats") private chatFormats: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;
@@ -517,6 +576,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private inputtingPeerIdList: any[] = [];
 
   private unitList: any = [];
+  private partsFormat: string = "";
 
   private volatileFrom: string = "";
   private volatileStatusName: string = "";
@@ -592,6 +652,12 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       });
     }
 
+    // コマンド（部分フォーマット）
+    let partsFormat: string = "";
+    if (text.endsWith("&") || text.endsWith("＆")) {
+      partsFormat = this.partsFormat || this.chatFormats[0].label;
+    }
+
     if (selectFrom) {
       this.chatOptionSelectMode = "from";
       this.updateActorKey(selectFrom);
@@ -601,6 +667,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     } else if (selectTab !== undefined) {
       this.chatOptionSelectMode = "tab";
       this.outputTab = selectTab;
+    } else if (partsFormat) {
+      this.chatOptionSelectMode = "chatFormat";
+      this.partsFormat = partsFormat;
     } else {
       this.chatOptionSelectMode = "";
       this.sendRoomData({
@@ -610,7 +679,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       });
     }
 
-    const matchResult = text.match(/@?([０-９0-9.e-]+) *(.+)/);
+    const matchResult = text.match(/([-.０-９0-9]+) *(.+)/);
     if (matchResult) {
       const num: number = parseFloat(
         matchResult[1].replace(/[０-９]/g, (s: string) =>
@@ -618,6 +687,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         )
       );
       const unit: string = matchResult[2];
+
+      // window.console.log(num, unit, matchResult);
 
       const result: any[] = conversion(num, unit);
       if (result) {
@@ -695,6 +766,18 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       );
       this.outputTab = newValue;
     }
+
+    // チャットフォーマットの選択の場合
+    if (this.chatOptionSelectMode === "chatFormat") {
+      const selection: (null | any)[] = [
+        ...this.chatFormats.map((chatFormat: any) => chatFormat.label)
+      ];
+
+      event.preventDefault();
+      let index = selection.indexOf(this.partsFormat);
+      const newValue = arrangeIndex(selection, index);
+      this.partsFormat = newValue;
+    }
   }
 
   /**
@@ -716,7 +799,11 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
    */
   private resetChatOption(): void {
     if (this.chatOptionSelectMode) {
-      this.currentMessage = "";
+      if (this.chatOptionSelectMode === "chatFormat") {
+        this.currentMessage = this.currentMessage.replace(/[&＆]$/, "");
+      } else {
+        this.currentMessage = "";
+      }
       if (this.volatileFrom) {
         this.updateActorKey(this.volatileFrom);
       }
@@ -819,6 +906,13 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   /**
+   * チャットログ保存ボタンクリックイベントハンドラ
+   */
+  private chatLogExportButtonOnClick(): void {
+    this.saveChatLogHtml();
+  }
+
+  /**
    * 点呼・投票設定ボタンクリックイベントハンドラ
    */
   private rollCallSettingButtonOnClick(): void {
@@ -847,14 +941,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private cutInSettingButtonOnClick(): void {
     // TODO
     alert("未実装です。");
-
-    // TODO テストコード
-    const data = {
-      chatLogs: JSON.stringify(this.chatLogs),
-      actors: JSON.stringify(this.getAllActors),
-      groupTargets: JSON.stringify(this.groupTargetTabList)
-    };
-    this.saveChatLogHtml(data);
   }
 
   /**
@@ -897,7 +983,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (this.enterPressing === flg) return;
     this.enterPressing = flg;
     if (!flg) return;
-    if (event.shiftKey) {
+    if (event && event.shiftKey) {
       this.currentMessage += "\n";
       return;
     }
@@ -908,7 +994,16 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
     // チャット送信オプション選択中のEnterは特別仕様
     if (this.chatOptionSelectMode) {
-      if (this.chatOptionSelectMode) this.currentMessage = "";
+      if (this.chatOptionSelectMode === "chatFormat") {
+        const chatFormat: any = this.chatFormats.filter(
+          (format: any) => format.label === this.partsFormat
+        )[0];
+        this.currentMessage =
+          this.currentMessage.replace(/[&＆]$/, "") + chatFormat.chatText;
+        this.partsFormat = this.chatFormats[0].label;
+      } else {
+        this.currentMessage = "";
+      }
       this.chatOptionSelectMode = "";
       this.volatileFrom = "";
       this.volatileStatusName = "";
@@ -1071,6 +1166,14 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         (target: any) => target.key === this.activeChatTab
       );
     }
+    if (this.chatOptionSelectMode === "chatFormat") {
+      const list = this.chatFormats.map((chatFormat: any) => ({
+        label: chatFormat.label
+      }));
+      index = list.findIndex(
+        (target: any) => target.label === this.partsFormat
+      );
+    }
     if (index === -1) return -1;
     return Math.floor(index / this.chatOptionPagingSize) + 1;
   }
@@ -1082,6 +1185,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (this.chatOptionSelectMode === "target")
       length = this.chatTargetList.length;
     if (this.chatOptionSelectMode === "tab") length = this.chatTabs.length;
+    if (this.chatOptionSelectMode === "chatFormat")
+      length = this.chatFormats.length;
     if (length === 0) return 1;
     return Math.floor((length - 1) / this.chatOptionPagingSize) + 1;
   }
@@ -1099,6 +1204,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (this.chatOptionSelectMode === "tab") {
       list = this.chatTabs.concat();
       list.unshift({ name: "[選択中]", key: null });
+    }
+    if (this.chatOptionSelectMode === "chatFormat") {
+      list = this.chatFormats.concat();
     }
     const endIndex = Math.min(pageNum * this.chatOptionPagingSize, list.length);
     return list.splice(startIndex, endIndex - startIndex);
@@ -1124,26 +1232,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
 .tabs.group {
   margin-left: 0.5em;
-}
-
-#chatLog {
-  display: block;
-  background-color: white;
-  flex: 1;
-  -moz-box-flex: 1;
-  -webkit-box-flex: 1;
-  border: 1px solid gray;
-  overflow-y: scroll;
-  overflow-x: auto;
-  margin: 0;
-  padding-left: 2px;
-  list-style: none;
-  /*font-size: 13px;*/
-  min-height: 70px;
-  position: relative;
-  z-index: 10;
-  white-space: normal;
-  word-break: break-all;
 }
 
 .oneLine {
@@ -1301,6 +1389,14 @@ i.icon-dice {
 }
 
 i.icon-bin {
+  color: rgb(150, 150, 150);
+  &:hover,
+  &.hover {
+    background-color: rgb(150, 150, 150);
+  }
+}
+
+i.icon-file-text {
   color: rgb(150, 150, 150);
   &:hover,
   &.hover {

@@ -17,7 +17,7 @@ import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import DiceBotSelect from "../parts/select/DiceBotSelect.vue";
 
-@Component({ components: {} })
+@Component
 export default class DiceBotMessage extends Vue {
   @Action("setProperty") private setProperty: any;
   @Getter("diceBotMessageText") private diceBotMessageText: any;

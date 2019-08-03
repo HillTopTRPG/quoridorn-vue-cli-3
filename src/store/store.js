@@ -362,7 +362,7 @@ export default new Vuex.Store({
         const isMaster =
           rootGetters.members[0].peerId === rootGetters.peerId(isWait);
         if (isMaster) {
-          value.processTime = moment().format("YYYYMMDD hh:mm:ss");
+          value.processTime = parseInt(moment().format("YYYYMMDDhhmmss"), 0);
         }
         dispatch("sendRoomData", {
           type: isMaster ? "DO_METHOD" : "NOTICE_OPERATION",
@@ -733,7 +733,7 @@ export default new Vuex.Store({
     volatilePrivateData: state => state.volatileSaveData.players,
     chatTabs: (state, getters, rootState, rootGetters) => {
       return rootGetters.chatTabsOption.map(privateTab => {
-        const publicTab = rootState.public.chat.tab.list.filter(
+        const publicTab = rootGetters.chatTabList.filter(
           publicTab => publicTab.key === privateTab.key
         )[0];
         return {

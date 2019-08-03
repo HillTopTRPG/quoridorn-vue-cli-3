@@ -9,7 +9,7 @@
     @add="add"
     @remove="remove"
   >
-    <div class="contents" @contextmenu.prevent>
+    <div class="contents">
       <master-volume-component />
       <template v-for="bgmObj in playList">
         <b-g-m-youtube-component

@@ -14,15 +14,8 @@
         <input
           type="color"
           :value="getPlayer ? getPlayer.fontColor : ''"
-          @change="
-            event =>
-              changePlayerFontColor(
-                event.target.value,
-                event.target.nextElementSibling.firstElementChild.checked
-              )
-          "
+          @change="event => changePlayerFontColor(event.target.value)"
         />
-        <label>過去ログ反映<input type="checkbox" checked/></label>
       </label>
       <!-----------------
        ! マップ
@@ -60,15 +53,12 @@
                     event =>
                       changeCharacterFontColor(
                         character.key,
-                        event.target.value,
-                        event.target.parentNode.nextElementSibling
-                          .firstElementChild.checked
+                        event.target.value
                       )
                   "
                   :disabled="character.fontColorType === '0'"
                 />
               </label>
-              <label>過去ログ反映<input type="checkbox" checked/></label>
             </fieldset>
           </li>
           <!--
@@ -176,29 +166,12 @@ export default class PlayerBoxWindow extends Mixins<WindowMixin>(WindowMixin) {
       logOff: true
     });
   }
-  changeCharacterFontColor(
-    this: any,
-    key: string,
-    value: boolean,
-    historyChange: boolean
-  ): void {
-    this.changeChatFontColor({
-      key: key,
-      color: value,
-      historyChange: historyChange
-    });
+  changeCharacterFontColor(this: any, key: string, value: boolean): void {
+    this.changeChatFontColor({ key: key, color: value });
   }
-  changePlayerFontColor(
-    this: any,
-    value: string,
-    historyChange: boolean
-  ): void {
+  changePlayerFontColor(this: any, value: string): void {
     const targetPlayer = this.getPlayer;
-    this.changeChatFontColor({
-      key: targetPlayer.key,
-      color: value,
-      historyChange: historyChange
-    });
+    this.changeChatFontColor({ key: targetPlayer.key, color: value });
   }
   getPlayerName(this: any, playerKey: string): string {
     const player = this.getObj(playerKey);

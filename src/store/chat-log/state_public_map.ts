@@ -17,9 +17,7 @@ export default {
           borderWidth: 10
         },
         grid: { totalColumn: 20, totalRow: 15, size: 48, color: "#000000" },
-        background: "#92A8B3",
-        chatLinkage: 0,
-        chatLinkageSearch: ""
+        background: "#92A8B3"
       }
     ],
     isEditing: null,

@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?d26kqt');
-  src:  url('fonts/icomoon.eot?d26kqt#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?d26kqt') format('truetype'),
-    url('fonts/icomoon.woff?d26kqt') format('woff'),
-    url('fonts/icomoon.svg?d26kqt#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?u8ism4');
+  src:  url('fonts/icomoon.eot?u8ism4#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?u8ism4') format('truetype'),
+    url('fonts/icomoon.woff?u8ism4') format('woff'),
+    url('fonts/icomoon.svg?u8ism4#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -35,6 +35,9 @@
 }
 .icon-dice:before {
   content: "\e915";
+}
+.icon-file-text:before {
+  content: "\e922";
 }
 .icon-file-music:before {
   content: "\e928";

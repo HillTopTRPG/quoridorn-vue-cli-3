@@ -33,9 +33,7 @@ export default {
           dispatch("addChatLog", {
             name: rootGetters.getViewName(actorKey),
             text,
-            // color,
             tab: outputTab,
-            actorKey: actorKey,
             statusName,
             target: chatTarget,
             from: actorKey
@@ -84,12 +82,11 @@ export default {
               dispatch("addChatLog", {
                 name: rootGetters.getViewName(actorKey),
                 text: `シークレットダイス`,
-                // color: color,
                 tab: outputTab,
-                actorKey: actorKey,
                 statusName: statusName,
                 target: chatTarget,
-                from: actorKey
+                from: actorKey,
+                diceBot: currentDiceBotSystem
               });
 
               // 隠しダイスロール結果画面に反映
@@ -113,9 +110,7 @@ export default {
               dispatch("addChatLog", {
                 name: rootGetters.getViewName(actorKey),
                 text,
-                // color,
                 tab: outputTab,
-                actorKey: actorKey,
                 statusName: statusName,
                 target: chatTarget,
                 from: actorKey
@@ -127,14 +122,13 @@ export default {
                 dispatch("addChatLog", {
                   name: currentDiceBotSystem,
                   text: diceRollResult,
-                  // color,
                   tab: outputTab,
-                  actorKey: actorKey,
                   statusName: statusName,
                   target: chatTarget,
                   from: actorKey,
                   dices,
-                  isDiceBot: true
+                  isDiceBot: true,
+                  diceBot: currentDiceBotSystem
                 });
               }
             }
@@ -230,9 +224,7 @@ export default {
           dispatch("addChatLog", {
             name: rootGetters.getViewName(actorKey),
             text,
-            // color,
             tab: outputTab,
-            actorKey: actorKey,
             statusName: statusName,
             target: chatTarget,
             from: actorKey
@@ -240,14 +232,13 @@ export default {
           dispatch("addChatLog", {
             name: diceBotSystem,
             text: customDiceBotResultText,
-            // color,
             tab: outputTab,
-            actorKey: actorKey,
             statusName: statusName,
             target: chatTarget,
             from: actorKey,
             dices,
-            isDiceBot: true
+            isDiceBot: true,
+            diceBot: diceBotSystem
           });
         });
       }
@@ -273,7 +264,7 @@ export default {
       }: { dispatch: Function; rootState: any; rootGetters: any },
       payload: any
     ) => {
-      let text = payload.text;
+      let text = payload.text.replace(/"/g, '[[quot]]');
 
       try {
         if (!text.startsWith("@")) {
@@ -287,6 +278,8 @@ export default {
           const target = payload.target;
           const isDiceBot: boolean = payload.isDiceBot || false;
           const statusName = payload.statusName || "◆";
+          const processTime = payload.processTime;
+          const diceBot = payload.diceBot;
 
           /*
            * 立ち絵の表示
@@ -333,15 +326,19 @@ export default {
             });
           }
 
-          const logObj = {
+          const logObj: any = {
+            type: 1,
+            processTime,
+            name,
+            text,
+            isDiceBot,
+            diceBot,
+            color: `color-${from}`,
             owner,
             from,
-            target,
-            text,
-            color,
             actorType: actor ? actor.type : undefined,
             statusName,
-            isDiceBot
+            target
           };
           window.console.log(JSON.stringify(logObj, null, "    "));
           // 未読カウントアップ
@@ -383,9 +380,8 @@ export default {
       }: { dispatch: Function; rootState: any; rootGetters: any },
       {
         key,
-        color,
-        historyChange
-      }: { key: string; color: string; historyChange: boolean }
+        color
+      }: { key: string; color: string; }
     ) => {
       const kind = key.split("-")[0];
       const target = rootState.public[kind].list.filter(
@@ -393,23 +389,6 @@ export default {
       )[0];
       if (!target) return;
       target.fontColor = color;
-      if (!historyChange) return;
-      const change: any = {};
-      for (const tab in rootGetters.chatLogs) {
-        if (!rootGetters.chatLogs.hasOwnProperty(tab)) continue;
-        const changeTab: any = {};
-        change[tab] = changeTab;
-        rootGetters.chatLogs[tab].forEach((log: any, index: number) => {
-          if (log.from !== target.key) return;
-          changeTab[index] = { color };
-        });
-      }
-      dispatch("setProperty", {
-        property: `public.chat.logs`,
-        value: change,
-        isNotice: false,
-        logOff: true
-      });
     },
 
     /** ========================================================================
@@ -1224,7 +1203,8 @@ export default {
     ) => {
       return rootGetters.chatLogs[rootGetters.activeChatTab].filter(
         (log: any) => {
-          log.name = rootGetters.getViewName(log.from);
+          if (log.type !== 1) return false;
+          // log.name = rootGetters.getViewName(log.from);
           if (log.owner === rootGetters.playerKey) return true;
           if (!log.target) return true;
           if (log.target === "groupTargetTab-0") return true;

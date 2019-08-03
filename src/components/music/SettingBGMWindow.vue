@@ -6,15 +6,15 @@
     fixSize="394, 334"
     @open="initWindow"
   >
-    <div class="contents" @contextmenu.prevent>
-      <div class="playOperationArea">
+    <div class="contents">
+      <div class="playOperationArea" @contextmenu.prevent>
         <ctrl-button @click="doPlay">送信</ctrl-button>
         <span class="space"></span>
         <ctrl-button @click="doPreview">プレビュー(自分のみ)</ctrl-button>
       </div>
       <div class="tableContainer">
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
-          <thead>
+          <thead @contextmenu.prevent>
             <tr>
               <th :style="colStyle(0)">連動</th>
               <divider :index="0" prop="settingBGMWindow" />
@@ -44,13 +44,19 @@
               @dblclick="playBGM()"
               :class="{ isActive: selectLineKey === bgmObj.key }"
             >
-              <td :style="colStyle(0)" :title="linkageStr(bgmObj)">
+              <td
+                :style="colStyle(0)"
+                :title="linkageStr(bgmObj)"
+                @contextmenu.prevent
+              >
                 {{ bgmObj.chatLinkage > 0 ? "あり" : "なし" }}
               </td>
               <divider :index="0" prop="settingBGMWindow" />
-              <td :style="colStyle(1)">{{ bgmObj.tag }}</td>
+              <td :style="colStyle(1)" @contextmenu.prevent>
+                {{ bgmObj.tag }}
+              </td>
               <divider :index="1" prop="settingBGMWindow" />
-              <td :style="colStyle(2)">
+              <td :style="colStyle(2)" @contextmenu.prevent>
                 <i class="icon-stop2" v-if="!bgmObj.url"></i>
                 <i class="icon-youtube2" v-if="isYoutube(bgmObj.url)"></i>
                 <i class="icon-dropbox" v-if="isDropBox(bgmObj.url)"></i>
@@ -68,24 +74,28 @@
                 {{ bgmObj.title }}
               </td>
               <divider :index="3" prop="settingBGMWindow" />
-              <td :style="colStyle(4)">
+              <td :style="colStyle(4)" @contextmenu.prevent>
                 {{ bgmObj.url ? convertSecond(bgmObj.start, bgmObj.end) : "-" }}
               </td>
               <divider :index="4" prop="settingBGMWindow" />
-              <td :style="colStyle(5)">
+              <td :style="colStyle(5)" @contextmenu.prevent>
                 <i class="icon-loop" v-if="bgmObj.url && bgmObj.isLoop"></i
                 >{{ bgmObj.url && bgmObj.isLoop ? "" : "-" }}
               </td>
               <divider :index="5" prop="settingBGMWindow" />
-              <td :style="colStyle(6)">
+              <td :style="colStyle(6)" @contextmenu.prevent>
                 {{ bgmObj.url ? bgmObj.volume * 100 : "-" }}
               </td>
               <divider :index="6" prop="settingBGMWindow" />
-              <td :style="colStyle(7)" :title="fadeTitle(bgmObj)">
+              <td
+                :style="colStyle(7)"
+                :title="fadeTitle(bgmObj)"
+                @contextmenu.prevent
+              >
                 {{ bgmObj.url ? fadeStr(bgmObj) : "-" }}
               </td>
             </tr>
-            <tr class="space">
+            <tr class="space" @contextmenu.prevent>
               <td :style="colStyle(0)"></td>
               <divider :index="0" prop="settingBGMWindow" />
               <td :style="colStyle(1)"></td>
@@ -105,7 +115,7 @@
           </tbody>
         </table>
       </div>
-      <div class="operateArea">
+      <div class="operateArea" @contextmenu.prevent>
         <ctrl-button @click="doAdd">追加</ctrl-button>
         <ctrl-button @click="doModify">変更</ctrl-button>
         <ctrl-button @click="doCopy">コピー</ctrl-button>
@@ -132,6 +142,7 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { saveJson } from "@/components/common/Utility";
+import CryptoJS from "crypto-js";
 
 @Component({ components: { CtrlButton, WindowFrame, Divider } })
 export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
@@ -142,6 +153,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("moveListObj") moveListObj: any;
   @Getter("bgmList") bgmList: any;
   @Getter("isGameMaster") private isGameMaster: any;
+  @Getter("magicWord") private magicWord: any;
 
   private isYoutube(url: string) {
     return /www\.youtube\.com/.test(url);
@@ -154,7 +166,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private initWindow(): void {
     this.setProperty({
       property: "private.display.settingBGMWindow.selectLineKey",
-      value: -1,
+      value: null,
       logOff: true
     });
   }
@@ -251,9 +263,21 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private doSave(): void {
     const data: any = {
       saveDataTypeName: "Quoridorn_BGM_01",
-      saveData: this.bgmList
+      saveData: this.bgmList.concat()
     };
-    window.console.log(JSON.stringify(data, null, "    "));
+
+    data.saveData.forEach((bgmObj: any) => {
+      if (!this.isYoutube(bgmObj.url)) {
+        const ciphertext = CryptoJS.AES.encrypt(
+          bgmObj.url,
+          this.magicWord
+        ).toString();
+        const bytes = CryptoJS.AES.decrypt(ciphertext, this.magicWord);
+        const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+        bgmObj.url = ciphertext;
+      }
+    });
+    // window.console.log(JSON.stringify(data, null, "    "));
     saveJson("bgm", data);
   }
 
@@ -283,7 +307,10 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     const addBgmObj: any = this.bgmList.find(
       (bgmObj: any) => bgmObj.key === this.selectLineKey
     );
-    window.console.log(addBgmObj, this.selectLineKey, this.bgmList);
+    if (!addBgmObj) {
+      alert("BGMを選択してください");
+      return;
+    }
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
       logOff: true,

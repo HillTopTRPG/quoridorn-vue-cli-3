@@ -426,7 +426,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.useImageIndex = useImageIndex;
       pieceObj.currentImageTag = currentImageTag;
       pieceObj.fontColorType = "0";
-      pieceObj.fontColor = "";
+      pieceObj.fontColor = "#000";
       pieceObj.chatPalette = {
         list: []
       };

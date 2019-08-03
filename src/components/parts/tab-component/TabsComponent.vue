@@ -33,7 +33,7 @@
     <span
       class="tab addButton"
       @click="tabAddButtonOnClick"
-      :tabindex="tabIndex + chatTabs.length + 1"
+      :tabindex="tabIndex + tabList.length + 1"
       ><span class="icon-cog"></span
     ></span>
   </div>
@@ -64,9 +64,6 @@ export default class TabsComponent extends Vue {
   @Prop({ type: Function, required: true })
   private textFunc!: Function;
 
-  @Action("setProperty") private setProperty: any;
-  @Getter("chatTabs") private chatTabs: any;
-
   /**
    * チャットログ表示タブを選択されたときの挙動
    * @param key タブのkey
@@ -93,7 +90,7 @@ export default class TabsComponent extends Vue {
       hover: tabObj.key === this.hoverChatTab,
       unRead: tabObj.unRead > 0,
       vertical: this.isVertical,
-      isLast: index === this.chatTabs.length - 1
+      isLast: index === this.tabList.length - 1
     };
   }
 }
@@ -245,7 +242,7 @@ $hover-border-color: #0092ed;
     &.addButton {
       @include flex-box(row, center, center);
       position: absolute;
-      right: 1px;
+      right: 2px;
       cursor: pointer;
       z-index: 13;
       height: 2em;

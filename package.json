@@ -37,6 +37,7 @@
     "yaml-loader": "^0.5.0"
   },
   "devDependencies": {
+    "@types/crypto-js": "^3.1.43",
     "@types/mustache": "^0.8.32",
     "@vue/cli-plugin-babel": "^3.2.0",
     "@vue/cli-plugin-eslint": "^3.2.0",

@@ -184,8 +184,9 @@ export default {
         dispatch("addChatLog", {
           name: rootGetters.systemLog.name,
           text: `${player.name} が退室しました。`,
-          color: rootGetters.systemLog.color,
+          color: rootGetters.systemLog.colorKey,
           tab: rootGetters.systemLog.tab,
+          target: "groupTargetTab-0",
           from: rootGetters.systemLog.from,
           owner: rootGetters.systemLog.from
         });
@@ -412,7 +413,7 @@ export default {
     ) {
       // 自分が親だったら、この通知を処理して、ルームメンバーに土管する
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
-        value.processTime = moment().format("YYYYMMDD hh:mm:ss");
+        value.processTime = moment().format("YYYY/MM/DD hh:mm:ss");
         dispatch("sendRoomData", {
           type: "DO_METHOD",
           value: value,
@@ -865,21 +866,21 @@ export default {
     sendRoomData({ rootGetters }: { rootGetters: any }, payload: any) {
       const room = rootGetters.webRtcRoom(payload.isWait);
       if (!room) return;
-      if (payload && payload.type !== "NOTICE_INPUT") {
-        const msgList: any[] = [];
-        msgList.push(`TYPE: ${payload.type}`);
-        if (payload.type === "DO_METHOD") {
-          msgList.push("METHOD:");
-          msgList.push(payload.method);
-        }
-        msgList.push("VALUE:");
-        msgList.push(payload.value);
-        msgList.push("targets:");
-        msgList.push(payload.targets);
-        msgList.push("this.peerId:");
-        msgList.push(rootGetters.peerId(payload.isWait));
-        qLog("RoomData送信 =>", ...msgList);
-      }
+      // if (payload && payload.type !== "NOTICE_INPUT") {
+      //   const msgList: any[] = [];
+      //   msgList.push(`TYPE: ${payload.type}`);
+      //   if (payload.type === "DO_METHOD") {
+      //     msgList.push("METHOD:");
+      //     msgList.push(payload.method);
+      //   }
+      //   msgList.push("VALUE:");
+      //   msgList.push(payload.value);
+      //   msgList.push("targets:");
+      //   msgList.push(payload.targets);
+      //   msgList.push("this.peerId:");
+      //   msgList.push(rootGetters.peerId(payload.isWait));
+      //   qLog("RoomData送信 =>", ...msgList);
+      // }
       room.send(payload);
     },
 
@@ -1127,7 +1128,7 @@ export default {
       dispatch("addChatLog", {
         name: rootGetters.systemLog.name,
         text: `${playerName} が入室しました。`,
-        color: rootGetters.systemLog.color,
+        color: rootGetters.systemLog.colorKey,
         tab: rootGetters.systemLog.tab,
         target: "groupTargetTab-0",
         from: rootGetters.systemLog.from,

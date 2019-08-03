@@ -27,12 +27,14 @@ export default {
       "chatTab-0": [
         {
           owner: "SYSTEM",
+          name: "SYSTEM",
           from: "SYSTEM",
           target: "groupTargetTab-0",
           text: "こちらデモ版です。",
-          color: "red",
+          color: "color-SYSTEM",
           statusName: "◆",
-          isDiceBot: false
+          isDiceBot: false,
+          type: 1
         }
       ]
     },
@@ -86,6 +88,7 @@ export default {
   },
   getters: {
     chatLogs: (state: any): any[] => state.logs,
+    chatTabList: (state: any): any[] => state.tab.list,
     inputting: (state: any): any => state.inputting,
     groupTargetTab: (state: any): any => state.groupTargetTab,
     groupTargetTabList: (state: any): any => state.groupTargetTab.list,
@@ -108,6 +111,18 @@ export default {
     },
     diceBotMessageText: (state: any) => state.diceBotMessage.message,
     diceBotMessageView: (state: any) => state.diceBotMessage.isView,
-    isChatTabVertical: (state: any) => state.tab.isVertical
+    isChatTabVertical: (state: any) => state.tab.isVertical,
+    colorMap: (state: any, getters: any, rootState: any, rootGetters: any) => {
+      const resultObj: any = {};
+      resultObj[rootGetters.systemLog.colorKey] = rootGetters.systemLog.color;
+      rootGetters.characterList.forEach((c: any) => {
+        resultObj[`color-${c.key}`] = rootGetters.getChatColor(c.key);
+      });
+      rootGetters.playerList.forEach((p: any) => {
+        resultObj[`color-${p.key}`] = p.fontColor;
+      });
+      window.console.log(JSON.stringify(resultObj, null, "    "));
+      return resultObj;
+    }
   }
 };

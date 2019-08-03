@@ -1,25 +1,19 @@
 <template>
-  <div>
-    <label v-for="(optionInfo, index) in optionInfoList" :key="index">
-      <input
-        type="radio"
-        :name="name"
-        :value="optionInfo.value"
-        v-model="localValue"
-      />
-      {{ optionInfo.text }}
-    </label>
-  </div>
+  <ctrl-radio
+    :optionInfoList="optionInfoList"
+    name="importTypeRadio"
+    v-model="localValue"
+    :test="test"
+  />
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from "vue-property-decorator";
-
-@Component
+import CtrlRadio from "../CtrlRadio.vue";
+@Component({
+  components: { CtrlRadio }
+})
 export default class ImportTypeRadio extends Vue {
-  @Prop({ type: String, required: true })
-  protected name!: string;
-
   @Prop({ type: String, default: "1" })
   public value!: string;
 

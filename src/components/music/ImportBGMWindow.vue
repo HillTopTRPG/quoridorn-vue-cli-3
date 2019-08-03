@@ -120,7 +120,7 @@
         <ctrl-button @click="doUp">↑</ctrl-button>
         <ctrl-button @click="doDown">↓</ctrl-button>
         <div class="space"></div>
-        <import-type-radio v-model="importType" name="bgmImportType" />
+        <import-type-radio v-model="importType" />
         <ctrl-button @click="doImport">取り込む</ctrl-button>
       </div>
     </div>
@@ -136,7 +136,7 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { saveJson } from "@/components/common/Utility";
-import ImportTypeRadio from "@/components/parts/ImportTypeRadio.vue";
+import ImportTypeRadio from "@/components/parts/radio/ImportTypeRadio.vue";
 import { Watch } from "vue-property-decorator";
 
 @Component({
@@ -206,13 +206,9 @@ export default class ImportBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private initWindow(): void {
     this.setProperty({
       property: "private.display.importBGMWindow.selectLineKey",
-      value: -1,
+      value: null,
       logOff: true
     });
-  }
-
-  private doPlay(): void {
-    this.playBGM();
   }
 
   private doPreview(): void {
@@ -286,6 +282,10 @@ export default class ImportBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     const addBgmObj: any = this.bgmList.find(
       (bgmObj: any) => bgmObj.key === this.selectLineKey
     );
+    if (!addBgmObj) {
+      alert("BGMを選択してください");
+      return;
+    }
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
       logOff: true,
