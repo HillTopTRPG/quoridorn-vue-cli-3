@@ -30,14 +30,11 @@
         <ctrl-button @click="onClickSaveAsDodontofHTML">
           どどんとふHTML
         </ctrl-button>
-        <ctrl-button @click="onClickSaveAsDodontofHTML">
+        <ctrl-button @click="onClickSaveAsDodontofText">
           どどんとふText
         </ctrl-button>
-        <ctrl-button @click="onClickSaveAsDodontofHTML">
+        <ctrl-button @click="onClickSaveAsJson">
           Json
-        </ctrl-button>
-        <ctrl-button @click="onClickSaveAsDodontofHTML">
-          XML(未実装)
         </ctrl-button>
       </div>
     </fieldset>
@@ -47,7 +44,7 @@
      !--------------->
     <chat-log-viewer
       :tabIndex="0"
-      :chatLogList="chatLogList"
+      :chatLogList="chatLogList(activeChatTab)"
       :tabList="chatTabList"
       :activeChatTab="activeChatTab"
       :hoverChatTab="hoverChatTab"
@@ -94,6 +91,7 @@ fieldset {
   background-color: lightcyan;
   border: 1px solid black;
   padding: 0.5em;
+  user-select: none;
 
   legend {
     background-color: inherit;
@@ -142,6 +140,7 @@ import ChatLogViewer from "@/components/chat/ChatLogViewer.vue";
 import { Watch } from "vue-property-decorator";
 import ImportTypeRadio from "@/components/parts/radio/ImportTypeRadio.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
+import { saveJson, saveHTML, saveText } from "@/components/common/Utility";
 
 @Component({
   components: {
@@ -205,42 +204,45 @@ export default class ChatLog extends Vue {
     alert("未実装");
   }
 
-  private get chatLogList(): any[] {
-    const isTargetPlayer: Function = (playerKey: string) =>
-      this.targetPlayers.filter(
-        (targetPlayer: any) => targetPlayer === playerKey
-      )[0];
-    const activeChatTab = this.getObj(this.activeChatTab);
+  private get chatLogList(): Function {
+    return (chatTab: string) => {
+      const isTargetPlayer: Function = (playerKey: string) =>
+        this.targetPlayers.filter(
+          (targetPlayer: any) => targetPlayer === playerKey
+        )[0];
+      const activeChatTab = this.getObj(chatTab);
 
-    return this.chatLogs.filter((log: any) => {
-      if (!activeChatTab) return false;
-      if (!activeChatTab.isTotal && log.tab !== activeChatTab.key) return false;
-      if (log.type !== 1) return false;
-      if (!log.target) return true;
-      if (log.target === "groupTargetTab-0") return true;
-      if (isTargetPlayer(log.owner)) return true;
-      const kind = log.target.split("-")[0];
-      if (kind === "groupTargetTab") {
-        const target = this.getObj(log.target);
-        if (!target.isSecret) return true;
-        if (target.isAll) return true;
-        const findIndex = target.group.findIndex((g: string) => {
-          const kind = g.split("-")[0];
-          if (kind === "player") {
-            if (isTargetPlayer(g)) return true;
-          } else if (kind === "character") {
-            if (isTargetPlayer(this.getObj(g).owner)) return true;
-          }
+      return this.chatLogs.filter((log: any) => {
+        if (!activeChatTab) return false;
+        if (!activeChatTab.isTotal && log.tab !== activeChatTab.key)
           return false;
-        });
-        return findIndex > -1;
-      } else if (kind === "player") {
-        return isTargetPlayer(log.target);
-      } else {
-        const target = this.getObj(log.target);
-        return isTargetPlayer(target.owner);
-      }
-    });
+        if (log.type !== 1) return false;
+        if (!log.target) return true;
+        if (log.target === "groupTargetTab-0") return true;
+        if (isTargetPlayer(log.owner)) return true;
+        const kind = log.target.split("-")[0];
+        if (kind === "groupTargetTab") {
+          const target = this.getObj(log.target);
+          if (!target.isSecret) return true;
+          if (target.isAll) return true;
+          const findIndex = target.group.findIndex((g: string) => {
+            const kind = g.split("-")[0];
+            if (kind === "player") {
+              if (isTargetPlayer(g)) return true;
+            } else if (kind === "character") {
+              if (isTargetPlayer(this.getObj(g).owner)) return true;
+            }
+            return false;
+          });
+          return findIndex > -1;
+        } else if (kind === "player") {
+          return isTargetPlayer(log.target);
+        } else {
+          const target = this.getObj(log.target);
+          return isTargetPlayer(target.owner);
+        }
+      });
+    };
   }
 
   private get playerList(): any {
@@ -249,19 +251,111 @@ export default class ChatLog extends Vue {
   }
 
   private onClickSaveAsDodontofHTML() {
-    alert("Save as DodontofHTML");
+    const regExp: RegExp = new RegExp(/(\[\[style([: #0-9a-zA-Z]*)]])/g);
+    const replaceFunc: Function = (text: string) =>
+      text.replace(regExp, "").replace(/\[\[quot]]/g, '"');
+
+    saveHTML(
+      "html",
+      [
+        "<?xml version='1.0' encoding='UTF-8'?>",
+        "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>",
+        "<html xmlns='http://www.w3.org/1999/xhtml' lang='ja'>",
+        "<head>",
+        "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />",
+        "<title>チャットログ：null</title>",
+        "</head>",
+        "<body>",
+        this.jsonData
+          .map((logObj: any) => {
+            const tabName = logObj.isDiceBot ? "" : `[${logObj.tab}]`;
+            const targetText =
+              logObj.targetName === "全体" ? "" : `＞＞${logObj.targetName}`;
+            return [
+              tabName,
+              `<font color="${logObj.color}">`,
+              "<b>",
+              logObj.name,
+              targetText,
+              "</b>",
+              "：",
+              replaceFunc(logObj.text),
+              "</font>",
+              "<br>"
+            ].join("");
+          })
+          .join("\n"),
+        "</body>",
+        "</html>"
+      ].join("\n")
+    );
   }
 
   private onClickSaveAsDodontofText() {
-    alert("Save as DodontofHTML");
+    const regExp: RegExp = new RegExp(/(\[\[style([: #0-9a-zA-Z]*)]])/g);
+    const replaceFunc: Function = (text: string) =>
+      text.replace(regExp, "").replace(/\[\[quot]]/g, '"');
+
+    saveText(
+      "text",
+      this.jsonData
+        .map((logObj: any) => {
+          const tabName = logObj.isDiceBot ? "" : `[${logObj.tab}]`;
+          const targetText =
+            logObj.targetName === "全体" ? "" : `＞＞${logObj.targetName}`;
+          return [
+            tabName,
+            logObj.name,
+            targetText,
+            "：",
+            replaceFunc(logObj.text)
+          ].join("");
+        })
+        .join("\n")
+    );
   }
 
   private onClickSaveAsJson() {
-    alert("Save as Json");
+    saveJson("chat-log", this.jsonData);
   }
 
-  private onClickSaveAsXML() {
-    alert("Save as XML");
+  private get jsonData(): any {
+    const chatLogs: any[] = JSON.parse(
+      JSON.stringify(this.chatLogList("chatTab-0"))
+    );
+    chatLogs.forEach((logObj: any) => {
+      // タブの指定
+      const tabObj: any = this.chatTabList.filter(
+        (tabObj: any) => tabObj.key === logObj.tab
+      )[0];
+      logObj.tab = tabObj.name;
+
+      // 色
+      logObj.color = this.colorMap[logObj.color];
+
+      // 時間
+      logObj.time = logObj.processTime;
+      delete logObj.processTime;
+
+      // from
+      const fromActor: any = this.getObj(logObj.from);
+      logObj.from = fromActor ? fromActor.name : logObj.from;
+
+      // owner
+      const ownerPlayer: any = this.getObj(logObj.owner);
+      logObj.owner = ownerPlayer ? ownerPlayer.name : logObj.owner;
+
+      // target
+      const targetObj = this.getObj(logObj.target);
+      logObj.isSecret = targetObj.isSecret;
+      logObj.targetName = targetObj.name;
+      logObj.isAllTarget = targetObj.isAll;
+      logObj.target = targetObj.group.map((t: any) => {
+        const actor: any = this.getObj(t);
+        return actor ? actor.name : t;
+      });
+    });
+    return chatLogs;
   }
 }
 </script>

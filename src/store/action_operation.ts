@@ -337,7 +337,7 @@ export default {
             color: `color-${from}`,
             owner,
             from,
-            actorType: actor ? actor.type : undefined,
+            actorType: actor ? actor.type : "PC",
             statusName,
             target
           };

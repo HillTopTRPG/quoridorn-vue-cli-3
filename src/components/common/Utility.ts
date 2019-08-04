@@ -138,6 +138,30 @@ export function saveJson(name: string, data: any): void {
   anchor.click();
 }
 
+export function saveHTML(name: string, text: string): void {
+  const blob = new Blob([text], {
+    type: "text/html"
+  });
+  const url = URL.createObjectURL(blob);
+
+  const anchor = document.createElement("a");
+  anchor.download = `${name}.html`;
+  anchor.href = url;
+  anchor.click();
+}
+
+export function saveText(name: string, text: string): void {
+  const blob = new Blob([text], {
+    type: "text/plain"
+  });
+  const url = URL.createObjectURL(blob);
+
+  const anchor = document.createElement("a");
+  anchor.download = `${name}.txt`;
+  anchor.href = url;
+  anchor.click();
+}
+
 export function conversion(num: number, unitName: string): any {
   const convertTable = [
     {
