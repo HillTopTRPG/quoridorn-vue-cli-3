@@ -135,7 +135,6 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
-import { saveJson } from "@/components/common/Utility";
 import ImportTypeRadio from "@/components/parts/radio/ImportTypeRadio.vue";
 import { Watch } from "vue-property-decorator";
 
@@ -143,12 +142,13 @@ import { Watch } from "vue-property-decorator";
   components: { ImportTypeRadio, CtrlButton, WindowFrame, Divider }
 })
 export default class ImportBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
-  @Action("setProperty") setProperty: any;
-  @Action("windowOpen") windowOpen: any;
-  @Action("addListObj") addListObj: any;
-  @Action("deleteListObj") deleteListObj: any;
-  @Action("moveListObj") moveListObj: any;
-  @Action("importBgmList") importBgmList: any;
+  @Action("setProperty") private setProperty: any;
+  @Action("windowOpen") private windowOpen: any;
+  @Action("addListObj") private addListObj: any;
+  @Action("deleteListObj") private deleteListObj: any;
+  @Action("moveListObj") private moveListObj: any;
+  @Action("importBgmList") private importBgmList: any;
+  @Getter("decrypt") private decrypt: any;
 
   private bgmList: any[] = [];
   private importType: string = "1";
@@ -178,16 +178,37 @@ export default class ImportBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
 
       const nameSplit: string[] = file.name.split(".");
       const ext: string = nameSplit[nameSplit.length - 1];
+      const reset: Function = () => {
+        this.file = null;
+        const fileChooser: HTMLInputElement = this.$refs
+          .fileChooser as HTMLInputElement;
+        fileChooser.value = "";
+      };
 
+      if (ext !== "json") {
+        reset();
+        alert("JSONファイルを指定してください。");
+        return;
+      }
+
+      let json: any = {};
       try {
-        const json = JSON.parse(text);
-        if (ext === "json" && json.saveDataTypeName === "Quoridorn_BGM_01") {
-          this.bgmList = json.saveData;
-        } else {
-          alert("ファイルフォーマットが違います");
-        }
+        json = JSON.parse(text);
       } catch (err) {
-        alert("ファイルフォーマットが違います");
+        reset();
+        alert("JSONファイルのフォーマットが壊れています。");
+        return;
+      }
+      if (json.saveDataTypeName === "Quoridorn_BGM_01") {
+        const regExp = new RegExp(/youtube/);
+        json.saveData.forEach((bgm: any) => {
+          const url: string = bgm.url;
+          if (!regExp.test(url)) bgm.url = this.decrypt({ cipherText: url });
+        });
+        this.bgmList = json.saveData;
+      } else {
+        reset();
+        alert("ファイルフォーマットが違います。\n（正：Quoridorn_BGM_01）");
       }
     });
 

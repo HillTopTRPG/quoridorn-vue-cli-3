@@ -12,9 +12,12 @@
     </div>
     <div class="bgmComponent">
       <div class="attrArea">
-        <span class="tag" :title="'【タグ】\n' + tag" @contextmenu.prevent>{{
-          tag
-        }}</span
+        <span
+          class="tag"
+          :title="'【タグ】\n' + tag"
+          ref="elm"
+          @contextmenu.prevent
+          >{{ tag }}</span
         ><!--
      --><span class="title selectable" :title="'【タイトル】\n' + title">{{
           title
@@ -127,6 +130,11 @@ export default class BGMCoreComponent extends Vue {
 
   private fadeInTable: number[] = [];
   private fadeOutTable: number[] = [];
+
+  public click() {
+    const elm: HTMLElement = this.$refs.elm as HTMLElement;
+    elm.click();
+  }
 
   private deleteItem() {
     this.setProperty({

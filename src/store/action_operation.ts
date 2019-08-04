@@ -1,4 +1,3 @@
-import Vue from "vue";
 import {
   toInitiativeObjList,
   arrangeInitiativeWidthList
@@ -264,7 +263,7 @@ export default {
       }: { dispatch: Function; rootState: any; rootGetters: any },
       payload: any
     ) => {
-      let text = payload.text.replace(/"/g, '[[quot]]');
+      let text = payload.text.replace(/"/g, "[[quot]]");
 
       try {
         if (!text.startsWith("@")) {
@@ -273,13 +272,14 @@ export default {
           const owner = payload.owner;
           const from = payload.from || rootGetters.chatActorKey;
           const name = payload.name || rootGetters.getViewName(from);
-          const color = payload.color || rootGetters.getChatColor(from);
-          const tab = payload.tab || activeChatTab;
+          let tab = payload.tab || activeChatTab;
           const target = payload.target;
           const isDiceBot: boolean = payload.isDiceBot || false;
           const statusName = payload.statusName || "◆";
           const processTime = payload.processTime;
           const diceBot = payload.diceBot;
+
+          if (tab === "chatTab-0") tab = "chatTab-1";
 
           /*
            * 立ち絵の表示
@@ -328,6 +328,7 @@ export default {
 
           const logObj: any = {
             type: 1,
+            tab,
             processTime,
             name,
             text,
@@ -340,17 +341,54 @@ export default {
             statusName,
             target
           };
-          window.console.log(JSON.stringify(logObj, null, "    "));
+          rootGetters.chatLogs.push(logObj);
+          // window.console.log(JSON.stringify(logObj, null, "    "));
+
           // 未読カウントアップ
-          if (tab !== activeChatTab) {
-            const index = rootGetters.chatTabsOption.findIndex(
-              (tabObj: any) => tabObj.key === tab
-            );
-            const tabObj = rootGetters.chatTabsOption[index];
-            tabObj.unRead++;
-            rootGetters.chatTabsOption.splice(index, 1, tabObj);
+          if (logObj.tab !== activeChatTab) {
+            /*
+             * 自分が閲覧できるチャットかどうかを判定
+             */
+            let doCountUp = false;
+
+            // from判定
+            doCountUp =
+              rootGetters.getOwnerKey(logObj.from) !== rootGetters.playerKey;
+
+            if (!doCountUp) {
+              // target判定
+              if (!logObj.target) doCountUp = true;
+              if (logObj.target === "groupTargetTab-0") doCountUp = true;
+              const kind = logObj.target.split("-")[0];
+              if (kind === "groupTargetTab") {
+                const target = rootGetters.getObj(logObj.target);
+                if (!target.isSecret || target.isAll) {
+                  doCountUp = true;
+                } else {
+                  const findIndex = target.group.findIndex(
+                    (g: string) =>
+                      rootGetters.getOwnerKey(g) === rootGetters.playerKey
+                  );
+                  doCountUp = findIndex > -1;
+                }
+              } else if (kind === "player") {
+                doCountUp = logObj.target === rootGetters.playerKey;
+              } else {
+                const target = rootGetters.getObj(logObj.target);
+                doCountUp = target.owner === rootGetters.playerKey;
+              }
+            }
+
+            // 自分が閲覧できるチャットだったらカウントアップ
+            if (doCountUp) {
+              const index = rootGetters.chatTabsOption.findIndex(
+                (tabObj: any) => tabObj.key === tab
+              );
+              const tabObj = rootGetters.chatTabsOption[index];
+              tabObj.unRead++;
+              rootGetters.chatTabsOption.splice(index, 1, tabObj);
+            }
           }
-          rootGetters.chatLogs[tab].push(logObj);
         }
 
         // チャット文字連携処理
@@ -378,10 +416,7 @@ export default {
         rootState,
         rootGetters
       }: { dispatch: Function; rootState: any; rootGetters: any },
-      {
-        key,
-        color
-      }: { key: string; color: string; }
+      { key, color }: { key: string; color: string }
     ) => {
       const kind = key.split("-")[0];
       const target = rootState.public[kind].list.filter(
@@ -410,7 +445,7 @@ export default {
         isActive = false,
         isHover = false,
         unRead = 0,
-        order = rootState.public.chat.tab.list.length
+        order = rootGetters.chatTabList.length
       }: {
         name: string | undefined;
         isActive: boolean | undefined;
@@ -420,20 +455,17 @@ export default {
       }
     ) => {
       const key = `chatTab-${++rootState.public.chat.tab.maxKey}`;
-      const publicTab = {
-        key: key,
-        name: name
-      };
-      const privateTab = {
-        key: key,
-        isActive: isActive,
-        isHover: isHover,
-        unRead: unRead,
-        order: order
-      };
-      rootState.public.chat.tab.list.push(publicTab);
-      rootState.private.chat.tab.push(privateTab);
-      Vue.set(rootGetters.chatLogs, key, []);
+      rootGetters.chatTabList.push({
+        key,
+        name
+      });
+      rootGetters.chatTabsOption.push({
+        key,
+        isActive,
+        isHover,
+        unRead,
+        order
+      });
     },
 
     /** ========================================================================
@@ -449,7 +481,7 @@ export default {
       });
     },
     doUpdateChatTab: (
-      { rootState }: { rootState: any },
+      { rootGetters }: { rootGetters: any },
       {
         key,
         name = undefined,
@@ -464,20 +496,20 @@ export default {
         unRead: number | undefined;
       }
     ) => {
-      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
+      const publicTabIndex = rootGetters.chatTabList.findIndex(
         (tab: any) => tab.key === key
       );
-      const publicTab = rootState.public.chat.tab.list[publicTabIndex];
-      const privateTabIndex = rootState.private.chat.tab.findIndex(
+      const publicTab = rootGetters.chatTabList[publicTabIndex];
+      const privateTabIndex = rootGetters.chatTabsOption.findIndex(
         (tab: any) => tab.key === key
       );
-      const privateTab = rootState.private.chat.tab[publicTabIndex];
+      const privateTab = rootGetters.chatTabsOption[publicTabIndex];
       if (name !== undefined) publicTab.name = name;
       if (isActive !== undefined) privateTab.isActive = isActive;
       if (isHover !== undefined) privateTab.isHover = isHover;
       if (unRead !== undefined) privateTab.isActive = unRead;
-      rootState.public.chat.tab.list.splice(publicTabIndex, 1, publicTab);
-      rootState.private.chat.tab.splice(privateTabIndex, 1, privateTab);
+      rootGetters.chatTabList.splice(publicTabIndex, 1, publicTab);
+      rootGetters.chatTabsOption.splice(privateTabIndex, 1, privateTab);
     },
 
     /** ========================================================================
@@ -493,17 +525,17 @@ export default {
       });
     },
     doDeleteChatTab: (
-      { rootState }: { rootState: any },
+      { rootGetters }: { rootGetters: any },
       { key }: { key: string }
     ) => {
-      const publicTabIndex = rootState.public.chat.tab.list.findIndex(
+      const publicTabIndex = rootGetters.chatTabList.findIndex(
         (tab: any) => tab.key === key
       );
-      const privateTabIndex = rootState.private.chat.tab.findIndex(
+      const privateTabIndex = rootGetters.chatTabsOption.findIndex(
         (tab: any) => tab.key === key
       );
-      rootState.public.chat.tab.list.splice(publicTabIndex, 1);
-      rootState.private.chat.tab.splice(privateTabIndex, 1);
+      rootGetters.chatTabList.splice(publicTabIndex, 1);
+      rootGetters.chatTabsOption.splice(privateTabIndex, 1);
     },
 
     /** ========================================================================
@@ -544,8 +576,9 @@ export default {
         .forEach((bgmObj: any) => {
           dispatch("setProperty", {
             property: "private.display.jukeboxWindow.command",
-            isNotice: true,
-            value: { command: "add", payload: bgmObj.key }
+            logOff: true,
+            isNotice: false,
+            value: { command: "add", payload: bgmObj }
           });
         });
     },
@@ -1104,185 +1137,9 @@ export default {
         message: payload.message,
         exampleText: payload.exampleText
       });
-    },
-
-    /** ========================================================================
-     * チャットタブの構成を変更する
-     */
-    changeChatTab: ({ dispatch }: { dispatch: Function }, payload: any) => {
-      dispatch("sendNoticeOperation", {
-        value: payload,
-        method: "doChangeChatTab"
-      });
-    },
-    /**
-     * チャットのタブの構成を変更する
-     * @param rootState
-     * @param rootGetters
-     * @param commit
-     * @param payload
-     * @returns {*}
-     */
-    doChangeChatTab: (
-      {
-        rootState,
-        rootGetters,
-        commit
-      }: { rootState: any; rootGetters: any; commit: Function },
-      payload: any
-    ) => {
-      const lastActiveTab = rootGetters.activeChatTab;
-      let tabsText = payload.tabsText.trim();
-      // 秘匿チャット以外を削除
-      rootGetters.chatTabs
-        .map((tab: any, index: number) => {
-          if (!tab.secretInfo) return;
-          return index;
-        })
-        .reverse()
-        .forEach((index: number) => rootGetters.chatTabs.splice(index, 1));
-
-      tabsText = "メイン " + tabsText;
-      const regExp = new RegExp("[ 　]+", "g");
-      let tabs = tabsText.replace(regExp, " ").split(" ");
-      for (let tab of tabs) {
-        let isActive = false;
-        if (lastActiveTab && lastActiveTab === tab) {
-          isActive = true;
-        }
-        let tabObj = {
-          name: tab,
-          isActive: isActive,
-          isHover: false,
-          unRead: 0,
-          secretInfo: null
-        };
-        rootGetters.chatTabs.push(tabObj);
-      }
-      if (!lastActiveTab) {
-        rootGetters.chatTabs[0].isActive = true;
-      }
-
-      // 削除されたタブの検知
-      let deleteLogTabList = [];
-      for (let tab in rootGetters.chatLogs) {
-        if (!rootGetters.chatLogs.hasOwnProperty(tab)) continue;
-        let findFlg = false;
-        for (const tabsTab of rootGetters.chatTabs) {
-          if (tabsTab.name === tab) {
-            findFlg = true;
-            break;
-          }
-        }
-        if (!findFlg) {
-          deleteLogTabList.push(tab);
-        }
-      }
-      deleteLogTabList.forEach(
-        delTabName => delete rootGetters.chatLogs[delTabName]
-      );
-
-      // 追加されたタブの検知
-      rootGetters.chatTabs.forEach((tabsTab: any) => {
-        if (!rootGetters.chatLogs[tabsTab.name]) {
-          // this.$set(state.chat.logs, tabsTab.name, [])
-          const newLogs = { ...rootGetters.chatLogs };
-          newLogs[tabsTab.key] = [];
-          rootGetters.chatLogs = newLogs;
-          // state.chat.logs[tabsTab.name] = []
-        }
-      });
     }
   },
   getters: {
-    chatLogList: (
-      state: any,
-      getters: any,
-      rootState: any,
-      rootGetters: any
-    ) => {
-      return rootGetters.chatLogs[rootGetters.activeChatTab].filter(
-        (log: any) => {
-          if (log.type !== 1) return false;
-          // log.name = rootGetters.getViewName(log.from);
-          if (log.owner === rootGetters.playerKey) return true;
-          if (!log.target) return true;
-          if (log.target === "groupTargetTab-0") return true;
-          const kind = log.target.split("-")[0];
-          if (kind === "groupTargetTab") {
-            const target = getters.getObj(log.target);
-            if (!target.isSecret) return true;
-            if (target.isAll) return true;
-            const findIndex = target.group.findIndex((g: string) => {
-              const kind = g.split("-")[0];
-              if (kind === "player") {
-                if (g === rootGetters.playerKey) return true;
-              } else if (kind === "character") {
-                if (getters.getObj(g).owner === rootGetters.playerKey)
-                  return true;
-              }
-              return false;
-            });
-            return findIndex > -1;
-          } else if (kind === "player") {
-            return log.target === rootGetters.playerKey;
-          } else {
-            const target = getters.getObj(log.target);
-            return target.owner === rootGetters.playerKey;
-          }
-        }
-      );
-    },
-    groupTargetTabListFiltered: (
-      state: any,
-      getters: any,
-      rootState: any,
-      rootGetters: any
-    ) => {
-      const playerKey: string = rootGetters.playerKey;
-      const fieldCharacters: any[] = rootGetters.getMapObjectList({
-        kind: "character",
-        place: "field",
-        playerKey
-      });
-      return getters.groupTargetTabList.filter((gtt: any) => {
-        if (gtt.isAll) return true;
-        if (gtt.group.findIndex((g: string) => g === playerKey) >= 0)
-          return true;
-        if (
-          gtt.group.findIndex(
-            (g: string) =>
-              fieldCharacters.findIndex((c: any) => c.key === g) >= 0
-          ) >= 0
-        )
-          return true;
-        return false;
-      });
-    },
-    createInputtingMsg: (
-      state: any,
-      getters: any,
-      rootState: any,
-      rootGetters: any
-    ) => (name: string) => `${rootGetters.getViewName(name)}が入力中...`,
-    chatTargetList: (
-      state: any,
-      getters: any,
-      rootState: any,
-      rootGetters: any
-    ) => {
-      const playerKey: string = rootGetters.playerKey;
-      const fieldCharacters: any[] = rootGetters.getMapObjectList({
-        kind: "character",
-        place: "field",
-        playerKey
-      });
-      return [
-        ...rootGetters.groupTargetTabListFiltered,
-        ...rootGetters.playerList,
-        ...fieldCharacters
-      ];
-    },
     mapMaskIsLock: (
       state: any,
       getters: any,

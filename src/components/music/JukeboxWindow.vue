@@ -14,6 +14,7 @@
       <template v-for="bgmObj in playList">
         <b-g-m-youtube-component
           v-if="/www\.youtube\.com/.test(bgmObj.url)"
+          :bgm="bgmObj"
           :key="bgmObj.key"
           :bgmKey="bgmObj.key"
           :ref="bgmObj.key"
@@ -30,6 +31,7 @@
         />
         <b-g-m-file-component
           v-if="!/www\.youtube\.com/.test(bgmObj.url)"
+          :bgm="bgmObj"
           :key="bgmObj.key"
           :bgmKey="bgmObj.key"
           :ref="bgmObj.key"
@@ -60,6 +62,7 @@ import BGMFileComponent from "@/components/music/component/BGMFileComponent.vue"
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
+import { Watch } from "vue-property-decorator";
 
 @Component({
   components: {

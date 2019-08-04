@@ -19,7 +19,7 @@ export default {
      * @param rootGetters
      */
     saveChatLogHtml({ rootGetters }: { rootGetters: any }) {
-      const dateStr = moment().format("YYYYMMDD_hhmmss");
+      const dateStr = moment().format("YYYYMMDD_HHmmss");
       const title = `Quoridorn_chatLog_${dateStr}`;
 
       const data = {

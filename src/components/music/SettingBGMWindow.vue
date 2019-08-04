@@ -142,7 +142,6 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { saveJson } from "@/components/common/Utility";
-import CryptoJS from "crypto-js";
 
 @Component({ components: { CtrlButton, WindowFrame, Divider } })
 export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
@@ -154,6 +153,7 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("bgmList") bgmList: any;
   @Getter("isGameMaster") private isGameMaster: any;
   @Getter("magicWord") private magicWord: any;
+  @Getter("encrypt") encrypt: any;
 
   private isYoutube(url: string) {
     return /www\.youtube\.com/.test(url);
@@ -267,15 +267,8 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     };
 
     data.saveData.forEach((bgmObj: any) => {
-      if (!this.isYoutube(bgmObj.url)) {
-        const ciphertext = CryptoJS.AES.encrypt(
-          bgmObj.url,
-          this.magicWord
-        ).toString();
-        const bytes = CryptoJS.AES.decrypt(ciphertext, this.magicWord);
-        const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
-        bgmObj.url = ciphertext;
-      }
+      if (!this.isYoutube(bgmObj.url))
+        bgmObj.url = this.encrypt({ planeText: bgmObj.url });
     });
     // window.console.log(JSON.stringify(data, null, "    "));
     saveJson("bgm", data);

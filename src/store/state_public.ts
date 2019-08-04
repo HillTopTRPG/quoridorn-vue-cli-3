@@ -114,6 +114,9 @@ export default {
       if (kind === "groupTargetTab") {
         // グループチャットタブ
         return rootGetters.groupTargetTabList.filter(filterFunc)[0];
+      } else if (kind === "chatTab") {
+        // チャットタブ
+        return rootGetters.chatTabList.filter(filterFunc)[0];
       } else if (kind === "imgTag") {
         // イメージタグ
         return rootGetters.imageTagList.filter(filterFunc)[0];
@@ -148,7 +151,10 @@ export default {
 
     getViewName: (state: any, getters: any) => (key: string): string => {
       const obj = getters.getObj(key);
-      if (!obj) return key;
+      if (!obj) {
+        if (key && key.split("-")[0] === "chatTab") return "削除済";
+        return key;
+      }
       const kind = obj.key.split("-")[0];
       if (kind === "player") {
         return `${obj.name}(${obj.type})`;

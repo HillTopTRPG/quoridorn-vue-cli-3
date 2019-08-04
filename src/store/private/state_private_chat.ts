@@ -4,10 +4,17 @@ export default {
     tab: [
       {
         key: "chatTab-0",
-        isActive: true,
+        isActive: false,
         isHover: false,
         unRead: 0,
         order: 0
+      },
+      {
+        key: "chatTab-1",
+        isActive: true,
+        isHover: false,
+        unRead: 0,
+        order: 1
       }
     ],
     secretDiceList: []

@@ -3,7 +3,7 @@ export default {
   state: {
     /** チャットのタブ */
     tab: {
-      list: [{ key: "chatTab-0", name: "メイン" }],
+      list: [{ key: "chatTab-1", name: "メイン" }],
       isVertical: false
     },
 
@@ -22,19 +22,7 @@ export default {
     },
 
     /** チャットのリスト */
-    logs: {
-      "chatTab-0": [
-        {
-          owner: "SYSTEM",
-          from: "SYSTEM",
-          target: "groupTargetTab-0",
-          text: "こちらデモ版です。",
-          color: "red",
-          statusName: "◆",
-          isDiceBot: false
-        }
-      ]
-    },
+    logs: [],
 
     /** 入力中のルームメイトのpeerId一覧 */
     inputting: {},
@@ -98,6 +86,32 @@ export default {
     chatLogs: (state: any): any[] => state.logs,
     chatTabList: (state: any): any[] => state.tab.list,
     groupTargetTabList: (state: any): any => state.groupTargetTab.list,
-    isChatTabVertical: (state: any) => state.tab.isVertical
+    isChatTabVertical: (state: any) => state.tab.isVertical,
+    getChatColor: (
+      state: any,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) => (actorKey: string) => {
+      const actor = rootGetters.getObj(actorKey);
+      if (!actor) return "black";
+      if (actor.fontColorType === "0") {
+        const owner = rootGetters.getObj(actor.owner);
+        return owner.fontColor;
+      }
+      return actor.fontColor;
+    },
+    colorMap: (state: any, getters: any, rootState: any, rootGetters: any) => {
+      const resultObj: any = {};
+      resultObj[rootGetters.systemLog.colorKey] = rootGetters.systemLog.color;
+      rootGetters.characterList.forEach((c: any) => {
+        resultObj[`color-${c.key}`] = rootGetters.getChatColor(c.key);
+      });
+      rootGetters.playerList.forEach((p: any) => {
+        resultObj[`color-${p.key}`] = p.fontColor;
+      });
+      // window.console.log(JSON.stringify(resultObj, null, "    "));
+      return resultObj;
+    }
   }
 };

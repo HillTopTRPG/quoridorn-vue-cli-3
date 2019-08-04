@@ -74,6 +74,7 @@ export default class DropZipWindow extends Mixins<WindowMixin>(WindowMixin) {
       ({ fileName, saveData }: { fileName: string; saveData: any }) => {
         const publicData: any = saveData.public;
         const dataVersion: string = saveData.dataVersion;
+
         // const delKeyList: string[] = saveData.delKeyList;
         // const addObjList: any[] = saveData.addObjList;
 

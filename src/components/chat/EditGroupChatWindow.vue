@@ -325,12 +325,14 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
   }
 
   private get targetTabOptionInfoList(): any[] {
-    const resultList: any[] = this.chatTabs.map((tabObj: any) => ({
-      key: tabObj.name,
-      value: tabObj.key,
-      text: tabObj.name,
-      disabled: false
-    }));
+    const resultList: any[] = this.chatTabs
+      .filter((tab: any) => !tab.isTotal)
+      .map((tabObj: any) => ({
+        key: tabObj.name,
+        value: tabObj.key,
+        text: tabObj.name,
+        disabled: false
+      }));
     resultList.unshift({
       key: "0",
       value: "",

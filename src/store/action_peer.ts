@@ -184,7 +184,6 @@ export default {
         dispatch("addChatLog", {
           name: rootGetters.systemLog.name,
           text: `${player.name} が退室しました。`,
-          color: rootGetters.systemLog.colorKey,
           tab: rootGetters.systemLog.tab,
           target: "groupTargetTab-0",
           from: rootGetters.systemLog.from,
@@ -212,6 +211,14 @@ export default {
       }: { rootState: any; dispatch: any; rootGetters: any },
       { fromPeerId, isWait }: { fromPeerId: string; isWait: boolean }
     ) {
+      if (!rootGetters.members[0]) {
+        // タイミング悪く準備完了前に来てしまったとき
+        setTimeout(
+          () => dispatch("onNoticeNewMember", { fromPeerId, isWait }),
+          500
+        );
+        return;
+      }
       // 自分が親だったら、入ってきた人に部屋情報を教えてあげる
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
         dispatch("sendRoomData", {
@@ -411,9 +418,17 @@ export default {
       }: { rootState: any; dispatch: any; rootGetters: any },
       { value, method, isWait }: { value: any; method: string; isWait: boolean }
     ) {
+      if (!rootGetters.members[0]) {
+        // タイミング悪く準備完了前に来てしまったとき
+        setTimeout(
+          () => dispatch("onNoticeOperation", { value, method, isWait }),
+          500
+        );
+        return;
+      }
       // 自分が親だったら、この通知を処理して、ルームメンバーに土管する
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
-        value.processTime = moment().format("YYYY/MM/DD hh:mm:ss");
+        value.processTime = parseInt(moment().format("YYYYMMDDHHmmss"), 10);
         dispatch("sendRoomData", {
           type: "DO_METHOD",
           value: value,
@@ -1128,7 +1143,6 @@ export default {
       dispatch("addChatLog", {
         name: rootGetters.systemLog.name,
         text: `${playerName} が入室しました。`,
-        color: rootGetters.systemLog.colorKey,
         tab: rootGetters.systemLog.tab,
         target: "groupTargetTab-0",
         from: rootGetters.systemLog.from,

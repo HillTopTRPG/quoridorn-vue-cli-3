@@ -11,14 +11,14 @@
       <draggable v-model="tabs">
         <template v-for="(tab, index) in tabs">
           <label :key="tab.key">
-            <span v-if="tab.key === 'chatTab-0'">{{ tab.name }}</span>
+            <span v-if="tab.key === 'chatTab-1'">{{ tab.name }}</span>
             <input
-              v-if="tab.key !== 'chatTab-0'"
+              v-if="tab.key !== 'chatTab-1'"
               type="text"
               v-model="tab.name"
             />
             <ctrl-button
-              v-if="tab.key !== 'chatTab-0'"
+              v-if="tab.key !== 'chatTab-1'"
               @click="delTab(tab.key, index)"
             >
               削除
@@ -29,6 +29,12 @@
       <ctrl-button @click="addTab">追加</ctrl-button>
       <label>
         タブを斜めにする<input type="checkbox" v-model="isTabVertical" />
+      </label>
+      <label>
+        時間を表示する<input type="checkbox" v-model="isLogViewTime" />
+      </label>
+      <label>
+        統合タブを表示する<input type="checkbox" v-model="isLogViewAllTab" />
       </label>
       <div class="operateArea">
         <ctrl-button @click="commit">変更</ctrl-button>
@@ -64,15 +70,22 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
   @Action("deleteChatTab") private deleteChatTab: any;
   @Getter("chatTabs") private chatTabs: any;
   @Getter("isChatTabVertical") private isChatTabVertical: any;
+  @Getter("isViewTime") private isViewTime: any;
+  @Getter("isViewTotalTab") private isViewTotalTab: any;
 
   private tabs: any[] = [];
   private addIndex: number = -1;
   private delTabs: string[] = [];
   private isTabVertical: boolean = false;
+  private isLogViewTime: boolean = false;
+  private isLogViewAllTab: boolean = false;
 
   private initWindow() {
-    this.tabs = this.chatTabs.concat();
+    this.tabs = this.chatTabs.filter((tab: any) => !tab.isTotal).concat();
+    this.delTabs = [];
     this.isTabVertical = this.isChatTabVertical;
+    this.isLogViewTime = this.isViewTime;
+    this.isLogViewAllTab = this.isViewTotalTab;
   }
 
   private addTab() {
@@ -91,7 +104,7 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
   }
 
   private commit() {
-    this.delTabs.forEach((key: string) => this.deleteChatTab(key));
+    this.delTabs.forEach((key: string) => this.deleteChatTab({ key }));
     this.tabs.forEach((tab: any, index: number) => {
       if (tab.key.startsWith("chatTabAdd")) {
         this.addChatTab({
@@ -102,20 +115,26 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
         this.updateChatTab({
           key: tab.key,
           name: tab.name,
-          order: index
+          order: index + 1
         });
       }
     });
     this.setProperty({
-      property: "public.chat.tab.isVertical",
-      value: this.isTabVertical,
+      property: "public.chat.tab",
+      value: {
+        isChatTabVertical: this.isTabVertical,
+        isViewTime: this.isLogViewTime,
+        isViewTotalTab: this.isLogViewAllTab
+      },
       isNotice: true,
       logOff: true
     });
+    this.delTabs = [];
     this.windowClose("private.display.settingChatTabWindow");
   }
 
   private cancel() {
+    this.delTabs = [];
     this.windowClose("private.display.settingChatTabWindow");
   }
 }

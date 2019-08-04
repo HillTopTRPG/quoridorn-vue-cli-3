@@ -4,6 +4,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import statePublic from "@/store/state_public_chat_log";
+import stateSetting from "@/store/state_setting";
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ Vue.use(Vuex);
  */
 export default new Vuex.Store({
   modules: {
+    setting: stateSetting,
     public: statePublic
   },
   state: {},
@@ -30,6 +32,8 @@ export default new Vuex.Store({
       commit("setChatLogs", (window as any)!["chatLogs"]);
       commit("setChatTabs", (window as any)!["chatTabList"]);
       commit("setGroupTargetTabList", (window as any)!["groupTargetTabList"]);
+      commit("initPlayer");
+      commit("initCharacter");
     }
   },
   mutations: {},
@@ -53,7 +57,10 @@ export default new Vuex.Store({
     },
     getViewName: (state: any, getters: any) => (key: string): string => {
       const obj = getters.getObj(key);
-      if (!obj) return key;
+      if (!obj) {
+        if (key.split("-")[0] === "chatTab") return "削除済";
+        return key;
+      }
       const kind = obj.key.split("-")[0];
       if (kind === "player") {
         return `${obj.name}(${obj.type})`;

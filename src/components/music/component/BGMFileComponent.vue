@@ -26,6 +26,7 @@
 <script lang="ts">
 import BGMCoreComponent from "./BGMCoreComponent.vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { Action } from "vuex-class";
 
 @Component({
   components: {
@@ -33,6 +34,11 @@ import { Component, Prop, Vue } from "vue-property-decorator";
   }
 })
 export default class BGMFileComponent extends Vue {
+  @Action("setProperty") private setProperty: any;
+
+  @Prop({ type: Object, required: true })
+  private bgm!: any;
+
   @Prop({ type: String, required: true })
   private bgmKey!: string;
 
@@ -69,6 +75,14 @@ export default class BGMFileComponent extends Vue {
   private jukeboxAudio: any = null;
 
   onMounted(this: any): void {
+    window.console.log(this.url);
+    const useUrl = this.url.replace(/^(.+dropbox.+\?dl)=0$/, "$1=1");
+
+    const bgmCoreComponent: BGMCoreComponent = this.$refs
+      .core as BGMCoreComponent;
+
+    bgmCoreComponent.click();
+
     this.jukeboxAudio = new Audio();
     // this.jukeboxAudio.crossOrigin = "anonymous";
     this.jukeboxAudio.autoplay = true;
@@ -76,13 +90,33 @@ export default class BGMFileComponent extends Vue {
     this.jukeboxAudio.addEventListener("timeupdate", this.onTimeUpdate);
     this.jukeboxAudio.addEventListener("play", () => {
       if (!this.jukeboxAudio) return;
-      const bgmCoreComponent: BGMCoreComponent = this.$refs
-        .core as BGMCoreComponent;
       bgmCoreComponent.setDuration(this.jukeboxAudio.duration);
       bgmCoreComponent.play();
     });
+    this.jukeboxAudio.addEventListener("progress", () =>
+      window.console.log("progress")
+    );
+    this.jukeboxAudio.addEventListener("emptied", () =>
+      window.console.log("emptied")
+    );
+    this.jukeboxAudio.addEventListener("stalled", () =>
+      window.console.log("stalled")
+    );
+    this.jukeboxAudio.addEventListener("abort", () =>
+      window.console.log("abort")
+    );
+    this.jukeboxAudio.addEventListener("error", () =>
+      window.console.log("error")
+    );
+    this.jukeboxAudio.addEventListener("ended", () =>
+      window.console.log("ended")
+    );
+    this.jukeboxAudio.addEventListener("suspend", () =>
+      window.console.log("suspend")
+    );
     // DropBox共有リンク対応
-    this.jukeboxAudio.src = this.url.replace(/^(.+dropbox.+\?dl)=0$/, "$1=1");
+    this.jukeboxAudio.src = useUrl;
+    window.console.log(this.jukeboxAudio.src);
   }
 
   onDestroyed(): void {
@@ -98,7 +132,9 @@ export default class BGMFileComponent extends Vue {
   }
 
   onPlay(): void {
-    this.jukeboxAudio.play().then();
+    this.jukeboxAudio.play().then(() => {
+      window.console.log("onPlayed", this.jukeboxAudio.readyState);
+    });
   }
 
   onPause(): void {
@@ -115,9 +151,8 @@ export default class BGMFileComponent extends Vue {
 
   onTimeUpdate(): void {
     if (!this.jukeboxAudio) return;
-    const bgmCoreComponent: BGMCoreComponent = <BGMCoreComponent>(
-      this.$refs.core
-    );
+    const bgmCoreComponent: BGMCoreComponent = this.$refs
+      .core as BGMCoreComponent;
     bgmCoreComponent.timeUpdate(this.jukeboxAudio.currentTime);
   }
 }

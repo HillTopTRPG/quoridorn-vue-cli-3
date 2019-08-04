@@ -1,9 +1,14 @@
 <template>
   <div id="app">
     <!-- 視点 -->
-    <fieldset class="imageAreaSettings">
-      <legend>視点</legend>
-      <div>
+    <fieldset class="visual-block">
+      <legend
+        :class="{ open: isViewVisualBlock }"
+        @click="onClickLegend('isViewVisualBlock')"
+      >
+        視点
+      </legend>
+      <div v-show="isViewVisualBlock">
         <label v-for="player in playerList" :key="player.key"
           >{{ getViewName(player.key)
           }}<input
@@ -13,20 +18,47 @@
       </div>
     </fieldset>
 
+    <!-- 出力形式 -->
+    <fieldset class="save-block">
+      <legend
+        :class="{ open: isViewSaveBlock }"
+        @click="onClickLegend('isViewSaveBlock')"
+      >
+        出力
+      </legend>
+      <div v-show="isViewSaveBlock">
+        <ctrl-button @click="onClickSaveAsDodontofHTML">
+          どどんとふHTML
+        </ctrl-button>
+        <ctrl-button @click="onClickSaveAsDodontofHTML">
+          どどんとふText
+        </ctrl-button>
+        <ctrl-button @click="onClickSaveAsDodontofHTML">
+          Json
+        </ctrl-button>
+        <ctrl-button @click="onClickSaveAsDodontofHTML">
+          XML(未実装)
+        </ctrl-button>
+      </div>
+    </fieldset>
+
     <!----------------
      ! チャットログ
      !--------------->
     <chat-log-viewer
       :tabIndex="0"
+      :chatLogList="chatLogList(false)"
       :tabList="chatTabList"
       :activeChatTab="activeChatTab"
       :hoverChatTab="hoverChatTab"
       :isVertical="isChatTabVertical"
+      :isViewTime="true"
+      :isViewTotalTab="true"
       :textFunc="info => info.name"
       @onSelect="chatTabOnSelect"
       @onHover="chatTabOnHover"
       @editTab="tabAddButtonOnClick"
-      :chatLogList="chatLogList"
+      :colorMap="colorMap"
       style="align-self: stretch;"
     />
   </div>
@@ -48,7 +80,6 @@ body {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   @include flex-box(column, flex-start, normal);
   width: 100%;
@@ -57,12 +88,47 @@ body {
   overflow: hidden;
 }
 
-.imageAreaSettings {
+fieldset {
   display: inline-block;
   margin-bottom: 0.5em;
+  background-color: lightcyan;
+  border: 1px solid black;
+  padding: 0.5em;
+
+  legend {
+    background-color: inherit;
+    border: 1px solid black;
+    cursor: pointer;
+    user-select: none;
+    padding: 0 0.5em;
+    position: relative;
+
+    &.open:after {
+      content: "(+)";
+    }
+
+    &:after {
+      content: "(-)";
+    }
+
+    &:hover:before {
+      content: "";
+      background-color: rgba(0, 0, 0, 0.1);
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+  }
 
   > div {
-    @include inline-flex-box(column, flex-start, normal);
+    @include inline-flex-box(row, flex-start, normal);
+    flex-wrap: wrap;
+
+    > *:not(:first-child) {
+      margin-left: 0.5em;
+    }
   }
 }
 </style>
@@ -75,9 +141,11 @@ import { Action, Getter, Mutation } from "vuex-class";
 import ChatLogViewer from "@/components/chat/ChatLogViewer.vue";
 import { Watch } from "vue-property-decorator";
 import ImportTypeRadio from "@/components/parts/radio/ImportTypeRadio.vue";
+import CtrlButton from "@/components/parts/CtrlButton.vue";
 
 @Component({
   components: {
+    CtrlButton,
     ImportTypeRadio,
     ChatLogViewer,
     TabsComponent
@@ -92,13 +160,20 @@ export default class ChatLog extends Vue {
   @Getter("isChatTabVertical") private isChatTabVertical: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
+  @Getter("colorMap") private colorMap: any;
 
   private activeChatTab: string = "";
   private hoverChatTab: string = "";
   private targetPlayers: string[] = [];
+  private isViewVisualBlock: boolean = true;
+  private isViewSaveBlock: boolean = false;
 
   private mounted() {
     this.onMount();
+  }
+
+  private onClickLegend(this: any, target: string) {
+    this[target] = !this[target];
   }
 
   private onTargetCheck(targetKey: string, check: boolean) {
@@ -130,39 +205,42 @@ export default class ChatLog extends Vue {
     alert("未実装");
   }
 
-  private get chatLogList(): any {
-    const isTargetPlayer: Function = (playerKey: string) =>
-      this.targetPlayers.filter(
-        (targetPlayer: any) => targetPlayer === playerKey
-      )[0];
+  private get chatLogList(): Function {
+    return (isAll: boolean = false): any => {
+      const isTargetPlayer: Function = (playerKey: string) =>
+        this.targetPlayers.filter(
+          (targetPlayer: any) => targetPlayer === playerKey
+        )[0];
 
-    return this.chatLogs[this.activeChatTab].filter((log: any) => {
-      if (log.type !== 1) return false;
-      if (!log.target) return true;
-      if (log.target === "groupTargetTab-0") return true;
-      if (isTargetPlayer(log.owner)) return true;
-      const kind = log.target.split("-")[0];
-      if (kind === "groupTargetTab") {
-        const target = this.getObj(log.target);
-        if (!target.isSecret) return true;
-        if (target.isAll) return true;
-        const findIndex = target.group.findIndex((g: string) => {
-          const kind = g.split("-")[0];
-          if (kind === "player") {
-            if (isTargetPlayer(g)) return true;
-          } else if (kind === "character") {
-            if (isTargetPlayer(this.getObj(g).owner)) return true;
-          }
-          return false;
-        });
-        return findIndex > -1;
-      } else if (kind === "player") {
-        return isTargetPlayer(log.target);
-      } else {
-        const target = this.getObj(log.target);
-        return isTargetPlayer(target.owner);
-      }
-    });
+      return this.chatLogs.filter((log: any) => {
+        if (!isAll && log.tab !== this.activeChatTab) return false;
+        if (log.type !== 1) return false;
+        if (!log.target) return true;
+        if (log.target === "groupTargetTab-0") return true;
+        if (isTargetPlayer(log.owner)) return true;
+        const kind = log.target.split("-")[0];
+        if (kind === "groupTargetTab") {
+          const target = this.getObj(log.target);
+          if (!target.isSecret) return true;
+          if (target.isAll) return true;
+          const findIndex = target.group.findIndex((g: string) => {
+            const kind = g.split("-")[0];
+            if (kind === "player") {
+              if (isTargetPlayer(g)) return true;
+            } else if (kind === "character") {
+              if (isTargetPlayer(this.getObj(g).owner)) return true;
+            }
+            return false;
+          });
+          return findIndex > -1;
+        } else if (kind === "player") {
+          return isTargetPlayer(log.target);
+        } else {
+          const target = this.getObj(log.target);
+          return isTargetPlayer(target.owner);
+        }
+      });
+    };
   }
 
   private get playerList(): any {
@@ -170,10 +248,20 @@ export default class ChatLog extends Vue {
     return actors.filter((actor: any) => actor.key.startsWith("player"));
   }
 
-  /*
-  private get actors(): any[] {
-    return (window as any)!["actors"];
+  private onClickSaveAsDodontofHTML() {
+    alert("Save as DodontofHTML");
   }
-  */
+
+  private onClickSaveAsDodontofText() {
+    alert("Save as DodontofHTML");
+  }
+
+  private onClickSaveAsJson() {
+    alert("Save as Json");
+  }
+
+  private onClickSaveAsXML() {
+    alert("Save as XML");
+  }
 }
 </script>

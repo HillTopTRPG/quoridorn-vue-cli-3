@@ -35,6 +35,9 @@ import { Action } from "vuex-class";
 export default class BGMYoutubeComponent extends Vue {
   @Action("setProperty") private setProperty: any;
 
+  @Prop({ type: Object, required: true })
+  private bgm!: string;
+
   @Prop({ type: String, required: true })
   private bgmKey!: string;
 
@@ -108,7 +111,7 @@ export default class BGMYoutubeComponent extends Vue {
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
       logOff: true,
-      value: { command: "add", payload: this.bgmKey }
+      value: { command: "add", payload: this.bgm }
     });
   }
 

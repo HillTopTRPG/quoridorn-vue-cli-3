@@ -55,7 +55,7 @@ export default new Vuex.Store({
     },
 
     chat: {
-      activeChatTab: "chatTab-0",
+      activeChatTab: "chatTab-1",
       hoverChatTab: "",
       actorKey: "",
       diceSystemList: []
@@ -362,7 +362,7 @@ export default new Vuex.Store({
         const isMaster =
           rootGetters.members[0].peerId === rootGetters.peerId(isWait);
         if (isMaster) {
-          value.processTime = parseInt(moment().format("YYYYMMDDhhmmss"), 0);
+          value.processTime = parseInt(moment().format("YYYYMMDDHHmmss"), 0);
         }
         dispatch("sendRoomData", {
           type: isMaster ? "DO_METHOD" : "NOTICE_OPERATION",
@@ -739,6 +739,7 @@ export default new Vuex.Store({
         return {
           key: publicTab.key,
           name: publicTab.name,
+          isTotal: publicTab.isTotal,
           isActive: privateTab.isActive,
           isHover: privateTab.isHover,
           unRead: privateTab.unRead,
@@ -762,12 +763,6 @@ export default new Vuex.Store({
     },
     hash: state => (planeText, key) => CryptoJS.HmacSHA1(planeText, key),
     isSameHash: state => (hash, planeText, key) =>
-      hash === CryptoJS.HmacSHA1(planeText, key),
-    encrypt: state => (planeText, password) =>
-      CryptoJS.AES.encrypt(planeText, password),
-    decrypt: state => (ciphertext, password) =>
-      CryptoJS.AES.decrypt(ciphertext.toString(), password).toString(
-        CryptoJS.enc.Utf8
-      )
+      hash === CryptoJS.HmacSHA1(planeText, key)
   }
 });

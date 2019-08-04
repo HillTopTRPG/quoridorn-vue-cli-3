@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import CryptoJS from "crypto-js";
 
 Vue.use(Vuex);
 
@@ -45,7 +46,7 @@ export default {
       name: "SYSTEM",
       colorKey: "color-SYSTEM",
       color: "#000",
-      tab: "chatTab-0",
+      tab: "chatTab-1",
       from: "SYSTEM"
     },
     chatFormats: [
@@ -159,6 +160,30 @@ export default {
     connectType: (state: any) => state.connect.type,
     version: (state: any) => state.version,
     bcdiceServer: (state: any) => state.bcdiceServer,
-    chatFormats: (state: any) => state.chatFormats
+    chatFormats: (state: any) => state.chatFormats,
+
+    /** 暗号化 */
+    encrypt: (state: any) => ({
+      planeText,
+      salt = state.magicWord
+    }: {
+      planeText: string;
+      salt: string;
+    }) => {
+      return CryptoJS.AES.encrypt(planeText, salt).toString();
+    },
+
+    /** 復号化 */
+    decrypt: (state: any) => ({
+      cipherText,
+      salt = state.magicWord
+    }: {
+      cipherText: string;
+      salt: string;
+    }) => {
+      // window.console.log("decrypt", cipherText, salt);
+      // window.console.log(CryptoJS.AES.decrypt(cipherText, salt).toString(CryptoJS.enc.Utf8));
+      return CryptoJS.AES.decrypt(cipherText, salt).toString(CryptoJS.enc.Utf8);
+    }
   }
 };

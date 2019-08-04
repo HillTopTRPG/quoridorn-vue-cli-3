@@ -238,7 +238,7 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     const volumeComponentElm: VolumeComponent = this.$refs
       .volumeComponent as VolumeComponent;
     volumeComponentElm!.setVolume(this.volume);
-    this.chatLinkage = bgmObj.chatLinkage;
+    this.chatLinkage = String(bgmObj.chatLinkage);
     this.chatLinkageSearch = bgmObj.chatLinkageSearch;
   }
 

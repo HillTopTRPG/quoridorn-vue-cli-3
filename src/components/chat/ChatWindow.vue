@@ -12,15 +12,17 @@
        !--------------->
       <chat-log-viewer
         :tabIndex="0"
+        :chatLogList="chatLogList"
         :tabList="chatTabs"
         :activeChatTab="activeChatTab"
         :hoverChatTab="hoverChatTab"
         :isVertical="isChatTabVertical"
+        :isViewTime="isViewTime"
+        :isViewTotalTab="isViewTotalTab"
         :textFunc="info => `#${info.name}/${info.unRead}`"
         @onSelect="chatTabOnSelect"
         @onHover="chatTabOnHover"
         @editTab="tabAddButtonOnClick"
-        :chatLogList="chatLogList"
         :colorMap="colorMap"
       />
 
@@ -555,6 +557,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("isChatTabVertical") private isChatTabVertical: any;
   @Getter("colorMap") private colorMap: any;
   @Getter("chatFormats") private chatFormats: any;
+  @Getter("isViewTime") private isViewTime: any;
+  @Getter("isViewTotalTab") private isViewTotalTab: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;

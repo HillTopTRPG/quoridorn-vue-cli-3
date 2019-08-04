@@ -91,6 +91,40 @@ export default {
       );
       saveData.public.room.members = [];
 
+      /*
+       * 暗号化
+       */
+      const encryptObj: Function = (container: any, target: string) => {
+        container[target] = rootGetters.encrypt({
+          planeText: JSON.stringify(container[target])
+        });
+      };
+      encryptObj(saveData.public, "room");
+      encryptObj(saveData.public, "initiative");
+      encryptObj(saveData.public, "setting");
+
+      const encryptListObj: Function = (container: any, target: string) => {
+        container[target] = container[target].map((obj: any) =>
+          rootGetters.encrypt({ planeText: JSON.stringify(obj) })
+        );
+      };
+      encryptListObj(saveData.public.chat, "logs");
+      encryptListObj(saveData.public.chat.tab, "list");
+      encryptListObj(saveData.public.chat.groupTargetTab, "list");
+      encryptListObj(saveData.public.player, "list");
+      encryptListObj(saveData.public.chit, "list");
+      encryptListObj(saveData.public.character, "list");
+      encryptListObj(saveData.public.mapMask, "list");
+      encryptListObj(saveData.public.diceSymbol, "list");
+      encryptListObj(saveData.public.customDiceBot, "list");
+      encryptListObj(saveData.public.customDiceBot, "roomSysList");
+      encryptListObj(saveData.public.publicMemo, "list");
+      encryptListObj(saveData.public.image, "list");
+      encryptListObj(saveData.public.image.tags, "list");
+      encryptListObj(saveData.public.bgm, "list");
+      encryptListObj(saveData.public.map, "list");
+      encryptListObj(saveData.public.counterRemocon, "list");
+
       for (const playerKey in rootGetters.volatilePrivateData) {
         if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
           continue;
@@ -213,7 +247,7 @@ export default {
       const zip = new JSZip();
       zip.file("save.json", JSON.stringify(saveData, undefined, 2));
       zip.generateAsync({ type: "blob" }).then((blob: any) => {
-        const dateStr = moment().format("YYYYMMDD_hhmmss");
+        const dateStr = moment().format("YYYYMMDD_HHmmss");
         saveAs(blob, `Quoridorn_${dateStr}.zip`);
       });
     },
@@ -298,6 +332,40 @@ export default {
         dropZipRoomCreate: boolean;
       }
     ) {
+      /*
+       * 復号化
+       */
+      const decryptObj: Function = (container: any, target: string) => {
+        container[target] = JSON.parse(
+          rootGetters.decrypt({ cipherText: container[target] })
+        );
+      };
+      decryptObj(publicData, "room");
+      decryptObj(publicData, "initiative");
+      decryptObj(publicData, "setting");
+
+      const decryptListObj: Function = (container: any, target: string) => {
+        container[target] = container[target].map((cipherText: string) =>
+          JSON.parse(rootGetters.decrypt({ cipherText }))
+        );
+      };
+      decryptListObj(publicData.chat, "logs");
+      decryptListObj(publicData.chat.tab, "list");
+      decryptListObj(publicData.chat.groupTargetTab, "list");
+      decryptListObj(publicData.player, "list");
+      decryptListObj(publicData.chit, "list");
+      decryptListObj(publicData.character, "list");
+      decryptListObj(publicData.mapMask, "list");
+      decryptListObj(publicData.diceSymbol, "list");
+      decryptListObj(publicData.customDiceBot, "list");
+      decryptListObj(publicData.customDiceBot, "roomSysList");
+      decryptListObj(publicData.publicMemo, "list");
+      decryptListObj(publicData.image, "list");
+      decryptListObj(publicData.image.tags, "list");
+      decryptListObj(publicData.bgm, "list");
+      decryptListObj(publicData.map, "list");
+      decryptListObj(publicData.counterRemocon, "list");
+
       const importFunc = () => {
         // FIXME チャットデータは上書きでいいの…かな？（差分方式がいい気もしている
         dispatch("setProperty", {

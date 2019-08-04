@@ -5,7 +5,7 @@
      !--------------->
     <tabs-component
       :tabIndex="0"
-      :tabList="tabList"
+      :tabList="useTabList"
       :activeChatTab="activeChatTab"
       :hoverChatTab="hoverChatTab"
       :isVertical="isVertical"
@@ -20,12 +20,17 @@
      !--------------->
     <ul id="chatLog" class="selectable" @wheel.stop>
       <li v-for="(chatLog, index) in chatLogList" :key="index">
+        <span v-if="activeChatTab === 'chatTab-0'"
+          >[{{ getViewName(chatLog.tab) }}]
+        </span>
         <span :style="{ color: `var(--${chatLog.color}, #000)` }">
           <b>{{ chatLog.name }}</b
           ><span v-if="chatLog.target !== 'groupTargetTab-0'"
             >＞＞<b>{{ getViewName(chatLog.target) }}</b></span
-          >：<span v-html="transText(chatLog.text)"></span
-        ></span>
+          >：<span v-html="transText(chatLog.text)"></span></span
+        ><span class="time" v-if="isViewTime">{{
+          getTime(chatLog.processTime)
+        }}</span>
       </li>
     </ul>
   </div>
@@ -38,6 +43,7 @@ import { Emit, Prop, Watch } from "vue-property-decorator";
 import { Component } from "vue-mixin-decorator";
 import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
 import { Getter } from "vuex-class";
+import moment from "moment";
 
 @Component({
   components: { TabsComponent }
@@ -48,6 +54,11 @@ export default class ChatLogViewer extends Vue {
   @Prop({ type: Array, required: true })
   private tabList!: any[];
 
+  private get useTabList() {
+    if (this.isViewTotalTab) return this.tabList;
+    return this.tabList.filter((tab: any) => !tab.isTotal);
+  }
+
   @Prop({ type: String, required: true })
   private activeChatTab!: string;
 
@@ -56,6 +67,12 @@ export default class ChatLogViewer extends Vue {
 
   @Prop({ type: Boolean, required: true })
   private isVertical!: boolean;
+
+  @Prop({ type: Boolean, required: true })
+  private isViewTime!: boolean;
+
+  @Prop({ type: Boolean, required: true })
+  private isViewTotalTab!: boolean;
 
   @Prop({ type: Number, required: true })
   private tabIndex!: number;
@@ -157,6 +174,12 @@ export default class ChatLogViewer extends Vue {
     }
     return resultTexts.join("");
   }
+
+  private getTime(timeNum: number) {
+    return timeNum
+      ? moment(String(timeNum), "YYYYMMDDHHmmss").format("HH:mm:ss")
+      : "";
+  }
 }
 </script>
 
@@ -170,7 +193,7 @@ export default class ChatLogViewer extends Vue {
 }
 
 #chatLog {
-  @include flex-box(column, flex-start, flex-start);
+  @include flex-box(column, stretch, flex-start);
   background-color: white;
   flex: 1;
   -moz-box-flex: 1;
@@ -186,5 +209,19 @@ export default class ChatLogViewer extends Vue {
   z-index: 10;
   white-space: normal;
   word-break: break-all;
+
+  li {
+    @include flex-box(row, flex-start, center);
+    min-height: 1.5em;
+
+    > * {
+      display: block;
+    }
+
+    .time {
+      flex: 1;
+      @include flex-box(row, flex-end, center);
+    }
+  }
 }
 </style>
