@@ -121,10 +121,6 @@ export default class ChatLogViewer extends Vue {
     text = text.replace(/\[\[quot]]/g, '"');
 
     const regExp: RegExp = new RegExp(/(\[\[style([: #0-9a-zA-Z]*)]])/g);
-    const styleExp: RegExp = new RegExp(
-      /(?:: *)(rgba?\([0-9, .]+\)|#[0-9a-fA-F]+|b|i|[a-zA-Z]+)/g
-    );
-
     const matchInfoList: any[] = [];
     let matchResult = null;
     while ((matchResult = regExp.exec(text)) !== null) {
@@ -141,9 +137,12 @@ export default class ChatLogViewer extends Vue {
 
     if (!matchInfoList.length) return text;
 
+    const styleExp: RegExp = new RegExp(
+      /(?:: *)(rgba?\([0-9, .]+\)|#[0-9a-fA-F]+|b|i|[a-zA-Z]+)/g
+    );
     matchInfoList.push({ startIndex: text.length });
-
     const resultTexts: string[] = [];
+
     resultTexts.push(text.substring(0, matchInfoList[0].startIndex));
     for (let i = 0; i < matchInfoList.length - 1; i++) {
       const styleStr: string = matchInfoList[i]!.styleStr;

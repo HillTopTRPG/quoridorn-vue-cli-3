@@ -47,6 +47,9 @@ export default new Vuex.Store({
       if (kind === "groupTargetTab") {
         // グループチャットタブ
         return rootGetters.groupTargetTabList.filter(filterFunc)[0];
+      } else if (kind === "chatTab") {
+        // チャットタブ
+        return rootGetters.chatTabList.filter(filterFunc)[0];
       } else if (kind === "imgTag") {
         // イメージタグ
         return rootGetters.imageTagList.filter(filterFunc)[0];

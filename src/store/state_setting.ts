@@ -43,11 +43,11 @@ export default {
       }
     ],
     systemLog: {
-      name: "SYSTEM",
-      colorKey: "color-SYSTEM",
+      name: "Quoridorn",
+      colorKey: "color-Quoridorn",
       color: "#000",
       tab: "chatTab-1",
-      from: "SYSTEM"
+      from: "Quoridorn"
     },
     chatFormats: [
       {

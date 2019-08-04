@@ -19,7 +19,9 @@
         :isVertical="isChatTabVertical"
         :isViewTime="isViewTime"
         :isViewTotalTab="isViewTotalTab"
-        :textFunc="info => `#${info.name}/${info.unRead}`"
+        :textFunc="
+          info => (info.isTotal ? info.name : `#${info.name}/${info.unRead}`)
+        "
         @onSelect="chatTabOnSelect"
         @onHover="chatTabOnHover"
         @editTab="tabAddButtonOnClick"
@@ -29,7 +31,7 @@
       <!----------------
        ! 操作盤
        !--------------->
-      <label class="oneLine dep" @contextmenu.prevent>
+      <div class="oneLine dep" @contextmenu.prevent>
         <!-- 発言者選択 -->
         <span class="label">名前(！)</span>
         <ctrl-select
@@ -142,7 +144,7 @@
             :tabindex="chatTabs.length + 14"
           ></i>
         </span>
-      </label>
+      </div>
 
       <!----------------
        ! 発言

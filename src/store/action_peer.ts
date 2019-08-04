@@ -183,7 +183,7 @@ export default {
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
         dispatch("addChatLog", {
           name: rootGetters.systemLog.name,
-          text: `${player.name} が退室しました。`,
+          text: `「${player.name}」が退室しました。`,
           tab: rootGetters.systemLog.tab,
           target: "groupTargetTab-0",
           from: rootGetters.systemLog.from,
@@ -1142,7 +1142,7 @@ export default {
       // チャット追加
       dispatch("addChatLog", {
         name: rootGetters.systemLog.name,
-        text: `${playerName} が入室しました。`,
+        text: `「${playerName}」が入室しました。`,
         tab: rootGetters.systemLog.tab,
         target: "groupTargetTab-0",
         from: rootGetters.systemLog.from,

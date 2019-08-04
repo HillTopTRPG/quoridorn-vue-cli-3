@@ -30,13 +30,13 @@ export default {
     /** チャットのリスト */
     logs: [
       {
-        owner: "SYSTEM",
-        name: "SYSTEM",
-        from: "SYSTEM",
+        owner: "Quoridorn",
+        name: "Quoridorn",
+        from: "Quoridorn",
         tab: "chatTab-1",
         target: "groupTargetTab-0",
         text: "こちらデモ版です。",
-        color: "color-SYSTEM",
+        color: "color-Quoridorn",
         statusName: "◆",
         isDiceBot: false,
         type: 1

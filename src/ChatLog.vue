@@ -47,7 +47,7 @@
      !--------------->
     <chat-log-viewer
       :tabIndex="0"
-      :chatLogList="chatLogList(false)"
+      :chatLogList="chatLogList"
       :tabList="chatTabList"
       :activeChatTab="activeChatTab"
       :hoverChatTab="hoverChatTab"
@@ -205,42 +205,42 @@ export default class ChatLog extends Vue {
     alert("未実装");
   }
 
-  private get chatLogList(): Function {
-    return (isAll: boolean = false): any => {
-      const isTargetPlayer: Function = (playerKey: string) =>
-        this.targetPlayers.filter(
-          (targetPlayer: any) => targetPlayer === playerKey
-        )[0];
+  private get chatLogList(): any[] {
+    const isTargetPlayer: Function = (playerKey: string) =>
+      this.targetPlayers.filter(
+        (targetPlayer: any) => targetPlayer === playerKey
+      )[0];
+    const activeChatTab = this.getObj(this.activeChatTab);
 
-      return this.chatLogs.filter((log: any) => {
-        if (!isAll && log.tab !== this.activeChatTab) return false;
-        if (log.type !== 1) return false;
-        if (!log.target) return true;
-        if (log.target === "groupTargetTab-0") return true;
-        if (isTargetPlayer(log.owner)) return true;
-        const kind = log.target.split("-")[0];
-        if (kind === "groupTargetTab") {
-          const target = this.getObj(log.target);
-          if (!target.isSecret) return true;
-          if (target.isAll) return true;
-          const findIndex = target.group.findIndex((g: string) => {
-            const kind = g.split("-")[0];
-            if (kind === "player") {
-              if (isTargetPlayer(g)) return true;
-            } else if (kind === "character") {
-              if (isTargetPlayer(this.getObj(g).owner)) return true;
-            }
-            return false;
-          });
-          return findIndex > -1;
-        } else if (kind === "player") {
-          return isTargetPlayer(log.target);
-        } else {
-          const target = this.getObj(log.target);
-          return isTargetPlayer(target.owner);
-        }
-      });
-    };
+    return this.chatLogs.filter((log: any) => {
+      if (!activeChatTab) return false;
+      if (!activeChatTab.isTotal && log.tab !== activeChatTab.key) return false;
+      if (log.type !== 1) return false;
+      if (!log.target) return true;
+      if (log.target === "groupTargetTab-0") return true;
+      if (isTargetPlayer(log.owner)) return true;
+      const kind = log.target.split("-")[0];
+      if (kind === "groupTargetTab") {
+        const target = this.getObj(log.target);
+        if (!target.isSecret) return true;
+        if (target.isAll) return true;
+        const findIndex = target.group.findIndex((g: string) => {
+          const kind = g.split("-")[0];
+          if (kind === "player") {
+            if (isTargetPlayer(g)) return true;
+          } else if (kind === "character") {
+            if (isTargetPlayer(this.getObj(g).owner)) return true;
+          }
+          return false;
+        });
+        return findIndex > -1;
+      } else if (kind === "player") {
+        return isTargetPlayer(log.target);
+      } else {
+        const target = this.getObj(log.target);
+        return isTargetPlayer(target.owner);
+      }
+    });
   }
 
   private get playerList(): any {

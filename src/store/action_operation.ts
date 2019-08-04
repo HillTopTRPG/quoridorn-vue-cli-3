@@ -457,7 +457,8 @@ export default {
       const key = `chatTab-${++rootState.public.chat.tab.maxKey}`;
       rootGetters.chatTabList.push({
         key,
-        name
+        name,
+        isTotal: false
       });
       rootGetters.chatTabsOption.push({
         key,
