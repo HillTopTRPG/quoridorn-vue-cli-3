@@ -130,24 +130,11 @@ export default new Vuex.Store({
       let playerType = getUrlParam("playerType");
       let system = getUrlParam("system");
 
-      if (!!roomName && roomName.endsWith(CreateNewRoom.ENTRANCE_ROOM_NAME)) {
+      if (roomName && roomName.endsWith(CreateNewRoom.ENTRANCE_ROOM_NAME)) {
         alert(
           `「${CreateNewRoom.ENTRANCE_ROOM_NAME}」で終わる部屋名は使えません。`
         );
         roomName = null;
-        /* ------------------------------
-         * URLを書き換える（リロードなし）
-         */
-        const paramList = [];
-        if (roomPassword !== null)
-          paramList.push(`roomPassword=${roomPassword}`);
-        if (system !== null) paramList.push(`system=${system}`);
-        if (playerName !== null) paramList.push(`playerName=${playerName}`);
-        if (playerPassword !== null)
-          paramList.push(`playerPassword=${playerPassword}`);
-        if (playerType !== null) paramList.push(`playerType=${playerType}`);
-        const newUrl = `?${paramList.join("&")}`;
-        window.history.replaceState("", "", newUrl);
       }
 
       state.param.roomName = roomName;
@@ -161,6 +148,25 @@ export default new Vuex.Store({
         playerType = null;
       }
       state.param.system = system;
+
+      /* ------------------------------
+       * URLを書き換える（リロードなし）
+       */
+      const paramList = [];
+      if (state.param.roomName !== null)
+        paramList.push(`roomName=${state.param.roomName}`);
+      if (state.param.roomPassword !== null)
+        paramList.push(`roomPassword=${state.param.roomPassword}`);
+      if (state.param.system !== null)
+        paramList.push(`system=${state.param.system}`);
+      if (state.param.playerName !== null)
+        paramList.push(`playerName=${state.param.playerName}`);
+      if (state.param.playerPassword !== null)
+        paramList.push(`playerPassword=${state.param.playerPassword}`);
+      if (state.param.playerType !== null)
+        paramList.push(`playerType=${state.param.playerType}`);
+      const newUrl = `?${paramList.join("&")}`;
+      window.history.replaceState("", "", newUrl);
 
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定

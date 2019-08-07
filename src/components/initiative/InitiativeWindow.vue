@@ -770,7 +770,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
       return this.propertyList[index].min || 0;
     } else {
       // 別プロパティ値を返却
-      return <number>this.getPropValue(objKey, index - 1);
+      return this.getPropValue(objKey, index - 1) as number;
     }
   }
 
@@ -780,7 +780,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
       return this.propertyList[index].max || 99;
     } else {
       // 別プロパティ値を返却
-      return <number>this.getPropValue(objKey, index + 1);
+      return this.getPropValue(objKey, index + 1) as number;
     }
   }
 
@@ -799,7 +799,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   private get sortCharacterList(): any[] {
     return this.characterList
       .concat()
-      .filter((character: any) => character.place === "field")
+      .filter((c: any) => c.place === "field" && !c.isHide)
       .sort((char1: any, char2: any) => {
         const prop1: any = char1.property;
         const prop2: any = char2.property;

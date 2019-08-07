@@ -7,8 +7,8 @@
     @open="open"
     @reset="open"
   >
-    <div class="container v-box" @contextmenu.prevent>
-      <div class="h-box flex-max">
+    <div class="container v-box">
+      <div class="h-box flex-max" @contextmenu.prevent>
         <div class="viewImage">
           <img
             v-img="currentImage"
@@ -60,23 +60,27 @@
         </div>
       </div>
 
-      <div class="initiativeTable"></div>
+      <div class="initiativeTable" @contextmenu.prevent></div>
 
       <div class="h-box">
         <div class="v-box">
           <div class="nameArea">
-            <label>名前：</label>
-            <input
-              type="text"
-              class="name"
-              placeholder="必ず入力してください"
-              v-model="name"
-            />
+            <label>
+              <span @contextmenu.prevent>名前：</span>
+              <input
+                type="text"
+                class="name"
+                placeholder="必ず入力してください"
+                v-model="name"
+              />
+            </label>
           </div>
           <div class="pieceOptions">
-            <label>サイズ：</label>
-            <input type="number" class="size" min="1" v-model="size" />
             <label>
+              <span @contextmenu.prevent>サイズ：</span>
+              <input type="number" class="size" min="1" v-model="size" />
+            </label>
+            <label @contextmenu.prevent>
               <input type="checkbox" class="hide" v-model="isHide" />
               <span>
                 マップマスクの下に隠す
@@ -85,22 +89,24 @@
             </label>
           </div>
           <div class="urlArea">
-            <label>参照URL：</label>
-            <input
-              type="text"
-              v-model="url"
-              placeholder="キャラクターシートのURL"
-            />
+            <label>
+              <span @contextmenu.prevent>参照URL：</span>
+              <input
+                type="text"
+                v-model="url"
+                placeholder="キャラクターシートのURL"
+              />
+            </label>
           </div>
         </div>
 
         <label class="v-box flex-max">
-          その他
+          <span @contextmenu.prevent>その他</span>
           <textarea class="otherText flex-max" v-model="text"></textarea>
         </label>
       </div>
 
-      <div class="buttonArea">
+      <div class="buttonArea" @contextmenu.prevent>
         <div>
           <ctrl-button @click="commit">追加</ctrl-button>
           <ctrl-button @click="cancel">キャンセル</ctrl-button>
@@ -143,14 +149,10 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
       image => image.key === this.switchCurrentKey
     );
     const switchImageObj = this.switchImageList[index];
+
     switchImageObj.imgKey = selectImage.replace(":R", "");
     switchImageObj.isReverse = /:R/.test(selectImage);
     this.switchImageList.splice(index, 1, switchImageObj);
-  }
-
-  @Watch("currentImageTag")
-  onChangeCurrentImageTag(currentImageTag: string) {
-    // alert("currentImageTag" + currentImageTag);
   }
 
   private isOpenSwitch: boolean = false;
@@ -165,7 +167,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   private url: string = "";
   private text: string = "";
 
-  private addSwitch() {
+  private addSwitch(): void {
     const nextKey: number =
       Math.max.apply(null, this.switchImageList.map(image => image.key)) + 1;
 
@@ -177,7 +179,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     this.switchCurrentKey = nextKey;
   }
 
-  private doReverse() {
+  private doReverse(): void {
     const index = this.switchImageList.findIndex(
       image => image.key === this.switchCurrentKey
     );
@@ -186,22 +188,22 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     this.switchImageList.splice(index, 1, switchImageObj);
   }
 
-  private getImage(key: number) {
+  private getImage(key: number | string): string | null {
     const imageObj = this.imageList.filter(
       (image: any) => image.key === key
     )[0];
     return imageObj ? imageObj.data : null;
   }
 
-  private getKeyObj(list: any[], key: number) {
+  private getKeyObj(list: any[], key: number | string): any | null {
     return list.filter(obj => obj.key === key)[0];
   }
 
-  private selectSwitchImage(key: number) {
+  private selectSwitchImage(key: number): void {
     this.switchCurrentKey = key;
   }
 
-  private selectTagImage(key: number) {
+  private selectTagImage(key: number): void {
     const index = this.switchImageList.findIndex(
       image => image.key === this.switchCurrentKey
     );
@@ -211,7 +213,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     this.switchImageList.splice(index, 1, switchImageObj);
   }
 
-  private deleteSwitch() {
+  private deleteSwitch(): void {
     const index = this.switchImageList.findIndex(
       image => image.key === this.switchCurrentKey
     );
@@ -225,7 +227,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     ].key;
   }
 
-  private commit() {
+  private commit(): void {
     if (this.name === "") {
       alert(`名前を入力してください。`);
       return;
@@ -253,11 +255,11 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     this.windowOpen("private.display.addCharacterWindow");
   }
 
-  private cancel() {
+  private cancel(): void {
     this.windowClose("private.display.addCharacterSettingWindow");
   }
 
-  private open() {
+  private open(): void {
     this.isOpenSwitch = false;
     this.currentImageTag = "imgTag-2";
     this.switchImageList.splice(0, this.switchImageList.length);
@@ -275,20 +277,20 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     this.windowClose("private.display.addCharacterWindow");
   }
 
-  private get isReverse() {
+  private get isReverse(): boolean {
     return this.getKeyObj(this.switchImageList, this.switchCurrentKey)
       .isReverse;
   }
 
-  private get isCanSwitchDelete() {
+  private get isCanSwitchDelete(): boolean {
     return this.switchImageList.length > 1;
   }
 
-  private get currentImage() {
+  private get currentImage(): string | null {
     return this.getImage(this.currentImageKey);
   }
 
-  private get currentImageKey() {
+  private get currentImageKey(): string {
     return this.getKeyObj(this.switchImageList, this.switchCurrentKey).imgKey;
   }
 }
@@ -352,7 +354,12 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
 }
 .initiativeTable {
 }
-.nameArea {
+.nameArea label {
+  @include flex-box(row, center, center);
+
+  input {
+    flex: 1;
+  }
 }
 .viewImage {
 }
@@ -370,14 +377,11 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   resize: none;
   box-sizing: border-box;
 }
-.urlArea {
-  display: flex;
-  vertical-align: middle;
+.urlArea label {
+  @include flex-box(row, center, center);
 
-  label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  input {
+    flex: 1;
   }
 }
 .urlArea input {

@@ -19,7 +19,7 @@
         <image-tag-select class="tagSelect" v-model="selectImageTag" />
         <span>{{ selectedTagIndexText }}</span>
       </div>
-      <ctrl-button>隠し画像</ctrl-button>
+      <ctrl-button @click="onClickHideImage">隠し画像</ctrl-button>
       <ctrl-button @click="doReverse">反</ctrl-button>
     </div>
   </div>
@@ -87,6 +87,10 @@ export default class ImageSelector extends Vue {
 
   private doReverse() {
     this.isReverse = !this.isReverse;
+  }
+
+  private onClickHideImage() {
+    alert("未実装です。");
   }
 
   private get selectedTagIndexText() {

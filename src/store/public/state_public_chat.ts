@@ -104,12 +104,9 @@ export default {
     ) => (actorKey: string) => {
       const actor = rootGetters.getObj(actorKey);
       if (!actor) return "black";
-      if (actor.fontColorType === "0") {
-        const owner = rootGetters.getObj(actor.owner);
-        window.console.log(owner);
-        return owner.fontColor;
-      }
-      return actor.fontColor;
+      return actor.fontColorType === "0"
+        ? rootGetters.getObj(actor.owner).fontColor
+        : actor.fontColor;
     },
     diceBotMessageText: (state: any) => state.diceBotMessage.message,
     diceBotMessageView: (state: any) => state.diceBotMessage.isView,

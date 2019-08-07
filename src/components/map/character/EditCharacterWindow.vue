@@ -7,83 +7,106 @@
     @open="open"
     @reset="open"
   >
-    <div class="container" @contextmenu.prevent>
-      <div class="viewImage">
-        <img
-          v-img="currentImage"
-          draggable="false"
-          :class="{ isReverse: isReverse }"
-        />
-      </div>
-
-      <image-selector
-        v-model="selectImage"
-        :imageTag.sync="currentImageTag"
-        class="imageSelector"
-      />
-
-      <div class="switchImageArea">
-        <ctrl-button
-          v-show="!isOpenSwitch"
-          @click="isOpenSwitch = true"
-          class="switchButton"
-        >
-          画像切替設定
-        </ctrl-button>
-        <span v-show="isOpenSwitch" class="switchImage">
+    <div class="container v-box">
+      <div class="h-box flex-max" @contextmenu.prevent>
+        <div class="viewImage">
           <img
-            v-for="switchObj in switchImageList"
-            :class="{
-              active: switchObj.key === switchCurrentKey,
-              isReverse: switchObj.isReverse
-            }"
-            :key="switchObj.key"
-            v-img="getImage(switchObj.imgKey)"
-            @click="selectSwitchImage(switchObj.key)"
-            tabindex="0"
+            v-img="currentImage"
             draggable="false"
+            :class="{ isReverse: isReverse }"
           />
-        </span>
-        <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">
-          追加
-        </ctrl-button>
-        <ctrl-button
-          v-show="isOpenSwitch"
-          @click.prevent="deleteSwitch"
-          :disabled="!isCanSwitchDelete"
-        >
-          削除
-        </ctrl-button>
+        </div>
+
+        <div class="v-box flex-max">
+          <image-selector
+            v-model="selectImage"
+            :imageTag.sync="currentImageTag"
+            class="imageSelector flex-max"
+          />
+
+          <div class="switchImageArea">
+            <ctrl-button
+              v-show="!isOpenSwitch"
+              @click="isOpenSwitch = true"
+              class="switchButton"
+            >
+              画像切替設定
+            </ctrl-button>
+            <span v-show="isOpenSwitch" class="switchImage">
+              <img
+                v-for="switchObj in switchImageList"
+                :class="{
+                  active: switchObj.key === switchCurrentKey,
+                  isReverse: switchObj.isReverse
+                }"
+                :key="switchObj.key"
+                v-img="getImage(switchObj.imgKey)"
+                @click="selectSwitchImage(switchObj.key)"
+                tabindex="0"
+                draggable="false"
+              />
+            </span>
+            <ctrl-button v-show="isOpenSwitch" @click.prevent="addSwitch">
+              追加
+            </ctrl-button>
+            <ctrl-button
+              v-show="isOpenSwitch"
+              @click.prevent="deleteSwitch"
+              :disabled="!isCanSwitchDelete"
+            >
+              削除
+            </ctrl-button>
+          </div>
+        </div>
       </div>
-      <div class="initiativeTable"></div>
-      <div class="nameArea">
-        <label>名前：</label>
-        <input
-          type="text"
-          class="name"
-          placeholder="必ず入力してください"
-          v-model="name"
-        />
-      </div>
-      <div class="pieceOptions">
-        <label>サイズ：</label>
-        <input type="number" class="size" min="1" v-model="size" />
-        <label>
-          <input type="checkbox" class="hide" v-model="isHide" />
-          <span>マップマスクの下に隠す<br />(イニシアティブ表で非表示)</span>
+
+      <div class="initiativeTable" @contextmenu.prevent></div>
+
+      <div class="h-box">
+        <div class="v-box">
+          <div class="nameArea">
+            <label>
+              <span @contextmenu.prevent>名前：</span>
+              <input
+                type="text"
+                class="name"
+                placeholder="必ず入力してください"
+                v-model="name"
+              />
+            </label>
+          </div>
+          <div class="pieceOptions">
+            <label>
+              <span @contextmenu.prevent>サイズ：</span>
+              <input type="number" class="size" min="1" v-model="size" />
+            </label>
+            <label @contextmenu.prevent>
+              <input type="checkbox" class="hide" v-model="isHide" />
+              <span>
+                マップマスクの下に隠す
+                <br />(イニシアティブ表で非表示)
+              </span>
+            </label>
+          </div>
+          <div class="urlArea">
+            <label>
+              <span @contextmenu.prevent>参照URL：</span>
+              <input
+                type="text"
+                v-model="url"
+                placeholder="キャラクターシートのURL"
+              />
+            </label>
+          </div>
+        </div>
+
+        <label class="v-box flex-max">
+          <span @contextmenu.prevent>その他</span>
+          <textarea class="otherText flex-max" v-model="text"></textarea>
         </label>
       </div>
-      <div class="urlArea">
-        <label>参照URL：</label>
-        <input
-          type="text"
-          v-model="url"
-          placeholder="キャラクターシートのURL"
-        />
-      </div>
-      <div class="otherTextLabel"><span>その他</span></div>
-      <textarea class="otherText" v-model="text"></textarea>
-      <div class="buttonArea">
+
+      <div class="buttonArea" @contextmenu.prevent>
         <div>
           <ctrl-button @click="commit">確定</ctrl-button>
           <ctrl-button @click="cancel">キャンセル</ctrl-button>
@@ -168,14 +191,14 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
     this.switchImageList.splice(index, 1, switchImageObj);
   }
 
-  private getImage(key: string): string {
+  private getImage(key: number | string): string | null {
     const imageObj = this.imageList.filter(
       (image: any) => image.key === key
     )[0];
     return imageObj ? imageObj.data : null;
   }
 
-  private getKeyObj(list: any[], key: string | number): any {
+  private getKeyObj(list: any[], key: number | string): any | null {
     return list.filter(obj => obj.key === key)[0];
   }
 
@@ -279,88 +302,42 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
     return this.switchImageList.length > 1;
   }
 
-  private get storeImages(): any[] {
-    return this.$store.state.public.image.list;
-  }
-
-  private get currentImage(): any {
+  private get currentImage(): string | null {
     return this.getImage(this.currentImageKey);
   }
 
   private get currentImageKey(): string {
     return this.getKeyObj(this.switchImageList, this.switchCurrentKey).imgKey;
   }
-
-  private get tagList(): any[] {
-    return this.$store.state.public.image.tags.list;
-  }
 }
 </script>
 
 <style scoped lang="scss">
+@import "../../common.scss";
+
 .container {
-  display: grid;
   width: 100%;
+  height: 100%;
   font-size: 12px;
-  position: absolute;
-  grid-template-columns: 200px auto 1fr;
-  grid-template-rows: 1fr auto auto auto auto auto auto auto;
-  grid-template-areas:
-    "viewImage       imageSelector   imageSelector"
-    "viewImage       switchImageArea switchImageArea"
-    "initiativeTable initiativeTable initiativeTable"
-    "nameArea        nameArea        otherTextLabel"
-    "pieceOptions    pieceOptions    otherText"
-    "urlArea         urlArea         otherText"
-    "buttonArea      buttonArea      buttonArea";
-}
 
-.tagImages {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  align-content: flex-start;
-  flex-wrap: wrap;
-  height: auto;
-  min-height: calc(100% - 2px);
-  box-sizing: border-box;
-  border: solid gray 1px;
-
-  img {
-    width: 50px;
-    height: 50px;
-    border: solid rgba(0, 0, 0, 0) 1px;
-
-    &.active {
-      border: solid blue 1px;
-    }
+  > * {
+    padding: 1px 0;
   }
 }
 
 .isReverse {
   transform: scale(-1, 1);
 }
-
-.container > * {
-  padding: 1px 0;
-}
-
 .viewImage {
-  grid-area: viewImage;
-
   img {
     display: inline-block;
     width: 200px;
     height: 200px;
   }
 }
-
 .imageSelector {
-  grid-area: imageSelector;
 }
-
 .switchImageArea {
-  grid-area: switchImageArea;
   display: flex;
 
   .switchImage {
@@ -379,65 +356,39 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
     }
   }
 
-  button.switchButton {
-    height: 26px;
-  }
+  button {
+    &.switchButton {
+      height: 26px;
+    }
 
-  button:not(.switchButton) {
-    height: 50px;
-    display: inline-block;
-    margin-left: 10px;
+    &:not(.switchButton) {
+      height: 50px;
+      display: inline-block;
+      margin-left: 10px;
+    }
   }
 }
-
 .initiativeTable {
-  grid-area: initiativeTable;
 }
-
 .nameArea {
-  grid-area: nameArea;
 }
-
 .viewImage {
-  grid-area: viewImage;
 }
-
-.otherTextLabel {
-  display: flex;
-  grid-area: otherTextLabel;
-  vertical-align: bottom;
-
-  span {
-    display: inline;
-    vertical-align: bottom;
-    flex: 1;
-  }
-}
-
 .pieceOptions {
-  grid-area: pieceOptions;
-
   input[type="number"] {
     width: 35px;
   }
-
-  span {
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
 }
-
+.pieceOptions span {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
 .otherText {
-  grid-area: otherText;
   resize: none;
-  width: 100%;
-  height: 100%;
   box-sizing: border-box;
 }
-
 .urlArea {
-  grid-area: urlArea;
   display: flex;
   vertical-align: middle;
 
@@ -446,24 +397,23 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
     align-items: center;
     justify-content: center;
   }
-
-  input {
-    flex: 1;
-    margin-right: 7px;
-  }
 }
-
+.urlArea input {
+  flex: 1;
+}
 .buttonArea {
-  grid-area: buttonArea;
   text-align: center;
-  padding-top: 15px;
-  padding-bottom: 10px;
+  padding-top: 0.5em;
+  /*padding-bottom: 10px;*/
 
   > div {
     display: inline-block;
+
+    > * {
+      margin: 0 0.5em;
+    }
   }
 }
-
 input {
   padding: 2px;
 }
