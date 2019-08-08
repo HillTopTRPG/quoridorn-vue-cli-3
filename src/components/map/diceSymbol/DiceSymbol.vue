@@ -1,8 +1,9 @@
 <template>
   <div
     class="diceSymbol"
-    :class="[isHover ? 'hover' : '', isHide ? 'isHide' : '']"
+    :class="[isHover ? 'hover' : '', storeObj.isHide ? 'isHide' : '']"
     :style="chitStyle"
+    :id="storeObj.key"
     @click.right.prevent="
       e => openContext(e, 'private.display.diceSymbolContext')
     "
@@ -27,8 +28,8 @@
     <div class="balloon" v-if="isHover">
       <span v-if="ownerPlayer">[{{ ownerPlayer.name }}]のダイス</span>
       <span>
-        {{ isHide ? "非公開：" : "" }}
-        {{ isAbsoluteHide ? "" : `${pips} / D${faceNum}` }}
+        {{ storeObj.isHide ? "非公開：" : "" }}
+        {{ isAbsoluteHide ? "" : `${storeObj.pips} / D${storeObj.faceNum}` }}
       </span>
     </div>
   </div>
@@ -37,8 +38,8 @@
 <script lang="ts">
 import PieceMixin from "../../PieceMixin.vue";
 
-import { Component, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
+import { Component } from "vue-property-decorator";
+import { Getter } from "vuex-class";
 
 @Component({})
 export default class DiceSymbol extends PieceMixin {
@@ -66,38 +67,21 @@ export default class DiceSymbol extends PieceMixin {
     return obj;
   }
 
-  private get faceNum() {
-    return this.storeObj.faceNum;
-  }
-
-  private get diceType() {
-    return this.storeObj.type;
-  }
-
-  private get pips() {
-    return this.storeObj.pips;
-  }
-
-  private get isHide() {
-    return this.storeObj.isHide;
-  }
-
   private get isAbsoluteHide() {
-    if (!this.isHide) return false;
-    return this.owner !== this.playerKey;
-  }
-
-  private get owner() {
-    return this.storeObj.owner;
+    if (!this.storeObj.isHide) return false;
+    return this.storeObj.owner !== this.playerKey;
   }
 
   private get ownerPlayer() {
-    const player: any = this.getObj(this.owner);
-    return player;
+    return this.getObj(this.storeObj.owner);
   }
 
   private get diceImage() {
-    return this.dicePipsImage(this.faceNum, this.diceType, this.pips);
+    return this.dicePipsImage(
+      this.storeObj.faceNum,
+      this.storeObj.diceType,
+      this.storeObj.pips
+    );
   }
 }
 </script>

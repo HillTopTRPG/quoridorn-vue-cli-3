@@ -1,9 +1,14 @@
 <template>
   <div
     class="chit"
-    :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
+    :class="[
+      isThisRolling ? 'rolling' : '',
+      isHover ? 'hover' : '',
+      storeObj.isBorderHide ? 'isBorderHide' : ''
+    ]"
     :style="chitStyle"
-    :title="description"
+    :title="storeObj.description"
+    :id="storeObj.key"
     @click.right.prevent="e => openContext(e, 'private.display.chitContext')"
     @mouseover="mouseover"
     @mouseout="mouseout"
@@ -16,11 +21,11 @@
     @touchcancel="leftUp"
     @contextmenu.prevent
   >
-    <div class="border"></div>
+    <div class="border" v-if="!storeObj.isBorderHide"></div>
     <img
       class="image"
       v-img="getKeyObj(imageList, imageKey).data"
-      :class="{ reverse: isReverse }"
+      :class="{ reverse: storeObj.isReverse }"
       draggable="false"
     />
   </div>
@@ -32,7 +37,7 @@ import PieceMixin from "../../PieceMixin.vue";
 import { Component } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component({})
+@Component
 export default class Chit extends PieceMixin {
   @Getter("imageList") imageList: any;
 
@@ -58,14 +63,6 @@ export default class Chit extends PieceMixin {
 
   private get imageKey() {
     return this.storeObj.imageKey.replace(":R", "");
-  }
-
-  private get isReverse() {
-    return this.storeObj.isReverse;
-  }
-
-  private get description() {
-    return this.storeObj.description;
   }
 }
 </script>
@@ -97,6 +94,11 @@ export default class Chit extends PieceMixin {
     right: -2px;
     bottom: -2px;
     top: -2px;
+    border: 2px solid black;
+  }
+
+  &.isBorderHide:before {
+    border: none;
   }
 }
 
@@ -144,7 +146,7 @@ img.rotate {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border: 4px solid rgb(187, 187, 0);
+  border: 3px solid #bbbbff;
   border-radius: 1px;
 }
 </style>

@@ -11,7 +11,7 @@
     @mouseout="mouseout"
     @contextmenu.prevent
   >
-    <div class="border"></div>
+    <div class="border" v-if="!isBorderHide"></div>
     <img
       class="image"
       v-img="imageObj.data"
@@ -57,6 +57,9 @@ export default class CharacterChip extends PieceMixin {
   }
   get useImageIndex() {
     return this.storeObj.useImageIndex;
+  }
+  get isBorderHide(): number {
+    return this.storeObj.isBorderHide;
   }
   get imageObj() {
     if (this.useImageList === "") {

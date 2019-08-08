@@ -23,6 +23,9 @@
     >
       墓場に移動（削除）
     </div>
+    <div class="item" @click.left.prevent="changeIsHideBorder(!isBorderHide)">
+      枠線を{{ isBorderHide ? "表示" : "非表示" }}
+    </div>
     <hr />
     <div class="item" @click.left.prevent="copyCharacter">
       複製
@@ -65,6 +68,7 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("changeListObj") private changeListObj: any;
+  @Action("copyListObj") private copyListObj: any;
   @Action("windowClose") private windowClose: any;
   @Getter("getObj") private getObj: any;
   @Getter("characterContextObjKey") private characterContextObjKey: any;
@@ -99,8 +103,10 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
     this.windowClose("private.display.characterContext");
   }
   private copyCharacter(): void {
+    this.copyListObj({
+      key: this.characterContextObjKey
+    });
     this.windowClose("private.display.characterContext");
-    alert("未実装の機能です。");
   }
   private openRefURL(): void {
     window.open(this.getObj(this.characterContextObjKey).url, "_blank");
@@ -109,6 +115,19 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
   private get place(): string {
     const character = this.getObj(this.characterContextObjKey);
     return character ? character.place : null;
+  }
+  private get isBorderHide(): boolean {
+    const character = this.getObj(this.characterContextObjKey);
+    return character ? character.isBorderHide : null;
+  }
+
+  private changeIsHideBorder(isBorderHide: boolean): void {
+    this.changeListObj({
+      key: this.characterContextObjKey,
+      isBorderHide,
+      isNotice: true
+    });
+    this.windowClose("private.display.characterContext");
   }
 
   private getOwner() {

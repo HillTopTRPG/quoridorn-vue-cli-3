@@ -1,8 +1,13 @@
 <template>
   <div
     class="mapMask"
-    :class="[storeObj.isLock ? 'isLock' : 'isUnLock', isHover ? 'hover' : '']"
+    :class="[
+      storeObj.isLock ? 'isLock' : 'isUnLock',
+      isHover ? 'hover' : '',
+      storeObj.isBorderHide ? 'isBorderHide' : ''
+    ]"
     :style="mapMaskStyle"
+    :id="storeObj.key"
     @mouseover="mouseover"
     @mouseout="mouseout"
     @click.right.prevent="e => openContext(e, 'private.display.mapMaskContext')"
@@ -19,41 +24,41 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapGetters } from "vuex";
-import PieceMixin from "../../PieceMixin";
+<script lang="ts">
+import PieceMixin from "../../PieceMixin.vue";
 
-export default {
-  name: "mapMask",
-  mixins: [PieceMixin],
-  computed: mapState({
-    ...mapGetters(["parseColor"]),
-    mapMaskStyle() {
-      let obj = {};
-      const baseStyle = this.style;
-      for (let key in baseStyle) {
-        obj[key] = baseStyle[key];
-      }
-      const translate = this.isHover ? -2 : 0;
-      obj.transform =
-        obj.transform.replace(/ translate[XY]\([^)]+\)/g, "") +
-        ` translateX(${translate}px) translateY(${translate}px)`;
-      let colorObj = this.parseColor(this.storeObj.color);
-      if (this.storeObj.isDraggingLeft) {
-        const plus = 1.5;
-        obj.left = this.rect.left - plus + "px";
-        obj.top = this.rect.top - plus + "px";
-        obj.width = this.rect.width + plus * 2 + "px";
-        obj.height = this.rect.height + plus * 2 + "px";
-        colorObj.a = colorObj.a * 0.6;
-      }
-      obj["background-color"] = colorObj.getRGBA();
-      obj["color"] = this.storeObj.fontColor;
-      // window.console.log(` [computed] mapMask(${this.objKey}) style => isDraggingLeft:${storeObj.isDraggingLeft},transZ:${obj['transform']} lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
-      return obj;
+import { Component } from "vue-property-decorator";
+import { Getter } from "vuex-class";
+
+@Component
+export default class MapMask extends PieceMixin {
+  @Getter("parseColor") private parseColor: any;
+
+  private get mapMaskStyle(): any {
+    let obj: any = {};
+    const baseStyle = this.style;
+    for (let key in baseStyle) {
+      obj[key] = baseStyle[key];
     }
-  })
-};
+    const translate = this.isHover ? -2 : 0;
+    obj.transform =
+      obj.transform.replace(/ translate[XY]\([^)]+\)/g, "") +
+      ` translateX(${translate}px) translateY(${translate}px)`;
+    let colorObj = this.parseColor(this.storeObj.color);
+    if (this.storeObj.isDraggingLeft) {
+      const plus = 1.5;
+      obj.left = this.rect.left - plus + "px";
+      obj.top = this.rect.top - plus + "px";
+      obj.width = this.rect.width + plus * 2 + "px";
+      obj.height = this.rect.height + plus * 2 + "px";
+      colorObj.a = colorObj.a * 0.6;
+    }
+    obj["background-color"] = colorObj.getRGBA();
+    obj["color"] = this.storeObj.fontColor;
+    // window.console.log(` [computed] mapMask(${this.objKey}) style => isDraggingLeft:${storeObj.isDraggingLeft},transZ:${obj['transform']} lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+    return obj;
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -64,23 +69,26 @@ export default {
   align-items: center;
   border-style: solid;
   border-width: 0;
-  border-color: rgba(0, 0, 0, 0);
+  border-color: transparent;
   white-space: nowrap;
   font-size: 12px;
   cursor: crosshair;
   z-index: 200000000;
 
   &.hover {
-    border-width: 2px;
     z-index: 999999999;
   }
 
-  &.isLock.hover {
-    border-color: blue;
-  }
+  &:not(.isBorderHide).hover {
+    border-width: 2px;
 
-  &.isUnLock.hover {
-    border-color: yellow;
+    &.isLock {
+      border-color: blue;
+    }
+
+    &.isUnLock {
+      border-color: yellow;
+    }
   }
 }
 </style>

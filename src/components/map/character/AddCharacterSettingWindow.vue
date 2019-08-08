@@ -228,7 +228,8 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   }
 
   private commit(): void {
-    if (this.name === "") {
+    this.name = this.name.trim();
+    if (!this.name) {
       alert(`名前を入力してください。`);
       return;
     }

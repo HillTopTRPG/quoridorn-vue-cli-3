@@ -226,7 +226,9 @@ export default class CanvasMixin extends AddressCalcMixin {
     return this.getObj(this.objKey);
   }
   get storeIndex() {
-    return this.$store.state.public[this.type].list.indexOf(this.storeObj);
+    return this.$store.state.public[this.type].list.findIndex(
+      (obj: any) => obj.key === this.objKey
+    );
   }
   get angle() {
     return this.storeObj.angle;

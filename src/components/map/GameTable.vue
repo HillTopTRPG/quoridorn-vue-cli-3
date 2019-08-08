@@ -161,7 +161,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   leftUp(): void {
-    // window.console.log(`  [methods] mouseup left on GameTable`)
+    window.console.log(`  [methods] mouseup left on GameTable`);
     if (this.rollObj.isRolling) {
       // マップ上のオブジェクトを回転中の場合
       const pieceObj = this.$store.state.public[
@@ -377,7 +377,8 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         dragging: 0,
         dragStart: 0
       },
-      isLock: false
+      isLock: false,
+      order: 0
     };
 
     // マップマスクの作成
@@ -395,6 +396,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.name = name;
       pieceObj.color = color;
       pieceObj.fontColor = fontColor;
+      pieceObj.isBorderHide = false;
 
       this.addListObj(pieceObj);
       return;
@@ -427,6 +429,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.currentImageTag = currentImageTag;
       pieceObj.fontColorType = "0";
       pieceObj.fontColor = "#000";
+      pieceObj.isBorderHide = false;
       pieceObj.chatPalette = {
         list: []
       };
@@ -506,6 +509,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.imageKey = imageKey;
       pieceObj.isReverse = isReverse === "true";
       pieceObj.description = description;
+      pieceObj.isBorderHide = false;
 
       this.addListObj(pieceObj);
 
@@ -693,7 +697,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   z-index: -1;
   perspective: 1000px;
   border: ridge gray;
-  overflow: hidden;
+  overflow: visible;
 
   &:before {
     content: "";

@@ -20,6 +20,7 @@ export default {
      */
     isFitGrid: (state: any) => state.isFitGrid,
     isDrawGridLine: (state: any): boolean => state.gridLine,
-    isDrawGridId: (state: any): boolean => state.gridId
+    isDrawGridId: (state: any): boolean => state.gridId,
+    isViewPieceRotateMarker: (state: any): boolean => state.pieceRotateMarker
   }
 };
