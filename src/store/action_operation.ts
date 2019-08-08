@@ -982,7 +982,7 @@ export default {
       payload: any
     ) => {
       const obj = rootGetters.getObj(payload.key);
-      dispatch("doAddListObj", obj);
+      dispatch("doAddListObj", JSON.parse(JSON.stringify(obj)));
     },
 
     /** ========================================================================
