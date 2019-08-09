@@ -86,7 +86,7 @@
       draggable="false"
     >
       <i
-        class="icon-redo2"
+        class="icon-redo2 roll-knob"
         @mousedown.stop="rollStart"
         @mouseup.stop="rollEnd"
         @touchstart.stop="rollStart"

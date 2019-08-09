@@ -102,6 +102,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Action("setProperty") private setProperty: any;
   @Action("windowClose") private windowClose: any;
   @Action("importStart") private importStart: any;
+  @Action("changeListObj") private changeListObj: any;
   @Getter("isFitGrid") private isFitGrid: any;
   @Getter("parseColor") private parseColor: any;
   @Getter("getBackgroundImage") private getBackgroundImage: any;
@@ -113,6 +114,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("playerKey") private playerKey: any;
   @Getter("angle") private angle: any;
   @Getter("rollObj") private rollObj: any;
+  @Getter("moveObj") private moveObj: any;
   @Getter("isDraggingLeft") private isDraggingLeft: any;
   @Getter("isMouseDownRight") private isMouseDownRight: any;
   @Getter("isOverEvent") private isOverEvent: any;
@@ -122,6 +124,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("isModal") private isModal: any;
   @Getter("getMapObjectList") private getMapObjectList: any;
   @Getter("propertyList") private propertyList: any;
+  @Getter("getObj") private getObj: any;
 
   mounted(): void {
     document.addEventListener("mousemove", this.mouseMove);
@@ -160,53 +163,87 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     this.setProperty({ property: "map", value: obj, logOff: true });
   }
 
-  leftUp(): void {
-    window.console.log(`  [methods] mouseup left on GameTable`);
+  leftUp(event: any): void {
+    const dispatchMouseUpEvent = (elm: HTMLElement) => {
+      const evt = document.createEvent("MouseEvents");
+      evt.initMouseEvent(
+        "mouseup",
+        true,
+        true,
+        window,
+        1,
+        event ? event.screenX : 0,
+        event ? event.screenY : 0,
+        event ? event.clientX : 0,
+        event ? event.clientY : 0,
+        event ? event.ctrlKey : false,
+        event ? event.altKey : false,
+        event ? event.shiftKey : false,
+        event ? event.metaKey : false,
+        event ? event.buttons : 0,
+        elm
+      );
+      elm!.dispatchEvent(evt);
+    };
+
     if (this.rollObj.isRolling) {
       // マップ上のオブジェクトを回転中の場合
-      const pieceObj = this.$store.state.public[
-        this.rollObj.propName
-      ].list.filter((obj: any) => obj.key === this.rollObj.key)[0];
-      const storeIndex = this.$store.state.public[
-        this.rollObj.propName
-      ].list.indexOf(pieceObj);
       this.setProperty({
         property: `map.rollObj.isRolling`,
         value: false,
         logOff: true
       });
-      const planeAngle = this.arrangeAngle(
-        pieceObj.angle.dragging + pieceObj.angle.total
-      );
-      const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30);
-      // window.console.log(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
-      const obj = {
-        total: total,
-        dragging: 0
-      };
-      this.setProperty({
-        property: `public.${this.rollObj.propName}.list.${storeIndex}.angle`,
-        value: obj,
-        logOff: true,
-        isNotice: true
-      });
-    } else {
-      // マップを動かしている場合
-      const obj = {
-        move: {
-          dragging: {
-            x: 0,
-            y: 0
-          },
-          total: {
-            x: this.move.total.x + this.move.dragging.x,
-            y: this.move.total.y + this.move.dragging.y
-          }
-        },
-        isDraggingLeft: false
-      };
-      this.setProperty({ property: "map", value: obj, logOff: true });
+
+      const targetCharacterElm: HTMLElement = document.getElementById(
+        this.rollObj.key
+      ) as HTMLElement;
+
+      Array.from(
+        targetCharacterElm.getElementsByClassName("roll-knob")
+      ).forEach((elm: HTMLElement) => dispatchMouseUpEvent(elm));
+      return;
     }
+
+    if (this.moveObj.isMoving) {
+      // マップ場のオブジェクトを移動中の場合
+      this.setProperty({
+        property: `map.moveObj.isMoving`,
+        value: false,
+        logOff: true
+      });
+
+      const targetObjElm: HTMLElement = document.getElementById(
+        this.moveObj.key
+      ) as HTMLElement;
+
+      if (/\./.test(this.moveObj.key)) {
+        // WindowFrameの場合
+        Array.from(targetObjElm.getElementsByClassName("window-title")).forEach(
+          (elm: HTMLElement) => dispatchMouseUpEvent(elm)
+        );
+      } else {
+        // マップオブジェクトの場合
+        dispatchMouseUpEvent(targetObjElm);
+      }
+
+      return;
+    }
+
+    // マップを動かしている場合
+    const obj = {
+      move: {
+        dragging: {
+          x: 0,
+          y: 0
+        },
+        total: {
+          x: this.move.total.x + this.move.dragging.x,
+          y: this.move.total.y + this.move.dragging.y
+        }
+      },
+      isDraggingLeft: false
+    };
+    this.setProperty({ property: "map", value: obj, logOff: true });
   }
 
   rightDown(this: any): void {

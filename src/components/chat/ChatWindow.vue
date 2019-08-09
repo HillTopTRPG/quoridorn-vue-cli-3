@@ -35,7 +35,7 @@
         <!-- 発言者選択 -->
         <span class="label">名前(！)</span>
         <ctrl-select
-          :tabindex="chatTabs.length + 2"
+          :tabindex="isModal ? -1 : chatTabs.length + 2"
           :value="chatActorKey"
           @input="updateActorKey"
           title=""
@@ -46,21 +46,24 @@
               text: getViewName(actor.key)
             }))
           "
+          :disabled="isModal"
         />
 
         <!-- ステータス選択 -->
         <actor-status-select
           :actorKey="chatActorKey"
           v-model="statusName"
-          :tabindex="chatTabs.length + 3"
+          :tabindex="isModal ? -1 : chatTabs.length + 3"
+          :disabled="isModal"
         />
 
         <!-- ダイスボット選択 -->
         <dice-bot-select
           ref="diceBot"
           v-model="currentDiceBotSystem"
-          :tabindex="chatTabs.length + 4"
+          :tabindex="isModal ? -1 : chatTabs.length + 4"
           class="diceBotSystem"
+          :disabled="isModal"
         />
 
         <!-- ここから各種機能呼び出しボタン -->
@@ -69,7 +72,7 @@
             class="icon-dice"
             title="ダイスボットの追加・編集・削除"
             @click="diceBotSettingButtonOnClick"
-            :tabindex="chatTabs.length + 5"
+            :tabindex="isModal ? -1 : chatTabs.length + 5"
           ></i>
         </span>
         <span class="icon">
@@ -77,7 +80,7 @@
             class="icon-bin"
             title="チャットログ全削除"
             @click="chatLogDeleteButtonOnClick"
-            :tabindex="chatTabs.length + 6"
+            :tabindex="isModal ? -1 : chatTabs.length + 6"
           ></i>
         </span>
         <span class="icon">
@@ -85,7 +88,7 @@
             class="icon-file-text"
             title="チャットログ保存"
             @click="chatLogExportButtonOnClick"
-            :tabindex="chatTabs.length + 7"
+            :tabindex="isModal ? -1 : chatTabs.length + 7"
           ></i>
         </span>
         <span class="icon">
@@ -93,7 +96,7 @@
             class="icon-cloud-check"
             title="点呼・投票設定"
             @click="rollCallSettingButtonOnClick"
-            :tabindex="chatTabs.length + 8"
+            :tabindex="isModal ? -1 : chatTabs.length + 8"
           ></i>
         </span>
         <span class="icon">
@@ -101,7 +104,7 @@
             class="icon-bell"
             title="目覚ましアラーム設定"
             @click="alermSettingButtonOnClick"
-            :tabindex="chatTabs.length + 9"
+            :tabindex="isModal ? -1 : chatTabs.length + 9"
           ></i>
         </span>
         <span class="icon">
@@ -109,7 +112,7 @@
             class="icon-music"
             title="BGMの設定"
             @click="bgmSettingButtonOnClick"
-            :tabindex="chatTabs.length + 10"
+            :tabindex="isModal ? -1 : chatTabs.length + 10"
           ></i>
         </span>
         <span class="icon">
@@ -117,7 +120,7 @@
             class="icon-film"
             title="カットイン設定"
             @click="cutInSettingButtonOnClick"
-            :tabindex="chatTabs.length + 11"
+            :tabindex="isModal ? -1 : chatTabs.length + 11"
           ></i>
         </span>
         <span class="icon">
@@ -125,7 +128,7 @@
             class="icon-list2"
             title="チャットパレット設定"
             @click="chatPaletteSettingButtonOnClick"
-            :tabindex="chatTabs.length + 12"
+            :tabindex="isModal ? -1 : chatTabs.length + 12"
           ></i>
         </span>
         <span class="icon">
@@ -133,7 +136,7 @@
             class="icon-accessibility"
             title="立ち絵設定"
             @click="standImageSettingButtonOnClick"
-            :tabindex="chatTabs.length + 13"
+            :tabindex="isModal ? -1 : chatTabs.length + 13"
           ></i>
         </span>
         <span class="icon">
@@ -141,7 +144,7 @@
             class="icon-target"
             title="射界設定"
             @click="rangeSettingButtonOnClick"
-            :tabindex="chatTabs.length + 14"
+            :tabindex="isModal ? -1 : chatTabs.length + 14"
           ></i>
         </span>
       </div>
@@ -178,7 +181,10 @@
               <input
                 type="checkbox"
                 v-model="addBrackets"
-                :tabindex="chatTabs.length + chatTabs.length + 16"
+                :tabindex="
+                  isModal ? -1 : chatTabs.length + chatTabs.length + 16
+                "
+                :disabled="isModal"
               />
               発言時に「」を付与
             </label>
@@ -467,17 +473,19 @@
               @keydown.esc.prevent="textAreaOnPressEsc"
               @keypress.enter.prevent="event => sendMessage(event, true)"
               @keyup.enter.prevent="event => sendMessage(event, false)"
-              :tabindex="chatTabs.length + chatTabs.length + 17"
+              :tabindex="isModal ? -1 : chatTabs.length + chatTabs.length + 17"
               :placeholder="
-                `メッセージ（改行はShift + Enter）\n部分フォント変更は \&quot;&\&quot; を入力`
+                'メッセージ（改行はShift + Enter）\n部分フォント変更は &quot;&amp;&quot; を入力'
               "
+              :disabled="isModal"
             ></textarea>
           </label>
         </div>
         <ctrl-button
-          :tabindex="chatTabs.length + chatTabs.length + 18"
+          :tabindex="isModal ? -1 : chatTabs.length + chatTabs.length + 18"
           @contextmenu.prevent
           @click="sendMessage(null, true)"
+          :disabled="isModal"
           >送信</ctrl-button
         >
       </div>
@@ -561,6 +569,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("chatFormats") private chatFormats: any;
   @Getter("isViewTime") private isViewTime: any;
   @Getter("isViewTotalTab") private isViewTotalTab: any;
+  @Getter("isModal") private isModal: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;

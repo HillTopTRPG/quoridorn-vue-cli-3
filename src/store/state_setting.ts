@@ -1,12 +1,5 @@
-import Vue from "vue";
-import Vuex from "vuex";
 import CryptoJS from "crypto-js";
 
-Vue.use(Vuex);
-
-/**
- * Store
- */
 export default {
   // FIXME settingのデータは別経路で保存する？
   state: {

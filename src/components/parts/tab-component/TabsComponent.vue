@@ -5,7 +5,6 @@
       class="tab"
       v-for="(tabObj, index) in tabList"
       :key="tabObj.name"
-      :tabindex="tabIndex + index + 1"
       :class="getTabClasses(tabObj, index)"
     >
       <div class="corner-container" v-if="isVertical">
@@ -19,6 +18,9 @@
 
       <div
         class="text"
+        :tabindex="isModal ? -1 : tabIndex + index + 1"
+        @keydown.space.prevent="chatTabOnSelect(tabObj.key)"
+        @keydown.enter.prevent="chatTabOnSelect(tabObj.key)"
         @mousedown.prevent="chatTabOnSelect(tabObj.key)"
         @mouseenter.prevent="chatTabOnHover(tabObj.key)"
         @mouseleave.prevent="chatTabOnHover('')"
@@ -33,7 +35,9 @@
     <span
       class="tab addButton"
       @click="tabAddButtonOnClick"
-      :tabindex="tabIndex + tabList.length + 1"
+      @keydown.space.prevent="tabAddButtonOnClick"
+      @keydown.enter.prevent="tabAddButtonOnClick"
+      :tabindex="isModal ? -1 : tabIndex + tabList.length + 1"
       ><span class="icon-cog"></span
     ></span>
   </div>
@@ -46,6 +50,8 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({ components: {} })
 export default class TabsComponent extends Vue {
+  @Getter("isModal") private isModal: any;
+
   @Prop({ type: Array, required: true })
   private tabList!: any[];
 
@@ -119,7 +125,7 @@ $hover-border-color: #0092ed;
 
   .tab {
     @include inline-flex-box(row, flex-start, flex-end);
-    outline: none;
+    /*outline: none;*/
     overflow: visible;
     margin-right: -2px;
 

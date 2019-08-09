@@ -10,7 +10,11 @@
     <div class="contents">
       <div class="playOperationArea" @contextmenu.prevent>
         <!-- 拡大ボタン -->
-        <ctrl-button @click="arrangeWindowSize(true)" v-if="isWindowViewScroll">
+        <ctrl-button
+          @click="arrangeWindowSize(true)"
+          v-if="isWindowViewScroll"
+          :disabled="isModal"
+        >
           ◁︎拡大
         </ctrl-button>
 
@@ -18,7 +22,7 @@
         <ctrl-button
           @click="arrangeWindowSize(false)"
           v-if="!isWindowViewScroll"
-          :disabled="baseWindowWidth === 0"
+          :disabled="isModal || baseWindowWidth === 0"
         >
           縮小▷︎
         </ctrl-button>
@@ -27,7 +31,11 @@
         <div style="flex: 1;"></div>
 
         <!-- 設定ボタン -->
-        <ctrl-button class="setting" @click="openSettingWindow">
+        <ctrl-button
+          class="setting"
+          @click="openSettingWindow"
+          :disabled="isModal"
+        >
           設定
         </ctrl-button>
       </div>
@@ -36,13 +44,17 @@
         <ctrl-button
           class="back"
           @click="roundBack"
-          :disabled="round === 0 || backDisabled"
+          :disabled="isModal || round === 0 || backDisabled"
         >
           戻る
         </ctrl-button>
 
         <!-- 次へボタン -->
-        <ctrl-button class="next" @click="roundNext" :disabled="round === 0">
+        <ctrl-button
+          class="next"
+          @click="roundNext"
+          :disabled="isModal || round === 0"
+        >
           次へ
         </ctrl-button>
 
@@ -53,13 +65,17 @@
         <ctrl-button
           class="start"
           @click="battleStart"
-          :disabled="sortCharacterList.length === 0"
+          :disabled="isModal || sortCharacterList.length === 0"
         >
           戦闘開始
         </ctrl-button>
 
         <!-- 戦闘終了ボタン -->
-        <ctrl-button class="end" @click="battleEnd" :disabled="round === 0">
+        <ctrl-button
+          class="end"
+          @click="battleEnd"
+          :disabled="isModal || round === 0"
+        >
           戦闘終了
         </ctrl-button>
       </div>
@@ -297,6 +313,7 @@
                     @change="
                       checked => setPropValue(character.key, index, checked)
                     "
+                    :disabled="isModal"
                   />
                 </td>
               </template>
@@ -369,7 +386,9 @@
         ></span>
       </div>
       <div class="operateArea">
-        <ctrl-button @click="editButtonOnClick">変更</ctrl-button>
+        <ctrl-button @click="editButtonOnClick" :disabled="isModal"
+          >変更</ctrl-button
+        >
         <span style="width: 0.5em;"></span>
         <ctrl-button :disabled="true">削除</ctrl-button>
       </div>
@@ -406,6 +425,7 @@ export default class InitiativeWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("round") private round: any;
   @Getter("roundPlayerKey") private roundPlayerKey: any;
   @Getter("propertyList") private propertyList: any;
+  @Getter("isModal") private isModal: any;
 
   private windowWidth: number = 0;
   private windowPadding: number = 0;

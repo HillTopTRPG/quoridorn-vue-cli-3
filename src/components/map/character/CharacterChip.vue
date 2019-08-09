@@ -1,7 +1,7 @@
 <template>
   <div
     class="character-chip"
-    :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
+    :class="[isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
     @click.right.prevent="
@@ -91,8 +91,7 @@ export default class CharacterChip extends PieceMixin {
   overflow: visible;
   margin-top: 1em;
 
-  &.hover,
-  &.rolling {
+  &.hover {
     z-index: 999999999;
   }
 

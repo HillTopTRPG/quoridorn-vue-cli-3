@@ -86,6 +86,8 @@
     <div class="hoverMenu hoverMenu2" v-show="isShow('ファイル')">
       <div class="item" @click="clickExport">セーブ</div>
       <div class="item" @click="clickImport">ロード</div>
+      <hr @mouseenter="menuHover('ファイル')" />
+      <div class="item" @click="clickChatLog">チャットログ取得</div>
     </div>
     <!--------------------------------------------------
      ! 表示
@@ -271,11 +273,13 @@ export default class Menu extends Vue {
   @Action("doResetWindowLocate") private doResetWindowLocate: any;
   @Action("exportStart") private exportStart: any;
   @Action("addListObj") private addListObj: any;
+  @Action("saveChatLogHtml") private saveChatLogHtml: any;
   @Getter("roomName") private roomName: any;
   @Getter("isModal") private isModal: any;
   @Getter("peerId") private peerId: any;
   @Getter("members") private members: any;
   @Getter("isRoomJoined") private isRoomJoined: any;
+  @Getter("isModal") private isModal: any;
 
   private isConnectHover: boolean = false;
   private isSelecting: boolean = false;
@@ -337,6 +341,12 @@ export default class Menu extends Vue {
       logOff: true
     });
     this.windowOpen("private.display.unSupportWindow");
+    this.menuClick();
+  }
+
+  /** チャットログ保存 */
+  clickChatLog(): void {
+    this.saveChatLogHtml();
     this.menuClick();
   }
 
@@ -537,9 +547,7 @@ export default class Menu extends Vue {
 
   get menuStyle(): any {
     const result: any = {};
-    if (this.isModal) {
-      result.filter = "blur(3px)";
-    }
+    if (this.isModal) result.filter = "blur(3px)";
     return result;
   }
 

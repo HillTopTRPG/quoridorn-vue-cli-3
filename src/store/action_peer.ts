@@ -1,18 +1,8 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
-import Vuex from "vuex";
 import Peer from "skyway-js";
 import { qLog } from "@/components/common/Utility";
 import moment from "moment";
-// const moment = require("moment");
 
-Vue.use(Vuex);
-
-/**
- * Store
- */
 export default {
   actions: {
     /**========================================================================

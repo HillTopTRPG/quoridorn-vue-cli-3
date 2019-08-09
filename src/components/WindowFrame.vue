@@ -1,10 +1,11 @@
 <template>
   <div
     :style="windowStyle"
+    :id="displayProperty"
     @mousedown="windowActive({ property: displayProperty, isClose: false })"
-    @mouseup="mouseUp"
-    @touchcancel="mouseUp"
-    @touchend="mouseUp"
+    @mouseup="event => mouseUp(event, 1)"
+    @touchcancel="event => mouseUp(event, 2)"
+    @touchend="event => mouseUp(event, 3)"
     @touchstart="deckHoverKey(displayProperty)"
     class="window"
     v-if="isDisplay"
@@ -53,116 +54,22 @@
     </div>
 
     <!-- サイズ変更つまみ -->
-    <div
-      class="corner-left-top"
+    <window-frame-knob name="corner-left-top" @resize="resize" v-if="!isFix" />
+    <window-frame-knob
+      name="corner-left-bottom"
+      @resize="resize"
       v-if="!isFix"
-      @mousedown.left.prevent="event => resize(event, 'corner-left-top', true)"
-      @mouseup.left.prevent="event => resize(event, 'corner-left-top', false)"
-      @touchstart.prevent="
-        event => resize(event, 'corner-left-top', true, true)
-      "
-      @touchend.prevent="event => resize(event, 'corner-left-top', false, true)"
-      @touchcancel.prevent="
-        event => resize(event, 'corner-left-top', false, true)
-      "
-      @contextmenu.prevent
-    ></div>
-    <div
-      class="corner-left-bottom"
+    />
+    <window-frame-knob name="corner-right-top" @resize="resize" v-if="!isFix" />
+    <window-frame-knob
+      name="corner-right-bottom"
+      @resize="resize"
       v-if="!isFix"
-      @mousedown.left.prevent="
-        event => resize(event, 'corner-left-bottom', true)
-      "
-      @mouseup.left.prevent="
-        event => resize(event, 'corner-left-bottom', false)
-      "
-      @touchstart.prevent="
-        event => resize(event, 'corner-left-bottom', true, true)
-      "
-      @touchend.prevent="
-        event => resize(event, 'corner-left-bottom', false, true)
-      "
-      @touchcancel.prevent="
-        event => resize(event, 'corner-left-bottom', false, true)
-      "
-      @contextmenu.prevent
-    ></div>
-    <div
-      class="corner-right-top"
-      v-if="!isFix"
-      @mousedown.left.prevent="event => resize(event, 'corner-right-top', true)"
-      @mouseup.left.prevent="event => resize(event, 'corner-right-top', false)"
-      @touchstart.prevent="
-        event => resize(event, 'corner-right-top', true, true)
-      "
-      @touchend.prevent="
-        event => resize(event, 'corner-right-top', false, true)
-      "
-      @touchcancel.prevent="
-        event => resize(event, 'corner-right-top', false, true)
-      "
-      @contextmenu.prevent
-    ></div>
-    <div
-      class="corner-right-bottom"
-      v-if="!isFix"
-      @mousedown.left.prevent="
-        event => resize(event, 'corner-right-bottom', true)
-      "
-      @mouseup.left.prevent="
-        event => resize(event, 'corner-right-bottom', false)
-      "
-      @touchstart.prevent="
-        event => resize(event, 'corner-right-bottom', true, true)
-      "
-      @touchend.prevent="
-        event => resize(event, 'corner-right-bottom', false, true)
-      "
-      @touchcancel.prevent="
-        event => resize(event, 'corner-right-bottom', false, true)
-      "
-      @contextmenu.prevent
-    ></div>
-    <div
-      class="side-top"
-      v-if="!isFix"
-      @mousedown.left.prevent="event => resize(event, 'side-top', true)"
-      @mouseup.left.prevent="event => resize(event, 'side-top', false)"
-      @touchstart.prevent="event => resize(event, 'side-top', true, true)"
-      @touchend.prevent="event => resize(event, 'side-top', false, true)"
-      @touchcancel.prevent="event => resize(event, 'side-top', false, true)"
-      @contextmenu.prevent
-    ></div>
-    <div
-      class="side-left"
-      v-if="!isFix"
-      @mousedown.left.prevent="event => resize(event, 'side-left', true)"
-      @mouseup.left.prevent="event => resize(event, 'side-left', false)"
-      @touchstart.prevent="event => resize(event, 'side-left', true, true)"
-      @touchend.prevent="event => resize(event, 'side-left', false, true)"
-      @touchcancel.prevent="event => resize(event, 'side-left', false, true)"
-      @contextmenu.prevent
-    ></div>
-    <div
-      class="side-right"
-      v-if="!isFix"
-      @mousedown.left.prevent="event => resize(event, 'side-right', true)"
-      @mouseup.left.prevent="event => resize(event, 'side-right', false)"
-      @touchstart.prevent="event => resize(event, 'side-right', true, true)"
-      @touchend.prevent="event => resize(event, 'side-right', false, true)"
-      @touchcancel.prevent="event => resize(event, 'side-right', false, true)"
-      @contextmenu.prevent
-    ></div>
-    <div
-      class="side-bottom"
-      v-if="!isFix"
-      @mousedown.left.prevent="event => resize(event, 'side-bottom', true)"
-      @mouseup.left.prevent="event => resize(event, 'side-bottom', false)"
-      @touchstart.prevent="event => resize(event, 'side-bottom', true, true)"
-      @touchend.prevent="event => resize(event, 'side-bottom', false, true)"
-      @touchcancel.prevent="event => resize(event, 'side-bottom', false, true)"
-      @contextmenu.prevent
-    ></div>
+    />
+    <window-frame-knob name="side-top" @resize="resize" v-if="!isFix" />
+    <window-frame-knob name="side-left" @resize="resize" v-if="!isFix" />
+    <window-frame-knob name="side-right" @resize="resize" v-if="!isFix" />
+    <window-frame-knob name="side-bottom" @resize="resize" v-if="!isFix" />
 
     <!-- 立ち絵 -->
     <stand-image-component
@@ -183,9 +90,10 @@ import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
+import WindowFrameKnob from "@/components/WindowFrameKnob.vue";
 
 @Component({
-  components: { StandImageComponent }
+  components: { WindowFrameKnob, StandImageComponent }
 })
 export default class WindowFrame extends Vue {
   @Action("windowClose") private windowClose: any;
@@ -239,7 +147,7 @@ export default class WindowFrame extends Vue {
 
   private fontSize: number = 12;
 
-  mounted(): void {
+  private mounted(): void {
     const _ = this;
     document.addEventListener("mousemove", event => {
       _.mouse.x = event.pageX;
@@ -254,13 +162,13 @@ export default class WindowFrame extends Vue {
     this.addEventForIFrame();
   }
 
-  closeWindow(this: any): void {
+  private closeWindow(this: any): void {
     // window.console.log(`  [methods] closeWindow(click [x]button)`)
     this.windowClose(this.displayProperty);
     this.$emit("cancel");
   }
 
-  mouseUp(event: any): void {
+  private mouseUp(event: any, num: number): void {
     const evtObj = {
       clientX: event.pageX,
       clientY: event.pageY,
@@ -273,12 +181,31 @@ export default class WindowFrame extends Vue {
         logOff: true
       });
     }
-    document
-      .getElementById("mapBoardFrame")!
-      .dispatchEvent(new MouseEvent("mouseUp", evtObj));
+    window.console.log("mouseUp on Window", num);
+    const gameTableElm = document.getElementById("mapBoardFrame");
+    const evt = document.createEvent("MouseEvents");
+    evt.initMouseEvent(
+      "mouseup",
+      true,
+      true,
+      window,
+      1,
+      event.screenX,
+      event.screenY,
+      event.clientX,
+      event.clientY,
+      event.ctrlKey,
+      event.altKey,
+      event.shiftKey,
+      event.metaKey,
+      event.buttons,
+      gameTableElm
+    );
+    // gameTableElm!.dispatchEvent(new MouseEvent("mouseUp", evtObj));
+    gameTableElm!.dispatchEvent(evt);
   }
 
-  resize(
+  private resize(
     this: any,
     event: any,
     direct: string,
@@ -314,17 +241,12 @@ export default class WindowFrame extends Vue {
       }
       winFac.draggingX = 0;
       winFac.draggingY = 0;
-      this.mouseUp(event);
+      this.mouseUp(event, 4);
     }
-    // window.console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     this.moveMode = flg ? direct : "";
   }
 
-  reflesh(this: any): void {
-    const x = this.mouse.x;
-    const y = this.mouse.y;
-    const moveX = x - this.mouse.saveX;
-    const moveY = y - this.mouse.saveY;
+  private reflesh(this: any): void {
     switch (this.moveMode) {
       case "side-top":
       case "side-bottom":
@@ -333,7 +255,7 @@ export default class WindowFrame extends Vue {
       case "corner-right-top":
       case "corner-right-bottom":
       case "move":
-        this.windowFactor.draggingY = moveY;
+        this.windowFactor.draggingY = this.mouse.y - this.mouse.saveY;
     }
     switch (this.moveMode) {
       case "side-left":
@@ -343,32 +265,49 @@ export default class WindowFrame extends Vue {
       case "corner-right-top":
       case "corner-right-bottom":
       case "move":
-        this.windowFactor.draggingX = moveX;
+        this.windowFactor.draggingX = this.mouse.x - this.mouse.saveX;
     }
-    // window.console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
   }
 
-  move(this: any, event: any, flg: boolean, isTouch: boolean): void {
-    if (flg) {
+  private move(
+    this: any,
+    event: any,
+    isStart: boolean,
+    isTouch: boolean
+  ): void {
+    if (isStart) {
       this.mouse.saveX = isTouch
         ? event.changedTouches[0]["pageX"]
         : event.pageX;
       this.mouse.saveY = isTouch
         ? event.changedTouches[0]["pageY"]
         : event.pageY;
+      this.setProperty({
+        property: `map.moveObj`,
+        value: {
+          key: this.displayProperty,
+          isMoving: true
+        },
+        logOff: true
+      });
     } else {
+      this.setProperty({
+        property: `map.moveObj.isMoving`,
+        value: false,
+        logOff: true
+      });
       this.windowFactor.r -= this.windowFactor.draggingX;
       this.windowFactor.t += this.windowFactor.draggingY;
       this.windowFactor.l += this.windowFactor.draggingX;
       this.windowFactor.b -= this.windowFactor.draggingY;
       this.windowFactor.draggingX = 0;
       this.windowFactor.draggingY = 0;
-      this.mouseUp(event);
+      this.mouseUp(event, 5);
     }
-    this.moveMode = flg ? "move" : "";
+    this.moveMode = isStart ? "move" : "";
   }
 
-  addEventForIFrame(this: any): void {
+  private addEventForIFrame(this: any): void {
     const elms: HTMLCollection = document.getElementsByTagName("iFrame");
     Array.prototype.slice.call(elms).forEach((iFrameElm: HTMLIFrameElement) => {
       // マウス移動
@@ -481,11 +420,11 @@ export default class WindowFrame extends Vue {
     });
   }
 
-  clickStandImage(standImage: any, index: number): void {
+  private clickStandImage(standImage: any, index: number): void {
     this.standImageList.splice(index, 1);
   }
 
-  standImageStyle(standImage: any, index: number): any {
+  private standImageStyle(standImage: any, index: number): any {
     const locate = standImage.locate;
     const mpx: number = (192 * (locate - 1)) / 12;
     return {
@@ -495,7 +434,7 @@ export default class WindowFrame extends Vue {
   }
 
   @Watch("command", { deep: true })
-  onChangeCommand(this: any, command: any) {
+  private onChangeCommand(this: any, command: any) {
     if (!command) {
       return;
     }
@@ -518,33 +457,33 @@ export default class WindowFrame extends Vue {
     setTimeout(() => this.$emit(command.command, command.payload), 0);
   }
 
-  get isDisplay(this: any): string {
+  private get isDisplay(this: any): string {
     return !this.displayProperty
       ? ""
       : this.getStateValue(this.displayProperty).isDisplay;
   }
 
-  get command(this: any): string {
+  private get command(this: any): string {
     return !this.displayProperty
       ? ""
       : this.getStateValue(this.displayProperty).command;
   }
-  get zIndex(this: any): any {
+  private get zIndex(this: any): any {
     return this.getStateValue(this.displayProperty).zIndex;
   }
-  get standImageList(this: any): any[] {
+  private get standImageList(this: any): any[] {
     return this.getStateValue(this.displayProperty).standImageList || [];
   }
-  get isFix(this: any): boolean {
+  private get isFix(this: any): boolean {
     return this.fixSize !== undefined;
   }
-  get fixW(this: any): number {
+  private get fixW(this: any): number {
     return !this.isFix ? -1 : parseInt(this.fixSize.split(",")[0].trim(), 10);
   }
-  get fixH(this: any): number {
+  private get fixH(this: any): number {
     return !this.isFix ? -1 : parseInt(this.fixSize.split(",")[1].trim(), 10);
   }
-  get base(this: any): any {
+  private get base(this: any): any {
     if (!this.baseSize) {
       return { w: 0, h: 0 };
     }
@@ -556,9 +495,9 @@ export default class WindowFrame extends Vue {
 
   @Emit("windowStyle")
   @Watch("windowStyle")
-  onChangeWindowStyle(windowStyle: any) {}
+  private onChangeWindowStyle(windowStyle: any) {}
 
-  get windowStyle(this: any): any {
+  private get windowStyle(this: any): any {
     const moveMode = this.moveMode;
     const winFac = this.windowFactor;
 

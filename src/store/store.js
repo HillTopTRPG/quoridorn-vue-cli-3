@@ -77,10 +77,13 @@ export default new Vuex.Store({
         total: { x: 0, y: 0 },
         dragging: { x: 0, y: 0 }
       },
+      moveObj: {
+        isMoving: false,
+        key: ""
+      },
       rollObj: {
         isRolling: false,
-        propName: "",
-        key: 0
+        key: ""
       },
       angle: {
         dragging: 0,
@@ -717,6 +720,7 @@ export default new Vuex.Store({
     activeChatTab: state => state.chat.activeChatTab,
     hoverChatTab: state => state.chat.hoverChatTab,
     hoverTab: state => state.chat.hoverTab,
+    moveObj: state => state.map.moveObj,
     rollObj: state => state.map.rollObj,
     isDraggingLeft: state => state.map.isDraggingLeft,
     isMouseDownRight: state => state.map.isMouseDownRight,
@@ -757,6 +761,7 @@ export default new Vuex.Store({
       c: state.map.grid.c,
       r: state.map.grid.r
     }),
+    isMoving: state => state.map.moveObj.isMoving,
     isRolling: state => state.map.rollObj.isRolling,
     diceSystemList: state => state.chat.diceSystemList,
     dice: state => state.dice,

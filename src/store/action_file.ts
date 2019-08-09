@@ -1,13 +1,6 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import 'bcdice-js/lib/preload-dicebots'
-import Vue from "vue";
-import Vuex from "vuex";
 import JSZip from "jszip";
 import saveAs from "file-saver";
 import moment from "moment";
-
-Vue.use(Vuex);
 
 /**
  * Store

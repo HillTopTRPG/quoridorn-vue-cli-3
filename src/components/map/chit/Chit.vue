@@ -2,7 +2,6 @@
   <div
     class="chit"
     :class="[
-      isThisRolling ? 'rolling' : '',
       isHover ? 'hover' : '',
       storeObj.isBorderHide ? 'isBorderHide' : ''
     ]"
@@ -82,8 +81,7 @@ export default class Chit extends PieceMixin {
   border-radius: 3px;
   z-index: 100000000;
 
-  &.hover,
-  &.rolling {
+  &.hover {
     z-index: 999999999;
   }
 
