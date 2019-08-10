@@ -110,7 +110,6 @@ import { Action, Getter } from "vuex-class";
   }
 })
 export default class Character extends PieceMixin {
-  @Action("changeListObj") private changeListObj: any;
   @Getter("imageList") private imageList: any;
   @Getter("propertyList") private propertyList: any;
   @Getter("isViewPieceRotateMarker") private isViewPieceRotateMarker: any;

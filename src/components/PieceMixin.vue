@@ -165,16 +165,6 @@ export default class CanvasMixin extends AddressCalcMixin {
     this.isHover = false;
   }
 
-  protected arrangeAngle(angle: number): number {
-    if (angle > 180) {
-      angle -= 360;
-    }
-    if (angle < -180) {
-      angle += 360;
-    }
-    return angle;
-  }
-
   protected getAngle(this: any, mouseOnTable: any) {
     const rect = this.rect;
     const center = {

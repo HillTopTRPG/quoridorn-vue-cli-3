@@ -160,6 +160,7 @@ export default class ChatLog extends Vue {
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("colorMap") private colorMap: any;
+  @Getter("chatLineRegExp") private chatLineRegExp: any;
 
   private activeChatTab: string = "";
   private hoverChatTab: string = "";
@@ -251,9 +252,8 @@ export default class ChatLog extends Vue {
   }
 
   private onClickSaveAsDodontofHTML() {
-    const regExp: RegExp = new RegExp(/(\[\[style([: #0-9a-zA-Z]*)]])/g);
     const replaceFunc: Function = (text: string) =>
-      text.replace(regExp, "").replace(/\[\[quot]]/g, '"');
+      text.replace(this.chatLineRegExp, "").replace(/\[\[quot]]/g, '"');
 
     saveHTML(
       "html",
@@ -292,9 +292,8 @@ export default class ChatLog extends Vue {
   }
 
   private onClickSaveAsDodontofText() {
-    const regExp: RegExp = new RegExp(/(\[\[style([: #0-9a-zA-Z]*)]])/g);
     const replaceFunc: Function = (text: string) =>
-      text.replace(regExp, "").replace(/\[\[quot]]/g, '"');
+      text.replace(this.chatLineRegExp, "").replace(/\[\[quot]]/g, '"');
 
     saveText(
       "text",

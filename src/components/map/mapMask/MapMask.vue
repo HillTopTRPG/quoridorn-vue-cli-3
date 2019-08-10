@@ -36,8 +36,9 @@ export default class MapMask extends PieceMixin {
 
   private get mapMaskStyle(): any {
     let obj: any = {};
-    const baseStyle = this.style;
+    const baseStyle: any = this.style;
     for (let key in baseStyle) {
+      if (!baseStyle.hasOwnProperty(key)) continue;
       obj[key] = baseStyle[key];
     }
     const translate = this.isHover ? -2 : 0;

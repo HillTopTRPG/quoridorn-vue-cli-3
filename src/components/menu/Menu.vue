@@ -279,7 +279,6 @@ export default class Menu extends Vue {
   @Getter("peerId") private peerId: any;
   @Getter("members") private members: any;
   @Getter("isRoomJoined") private isRoomJoined: any;
-  @Getter("isModal") private isModal: any;
 
   private isConnectHover: boolean = false;
   private isSelecting: boolean = false;

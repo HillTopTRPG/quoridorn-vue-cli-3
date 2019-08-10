@@ -42,28 +42,69 @@ export default {
       tab: "chatTab-1",
       from: "Quoridorn"
     },
-    chatFormats: [
-      {
-        label: "[リセット]",
-        chatText: "[[style]]"
-      },
-      {
-        label: "太文字",
-        chatText: "[[style:b]]"
-      },
-      {
-        label: "イタリック",
-        chatText: "[[style:i]]"
-      },
-      {
-        label: "赤文字",
-        chatText: "[[style:#f00]]"
-      },
-      {
-        label: "赤文字（太文字）",
-        chatText: "[[style:#f00:b]]"
-      }
-    ]
+    chatFormat: {
+      lineRegExp: null,
+      borderStyleRegExp: null,
+      styleRegExp: null,
+      targetList: [
+        {
+          label: "[リセット]",
+          chatText: "[[style]]"
+        },
+        {
+          label: "太文字",
+          chatText: "[[style:b]]"
+        },
+        {
+          label: "イタリック",
+          chatText: "[[style:i]]"
+        },
+        {
+          label: "赤文字",
+          chatText: "[[style:c{#f00}]]"
+        },
+        {
+          label: "赤文字（太文字）",
+          chatText: "[[style:c{#f00}:b]]"
+        },
+        {
+          label: "下線",
+          chatText: "[[style:u{#000}]]"
+        },
+        {
+          label: "下線（波線）",
+          chatText: "[[style:u{#000|wavy}]]"
+        },
+        {
+          label: "下線（赤色ダッシュ）",
+          chatText: "[[style:u{red|dashed}]]"
+        },
+        {
+          label: "上付線",
+          chatText: "[[style:o{#000}]]"
+        },
+        {
+          label: "上付線（波線）",
+          chatText: "[[style:o{#000|wavy}]]"
+        },
+        {
+          label: "上付線（赤色ダッシュ）",
+          chatText: "[[style:o{red|dashed}]]"
+        },
+        {
+          label: "取り消し線",
+          chatText: "[[style:lt]]"
+        },
+        {
+          label: "ルビ",
+          chatText: "[[style:r{ルビ}]]"
+        },
+        {
+          label: "背景色(黄色)",
+          chatText: "[[style:bc{yellow}]]"
+        }
+      ]
+    }
   } /* end of state */,
 
   actions: {
@@ -144,6 +185,32 @@ export default {
     }
   },
 
+  mutations: {
+    init_state_setting: (state: any) => {
+      /* ----------------------------------------------------------------------
+       * チャット整形に使う正規表現の初期化
+       */
+      const colorFormat = "#[0-9a-f]+|rgba? *\\([0-9., ]+\\)|[a-z]+";
+      const lineStyleFormat = "solid|double|dotted|dashed|wavy";
+      state.chatFormat.borderStyleRegExp = new RegExp(lineStyleFormat, "gi");
+      const colorAndLineFormat = `(${lineStyleFormat}|${colorFormat})`;
+      const styleRegExpList = [
+        `(b?c)(?: *{ *)(${colorFormat})(?: *})`,
+        `([uo])(?: *{ *)${colorAndLineFormat}(?: *\\| *${colorAndLineFormat})?(?: *})`,
+        "(b)",
+        "(i)",
+        "(lt)",
+        "(r)(?: *{ *)([^}]+)(?: *})"
+      ];
+      const styleRegExpStr = `(?:: *)(?:${styleRegExpList.join("|")})`;
+      state.chatFormat.styleRegExp = new RegExp(styleRegExpStr, "gi");
+
+      const regExpStr = `\\[\\[ *style((?: *${styleRegExpStr})*) *]]`;
+      window.console.log(regExpStr);
+      state.chatFormat.lineRegExp = new RegExp(regExpStr, "gi");
+    }
+  },
+
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,
@@ -153,7 +220,10 @@ export default {
     connectType: (state: any) => state.connect.type,
     version: (state: any) => state.version,
     bcdiceServer: (state: any) => state.bcdiceServer,
-    chatFormats: (state: any) => state.chatFormats,
+    chatFormats: (state: any) => state.chatFormat.targetList,
+    chatLineRegExp: (state: any) => state.chatFormat.lineRegExp,
+    borderStyleRegExp: (state: any) => state.chatFormat.borderStyleRegExp,
+    chatStyleRegExp: (state: any) => state.chatFormat.styleRegExp,
 
     /** 暗号化 */
     encrypt: (state: any) => ({

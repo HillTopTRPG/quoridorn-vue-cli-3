@@ -198,9 +198,11 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         this.rollObj.key
       ) as HTMLElement;
 
-      Array.from(
+      (Array.from(
         targetCharacterElm.getElementsByClassName("roll-knob")
-      ).forEach((elm: HTMLElement) => dispatchMouseUpEvent(elm));
+      ) as HTMLElement[]).forEach((elm: HTMLElement) =>
+        dispatchMouseUpEvent(elm)
+      );
       return;
     }
 
@@ -218,8 +220,10 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
 
       if (/\./.test(this.moveObj.key)) {
         // WindowFrameの場合
-        Array.from(targetObjElm.getElementsByClassName("window-title")).forEach(
-          (elm: HTMLElement) => dispatchMouseUpEvent(elm)
+        (Array.from(
+          targetObjElm.getElementsByClassName("window-title")
+        ) as HTMLElement[]).forEach((elm: HTMLElement) =>
+          dispatchMouseUpEvent(elm)
         );
       } else {
         // マップオブジェクトの場合

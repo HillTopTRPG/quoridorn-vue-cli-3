@@ -26,6 +26,9 @@ export default new Vuex.Store({
      * @param rootGetters
      */
     onMount({ dispatch, commit, state, rootState, rootGetters }) {
+      // state_settingの初期化
+      commit("init_state_setting");
+
       commit("setChatLogs", (window as any)!["chatLogs"]);
       commit("setChatTabs", (window as any)!["chatTabList"]);
       commit("setGroupTargetTabList", (window as any)!["groupTargetTabList"]);

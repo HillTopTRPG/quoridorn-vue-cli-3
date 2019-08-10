@@ -14,6 +14,7 @@ import { getFileNameArgList, getUrlParam } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
 import yaml from "js-yaml";
 import moment from "moment";
+
 const CryptoJS = require("crypto-js");
 
 Vue.use(Vuex);
@@ -121,8 +122,9 @@ export default new Vuex.Store({
      * @param state
      * @param rootState
      * @param rootGetters
+     * @param commit
      */
-    onMount({ dispatch, state, rootState, rootGetters }) {
+    onMount({ dispatch, state, rootState, rootGetters, commit }) {
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
@@ -170,6 +172,9 @@ export default new Vuex.Store({
         paramList.push(`playerType=${state.param.playerType}`);
       const newUrl = `?${paramList.join("&")}`;
       window.history.replaceState("", "", newUrl);
+
+      // state_settingの初期化
+      commit("init_state_setting");
 
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定

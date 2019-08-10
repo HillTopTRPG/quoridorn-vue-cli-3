@@ -50,6 +50,9 @@ import moment from "moment";
 })
 export default class ChatLogViewer extends Vue {
   @Getter("getViewName") private getViewName: any;
+  @Getter("chatLineRegExp") private chatLineRegExp: any;
+  @Getter("borderStyleRegExp") private borderStyleRegExp: any;
+  @Getter("chatStyleRegExp") private chatStyleRegExp: any;
 
   @Prop({ type: Array, required: true })
   private tabList!: any[];
@@ -120,11 +123,9 @@ export default class ChatLogViewer extends Vue {
   private transText(text: string) {
     text = text.replace(/\[\[quot]]/g, '"');
 
-    const regExp: RegExp = new RegExp(/(\[\[style([: #0-9a-zA-Z]*)]])/g);
     const matchInfoList: any[] = [];
     let matchResult = null;
-    while ((matchResult = regExp.exec(text)) !== null) {
-      // window.console.log(matchResult);
+    while ((matchResult = this.chatLineRegExp.exec(text)) !== null) {
       const styleStr = matchResult[1];
       const startIndex = matchResult.index;
       const contentsIndex = matchResult.index + matchResult[0].length;
@@ -137,13 +138,10 @@ export default class ChatLogViewer extends Vue {
 
     if (!matchInfoList.length) return text;
 
-    const styleExp: RegExp = new RegExp(
-      /(?:: *)(rgba?\([0-9, .]+\)|#[0-9a-fA-F]+|b|i|[a-zA-Z]+)/g
-    );
     matchInfoList.push({ startIndex: text.length });
     const resultTexts: string[] = [];
-
     resultTexts.push(text.substring(0, matchInfoList[0].startIndex));
+
     for (let i = 0; i < matchInfoList.length - 1; i++) {
       const styleStr: string = matchInfoList[i]!.styleStr;
       const startIndex: number = matchInfoList[i]!.contentsIndex;
@@ -151,25 +149,52 @@ export default class ChatLogViewer extends Vue {
       const contentsStr = text.substring(startIndex, endIndex);
 
       const style: string[] = [];
+      const textDecoration: string[] = [];
+      let rubyText: string = "";
       let matchResult = null;
-      while ((matchResult = styleExp.exec(styleStr)) !== null) {
-        switch (matchResult[1]) {
-          case "i":
-            style.push("font-style: italic");
-            break;
-          case "b":
-            style.push("font-weight: bold");
-            break;
-          default:
-            style.push(`color: ${matchResult[1]}`);
+      while ((matchResult = this.chatStyleRegExp.exec(styleStr)) !== null) {
+        if (matchResult[1] === "c") style.push(`color: ${matchResult[2]}`);
+        if (matchResult[1] === "bc")
+          style.push(`background-color: ${matchResult[2]}`);
+        if (matchResult[3] === "u" || matchResult[3] === "o") {
+          const lineObj: any = {
+            type: matchResult[3] === "u" ? "underline" : "overline",
+            style: "",
+            color: ""
+          };
+          const setFunc: Function = (str: string): void => {
+            if (str) {
+              if (this.borderStyleRegExp.test(str)) lineObj.style = ` ${str}`;
+              else lineObj.color = ` ${str}`;
+            }
+          };
+          setFunc(matchResult[4]);
+          setFunc(matchResult[5]);
+
+          textDecoration.push(
+            `${lineObj.type}${lineObj.style}${lineObj.color}`
+          );
         }
+        if (matchResult[6] === "b") style.push("font-weight: bold");
+        if (matchResult[7] === "i") style.push("font-style: italic");
+        if (matchResult[8] === "lt") textDecoration.push("line-through");
+        if (matchResult[9] === "r") rubyText = matchResult[10];
+      }
+      if (textDecoration.length) {
+        style.push(`text-decoration: ${textDecoration.join(" ")}`);
       }
 
-      resultTexts.push(
-        styleStr
-          ? `<span style="${style.join(";")};">${contentsStr}</span>`
-          : contentsStr
-      );
+      const styleText: string = style.join(";");
+      const styleAttrStr: string = styleText ? ` style="${styleText};"` : "";
+      let contentsText: string = contentsStr;
+      if (rubyText) {
+        contentsText = `<ruby><rb${styleAttrStr}>${contentsText}</rb><rp>（</rp><rt${styleAttrStr}>${rubyText}</rt><rp>）</rp></ruby>`;
+      } else {
+        if (styleText) {
+          contentsText = `<span${styleAttrStr}>${contentsText}</span>`;
+        }
+      }
+      resultTexts.push(contentsText);
     }
     return resultTexts.join("");
   }
@@ -221,6 +246,10 @@ export default class ChatLogViewer extends Vue {
       flex: 1;
       @include flex-box(row, flex-end, center);
     }
+  }
+
+  rt {
+    font-size: 80%;
   }
 }
 </style>
