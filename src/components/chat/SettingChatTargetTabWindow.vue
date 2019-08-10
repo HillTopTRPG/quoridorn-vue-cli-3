@@ -158,13 +158,7 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   }
 
   private addButtonOnClick() {
-    this.addGroupTargetTab({ ownerKey: this.getChatFromKey() }).then(() => {
-      const last: any = this.groupTargetTabList[
-        this.groupTargetTabList.length - 1
-      ];
-      this.selectLine(last.key);
-      this.edit(last.key);
-    });
+    this.windowOpen("private.display.addGroupChatWindow");
   }
 
   private delButtonOnClick() {
@@ -264,13 +258,6 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
       newArr.splice(index, 1);
     }
     this.changeProp(groupTargetTab, "group", newArr);
-  }
-
-  private getChatFromKey() {
-    const actor: any = this.getSelfActors.filter(
-      (actor: any) => actor.key === this.chatActorKey
-    )[0];
-    return actor ? actor.key : "";
   }
 
   private getViewNames(tab: any) {

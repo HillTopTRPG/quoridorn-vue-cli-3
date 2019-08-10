@@ -1,7 +1,7 @@
 <template>
   <window-frame
-    titleText="グループチャット編集画面"
-    display-property="private.display.editGroupChatWindow"
+    titleText="グループチャット追加画面"
+    display-property="private.display.addGroupChatWindow"
     align="center"
     :fixSize="`${windowSize.w}, ${windowSize.h}`"
     @open="initWindow"
@@ -29,7 +29,7 @@
             <thead>
               <tr>
                 <th :style="colStyle(0)">対象</th>
-                <divider :index="0" prop="editGroupChatWindow" />
+                <divider :index="0" prop="addGroupChatWindow" />
                 <th :style="colStyle(1)">名前</th>
               </tr>
             </thead>
@@ -56,7 +56,7 @@
                     :disabled="isAll"
                   />
                 </td>
-                <divider :index="0" prop="editGroupChatWindow" />
+                <divider :index="0" prop="addGroupChatWindow" />
 
                 <!-- 名前 -->
                 <td :style="colStyle(1)" class="name" :class="target.kind">
@@ -65,7 +65,7 @@
               </tr>
               <tr class="space">
                 <td :style="colStyle(0)"></td>
-                <divider :index="0" prop="editGroupChatWindow" />
+                <divider :index="0" prop="addGroupChatWindow" />
                 <td :style="colStyle(1)"></td>
               </tr>
             </tbody>
@@ -101,47 +101,49 @@ import { Component, Mixins } from "vue-mixin-decorator";
     Divider
   }
 })
-export default class EditGroupChatWindow extends Mixins<WindowMixin>(
+export default class addGroupChatWindow extends Mixins<WindowMixin>(
   WindowMixin
 ) {
   @Action("windowClose") private windowClose: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("changeListObj") private changeListObj: any;
+  @Action("addGroupTargetTab") private addGroupTargetTab: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("chatTabs") private chatTabs: any;
   @Getter("playerList") private playerList: any;
   @Getter("getMapObjectList") private getMapObjectList: any;
   @Getter("groupTargetTabList") private groupTargetTabList: any;
+  @Getter("getSelfActors") private getSelfActors: any;
+  @Getter("chatActorKey") private chatActorKey: any;
 
   private isSecret: boolean = false;
   private name: string = "";
-  private targetTab: string = "";
+  private targetTab: string | null = null;
   private isAll: boolean = false;
   private group: any[] = [];
 
   private initWindow() {
-    this.isSecret = this.storeObj.isSecret;
-    this.name = this.storeObj.name;
-    this.targetTab = this.storeObj.targetTab;
-    this.isAll = this.storeObj.isAll;
-    this.group = this.storeObj.group.concat();
+    this.isSecret = false;
+    this.name = "";
+    this.targetTab = null;
+    this.isAll = false;
+    this.group = [this.chatActorKey];
   }
 
   private commit() {
-    this.changeListObj({
-      key: this.objKey,
+    this.addGroupTargetTab({
       isSecret: this.isSecret,
       name: this.name,
       targetTab: this.targetTab,
       isAll: this.isAll,
       group: this.group
     });
-    this.windowClose("private.display.editGroupChatWindow");
+    this.windowClose("private.display.addGroupChatWindow");
   }
 
   private cancel() {
-    this.windowClose("private.display.editGroupChatWindow");
+    this.windowClose("private.display.addGroupChatWindow");
   }
 
   private moveDev(event: any) {
@@ -154,7 +156,7 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
         paramObj[this.movingIndex] = afterLeftWidth;
         paramObj[this.movingIndex + 1] = afterRightWidth;
         this.setProperty({
-          property: "private.display.editGroupChatWindow.widthList",
+          property: "private.display.addGroupChatWindow.widthList",
           value: paramObj,
           logOff: true
         });
@@ -164,7 +166,7 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
 
   private moveDevEnd() {
     this.setProperty({
-      property: "private.display.editGroupChatWindow",
+      property: "private.display.addGroupChatWindow",
       value: {
         hoverDevIndex: -1,
         movingIndex: -1,
@@ -178,7 +180,7 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
 
   private selectLine(selectLineKey: string) {
     this.setProperty({
-      property: "private.display.editGroupChatWindow.selectLineKey",
+      property: "private.display.addGroupChatWindow.selectLineKey",
       value: selectLineKey,
       logOff: true
     });
@@ -187,8 +189,8 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
     }
   }
 
-  private isSelected(groupTargetTab: any, player: any) {
-    return !!groupTargetTab.group.filter((t: string) => t === player.key)[0];
+  private isSelected(groupTargetTab: any, player: any): boolean {
+    return groupTargetTab.group.filter((t: string) => t === player.key)[0];
   }
 
   private changeProp(groupTargetTab: any, prop: string, newValue: any) {
@@ -255,40 +257,29 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
     }
   }
 
-  private get objKey() {
-    return this.$store.state.private.display["editGroupChatWindow"].key;
-  }
-
-  private get storeObj() {
-    return this.groupTargetTabList.filter(
-      (tab: any) => tab.key === this.objKey
-    )[0];
-  }
-
   /* Start 列幅可変テーブルのプロパティ */
   private get selectLineKey() {
-    return this.$store.state.private.display.editGroupChatWindow.selectLineKey;
+    return this.$store.state.private.display.addGroupChatWindow.selectLineKey;
   }
 
   private get widthList() {
-    return this.$store.state.private.display.editGroupChatWindow.widthList;
+    return this.$store.state.private.display.addGroupChatWindow.widthList;
   }
 
   private get movingIndex() {
-    return this.$store.state.private.display.editGroupChatWindow.movingIndex;
+    return this.$store.state.private.display.addGroupChatWindow.movingIndex;
   }
 
   private get startX() {
-    return this.$store.state.private.display.editGroupChatWindow.startX;
+    return this.$store.state.private.display.addGroupChatWindow.startX;
   }
 
   private get startLeftWidth() {
-    return this.$store.state.private.display.editGroupChatWindow.startLeftWidth;
+    return this.$store.state.private.display.addGroupChatWindow.startLeftWidth;
   }
 
   private get startRightWidth() {
-    return this.$store.state.private.display.editGroupChatWindow
-      .startRightWidth;
+    return this.$store.state.private.display.addGroupChatWindow.startRightWidth;
   }
 
   private get colStyle() {
@@ -297,7 +288,7 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
   /* End 列幅可変テーブルのプロパティ */
 
   private get windowSize() {
-    return this.$store.state.private.display.editGroupChatWindow.windowSize;
+    return this.$store.state.private.display.addGroupChatWindow.windowSize;
   }
 
   private get targetList() {

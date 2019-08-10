@@ -51,6 +51,7 @@ import diceSymbolContextStore from "@/store/private/display/diceSymbolContextSto
 import customDiceBotTableWindowStore from "@/store/private/display/customDiceBotTableWindowStore";
 import unSupportWindowStore from "@/store/private/display/unSupportWindowStore";
 import importBGMWindowStore from "@/store/private/display/importBGMWindowStore";
+import addGroupChatWindowStore from "@/store/private/display/addGroupChatWindowStore";
 
 export default {
   modules: {
@@ -106,7 +107,8 @@ export default {
     standImageSettingWindow: standImageSettingWindowStore,
     versionWindow: versionWindowStore,
     welcomeWindow: welcomeWindowStore,
-    unSupportWindow: unSupportWindowStore
+    unSupportWindow: unSupportWindowStore,
+    addGroupChatWindow: addGroupChatWindowStore
   },
   state: {},
   actions: {

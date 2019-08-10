@@ -1082,11 +1082,11 @@ export default {
     ) => {
       rootGetters.groupTargetTabList.push({
         key: `groupTargetTab-${++rootGetters.groupTargetTab.maxKey}`,
-        isSecret: false,
-        name: "",
-        targetTab: "",
-        isAll: false,
-        group: [payload.ownerKey]
+        isSecret: payload.isSecret,
+        name: payload.name,
+        targetTab: payload.targetTab,
+        isAll: payload.isAll,
+        group: payload.group
       });
     },
 
