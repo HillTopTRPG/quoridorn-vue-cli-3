@@ -83,16 +83,16 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
     }
 
     // 中心点の描画
-    ctx.strokeStyle = "red";
-    ctx.globalAlpha = 1;
-    const center = {
-      x: this.canvasSize.w / 2,
-      y: this.canvasSize.h / 2
-    };
-    // 横線
-    this.drawLine(ctx, center.x - 5, center.y, 10, 0);
-    // 縦線
-    this.drawLine(ctx, center.x, center.y - 5, 0, 10);
+    // ctx.strokeStyle = "red";
+    // ctx.globalAlpha = 1;
+    // const center = {
+    //   x: this.canvasSize.w / 2,
+    //   y: this.canvasSize.h / 2
+    // };
+    // // 横線
+    // this.drawLine(ctx, center.x - 5, center.y, 10, 0);
+    // // 縦線
+    // this.drawLine(ctx, center.x, center.y - 5, 0, 10);
 
     /*
     // マウス座標の描画
