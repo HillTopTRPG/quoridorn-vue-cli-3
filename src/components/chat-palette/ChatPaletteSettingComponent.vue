@@ -23,7 +23,11 @@
         </div>
 
         <div class="sendLine">
-          <input type="text" v-model="chatTemporarily" />
+          <input
+            type="text"
+            v-model="chatTemporarily"
+            @keydown.enter="sendLine(actor, null)"
+          />
           <ctrl-button @click="sendLine(actor, null)">送信</ctrl-button>
         </div>
 
