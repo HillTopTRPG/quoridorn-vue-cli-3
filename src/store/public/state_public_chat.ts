@@ -73,17 +73,13 @@ export default {
     /** ========================================================================
      * チャットタブ追加処理
      */
-    deleteChatLog: (
-      { dispatch }: { dispatch: Function }
-    ): string => {
+    deleteChatLog: ({ dispatch }: { dispatch: Function }): string => {
       return dispatch("sendNoticeOperation", {
         value: {},
         method: "doDeleteChatLog"
       });
     },
-    doDeleteChatLog: (
-      { state }: { state: any }
-    ) => {
+    doDeleteChatLog: ({ state }: { state: any }) => {
       state.logs.splice(0, state.logs.length);
       state.logs.push({
         owner: "Quoridorn",

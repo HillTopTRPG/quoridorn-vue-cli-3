@@ -916,16 +916,13 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   /**
    * チャットログ削除ボタンクリックイベントハンドラ
    */
-  private async chatLogDeleteButtonOnClick(): void {
+  private async chatLogDeleteButtonOnClick(): Promise<any> {
     const result: boolean = window.confirm(
       "本当にチャットログを削除しますか？\n削除前にログ保存を同時に行います。"
     );
-    window.console.log(result);
     if (!result) return;
 
-    window.console.log("チャットログ保存");
     await this.saveChatLogHtml();
-    window.console.log("チャットログ削除");
     this.deleteChatLog();
   }
 

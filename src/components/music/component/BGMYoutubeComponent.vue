@@ -93,7 +93,7 @@ export default class BGMYoutubeComponent extends Vue {
   private onReady() {}
 
   private onPlaying(this: any, duration: number) {
-    const bgmCoreComponent: BGMCoreComponent = this.$refs.core;
+    const bgmCoreComponent: BGMCoreComponent = this.$refs.core! as BGMCoreComponent;
     bgmCoreComponent.setDuration(duration);
     bgmCoreComponent.play();
   }
@@ -103,7 +103,8 @@ export default class BGMYoutubeComponent extends Vue {
   }
 
   private onPaused(this: any) {
-    const bgmCoreComponent: BGMCoreComponent = this.$refs.core;
+    const bgmCoreComponent: BGMCoreComponent = this.$refs
+      .core as BGMCoreComponent;
     bgmCoreComponent.pause();
   }
 
@@ -143,7 +144,7 @@ export default class BGMYoutubeComponent extends Vue {
 
   private onTimeUpdate(time: number) {
     const bgmCoreComponent: BGMCoreComponent = this.$refs
-      .core! as BGMCoreComponent;
+      .core as BGMCoreComponent;
     bgmCoreComponent.timeUpdate(time);
   }
 }

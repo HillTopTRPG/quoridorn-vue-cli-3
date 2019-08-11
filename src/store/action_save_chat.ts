@@ -21,25 +21,27 @@ export default {
         mode: "dev"
       };
 
-      return Promise.resolve()
-        // テンプレートファイル読み込み
-        .then(() =>
-          fetch(`${process.env.BASE_URL}/static/chatLogTemplate.html`).then(
-            res => res.text()
+      return (
+        Promise.resolve()
+          // テンプレートファイル読み込み
+          .then(() =>
+            fetch(`${process.env.BASE_URL}/static/chatLogTemplate.html`).then(
+              res => res.text()
+            )
           )
-        )
 
-        // テンプレートエンジン
-        .then((templateStr: string) => Mustache.render(templateStr, data))
+          // テンプレートエンジン
+          .then((templateStr: string) => Mustache.render(templateStr, data))
 
-        // HTML出力
-        .then((contents: string) => {
-          const blob = new Blob([contents], { type: "text/html" });
-          saveAs(blob, `${title}.html`);
-        })
+          // HTML出力
+          .then((contents: string) => {
+            const blob = new Blob([contents], { type: "text/html" });
+            saveAs(blob, `${title}.html`);
+          })
 
-        // エラー処理
-        .catch((err: any) => window.console.error(err));
+          // エラー処理
+          .catch((err: any) => window.console.error(err))
+      );
     }
   }
 };

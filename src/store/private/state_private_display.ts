@@ -115,9 +115,23 @@ export default {
     /**
      * 画面の配置を初期化する
      */
-    doResetWindowLocate() {
-      // TODO 実装
-      alert("未実装の機能です。");
+    doResetWindowLocate({ rootState, dispatch }: { rootState: any; dispatch: Function }) {
+      Object.entries(rootState.private.display)
+        .map(([key, value]) => ({ key, value }))
+        .filter((obj: any) => {
+          if (!obj.value) return false;
+          return obj.value.isDisplay;
+        })
+        .forEach((obj: any) => {
+          const accessName = obj.key;
+          window.console.log(accessName);
+          dispatch("setProperty", {
+            property: `private.display.${accessName}.command`,
+            logOff: true,
+            isNotice: false,
+            value: { command: "reset" }
+          });
+        });
     },
 
     /**
