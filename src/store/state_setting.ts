@@ -46,64 +46,7 @@ export default {
       lineRegExp: null,
       borderStyleRegExp: null,
       styleRegExp: null,
-      targetList: [
-        {
-          label: "[リセット]",
-          chatText: "[[style]]"
-        },
-        {
-          label: "太文字",
-          chatText: "[[style:b]]"
-        },
-        {
-          label: "イタリック",
-          chatText: "[[style:i]]"
-        },
-        {
-          label: "赤文字",
-          chatText: "[[style:c{#f00}]]"
-        },
-        {
-          label: "赤文字（太文字）",
-          chatText: "[[style:c{#f00}:b]]"
-        },
-        {
-          label: "下線",
-          chatText: "[[style:u{#000}]]"
-        },
-        {
-          label: "下線（波線）",
-          chatText: "[[style:u{#000|wavy}]]"
-        },
-        {
-          label: "下線（赤色ダッシュ）",
-          chatText: "[[style:u{red|dashed}]]"
-        },
-        {
-          label: "上付線",
-          chatText: "[[style:o{#000}]]"
-        },
-        {
-          label: "上付線（波線）",
-          chatText: "[[style:o{#000|wavy}]]"
-        },
-        {
-          label: "上付線（赤色ダッシュ）",
-          chatText: "[[style:o{red|dashed}]]"
-        },
-        {
-          label: "取り消し線",
-          chatText: "[[style:lt]]"
-        },
-        {
-          label: "ルビ",
-          chatText: "[[style:r{ルビ}]]"
-        },
-        {
-          label: "背景色(黄色)",
-          chatText: "[[style:bc{yellow}]]"
-        }
-      ]
+      targetList: []
     }
   } /* end of state */,
 

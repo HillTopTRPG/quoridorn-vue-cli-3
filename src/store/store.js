@@ -271,6 +271,21 @@ export default new Vuex.Store({
       });
 
       /* ----------------------------------------------------------------------
+       * チャットフォーマットの設定
+       */
+      rootGetters
+        .loadYaml("/static/conf/chatFormat.yaml")
+        .then(chatFormatList => {
+          chatFormatList.forEach(chatFormat => {
+            rootState.setting.chatFormat.targetList.push({
+              label: chatFormat.label,
+              chatText: chatFormat.chatText
+            });
+          });
+          window.console.log(rootState.setting.chatFormat.targetList);
+        });
+
+      /* ----------------------------------------------------------------------
        * 接続設定の設定
        */
       rootGetters.loadYaml("/static/conf/connect.yaml").then(setting => {
