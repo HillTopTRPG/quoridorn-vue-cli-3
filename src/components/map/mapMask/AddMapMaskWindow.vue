@@ -4,6 +4,7 @@
     display-property="private.display.addMapMaskWindow"
     align="center"
     fixSize="285, 195"
+    message="ドラッグ＆ドロップで配置"
   >
     <table>
       <tbody>

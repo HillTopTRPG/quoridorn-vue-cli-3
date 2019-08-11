@@ -69,18 +69,19 @@ export default class BGMYoutubeComponent extends Vue {
   private fadeOut!: number;
 
   private onMounted() {
+    const bgmObj = {
+      onReady: this.onReady,
+      timeUpdate: this.onTimeUpdate,
+      onPlaying: this.onPlaying,
+      onError: this.onError,
+      onPaused: this.onPaused,
+      onReject: this.onReject
+    };
     const result = (<any>window)["youtube"]["registration"](
       this.tag,
       this.url,
       0,
-      {
-        onReady: this.onReady,
-        timeUpdate: this.onTimeUpdate,
-        onPlaying: this.onPlaying,
-        onError: this.onError,
-        onPaused: this.onPaused,
-        onReject: this.onReject
-      }
+      bgmObj
     );
     if (!result) this.$emit("end");
   }
@@ -107,7 +108,7 @@ export default class BGMYoutubeComponent extends Vue {
   }
 
   private onReject() {
-    window.console.error("youtube - onReject => reload");
+    window.console.log("youtube - onReject => reload");
     this.bgm.isReject = true;
     this.setProperty({
       property: "private.display.jukeboxWindow.command",

@@ -4,6 +4,7 @@
     display-property="private.display.addCharacterSettingWindow"
     align="center"
     fixSize="653, 377"
+    message="追加ボタンを押してから画面にドラッグ&ドロップで追加"
     @open="open"
     @reset="open"
   >

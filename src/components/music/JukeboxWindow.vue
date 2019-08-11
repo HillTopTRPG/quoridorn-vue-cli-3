@@ -109,7 +109,6 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
 
     // 追加処理
-    window.console.log("play BGM", addBgmObj.title);
     if (addBgmObj.url !== "") {
       setTimeout(() => {
         this.playList.unshift(addBgmObj);
