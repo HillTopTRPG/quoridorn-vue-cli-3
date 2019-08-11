@@ -36,7 +36,7 @@ export default class BGMYoutubeComponent extends Vue {
   @Action("setProperty") private setProperty: any;
 
   @Prop({ type: Object, required: true })
-  private bgm!: string;
+  private bgm!: any;
 
   @Prop({ type: String, required: true })
   private bgmKey!: string;
@@ -108,6 +108,7 @@ export default class BGMYoutubeComponent extends Vue {
 
   private onReject() {
     window.console.error("youtube - onReject => reload");
+    this.bgm.isReject = true;
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
       logOff: true,

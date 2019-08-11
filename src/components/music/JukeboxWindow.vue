@@ -83,7 +83,7 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (!addBgmObj) return;
 
     // 強制リスタートじゃなければ、もともと再生されてる曲を中断しない。
-    if (!addBgmObj.forceReset) {
+    if (!addBgmObj.isReject && !addBgmObj.forceReset) {
       const bgmObj: any = this.playList.filter(
         (bgmObj: any) => bgmObj.key === addBgmObj.key
       )[0];
@@ -109,6 +109,7 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
     });
 
     // 追加処理
+    window.console.log("play BGM", addBgmObj.title);
     if (addBgmObj.url !== "") {
       setTimeout(() => {
         this.playList.unshift(addBgmObj);
