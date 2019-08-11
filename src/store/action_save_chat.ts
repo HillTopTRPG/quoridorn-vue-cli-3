@@ -8,7 +8,7 @@ export default {
      * HTML形式でチャットログをダウンロードする
      * @param rootGetters
      */
-    saveChatLogHtml({ rootGetters }: { rootGetters: any }) {
+    async saveChatLogHtml({ rootGetters }: { rootGetters: any }) {
       const dateStr = moment().format("YYYYMMDD_HHmmss");
       const title = `Quoridorn_chatLog_${dateStr}`;
 
@@ -20,10 +20,8 @@ export default {
         title,
         mode: "dev"
       };
-      window.console.log(data);
 
-      // TODO 一時的な書き換え
-      Promise.resolve()
+      return Promise.resolve()
         // テンプレートファイル読み込み
         .then(() =>
           fetch(`${process.env.BASE_URL}/static/chatLogTemplate.html`).then(

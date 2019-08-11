@@ -541,6 +541,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("updateActorKey") private updateActorKey: any;
   @Action("sendChatLog") private sendChatLog: any;
   @Action("saveChatLogHtml") private saveChatLogHtml: any;
+  @Action("deleteChatLog") private deleteChatLog: any;
   @Mutation("chatTabSelect") private chatTabSelect: any;
   @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
@@ -915,9 +916,17 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   /**
    * チャットログ削除ボタンクリックイベントハンドラ
    */
-  private chatLogDeleteButtonOnClick(): void {
-    // TODO
-    alert("未実装です。");
+  private async chatLogDeleteButtonOnClick(): void {
+    const result: boolean = window.confirm(
+      "本当にチャットログを削除しますか？\n削除前にログ保存を同時に行います。"
+    );
+    window.console.log(result);
+    if (!result) return;
+
+    window.console.log("チャットログ保存");
+    await this.saveChatLogHtml();
+    window.console.log("チャットログ削除");
+    this.deleteChatLog();
   }
 
   /**

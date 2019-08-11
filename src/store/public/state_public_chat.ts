@@ -35,7 +35,7 @@ export default {
         from: "Quoridorn",
         tab: "chatTab-1",
         target: "groupTargetTab-0",
-        text: "こちらデモ版です。",
+        text: "ようこそQuoridornへ！",
         color: "color-Quoridorn",
         statusName: "◆",
         isDiceBot: false,
@@ -68,6 +68,35 @@ export default {
       setTimeout(() => {
         commit("inputPeerId", { key: key, add: -1 });
       }, 400);
+    },
+
+    /** ========================================================================
+     * チャットタブ追加処理
+     */
+    deleteChatLog: (
+      { dispatch }: { dispatch: Function }
+    ): string => {
+      return dispatch("sendNoticeOperation", {
+        value: {},
+        method: "doDeleteChatLog"
+      });
+    },
+    doDeleteChatLog: (
+      { state }: { state: any }
+    ) => {
+      state.logs.splice(0, state.logs.length);
+      state.logs.push({
+        owner: "Quoridorn",
+        name: "Quoridorn",
+        from: "Quoridorn",
+        tab: "chatTab-1",
+        target: "groupTargetTab-0",
+        text: "チャットログを初期化しました。",
+        color: "color-Quoridorn",
+        statusName: "◆",
+        isDiceBot: false,
+        type: 1
+      });
     }
   },
   mutations: {
