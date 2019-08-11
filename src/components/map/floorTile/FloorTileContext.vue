@@ -1,9 +1,12 @@
 <template>
-  <context-frame displayProperty="private.display.chitContext">
+  <context-frame displayProperty="private.display.floorTileContext">
     <div class="item" @click.left.prevent="editObj">変更</div>
     <div class="item" @click.left.prevent="copyObj">複製</div>
     <div class="item" @click.left.prevent="deleteObj">削除</div>
     <hr />
+    <div class="item" @click.left.prevent="changeLock">
+      固定{{ isLock ? "を解除" : "" }}
+    </div>
     <div class="item" @click.left.prevent="changeIsHideBorder(!isBorderHide)">
       枠線を{{ isBorderHide ? "表示" : "非表示" }}
     </div>
@@ -22,55 +25,68 @@ import { Component, Mixins } from "vue-mixin-decorator";
     ContextFrame
   }
 })
-export default class ChitContext extends Mixins<WindowMixin>(WindowMixin) {
+export default class FloorTileContext extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("deleteListObj") private deleteListObj: any;
   @Action("changeListObj") private changeListObj: any;
   @Action("copyListObj") private copyListObj: any;
   @Action("windowClose") private windowClose: any;
-  @Getter("chitContextObjKey") private chitContextObjKey: any;
+  @Getter("floorTileContextObjKey") private floorTileContextObjKey: any;
   @Getter("playerKey") private playerKey: any;
   @Getter("getObj") private getObj: any;
 
   private editObj() {
     this.setProperty({
-      property: "private.display.editChitWindow.key",
-      value: this.chitContextObjKey
+      property: "private.display.editFloorTileWindow.key",
+      value: this.floorTileContextObjKey,
+      logOff: true
     });
-    this.windowOpen("private.display.editChitWindow");
-    this.windowClose("private.display.chitContext");
+    this.windowOpen("private.display.editFloorTileWindow");
+    this.windowClose("private.display.floorTileContext");
   }
-
+  private changeLock(): void {
+    this.changeListObj({
+      key: this.floorTileContextObjKey,
+      isLock: !this.isLock,
+      isNotice: true
+    });
+    this.windowClose("private.display.floorTileContext");
+  }
   private copyObj(): void {
     this.copyListObj({
-      key: this.chitContextObjKey
+      key: this.floorTileContextObjKey
     });
-    this.windowClose("private.display.chitContext");
+    this.windowClose("private.display.floorTileContext");
   }
-
-  private deleteObj() {
+  private deleteObj(): void {
     this.deleteListObj({
-      propName: "chit",
-      key: this.chitContextObjKey,
+      propName: "floorTile",
+      key: this.floorTileContextObjKey,
       owner: this.playerKey,
       isNotice: true
     });
-    this.windowClose("private.display.chitContext");
+    this.windowClose("private.display.floorTileContext");
+  }
+
+  private get isLock(): boolean {
+    const floorTileObj = this.getObj(this.floorTileContextObjKey);
+    if (!floorTileObj) return false;
+    return floorTileObj.isLock;
   }
 
   private changeIsHideBorder(isBorderHide: boolean): void {
     this.changeListObj({
-      key: this.chitContextObjKey,
+      key: this.floorTileContextObjKey,
       isBorderHide,
       isNotice: true
     });
-    this.windowClose("private.display.chitContext");
+    this.windowClose("private.display.floorTileContext");
   }
 
   private get isBorderHide(): boolean {
-    const character = this.getObj(this.chitContextObjKey);
-    return character ? character.isBorderHide : null;
+    const floorTileObj = this.getObj(this.floorTileContextObjKey);
+    return floorTileObj ? floorTileObj.isBorderHide : null;
   }
 }
 </script>

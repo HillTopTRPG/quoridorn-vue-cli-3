@@ -1,6 +1,7 @@
 <template>
   <context-frame displayProperty="private.display.characterContext">
-    <div class="item" @click.left.prevent="viewEditCharacter">変更</div>
+    <div class="item" @click.left.prevent="editObj">変更</div>
+    <div class="item" @click.left.prevent="copyObj">複製</div>
     <hr />
     <div
       class="item"
@@ -23,12 +24,9 @@
     >
       墓場に移動（削除）
     </div>
+    <hr />
     <div class="item" @click.left.prevent="changeIsHideBorder(!isBorderHide)">
       枠線を{{ isBorderHide ? "表示" : "非表示" }}
-    </div>
-    <hr />
-    <div class="item" @click.left.prevent="copyCharacter">
-      複製
     </div>
     <template
       v-if="
@@ -73,10 +71,9 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("getObj") private getObj: any;
   @Getter("characterContextObjKey") private characterContextObjKey: any;
   @Getter("playerKey") private playerKey: any;
-  @Getter("mapMaskIsLock") private mapMaskIsLock: any;
   @Getter("isGameMaster") private isGameMaster: any;
 
-  private viewEditCharacter(): void {
+  private editObj(): void {
     this.setProperty({
       property: "private.display.editCharacterWindow.key",
       value: this.characterContextObjKey,
@@ -102,7 +99,7 @@ export default class CharacterContext extends Mixins<WindowMixin>(WindowMixin) {
     });
     this.windowClose("private.display.characterContext");
   }
-  private copyCharacter(): void {
+  private copyObj(): void {
     this.copyListObj({
       key: this.characterContextObjKey
     });

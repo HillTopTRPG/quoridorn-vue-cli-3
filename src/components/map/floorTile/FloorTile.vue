@@ -1,26 +1,25 @@
 <template>
   <div
-    class="chit"
+    class="floorTile"
     :class="[
+      storeObj.isLock ? 'isLock' : 'isUnLock',
       isHover ? 'hover' : '',
       storeObj.isBorderHide ? 'isBorderHide' : ''
     ]"
-    :style="chitStyle"
-    :title="storeObj.description"
+    :style="floorTileStyle"
     :id="storeObj.key"
-    @click.right.stop="e => openContext(e, 'private.display.chitContext')"
     @mouseover="mouseover"
     @mouseout="mouseout"
+    @click.right.stop="e => openContext(e, 'private.display.floorTileContext')"
     @mousedown.left.stop="leftDown"
     @mouseup.left.stop="leftUp"
     @mousedown.right.stop="rightDown"
     @mouseup.right.stop="rightUp"
-    @touchstart="leftDown"
-    @touchend="leftUp"
-    @touchcancel="leftUp"
+    @touchstart.stop="leftDown"
+    @touchend.stop="leftUp"
+    @touchcancel.stop="leftUp"
     @contextmenu.prevent
   >
-    <div class="border" v-if="!storeObj.isBorderHide"></div>
     <img
       class="image"
       v-img="imageData"
@@ -37,7 +36,7 @@ import { Component } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
 @Component
-export default class Chit extends PieceMixin {
+export default class FloorTile extends PieceMixin {
   @Getter("imageList") imageList: any;
 
   private get imageData() {
@@ -47,7 +46,7 @@ export default class Chit extends PieceMixin {
     return obj ? obj.data : null;
   }
 
-  private get chitStyle() {
+  private get floorTileStyle() {
     let obj: any = this.style;
     if (this.storeObj.isDraggingLeft) {
       const plus = 1.5;
@@ -67,7 +66,7 @@ export default class Chit extends PieceMixin {
 </script>
 
 <style scoped lang="scss">
-.chit {
+.floorTile {
   position: fixed;
   display: flex;
   justify-content: center;
@@ -75,8 +74,7 @@ export default class Chit extends PieceMixin {
   white-space: nowrap;
   font-size: 12px;
   cursor: crosshair;
-  border-radius: 3px;
-  z-index: 200000000;
+  z-index: 100000000;
 
   &.hover {
     z-index: 999999999;
@@ -89,11 +87,21 @@ export default class Chit extends PieceMixin {
     right: -2px;
     bottom: -2px;
     top: -2px;
-    border: 2px solid black;
+    border: 2px solid transparent;
   }
 
   &.isBorderHide:before {
     border: none;
+  }
+
+  &:not(.isBorderHide).hover {
+    &.isLock:before {
+      border-color: blue;
+    }
+
+    &.isUnLock:before {
+      border-color: yellow;
+    }
   }
 }
 
@@ -103,7 +111,7 @@ img.image {
   top: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: fill;
 
   &.reverse {
     transform: scale(-1, 1);
@@ -125,23 +133,5 @@ img.rotate {
     height: 19px;
     transform: translate(-2px, -2px);
   }
-}
-
-.name {
-  position: absolute;
-  top: calc(-1em - 4px);
-  background-color: rgba(255, 255, 255, 0.3);
-  padding: 0 3px;
-}
-
-.border {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  border: 3px solid #bbbbff;
-  border-radius: 1px;
 }
 </style>

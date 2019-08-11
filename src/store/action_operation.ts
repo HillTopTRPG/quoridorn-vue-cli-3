@@ -1142,18 +1142,5 @@ export default {
       });
     }
   },
-  getters: {
-    mapMaskIsLock: (
-      state: any,
-      getters: any,
-      rootState: any,
-      rootGetters: any
-    ) => {
-      if (!getters.isWindowOpen("private.display.mapMaskContext")) {
-        return false;
-      }
-      const obj = rootGetters.getObj(rootGetters.mapMaskContextObjKey);
-      return obj ? obj.isLock : false;
-    }
-  }
+  getters: {}
 };

@@ -58,6 +58,18 @@
       type="chit"
     />
 
+    <floor-tile
+      v-for="obj in getMapObjectList({ kind: 'floorTile', place: 'field' })"
+      :key="obj.key"
+      :objKey="obj.key"
+      @drag="dragging"
+      @leftDown="leftDown"
+      @leftUp="leftUp"
+      @rightDown="rightDown"
+      @rightUp="rightUp"
+      type="floorTile"
+    />
+
     <dice-symbol
       v-for="obj in getMapObjectList({ kind: 'diceSymbol' })"
       :key="obj.key"
@@ -84,9 +96,11 @@ import { Component, Mixins } from "vue-mixin-decorator";
 import { Action, Getter } from "vuex-class";
 import { Watch } from "vue-property-decorator";
 import DiceSymbol from "@/components/map/diceSymbol/DiceSymbol.vue";
+import FloorTile from "@/components/map/floorTile/FloorTile.vue";
 
 @Component({
   components: {
+    FloorTile,
     DiceSymbol,
     MapBoard,
     MapMask,
@@ -252,6 +266,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
 
   rightDown(this: any): void {
     // qLog(`  [methods] GameTableイベント => event: mousedown, mouse: right`);
+    window.console.log("回転開始");
     const obj = {
       angle: {
         dragStart: this.calcCoordinate(
@@ -267,6 +282,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
 
   rightUp(event: any): void {
     // qLog(`  [methods] GameTableイベント => event: mouseup, mouse: right`);
+    window.console.log("回転終了");
     const isDraggingRight = this.isDraggingRight;
     this.setProperty({
       property: "map.isMouseDownRight",
@@ -419,7 +435,8 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
         dragStart: 0
       },
       isLock: false,
-      order: 0
+      order: 0,
+      isBorderHide: false
     };
 
     // マップマスクの作成
@@ -429,6 +446,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       const fontColor = event.dataTransfer.getData("fontColor");
       const columns = parseInt(event.dataTransfer.getData("columns"), 10);
       const rows = parseInt(event.dataTransfer.getData("rows"), 10);
+      const isMulti = event.dataTransfer.getData("isMulti");
 
       // 必須項目
       pieceObj.columns = columns;
@@ -437,9 +455,11 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.name = name;
       pieceObj.color = color;
       pieceObj.fontColor = fontColor;
-      pieceObj.isBorderHide = false;
 
       this.addListObj(pieceObj);
+      if (isMulti === "false") {
+        this.windowClose("private.display.addMapMaskWindow");
+      }
       return;
     }
 
@@ -470,7 +490,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.currentImageTag = currentImageTag;
       pieceObj.fontColorType = "0";
       pieceObj.fontColor = "#000";
-      pieceObj.isBorderHide = false;
       pieceObj.chatPalette = {
         list: []
       };
@@ -532,6 +551,34 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       return;
     }
 
+    // フロアタイルの作成
+    if (kind === "floorTile") {
+      const currentImageTag = event.dataTransfer.getData("currentImageTag");
+      const imageKey = event.dataTransfer.getData("imageKey");
+      const isReverse = event.dataTransfer.getData("isReverse");
+      const columns = event.dataTransfer.getData("columns");
+      const rows = event.dataTransfer.getData("rows");
+      const description = event.dataTransfer.getData("description");
+      const isMulti = event.dataTransfer.getData("isMulti");
+
+      // 必須項目
+      pieceObj.columns = columns;
+      pieceObj.rows = rows;
+      // 個別部
+      pieceObj.currentImageTag = currentImageTag;
+      pieceObj.imageKey = imageKey;
+      pieceObj.isReverse = isReverse === "true";
+      pieceObj.description = description;
+
+      this.addListObj(pieceObj);
+
+      window.console.log(isMulti);
+      if (isMulti === "false") {
+        this.windowClose("private.display.addFloorTileWindow");
+      }
+      return;
+    }
+
     // チットの作成
     if (kind === "chit") {
       const currentImageTag = event.dataTransfer.getData("currentImageTag");
@@ -550,7 +597,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       pieceObj.imageKey = imageKey;
       pieceObj.isReverse = isReverse === "true";
       pieceObj.description = description;
-      pieceObj.isBorderHide = false;
 
       this.addListObj(pieceObj);
 

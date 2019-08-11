@@ -18,6 +18,7 @@ import secretDiceWindowStore from "@/store/private/display/secretDiceWindowStore
 import addCharacterSettingWindowStore from "@/store/private/display/addCharacterSettingWindowStore";
 import roomInfoWindowStore from "@/store/private/display/roomInfoWindowStore";
 import addChitWindowStore from "@/store/private/display/addChitWindowStore";
+import addFloorTileWindowStore from "@/store/private/display/addFloorTileWindowStore";
 import editMapWindowStore from "@/store/private/display/editMapWindowStore";
 import addBGMWindowStore from "@/store/private/display/addBGMWindowStore";
 import versionWindowStore from "@/store/private/display/versionWindowStore";
@@ -30,6 +31,7 @@ import fileUploaderWindowStore from "@/store/private/display/fileUploaderWindowS
 import editMapMaskWindowStore from "@/store/private/display/editMapMaskWindowStore";
 import editCharacterWindowStore from "@/store/private/display/editCharacterWindowStore";
 import editChitWindowStore from "@/store/private/display/editChitWindowStore";
+import editFloorTileWindowStore from "@/store/private/display/editFloorTileWindowStore";
 import editBGMWindowStore from "@/store/private/display/editBGMWindowStore";
 import imageViewWindowStore from "@/store/private/display/imageViewWindowStore";
 import editCustomDiceBotTableWindowStore from "@/store/private/display/editCustomDiceBotTableWindowStore";
@@ -52,6 +54,7 @@ import customDiceBotTableWindowStore from "@/store/private/display/customDiceBot
 import unSupportWindowStore from "@/store/private/display/unSupportWindowStore";
 import importBGMWindowStore from "@/store/private/display/importBGMWindowStore";
 import addGroupChatWindowStore from "@/store/private/display/addGroupChatWindowStore";
+import floorTileContextStore from "@/store/private/display/floorTileContextStore";
 
 export default {
   modules: {
@@ -108,14 +111,23 @@ export default {
     versionWindow: versionWindowStore,
     welcomeWindow: welcomeWindowStore,
     unSupportWindow: unSupportWindowStore,
-    addGroupChatWindow: addGroupChatWindowStore
+    addGroupChatWindow: addGroupChatWindowStore,
+    addFloorTileWindow: addFloorTileWindowStore,
+    editFloorTileWindow: editFloorTileWindowStore,
+    floorTileContext: floorTileContextStore
   },
   state: {},
   actions: {
     /**
      * 画面の配置を初期化する
      */
-    doResetWindowLocate({ rootState, dispatch }: { rootState: any; dispatch: Function }) {
+    doResetWindowLocate({
+      rootState,
+      dispatch
+    }: {
+      rootState: any;
+      dispatch: Function;
+    }) {
       Object.entries(rootState.private.display)
         .map(([key, value]) => ({ key, value }))
         .filter((obj: any) => {
@@ -124,7 +136,6 @@ export default {
         })
         .forEach((obj: any) => {
           const accessName = obj.key;
-          window.console.log(accessName);
           dispatch("setProperty", {
             property: `private.display.${accessName}.command`,
             logOff: true,

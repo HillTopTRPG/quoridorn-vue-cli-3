@@ -181,7 +181,6 @@ export default class WindowFrame extends Vue {
         logOff: true
       });
     }
-    window.console.log("mouseUp on Window", num);
     const gameTableElm = document.getElementById("mapBoardFrame");
     const evt = document.createEvent("MouseEvents");
     evt.initMouseEvent(

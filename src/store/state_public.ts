@@ -14,6 +14,7 @@ import state_public_chit from "@/store/public/state_public_chit";
 import state_public_character from "@/store/public/state_public_character";
 import state_public_map_mask from "@/store/public/state_public_map_mask";
 import state_public_dice_symbol from "@/store/public/state_public_dice_symbol";
+import state_public_floor_tile from "@/store/public/state_public_floor_tile";
 
 export default {
   modules: {
@@ -32,7 +33,8 @@ export default {
     chit: state_public_chit,
     character: state_public_character,
     mapMask: state_public_map_mask,
-    diceSymbol: state_public_dice_symbol
+    diceSymbol: state_public_dice_symbol,
+    floorTile: state_public_floor_tile
   },
   state: {
     /** 操作履歴 */

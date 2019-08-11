@@ -77,6 +77,9 @@
     <import-chat-palette-window />
     <import-b-g-m-window />
     <add-group-chat-window />
+    <add-floor-tile-window />
+    <edit-floor-tile-window />
+    <floor-tile-context />
   </div>
 </template>
 
@@ -146,11 +149,12 @@ import EditChatPaletteWindow from "@/components/chat-palette/EditChatPaletteWind
 import ImportChatPaletteWindow from "@/components/chat-palette/ImportChatPaletteWindow.vue";
 import ImportBGMWindow from "@/components/music/ImportBGMWindow.vue";
 import AddGroupChatWindow from "@/components/chat/AddGroupChatWindow.vue";
+import AddFloorTileWindow from "@/components/map/floorTile/AddFloorTileWindow.vue";
+import EditFloorTileWindow from "@/components/map/floorTile/EditFloorTileWindow.vue";
+import FloorTileContext from "@/components/map/floorTile/FloorTileContext.vue";
 
 @Component({
   components: {
-    AddGroupChatWindow,
-    ImportBGMWindow,
     DiceSymbolContext,
     GameTable,
     ChatWindow,
@@ -209,7 +213,12 @@ import AddGroupChatWindow from "@/components/chat/AddGroupChatWindow.vue";
     ChatPaletteSettingWindow,
     SelectNewOwnerWindow,
     EditChatPaletteWindow,
-    ImportChatPaletteWindow
+    ImportChatPaletteWindow,
+    ImportBGMWindow,
+    AddGroupChatWindow,
+    AddFloorTileWindow,
+    EditFloorTileWindow,
+    FloorTileContext
   }
 })
 export default class App2 extends Vue {

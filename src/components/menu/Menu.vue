@@ -418,12 +418,7 @@ export default class Menu extends Vue {
 
   /** フロアタイル変更モード */
   clickFloorTileMode(): void {
-    this.setProperty({
-      property: "private.display.unSupportWindow.title",
-      value: "フロアタイルモード",
-      logOff: true
-    });
-    this.windowOpen("private.display.unSupportWindow");
+    this.windowOpen("private.display.addFloorTileWindow");
     this.menuClick();
   }
 

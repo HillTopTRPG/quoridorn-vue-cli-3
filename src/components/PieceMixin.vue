@@ -135,7 +135,7 @@ export default class CanvasMixin extends AddressCalcMixin {
   }
 
   protected rightDown(this: any): void {
-    if (this.storeObj.isLock || this.isRolling) {
+    if (this.isRolling) {
       this.$emit("rightDown");
     }
   }

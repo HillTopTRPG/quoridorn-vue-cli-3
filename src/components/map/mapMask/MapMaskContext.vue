@@ -1,26 +1,16 @@
 <template>
-  <ContextFrame displayProperty="private.display.mapMaskContext">
-    <div class="item" @click.left.prevent="viewEditMapMask">
-      変更
+  <context-frame displayProperty="private.display.mapMaskContext">
+    <div class="item" @click.left.prevent="editObj">変更</div>
+    <div class="item" @click.left.prevent="copyObj">複製</div>
+    <div class="item" @click.left.prevent="deleteObj">削除</div>
+    <hr />
+    <div class="item" @click.left.prevent="changeLock">
+      固定{{ isLock ? "を解除" : "" }}
     </div>
-    <div
-      class="item"
-      @click.left.prevent="changeMapMaskLock"
-      v-show="!mapMaskIsLock"
-    >
-      固定
+    <div class="item" @click.left.prevent="changeIsHideBorder(!isBorderHide)">
+      枠線を{{ isBorderHide ? "表示" : "非表示" }}
     </div>
-    <div
-      class="item"
-      @click.left.prevent="changeMapMaskLock"
-      v-show="mapMaskIsLock"
-    >
-      固定を解除
-    </div>
-    <div class="item" @click.left.prevent="deleteMapMask">
-      削除
-    </div>
-  </ContextFrame>
+  </context-frame>
 </template>
 
 <script lang="ts">
@@ -39,13 +29,14 @@ export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("changeListObj") private changeListObj: any;
+  @Action("copyListObj") private copyListObj: any;
   @Action("deleteListObj") private deleteListObj: any;
   @Action("windowClose") private windowClose: any;
   @Getter("mapMaskContextObjKey") private mapMaskContextObjKey: any;
   @Getter("playerKey") private playerKey: any;
-  @Getter("mapMaskIsLock") private mapMaskIsLock: any;
+  @Getter("getObj") private getObj: any;
 
-  viewEditMapMask() {
+  private editObj(): void {
     this.setProperty({
       property: "private.display.editMapMaskWindow.key",
       value: this.mapMaskContextObjKey,
@@ -54,20 +45,21 @@ export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
     this.windowOpen("private.display.editMapMaskWindow");
     this.windowClose("private.display.mapMaskContext");
   }
-  changeMapMaskLock() {
+  private changeLock(): void {
     this.changeListObj({
       key: this.mapMaskContextObjKey,
-      isLock: !this.mapMaskIsLock,
+      isLock: !this.isLock,
       isNotice: true
     });
     this.windowClose("private.display.mapMaskContext");
   }
-  deleteMapMask() {
-    window.console.log(
-      `  [methods] select context => item: MapMask(${
-        this.mapMaskContextObjKey
-      }).deleteMapMask`
-    );
+  private copyObj(): void {
+    this.copyListObj({
+      key: this.mapMaskContextObjKey
+    });
+    this.windowClose("private.display.mapMaskContext");
+  }
+  private deleteObj(): void {
     this.deleteListObj({
       propName: "mapMask",
       key: this.mapMaskContextObjKey,
@@ -75,6 +67,26 @@ export default class MapMaskContext extends Mixins<WindowMixin>(WindowMixin) {
       isNotice: true
     });
     this.windowClose("private.display.mapMaskContext");
+  }
+
+  private get isLock(): boolean {
+    const mapMaskObj = this.getObj(this.mapMaskContextObjKey);
+    if (!mapMaskObj) return false;
+    return mapMaskObj.isLock;
+  }
+
+  private changeIsHideBorder(isBorderHide: boolean): void {
+    this.changeListObj({
+      key: this.mapMaskContextObjKey,
+      isBorderHide,
+      isNotice: true
+    });
+    this.windowClose("private.display.mapMaskContext");
+  }
+
+  private get isBorderHide(): boolean {
+    const mapMaskObj = this.getObj(this.mapMaskContextObjKey);
+    return mapMaskObj ? mapMaskObj.isBorderHide : null;
   }
 }
 </script>

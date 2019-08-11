@@ -41,10 +41,9 @@ export default class MapMask extends PieceMixin {
       if (!baseStyle.hasOwnProperty(key)) continue;
       obj[key] = baseStyle[key];
     }
-    const translate = this.isHover ? -2 : 0;
-    obj.transform =
-      obj.transform.replace(/ translate[XY]\([^)]+\)/g, "") +
-      ` translateX(${translate}px) translateY(${translate}px)`;
+    // obj.transform =
+    //   obj.transform.replace(/ translate[XY]\([^)]+\)/g, "") +
+    //   ` translateX(0px) translateY(0px)`;
     let colorObj = this.parseColor(this.storeObj.color);
     if (this.storeObj.isDraggingLeft) {
       const plus = 1.5;
@@ -68,26 +67,35 @@ export default class MapMask extends PieceMixin {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-style: solid;
-  border-width: 0;
-  border-color: transparent;
   white-space: nowrap;
   font-size: 12px;
   cursor: crosshair;
-  z-index: 200000000;
+  z-index: 300000000;
 
   &.hover {
     z-index: 999999999;
   }
 
-  &:not(.isBorderHide).hover {
-    border-width: 2px;
+  &:before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    top: -2px;
+    border: 2px solid transparent;
+  }
 
-    &.isLock {
+  &.isBorderHide:before {
+    border: none;
+  }
+
+  &:not(.isBorderHide).hover {
+    &.isLock:before {
       border-color: blue;
     }
 
-    &.isUnLock {
+    &.isUnLock:before {
       border-color: yellow;
     }
   }
