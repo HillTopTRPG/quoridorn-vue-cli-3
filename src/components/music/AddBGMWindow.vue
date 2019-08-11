@@ -3,41 +3,46 @@
     titleText="BGM追加画面"
     display-property="private.display.addBGMWindow"
     align="right-bottom"
-    fixSize="300, 350"
+    fixSize="300, 365"
     @open="initWindow"
   >
-    <div class="contents" @contextmenu.prevent>
+    <div class="contents">
       <fieldset>
-        <legend>読込</legend>
+        <legend @contextmenu.prevent>読込</legend>
         <!-- URL -->
         <label class="url">
-          <span>URL</span>
+          <span @contextmenu.prevent>URL</span>
           <input type="text" v-model="url" ref="urlElm" />
         </label>
       </fieldset>
       <fieldset>
-        <legend>表示</legend>
+        <legend @contextmenu.prevent>表示</legend>
         <div class="firstWide">
           <!-- 表示タイトル -->
           <label class="titleStr">
-            <span>タイトル</span><input type="text" v-model="title" />
+            <span @contextmenu.prevent>タイトル</span>
+            <input type="text" v-model="title" />
           </label>
         </div>
         <div class="firstWide" v-if="!isYoutube">
           <!-- クレジットURL -->
           <label class="creditUrl">
-            <span>CreditURL</span><input type="text" v-model="creditUrl" />
+            <span @contextmenu.prevent>CreditURL</span>
+            <input type="text" v-model="creditUrl" />
           </label>
           <!-- クレジット取得 -->
           <ctrl-button class="getCredit" @click="getCredit">取得</ctrl-button>
         </div>
       </fieldset>
       <fieldset>
-        <legend>再生</legend>
+        <legend @contextmenu.prevent>再生</legend>
         <div>
           <!-- タグ -->
           <label class="tag">
-            <span title="再生中のBGMはタグによって一意になります">タグ</span
+            <span
+              title="再生中のBGMはタグによって一意になります"
+              @contextmenu.prevent
+              >タグ</span
             ><input type="text" v-model="tag" list="bgmTagComboboxValues" />
           </label>
           <datalist id="bgmTagComboboxValues">
@@ -59,7 +64,7 @@
         <div>
           <!-- 再生時間 -->
           <label class="playLength">
-            <span title="0で全て再生">時間</span>
+            <span title="0で全て再生" @contextmenu.prevent>時間</span>
             <input
               type="number"
               min="0"
@@ -70,7 +75,7 @@
           </label>
           <!-- フェードイン -->
           <label class="fadeIn">
-            <span>fadeIn</span>
+            <span @contextmenu.prevent>fadeIn</span>
             <input
               type="number"
               min="0"
@@ -82,7 +87,7 @@
           </label>
           <!-- フェードアウト -->
           <label class="fadeOut">
-            <span>fadeOut</span>
+            <span @contextmenu.prevent>fadeOut</span>
             <input
               type="number"
               min="0"
@@ -93,7 +98,11 @@
             />
           </label>
           <!-- 無限ループ -->
-          <span class="icon loop" :class="{ active: isLoop }">
+          <span
+            class="icon loop"
+            :class="{ active: isLoop }"
+            @contextmenu.prevent
+          >
             <i
               class="icon-loop"
               @click="change('isLoop')"
@@ -101,9 +110,16 @@
             ></i>
           </span>
         </div>
+        <div>
+          <!-- 多重再生時強制再スタート -->
+          <label>
+            <span @contextmenu.prevent>多重再生時強制再スタート</span>
+            <input type="checkbox" v-model="forceReset" />
+          </label>
+        </div>
       </fieldset>
       <fieldset>
-        <legend>チャット連動</legend>
+        <legend @contextmenu.prevent>チャット連動</legend>
         <div class="lastWide">
           <!-- チャット連動オプション -->
           <label class="option">
@@ -125,7 +141,7 @@
           </label>
         </div>
       </fieldset>
-      <div class="buttonArea">
+      <div class="buttonArea" @contextmenu.prevent>
         <div>
           <ctrl-button @click="commit">確定</ctrl-button>
           <ctrl-button @click="cancel">キャンセル</ctrl-button>
@@ -157,6 +173,7 @@ import { Component, Mixins } from "vue-mixin-decorator";
 export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowClose") private windowClose: any;
   @Action("addListObj") private addListObj: any;
+  @Action("setProperty") private setProperty: any;
   @Getter("playerKey") private playerKey: any;
 
   private isYoutube: boolean = false;
@@ -180,6 +197,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private tags: string[] = ["BGM", "SE"];
   private chatLinkage: string = "0";
   private chatLinkageSearch: string = "";
+  private forceReset: boolean = true;
 
   private initWindow(this: any): void {
     this.isYoutube = false;
@@ -197,6 +215,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.volume = 0.8;
     this.chatLinkage = "0";
     this.chatLinkageSearch = "";
+    this.forceReset = true;
 
     const urlElm: HTMLElement = this.$refs.urlElm;
     setTimeout(() => urlElm.focus(), 0);
@@ -218,6 +237,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       volume: this.volume,
       chatLinkage: this.chatLinkage,
       chatLinkageSearch: this.chatLinkageSearch,
+      forceReset: this.forceReset,
       owner: this.playerKey
     });
     this.windowClose("private.display.addBGMWindow");
@@ -232,7 +252,30 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private preview() {
-    alert("未実装の機能です");
+    this.setProperty({
+      property: "private.display.jukeboxWindow.command",
+      logOff: true,
+      isNotice: false,
+      value: {
+        command: "add",
+        payload: {
+          url: this.url,
+          title: this.title,
+          creditUrl: this.creditUrl,
+          tag: this.tag,
+          isLoop: this.isLoop,
+          start: parseInt(String(this.start), 10),
+          end: parseInt(String(this.end), 10),
+          fadeIn: Math.floor(parseFloat(String(this.fadeIn)) * 10) / 10,
+          fadeOut: Math.floor(parseFloat(String(this.fadeOut)) * 10) / 10,
+          isMute: this.isMute,
+          volume: this.volume,
+          chatLinkage: this.chatLinkage,
+          chatLinkageSearch: this.chatLinkageSearch,
+          forceReset: this.forceReset
+        }
+      }
+    });
   }
 
   private change(this: any, param: string): void {

@@ -82,6 +82,16 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
   private add(addBgmObj: any): void {
     if (!addBgmObj) return;
 
+    // 強制リスタートじゃなければ、もともと再生されてる曲を中断しない。
+    if (!addBgmObj.forceReset) {
+      const bgmObj: any = this.playList.filter(
+        (bgmObj: any) => bgmObj.key === addBgmObj.key
+      )[0];
+      if (bgmObj) {
+        return;
+      }
+    }
+
     // タグが同じものはプレイリストから削除する
     const delList = this.playList.filter(plObj => {
       const bgmObj = this.bgmList.filter(

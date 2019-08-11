@@ -282,7 +282,6 @@ export default new Vuex.Store({
               chatText: chatFormat.chatText
             });
           });
-          window.console.log(rootState.setting.chatFormat.targetList);
         });
 
       /* ----------------------------------------------------------------------

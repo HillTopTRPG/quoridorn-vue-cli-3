@@ -554,12 +554,14 @@ export default {
         .filter((bgmObj: any) => {
           if (
             bgmObj.chatLinkage === 1 &&
+            bgmObj.chatLinkageSearch &&
             text.endsWith(bgmObj.chatLinkageSearch)
           ) {
             return true;
           }
           return (
             bgmObj.chatLinkage === 2 &&
+            bgmObj.chatLinkageSearch &&
             new RegExp(bgmObj.chatLinkageSearch).test(text)
           );
         })

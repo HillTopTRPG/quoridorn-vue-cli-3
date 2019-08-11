@@ -3,15 +3,16 @@
     titleText="BGM編集画面"
     display-property="private.display.editBGMWindow"
     align="right-bottom"
-    fixSize="300, 350"
+    fixSize="300, 365"
     @open="initWindow"
+    @reset="initWindow"
   >
-    <div class="contents" @contextmenu.prevent>
+    <div class="contents">
       <fieldset>
-        <legend>読込</legend>
+        <legend @contextmenu.prevent>読込</legend>
         <!-- URL -->
         <label class="url">
-          <span>URL</span>
+          <span @contextmenu.prevent>URL</span>
           <input
             type="text"
             v-model="url"
@@ -24,24 +25,25 @@
             class="mask"
             v-if="url && !isYoutube && isHideUrl"
             @click="isHideUrl = !isHideUrl"
+            @contextmenu.prevent
           >
             編集するにはここをクリックしてください。
           </div>
         </label>
       </fieldset>
       <fieldset>
-        <legend>表示</legend>
+        <legend @contextmenu.prevent>表示</legend>
         <div class="firstWide">
           <!-- 表示タイトル -->
           <label class="titleStr">
-            <span>タイトル</span>
+            <span @contextmenu.prevent>タイトル</span>
             <input type="text" v-model="title" />
           </label>
         </div>
         <div class="firstWide" v-if="!isYoutube">
           <!-- クレジットURL -->
           <label class="creditUrl">
-            <span>CreditURL</span>
+            <span @contextmenu.prevent>CreditURL</span>
             <input type="text" v-model="creditUrl" placeholder="未実装" />
           </label>
           <!-- クレジット取得 -->
@@ -49,11 +51,15 @@
         </div>
       </fieldset>
       <fieldset>
-        <legend>再生</legend>
+        <legend @contextmenu.prevent>再生</legend>
         <div>
           <!-- タグ -->
           <label class="tag">
-            <span title="再生中のBGMはタグによって一意になります">タグ</span>
+            <span
+              title="再生中のBGMはタグによって一意になります"
+              @contextmenu.prevent
+              >タグ</span
+            >
             <input type="text" v-model="tag" list="bgmTagComboboxValues" />
           </label>
           <datalist id="bgmTagComboboxValues">
@@ -75,7 +81,7 @@
         <div>
           <!-- 再生開始 -->
           <label class="start">
-            <span>再生開始</span>
+            <span @contextmenu.prevent>再生開始</span>
             <input
               type="number"
               step="0.1"
@@ -83,12 +89,12 @@
               max="10000"
               v-model="start"
             />
-            <span>秒</span></label
+            <span @contextmenu.prevent>秒</span></label
           >
           〜
           <!-- 再生終了 -->
           <label class="end">
-            <span>再生終了</span>
+            <span @contextmenu.prevent>再生終了</span>
             <input
               type="number"
               step="0.1"
@@ -96,13 +102,13 @@
               max="10000"
               v-model="end"
             />
-            <span>秒</span></label
+            <span @contextmenu.prevent>秒</span></label
           >
         </div>
         <div>
           <!-- フェードイン -->
           <label class="fadeIn">
-            <span>fadeIn</span>
+            <span @contextmenu.prevent>fadeIn</span>
             <input
               type="number"
               min="0"
@@ -114,7 +120,7 @@
           </label>
           <!-- フェードアウト -->
           <label class="fadeOut">
-            <span>fadeOut</span>
+            <span @contextmenu.prevent>fadeOut</span>
             <input
               type="number"
               min="0"
@@ -129,13 +135,21 @@
             class="icon loop"
             :class="{ active: isLoop }"
             @click="change('isLoop')"
+            @contextmenu.prevent
           >
             <i class="icon-loop"></i>リピート{{ isLoop ? "あり" : "なし" }}
           </span>
         </div>
+        <div>
+          <!-- 多重再生時強制再スタート -->
+          <label>
+            <span @contextmenu.prevent>多重再生時強制再スタート</span>
+            <input type="checkbox" v-model="forceReset" />
+          </label>
+        </div>
       </fieldset>
       <fieldset>
-        <legend>チャット連動</legend>
+        <legend @contextmenu.prevent>チャット連動</legend>
         <div class="lastWide">
           <!-- チャット連動オプション -->
           <label class="option">
@@ -157,7 +171,7 @@
           </label>
         </div>
       </fieldset>
-      <div class="buttonArea">
+      <div class="buttonArea" @contextmenu.prevent>
         <div>
           <ctrl-button @click="commit">確定</ctrl-button>
           <ctrl-button @click="cancel">キャンセル</ctrl-button>
@@ -208,11 +222,13 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   private tags: string[] = ["BGM", "SE"];
   private chatLinkage: string = "0";
   private chatLinkageSearch: string = "";
+  private forceReset: boolean = true;
 
   @Action("setProperty") private setProperty: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("windowClose") private windowClose: any;
   @Getter("parseColor") private parseColor: any;
+  @Getter("changeListObj") private changeListObj: any;
 
   private initWindow() {
     const key = this.key;
@@ -240,10 +256,12 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     volumeComponentElm!.setVolume(this.volume);
     this.chatLinkage = String(bgmObj.chatLinkage);
     this.chatLinkageSearch = bgmObj.chatLinkageSearch;
+    this.forceReset = bgmObj.forceReset;
   }
 
   private commit() {
-    const bgmObj = {
+    this.changeListObj({
+      key: this.key,
       url: this.url,
       title: this.title,
       creditUrl: this.creditUrl,
@@ -256,16 +274,8 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       isMute: this.isMute,
       volume: this.volume,
       chatLinkage: this.chatLinkage,
-      chatLinkageSearch: this.chatLinkageSearch
-    };
-    const index = this.bgmList.findIndex(
-      (bgmObj: any) => bgmObj.key === this.key
-    );
-    this.setProperty({
-      property: `public.bgm.list.${index}`,
-      value: bgmObj,
-      isNotice: true,
-      logOff: true
+      chatLinkageSearch: this.chatLinkageSearch,
+      forceReset: this.forceReset
     });
     this.windowClose("private.display.editBGMWindow");
   }
@@ -279,7 +289,30 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private preview() {
-    alert("未実装の機能です");
+    this.setProperty({
+      property: "private.display.jukeboxWindow.command",
+      logOff: true,
+      isNotice: false,
+      value: {
+        command: "add",
+        payload: {
+          url: this.url,
+          title: this.title,
+          creditUrl: this.creditUrl,
+          tag: this.tag,
+          isLoop: this.isLoop,
+          start: parseInt(String(this.start), 10),
+          end: parseInt(String(this.end), 10),
+          fadeIn: Math.floor(parseFloat(String(this.fadeIn)) * 10) / 10,
+          fadeOut: Math.floor(parseFloat(String(this.fadeOut)) * 10) / 10,
+          isMute: this.isMute,
+          volume: this.volume,
+          chatLinkage: this.chatLinkage,
+          chatLinkageSearch: this.chatLinkageSearch,
+          forceReset: this.forceReset
+        }
+      }
+    });
   }
 
   private change(this: any, param: string) {
