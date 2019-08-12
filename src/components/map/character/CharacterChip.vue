@@ -1,7 +1,7 @@
 <template>
   <div
     class="character-chip"
-    :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
+    :class="[isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
     @click.right.prevent="
@@ -11,7 +11,7 @@
     @mouseout="mouseout"
     @contextmenu.prevent
   >
-    <div class="border"></div>
+    <div class="border" v-if="!isBorderHide"></div>
     <img
       class="image"
       v-img="imageObj.data"
@@ -58,6 +58,9 @@ export default class CharacterChip extends PieceMixin {
   get useImageIndex() {
     return this.storeObj.useImageIndex;
   }
+  get isBorderHide(): number {
+    return this.storeObj.isBorderHide;
+  }
   get imageObj() {
     if (this.useImageList === "") {
       return "";
@@ -88,8 +91,7 @@ export default class CharacterChip extends PieceMixin {
   overflow: visible;
   margin-top: 1em;
 
-  &.hover,
-  &.rolling {
+  &.hover {
     z-index: 999999999;
   }
 

@@ -16,6 +16,8 @@
           type="text"
           readonly="readonly"
           :value="inviteUrl"
+          @keydown.enter.stop
+          @keyup.enter.stop
         />
       </div>
       <ul v-if="playerList.length > 0">
@@ -29,6 +31,8 @@
               type="text"
               readonly="readonly"
               :value="createURL(player)"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
           </div>
         </li>

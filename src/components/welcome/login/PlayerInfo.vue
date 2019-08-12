@@ -26,6 +26,8 @@
               type="text"
               readonly="readonly"
               :value="createUrl(player)"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
             <ctrl-button class="copy" @click="doCopy">
               コピー

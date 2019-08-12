@@ -5,8 +5,33 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
 
 module.exports = {
-  baseUrl: process.env.VUE_APP_BASE_URL,
+  publicPath: process.env.VUE_APP_BASE_URL,
+  pages: {
+    main: {
+      entry: "src/main.ts", // エントリーポイントとなるjs
+      template: "public/index.html", // テンプレートのHTML
+      filename: "index.html" // build時に出力されるファイル名
+    },
+    chatLog: {
+      entry: "src/chatLog.ts",
+      template: "public/chatLog.html",
+      filename: "chatLog.html"
+    }
+  },
   devServer: {
+    historyApiFallback: {
+      rewrites: [
+        {
+          from: new RegExp(`/${process.env.VUE_APP_BASE_URL}/chatLog.html`),
+          to: "chatLog.html"
+        },
+        {
+          from: new RegExp(`/${process.env.VUE_APP_BASE_URL}/`),
+          to: "index.html"
+        } // index.html に飛ばす
+      ]
+    },
+
     watchOptions: {
       poll: true
     },

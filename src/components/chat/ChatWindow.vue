@@ -5,42 +5,39 @@
     align="left-bottom"
     baseSize="-300, 300"
     :fontSizeBar="true"
+    @globalEnter="globalEnter"
   >
     <div class="container">
       <!----------------
-       ! タブ
+       ! チャットログ
        !--------------->
-      <tabs-component
+      <chat-log-viewer
         :tabIndex="0"
+        :chatLogList="chatLogList"
         :tabList="chatTabs"
         :activeChatTab="activeChatTab"
         :hoverChatTab="hoverChatTab"
         :isVertical="isChatTabVertical"
-        :textFunc="info => `#${info.name}/${info.unRead}`"
+        :isViewTime="isViewTime"
+        :isViewTotalTab="isViewTotalTab"
+        :textFunc="
+          info => (info.isTotal ? info.name : `#${info.name}/${info.unRead}`)
+        "
         @onSelect="chatTabOnSelect"
         @onHover="chatTabOnHover"
         @editTab="tabAddButtonOnClick"
+        :colorMap="colorMap"
+        :viewOption="true"
       />
-
-      <!----------------
-       ! チャットログ
-       !--------------->
-      <ul id="chatLog" class="selectable" @wheel.stop>
-        <li
-          v-for="(chatLog, index) in chatLogList"
-          v-html="chatLog.viewHtml"
-          :key="index"
-        ></li>
-      </ul>
 
       <!----------------
        ! 操作盤
        !--------------->
-      <label class="oneLine dep" @contextmenu.prevent>
+      <div class="oneLine dep" @contextmenu.prevent>
         <!-- 発言者選択 -->
         <span class="label">名前(！)</span>
         <ctrl-select
-          :tabindex="chatTabs.length + 2"
+          :tabindex="isModal ? -1 : chatTabs.length + 2"
           :value="chatActorKey"
           @input="updateActorKey"
           title=""
@@ -51,21 +48,24 @@
               text: getViewName(actor.key)
             }))
           "
+          :disabled="isModal"
         />
 
         <!-- ステータス選択 -->
         <actor-status-select
           :actorKey="chatActorKey"
           v-model="statusName"
-          :tabindex="chatTabs.length + 3"
+          :tabindex="isModal ? -1 : chatTabs.length + 3"
+          :disabled="isModal"
         />
 
         <!-- ダイスボット選択 -->
         <dice-bot-select
           ref="diceBot"
           v-model="currentDiceBotSystem"
-          :tabindex="chatTabs.length + 4"
+          :tabindex="isModal ? -1 : chatTabs.length + 4"
           class="diceBotSystem"
+          :disabled="isModal"
         />
 
         <!-- ここから各種機能呼び出しボタン -->
@@ -74,7 +74,9 @@
             class="icon-dice"
             title="ダイスボットの追加・編集・削除"
             @click="diceBotSettingButtonOnClick"
-            :tabindex="chatTabs.length + 5"
+            @keydown.space.stop="diceBotSettingButtonOnClick"
+            @keydown.enter.stop="diceBotSettingButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 5"
           ></i>
         </span>
         <span class="icon">
@@ -82,16 +84,29 @@
             class="icon-bin"
             title="チャットログ全削除"
             @click="chatLogDeleteButtonOnClick"
-            :tabindex="chatTabs.length + 6"
+            @keydown.space.stop="chatLogDeleteButtonOnClick"
+            @keydown.enter.stop="chatLogDeleteButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 6"
           ></i>
         </span>
-        <!--<span class="icon"><i class="icon-font" title="フォントの設定" @click="chatFontSettingButtonOnClick" :tabindex="chatTabs.length + 9"></i></span>-->
+        <span class="icon">
+          <i
+            class="icon-file-text"
+            title="チャットログ保存"
+            @click="chatLogExportButtonOnClick"
+            @keydown.space.stop="chatLogExportButtonOnClick"
+            @keydown.enter.stop="chatLogExportButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 7"
+          ></i>
+        </span>
         <span class="icon">
           <i
             class="icon-cloud-check"
             title="点呼・投票設定"
             @click="rollCallSettingButtonOnClick"
-            :tabindex="chatTabs.length + 7"
+            @keydown.space.stop="rollCallSettingButtonOnClick"
+            @keydown.enter.stop="rollCallSettingButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 8"
           ></i>
         </span>
         <span class="icon">
@@ -99,7 +114,9 @@
             class="icon-bell"
             title="目覚ましアラーム設定"
             @click="alermSettingButtonOnClick"
-            :tabindex="chatTabs.length + 8"
+            @keydown.space.stop="alermSettingButtonOnClick"
+            @keydown.enter.stop="alermSettingButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 9"
           ></i>
         </span>
         <span class="icon">
@@ -107,7 +124,9 @@
             class="icon-music"
             title="BGMの設定"
             @click="bgmSettingButtonOnClick"
-            :tabindex="chatTabs.length + 9"
+            @keydown.space.stop="bgmSettingButtonOnClick"
+            @keydown.enter.stop="bgmSettingButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 10"
           ></i>
         </span>
         <span class="icon">
@@ -115,7 +134,9 @@
             class="icon-film"
             title="カットイン設定"
             @click="cutInSettingButtonOnClick"
-            :tabindex="chatTabs.length + 10"
+            @keydown.space.stop="cutInSettingButtonOnClick"
+            @keydown.enter.stop="cutInSettingButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 11"
           ></i>
         </span>
         <span class="icon">
@@ -123,7 +144,9 @@
             class="icon-list2"
             title="チャットパレット設定"
             @click="chatPaletteSettingButtonOnClick"
-            :tabindex="chatTabs.length + 11"
+            @keydown.space.stop="chatPaletteSettingButtonOnClick"
+            @keydown.enter.stop="chatPaletteSettingButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 12"
           ></i>
         </span>
         <span class="icon">
@@ -131,7 +154,9 @@
             class="icon-accessibility"
             title="立ち絵設定"
             @click="standImageSettingButtonOnClick"
-            :tabindex="chatTabs.length + 12"
+            @keydown.space.stop="standImageSettingButtonOnClick"
+            @keydown.enter.stop="standImageSettingButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 13"
           ></i>
         </span>
         <span class="icon">
@@ -139,10 +164,12 @@
             class="icon-target"
             title="射界設定"
             @click="rangeSettingButtonOnClick"
-            :tabindex="chatTabs.length + 13"
+            @keydown.space.stop="rangeSettingButtonOnClick"
+            @keydown.enter.stop="rangeSettingButtonOnClick"
+            :tabindex="isModal ? -1 : chatTabs.length + 14"
           ></i>
         </span>
-      </label>
+      </div>
 
       <!----------------
        ! 発言
@@ -154,8 +181,8 @@
            !--------------->
           <tabs-component
             class="group"
-            :tabIndex="chatTabs.length + 13"
-            :tabList="groupTargetTabList"
+            :tabIndex="chatTabs.length + 14"
+            :tabList="groupTargetTabListFiltered"
             :activeChatTab="chatTarget"
             :hoverChatTab="hoverChatTargetTab"
             :isVertical="isTargetTabVertical"
@@ -170,17 +197,40 @@
             @onSelect="groupTargetTabOnSelect"
             @onHover="groupTargetTabOnHover"
             @editTab="targetTabAddButtonOnClick"
+            :viewOption="true"
           >
             <!-- 「」付与チェックボックス -->
             <label class="bracketOption">
               <input
                 type="checkbox"
                 v-model="addBrackets"
-                :tabindex="chatTabs.length + chatTabs.length + 15"
+                :tabindex="
+                  isModal ? -1 : chatTabs.length + chatTabs.length + 16
+                "
+                :disabled="isModal"
+                @keydown.enter.stop
+                @keyup.enter.stop
               />
               発言時に「」を付与
             </label>
           </tabs-component>
+
+          <!----------------
+           ! チャットオプション（単位）
+           !--------------->
+          <div
+            class="optionTable dep"
+            v-if="unitList.length"
+            @contextmenu.prevent
+          >
+            <table>
+              <tr v-for="unit in unitList" :key="unit.unit">
+                <th>{{ unit.name }}</th>
+                <th>({{ unit.unit }})</th>
+                <td>{{ unit.value }}</td>
+              </tr>
+            </table>
+          </div>
 
           <!----------------
            ! チャットオプション（送信者）
@@ -357,6 +407,63 @@
             </ul>
           </div>
 
+          <!----------------
+           ! チャットオプション（対象）
+           !--------------->
+          <div
+            class="chatOptionSelector dep"
+            v-if="chatOptionSelectMode === 'chatFormat'"
+            @contextmenu.prevent
+          >
+            <span
+              >以降の文字を…{{
+                chatOptionPageMaxNum > 1
+                  ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})`
+                  : ""
+              }}</span
+            >
+            <ul>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1"
+              >
+                [末尾へ]
+              </li>
+              <li
+                class="ope"
+                v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1"
+              >
+                [前へ]
+              </li>
+              <li
+                v-for="target in chatOptionPagingList"
+                :key="target.label"
+                :class="{ selected: partsFormat === target.label }"
+                tabindex="-1"
+              >
+                {{ target.label }}
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum !== chatOptionPageMaxNum
+                "
+              >
+                [次へ]
+              </li>
+              <li
+                class="ope"
+                v-if="
+                  chatOptionPageMaxNum > 1 &&
+                    chatOptionPageNum === chatOptionPageMaxNum
+                "
+              >
+                [先頭へ]
+              </li>
+            </ul>
+          </div>
+
           <!-- チャット入力エリア -->
           <label class="chatInputArea">
             <span
@@ -382,23 +489,27 @@
               v-model="currentMessage"
               @input="onInput"
               @blur="textAreaOnBlur"
-              @keydown.up.prevent.self.stop="
+              @keydown.up.self.stop="
                 event => chatOptionSelectChange('up', event)
               "
-              @keydown.down.prevent.self.stop="
+              @keydown.down.self.stop="
                 event => chatOptionSelectChange('down', event)
               "
               @keydown.esc.prevent="textAreaOnPressEsc"
               @keypress.enter.prevent="event => sendMessage(event, true)"
               @keyup.enter.prevent="event => sendMessage(event, false)"
-              :tabindex="chatTabs.length + chatTabs.length + 16"
-              :placeholder="'メッセージ（改行はShift + Enter）'"
+              :tabindex="isModal ? -1 : chatTabs.length + chatTabs.length + 17"
+              :placeholder="placeholderText"
+              :disabled="isModal"
+              ref="input"
             ></textarea>
           </label>
         </div>
         <ctrl-button
-          :tabindex="chatTabs.length + chatTabs.length + 17"
+          :tabindex="isModal ? -1 : chatTabs.length + chatTabs.length + 18"
           @contextmenu.prevent
+          @click="sendMessage(null, true)"
+          :disabled="isModal"
           >送信</ctrl-button
         >
       </div>
@@ -428,13 +539,16 @@ import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
 import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
 
-import { Vue, Watch } from "vue-property-decorator";
+import { Watch } from "vue-property-decorator";
 import { Action, Getter, Mutation } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
+import { conversion } from "@/components/common/Utility";
+import ChatLogViewer from "@/components/chat/ChatLogViewer.vue";
 
 @Component({
   components: {
+    ChatLogViewer,
     TabsComponent,
     CtrlButton,
     CtrlSelect,
@@ -444,26 +558,25 @@ import TabsComponent from "@/components/parts/tab-component/TabsComponent.vue";
   }
 })
 export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
-  @Action("addChatLog") private addChatLog: any;
-  @Action("chatTabSelect") private chatTabSelect: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
   @Action("sendRoomData") private sendRoomData: any;
   @Action("sendBcdiceServer") private sendBcdiceServer: any;
   @Action("updateActorKey") private updateActorKey: any;
   @Action("sendChatLog") private sendChatLog: any;
-  @Mutation("addSecretDice") private addSecretDice: any;
+  @Action("saveChatLogHtml") private saveChatLogHtml: any;
+  @Action("deleteChatLog") private deleteChatLog: any;
+  @Mutation("chatTabSelect") private chatTabSelect: any;
   @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("chatLogList") private chatLogList: any;
   @Getter("chatTabs") private chatTabs: any;
   @Getter("playerList") private playerList: any;
-  @Getter("groupTargetTabList") private groupTargetTabList: any;
+  @Getter("groupTargetTabListFiltered") private groupTargetTabListFiltered: any;
   @Getter("members") private members: any;
   @Getter("inputting") private inputting: any;
   @Getter("createInputtingMsg") private createInputtingMsg: any;
-  @Getter("fontColor") private fontColor: any;
   @Getter("chatTargetList") private chatTargetList: any;
   @Getter("activeChatTab") private activeChatTab: any;
   @Getter("hoverChatTab") private hoverChatTab: any;
@@ -473,11 +586,16 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("isWait") private isWait: any;
   @Getter("chatActorKey") private chatActorKey: any;
   @Getter("roomSystem") private roomSystem: any;
-  @Getter("getChatColor") private getChatColor: any;
   @Getter("customDiceBotList") private customDiceBotList: any;
   @Getter("customDiceBotRoomSysList") private customDiceBotRoomSysList: any;
   @Getter("loadYaml") private loadYaml: any;
   @Getter("isChatTabVertical") private isChatTabVertical: any;
+  @Getter("colorMap") private colorMap: any;
+  @Getter("chatFormats") private chatFormats: any;
+  @Getter("isViewTime") private isViewTime: any;
+  @Getter("isViewTotalTab") private isViewTotalTab: any;
+  @Getter("isModal") private isModal: any;
+  @Getter("isGameMaster") private isGameMaster: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;
@@ -498,6 +616,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   /** 入力中のルームメンバーのpeerIdの配列 */
   private inputtingPeerIdList: any[] = [];
 
+  private unitList: any = [];
+  private partsFormat: string = "";
+
   private volatileFrom: string = "";
   private volatileStatusName: string = "";
   private volatileTarget: string = "";
@@ -505,6 +626,15 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private volatileTargetTab: string | null = "";
   private statusName: string = "◆";
   private hoverChatTargetTab = "";
+
+  private placeholderText: string =
+    'メッセージ（改行はShift + Enter）\n部分フォント変更は "&" を入力';
+
+  private globalEnter() {
+    window.console.log("globalEnter at ChatWindow");
+    const input: HTMLTextAreaElement = this.$refs.input as HTMLTextAreaElement;
+    input.focus();
+  }
 
   @Watch("chatActorKey", { deep: true, immediate: true })
   private onChangeChatActorKey(chatActorKey: any) {
@@ -572,6 +702,12 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       });
     }
 
+    // コマンド（部分フォーマット）
+    let partsFormat: string = "";
+    if (text.endsWith("&") || text.endsWith("＆")) {
+      partsFormat = this.partsFormat || this.chatFormats[0].label;
+    }
+
     if (selectFrom) {
       this.chatOptionSelectMode = "from";
       this.updateActorKey(selectFrom);
@@ -581,6 +717,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     } else if (selectTab !== undefined) {
       this.chatOptionSelectMode = "tab";
       this.outputTab = selectTab;
+    } else if (partsFormat) {
+      this.chatOptionSelectMode = "chatFormat";
+      this.partsFormat = partsFormat;
     } else {
       this.chatOptionSelectMode = "";
       this.sendRoomData({
@@ -589,6 +728,25 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         isWait: this.isWait
       });
     }
+
+    const matchResult = text.match(/([-.０-９0-9]+) *(.+)/);
+    if (matchResult) {
+      const num: number = parseFloat(
+        matchResult[1].replace(/[０-９]/g, (s: string) =>
+          String.fromCharCode(s.charCodeAt(0) - 0xfee0)
+        )
+      );
+      const unit: string = matchResult[2];
+
+      // window.console.log(num, unit, matchResult);
+
+      const result: any[] = conversion(num, unit);
+      if (result) {
+        this.unitList = result;
+        return;
+      }
+    }
+    this.unitList = [];
   }
 
   /**
@@ -629,6 +787,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
       this.statusName = newValue.statusName;
       this.updateActorKey(newValue.key);
+      event.preventDefault();
     }
 
     // 発言先の選択の場合
@@ -640,6 +799,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       const newValue = arrangeIndex(this.chatTargetList, index);
 
       this.groupTargetTabOnSelect(newValue.key);
+      event.preventDefault();
     }
 
     // タブの選択の場合
@@ -657,6 +817,20 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         newValue !== null ? newValue : this.volatileActiveTab
       );
       this.outputTab = newValue;
+      event.preventDefault();
+    }
+
+    // チャットフォーマットの選択の場合
+    if (this.chatOptionSelectMode === "chatFormat") {
+      const selection: (null | any)[] = [
+        ...this.chatFormats.map((chatFormat: any) => chatFormat.label)
+      ];
+
+      event.preventDefault();
+      let index = selection.indexOf(this.partsFormat);
+      const newValue = arrangeIndex(selection, index);
+      this.partsFormat = newValue;
+      event.preventDefault();
     }
   }
 
@@ -679,7 +853,11 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
    */
   private resetChatOption(): void {
     if (this.chatOptionSelectMode) {
-      this.currentMessage = "";
+      if (this.chatOptionSelectMode === "chatFormat") {
+        this.currentMessage = this.currentMessage.replace(/[&＆]$/, "");
+      } else {
+        this.currentMessage = "";
+      }
       if (this.volatileFrom) {
         this.updateActorKey(this.volatileFrom);
       }
@@ -776,16 +954,26 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   /**
    * チャットログ削除ボタンクリックイベントハンドラ
    */
-  private chatLogDeleteButtonOnClick(): void {
-    // TODO
-    alert("未実装です。");
+  private async chatLogDeleteButtonOnClick(): Promise<any> {
+    if (!this.isGameMaster) {
+      alert(
+        "仕様的な考慮不足によりGM専用機能です。\nGM以外でも可能になるよう、近いうちに改修します。\nGMにログ取得を促してくださいませ。"
+      );
+      return;
+    }
+    const result: boolean = window.confirm(
+      "本当にチャットログを削除しますか？\n削除前にログ保存を同時に行います。"
+    );
+    if (!result) return;
+    await this.saveChatLogHtml();
+    this.deleteChatLog();
   }
 
   /**
-   * グループチャットタグ追加ボタンクリックイベントハンドラ
+   * チャットログ保存ボタンクリックイベントハンドラ
    */
-  private chatFontSettingButtonOnClick(): void {
-    this.windowOpen("private.display.settingChatFontWindow");
+  private chatLogExportButtonOnClick(): void {
+    this.saveChatLogHtml();
   }
 
   /**
@@ -859,15 +1047,37 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (this.enterPressing === flg) return;
     this.enterPressing = flg;
     if (!flg) return;
-    if (event.shiftKey) {
-      this.currentMessage += "\n";
+    if (event && event.shiftKey) {
+      const textArea: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
+      const sentence = textArea.value;
+      const pos = textArea.selectionStart;
+
+      const before = sentence.substr(0, pos);
+      const after = sentence.substr(pos, sentence.length);
+      this.currentMessage = `${before}\n${after}`;
+      setTimeout(() => {
+        textArea.selectionStart = pos + 1;
+        textArea.selectionEnd = pos + 1;
+      });
       return;
     }
     if (this.currentMessage === "") return;
 
+    // 単位を初期化
+    this.unitList = [];
+
     // チャット送信オプション選択中のEnterは特別仕様
     if (this.chatOptionSelectMode) {
-      if (this.chatOptionSelectMode) this.currentMessage = "";
+      if (this.chatOptionSelectMode === "chatFormat") {
+        const chatFormat: any = this.chatFormats.filter(
+          (format: any) => format.label === this.partsFormat
+        )[0];
+        this.currentMessage =
+          this.currentMessage.replace(/[&＆]$/, "") + chatFormat.chatText;
+        this.partsFormat = this.chatFormats[0].label;
+      } else {
+        this.currentMessage = "";
+      }
       this.chatOptionSelectMode = "";
       this.volatileFrom = "";
       this.volatileStatusName = "";
@@ -912,6 +1122,16 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         return false;
       })
       .filter((obj: any) => obj.key !== this.chatActorKey)[0];
+  }
+
+  @Watch("groupTargetTabListFiltered", { deep: true })
+  private onChangeGroupTargetTabListFiltered(
+    groupTargetTabListFiltered: any[]
+  ) {
+    const chatTarget = groupTargetTabListFiltered.filter(
+      (tabObj: any) => tabObj.key === this.chatTarget
+    )[0];
+    if (!chatTarget) this.chatTarget = "groupTargetTab-0";
   }
 
   @Watch("roomSystem")
@@ -1020,6 +1240,14 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         (target: any) => target.key === this.activeChatTab
       );
     }
+    if (this.chatOptionSelectMode === "chatFormat") {
+      const list = this.chatFormats.map((chatFormat: any) => ({
+        label: chatFormat.label
+      }));
+      index = list.findIndex(
+        (target: any) => target.label === this.partsFormat
+      );
+    }
     if (index === -1) return -1;
     return Math.floor(index / this.chatOptionPagingSize) + 1;
   }
@@ -1031,6 +1259,8 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     if (this.chatOptionSelectMode === "target")
       length = this.chatTargetList.length;
     if (this.chatOptionSelectMode === "tab") length = this.chatTabs.length;
+    if (this.chatOptionSelectMode === "chatFormat")
+      length = this.chatFormats.length;
     if (length === 0) return 1;
     return Math.floor((length - 1) / this.chatOptionPagingSize) + 1;
   }
@@ -1049,6 +1279,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       list = this.chatTabs.concat();
       list.unshift({ name: "[選択中]", key: null });
     }
+    if (this.chatOptionSelectMode === "chatFormat") {
+      list = this.chatFormats.concat();
+    }
     const endIndex = Math.min(pageNum * this.chatOptionPagingSize, list.length);
     return list.splice(startIndex, endIndex - startIndex);
   }
@@ -1064,10 +1297,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 @import "../common";
 
 .container {
+  @include flex-box(column, normal, normal);
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
   position: relative;
   overflow: visible;
 }
@@ -1076,32 +1308,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   margin-left: 0.5em;
 }
 
-#chatLog {
-  display: block;
-  background-color: white;
-  flex: 1;
-  -moz-box-flex: 1;
-  -webkit-box-flex: 1;
-  border: 1px solid gray;
-  overflow-y: scroll;
-  overflow-x: auto;
-  margin: 0;
-  padding-left: 2px;
-  list-style: none;
-  /*font-size: 13px;*/
-  min-height: 70px;
-  position: relative;
-  z-index: 10;
-  white-space: normal;
-  word-break: break-all;
-}
-
 .oneLine {
-  display: flex;
-  flex-direction: row;
+  @include flex-box(row, flex-start, center);
   flex-wrap: nowrap;
-  justify-content: left;
-  align-items: center;
   height: 26px;
   min-height: 26px;
   padding: 3px 0;
@@ -1114,10 +1323,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 
 .sendLine {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
+  @include flex-box(row, center, center);
 
   .label {
     width: 100%;
@@ -1125,9 +1331,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   > *:not(.tabs) {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    @include flex-box(row, flex-end, center);
     height: 42px;
     min-height: 42px;
   }
@@ -1158,12 +1362,9 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 }
 
 .chatOption {
-  display: flex;
+  @include flex-box(column, flex-start, center);
   height: 3.6em;
   padding: 0.2em 0 0.2em 0.4em;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
   border-radius: 5px 0 0 5px;
   border: 1px solid gray;
   border-right: 1px dashed gray;
@@ -1217,9 +1418,7 @@ textarea {
   font-size: 10px;
 
   div {
-    display: inline-flex;
-    justify-content: left;
-    align-items: center;
+    @include inline-flex-box(row, flex-start, center);
   }
 }
 
@@ -1271,6 +1470,14 @@ i.icon-bin {
   }
 }
 
+i.icon-file-text {
+  color: rgb(150, 150, 150);
+  &:hover,
+  &.hover {
+    background-color: rgb(150, 150, 150);
+  }
+}
+
 i.icon-cloud-check,
 i.icon-bell {
   color: rgb(150, 150, 0);
@@ -1313,36 +1520,68 @@ i.icon-target {
   z-index: 1000;
   max-height: 22.8em;
   overflow-y: auto;
+
+  .ope {
+    color: #777;
+  }
+
+  > span {
+    line-height: 1.8em;
+  }
+
+  ul {
+    padding: 0;
+    margin: 0.5em 0 0;
+    list-style: none;
+  }
+
+  li {
+    padding: 0.2em 0.8em;
+    line-height: 1.6em;
+  }
+
+  .selected {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
 }
 
-.chatOptionSelector .ope {
-  color: #777;
-}
+.optionTable {
+  padding: 0.5em;
+  background-color: lightgreen;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  cursor: default;
+  z-index: 1000;
+  max-height: 26em;
+  overflow-y: auto;
 
-.chatOptionSelector > span {
-  line-height: 1.8em;
-}
+  table {
+    padding: 0;
+    margin: 0;
+    border-collapse: collapse;
+  }
 
-.chatOptionSelector ul {
-  padding: 0;
-  margin: 0.5em 0 0;
-  list-style: none;
-}
+  tr:first-child {
+    th,
+    td {
+      border-top-color: transparent;
+    }
+  }
 
-.chatOptionSelector li {
-  padding: 0.2em 0.8em;
-  line-height: 1.6em;
-}
-
-.chatOptionSelector .selected {
-  background-color: rgba(255, 255, 255, 0.8);
+  th,
+  td {
+    padding: 0;
+    line-height: 2em;
+    text-align: left;
+    vertical-align: center;
+    border-top: dashed 1px black;
+  }
 }
 
 .bracketOption {
   flex: 1;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  @include flex-box(row, flex-end, center);
   padding-right: 3em;
 }
 </style>

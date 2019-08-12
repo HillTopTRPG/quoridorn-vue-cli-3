@@ -1,6 +1,6 @@
 <template>
   <div class="chat-palette-setting-component">
-    <actor-tab-component @change="changeActor" :optionTabInfo="[]">
+    <actor-tab-component @change="changeActor" :optionTabInfo="[]" ref="tab">
       <div slot="option" slot-scope="{ option }" v-if="option">
         {{ option }}
       </div>
@@ -23,7 +23,13 @@
         </div>
 
         <div class="sendLine">
-          <input type="text" v-model="chatTemporarily" />
+          <input
+            type="text"
+            v-model="chatTemporarily"
+            ref="sendLineInput"
+            @keydown.enter.stop="sendLine(actor, null)"
+            @keyup.enter.stop
+          />
           <ctrl-button @click="sendLine(actor, null)">送信</ctrl-button>
         </div>
 
@@ -74,6 +80,7 @@ import ActorStatusSelect from "@/components/parts/select/ActorStatusSelect.vue";
 import { Prop, Watch } from "vue-property-decorator";
 import DiceBotSelect from "@/components/parts/select/DiceBotSelect.vue";
 import GroupChatTabSelect from "@/components/parts/select/GroupChatTabSelect.vue";
+import { saveJson } from "@/components/common/Utility";
 
 @Component({
   components: {
@@ -104,6 +111,11 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
   private statusName: string = "◆";
   /** 発言先 */
   private chatTarget: string = "groupTargetTab-0";
+
+  public requestFocus(): void {
+    const elm: ActorTabComponent = this.$refs.tab as ActorTabComponent;
+    elm.requestFocus();
+  }
 
   private changeActor(actorKey: string): void {
     this.actorKey = actorKey;
@@ -170,22 +182,13 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
    * @param actor
    */
   private doExport(actor: any) {
-    window.console.log("doExport");
     const data = {
       saveData: {
         lines: actor.chatPalette.list
       },
       saveDataTypeName: "Quoridorn_ChatPalette01"
     };
-    const blob = new Blob([JSON.stringify(data, null, "  ")], {
-      type: "application/json"
-    });
-    const url = URL.createObjectURL(blob);
-
-    const anchor = document.createElement("a");
-    anchor.download = `チャットパレット_${actor.name}.json`;
-    anchor.href = url;
-    anchor.click();
+    saveJson(`チャットパレット_${actor.name}`, data);
   }
 
   /**
@@ -260,7 +263,7 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
     }
 
     ul.chat-palette {
-      @include flex-box(column, stretch, center);
+      @include flex-box(column, stretch, flex-start);
       position: relative;
       list-style: none;
       padding: 0;

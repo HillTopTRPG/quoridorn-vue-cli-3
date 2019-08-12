@@ -41,7 +41,6 @@ export default class SecretDiceWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("windowOpen") private windowOpen: any;
   @Action("windowClose") private windowClose: any;
   @Action("addChatLog") private addChatLog: any;
-  @Mutation("addSecretDice") private addSecretDice: any;
   @Mutation("delSecretDice") private delSecretDice: any;
   @Getter("secretDiceList") private secretDiceList: any;
 
@@ -51,10 +50,8 @@ export default class SecretDiceWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.addChatLog({
       name: secretDiceObj.name,
       text: secretDiceObj.text,
-      color: secretDiceObj.color,
       tab: secretDiceObj.tab,
       from: secretDiceObj.from,
-      actorKey: secretDiceObj.chatActorKey,
       statusName: secretDiceObj.statusName,
       target: secretDiceObj.target,
       owner: secretDiceObj.owner
@@ -63,15 +60,14 @@ export default class SecretDiceWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.addChatLog({
       name: secretDiceObj.diceBot,
       text: secretDiceObj.diceRollResult,
-      color: secretDiceObj.color,
       tab: secretDiceObj.tab,
       from: secretDiceObj.from,
-      actorKey: secretDiceObj.chatActorKey,
       statusName: secretDiceObj.statusName,
       target: secretDiceObj.target,
       owner: secretDiceObj.owner,
       dices: secretDiceObj.dices,
-      isDiceBot: true
+      isDiceBot: true,
+      diceBot: secretDiceObj.diceBot
     });
     this.delSecretDice(index);
   }

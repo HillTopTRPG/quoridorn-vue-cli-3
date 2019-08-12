@@ -5,6 +5,8 @@
     align="center"
     baseSize="300, 180"
     ref="window"
+    @open="open"
+    @reset="open"
   >
     <div
       class="contents"
@@ -21,6 +23,7 @@
           <ctrl-button
             @click="event => remoconButtonOnClick(infoObj, event)"
             @click-right="event => openContext(event, infoObj.key)"
+            ref="button"
           >
             {{ infoObj.buttonName }}
           </ctrl-button>
@@ -99,6 +102,12 @@ export default class CounterRemoconWindow extends Mixins<WindowMixin>(
   @Getter("propertyList") private propertyList: any;
 
   private selectBlockList: any[] = [];
+
+  private open() {
+    const button: CtrlButton[] = this.$refs.button as CtrlButton[];
+    if (!button || !button[0]) return;
+    button[0].requestFocus();
+  }
 
   /**
    * 保存を行う

@@ -11,6 +11,7 @@
         <self-actor-select
           :selectedActorList="standActorList"
           v-model="selectActorKey"
+          ref="actorSelect"
         />
         <span
           class="icon-arrow-up-right2"
@@ -107,7 +108,6 @@ export default class ActorTabComponent extends Vue {
   })
   private optionTabInfo!: any[];
 
-  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
 
@@ -116,6 +116,11 @@ export default class ActorTabComponent extends Vue {
   private selectActorKey: string = "";
   private isDiagonal: boolean = false;
   private hoverTabKey: string = "";
+
+  public requestFocus(): void {
+    const elm: SelfActorSelect = this.$refs.actorSelect as SelfActorSelect;
+    elm.requestFocus();
+  }
 
   private selectTab(activeId: string) {
     this.activeId = activeId;

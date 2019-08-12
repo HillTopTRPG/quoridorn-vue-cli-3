@@ -1,6 +1,6 @@
 <template>
-  <div class="bgmCoreComponent" @contextmenu.prevent>
-    <div class="thumbnail">
+  <div class="bgmCoreComponent">
+    <div class="thumbnail" @contextmenu.prevent>
       <span class="icon-cross" @click.stop="deleteItem"></span>
       <img
         v-img="thumbnailData"
@@ -12,15 +12,25 @@
     </div>
     <div class="bgmComponent">
       <div class="attrArea">
-        <span class="tag" :title="'【タグ】\n' + tag">{{ tag }}</span
+        <span
+          class="tag"
+          :title="'【タグ】\n' + tag"
+          ref="elm"
+          @contextmenu.prevent
+          >{{ tag }}</span
         ><!--
-     --><span class="title" :title="'【タイトル】\n' + title">{{ title }}</span
+     --><span class="title selectable" :title="'【タイトル】\n' + title">{{
+          title
+        }}</span
         ><!--
-     --><span class="icon loop" disabled v-if="isLoop"
-          ><i class="icon-loop" title="ループ再生します"></i
-        ></span>
+     --><span class="icon loop" disabled v-if="isLoop" @contextmenu.prevent
+          ><!--
+       --><i class="icon-loop" title="ループ再生します"></i
+          ><!--
+       --></span
+        >
       </div>
-      <div class="controlArea">
+      <div class="controlArea" @contextmenu.prevent>
         <span
           class="icon play"
           :class="{ isPlay: isPlay }"
@@ -42,7 +52,7 @@
           ref="volumeComponent"
         />
       </div>
-      <div class="playLengthArea">
+      <div class="playLengthArea" @contextmenu.prevent>
         <input
           class="playLength"
           :class="{ isPlay: isPlay }"
@@ -120,6 +130,11 @@ export default class BGMCoreComponent extends Vue {
 
   private fadeInTable: number[] = [];
   private fadeOutTable: number[] = [];
+
+  public click() {
+    const elm: HTMLElement = this.$refs.elm as HTMLElement;
+    elm.click();
+  }
 
   private deleteItem() {
     this.setProperty({

@@ -1,10 +1,13 @@
 <template>
-  <input type="checkbox"
+  <input
+    type="checkbox"
     @change="event => changeProperty(event.target.checked)"
     :checked="storePropertyValue"
     @dblclick.stop
     @contextmenu.prevent
-  >
+    @keydown.enter.stop
+    @keyup.enter.stop
+  />
 </template>
 
 <script>

@@ -1,16 +1,11 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import CryptoJS from "crypto-js";
 
-Vue.use(Vuex);
-
-/**
- * Store
- */
 export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.0b14.1",
+    version: "1.0.0",
+    magicWord: "I walk slowly, but I never walk backward.",
     /** 接続情報 */
     connect: {
       skywayKey: "",
@@ -41,10 +36,17 @@ export default {
       }
     ],
     systemLog: {
-      name: "SYSTEM",
-      color: "red",
-      tab: "chatTab-0",
-      owner: "SYSTEM"
+      name: "Quoridorn",
+      colorKey: "color-Quoridorn",
+      color: "#000",
+      tab: "chatTab-1",
+      from: "Quoridorn"
+    },
+    chatFormat: {
+      lineRegExp: null,
+      borderStyleRegExp: null,
+      styleRegExp: null,
+      targetList: []
     }
   } /* end of state */,
 
@@ -112,19 +114,83 @@ export default {
             });
           // .catch(err => { /* 無視 */ }); // reject(err)
         } catch (error) {
+          window.console.error(error);
           // 無視
         }
       });
     }
   },
 
+  mutations: {
+    init_state_setting: (state: any) => {
+      /* ----------------------------------------------------------------------
+       * チャット整形に使う正規表現の初期化
+       */
+      const colorFormat = "#[0-9a-f]+|rgba? *\\([0-9., ]+\\)|[a-z]+";
+      const lineStyleFormat = "solid|double|dotted|dashed|wavy";
+      state.chatFormat.borderStyleRegExp = new RegExp(lineStyleFormat, "gi");
+      const colorAndLineFormat = `(${lineStyleFormat}|${colorFormat})`;
+      const styleRegExpList = [
+        `(b?c)(?: *{ *)(${colorFormat})(?: *})`,
+        `([uo])(?: *{ *)${colorAndLineFormat}(?: *\\| *${colorAndLineFormat})?(?: *})`,
+        "(b)",
+        "(i)",
+        "(lt)",
+        "(r)(?: *{ *)([^}]+)(?: *})"
+      ];
+      const styleRegExpStr = `(?:: *)(?:${styleRegExpList.join("|")})`;
+      state.chatFormat.styleRegExp = new RegExp(styleRegExpStr, "gi");
+
+      const regExpStr = `\\[\\[ *style((?: *${styleRegExpStr})*) *]]`;
+      // window.console.log(regExpStr);
+      state.chatFormat.lineRegExp = new RegExp(regExpStr, "gi");
+    }
+  },
+
   getters: {
     roles: (state: any) => state.roles,
     systemLog: (state: any) => state.systemLog,
+    magicWord: (state: any) => state.magicWord,
     chatOptionPagingSize: () => 8,
     skywayKey: (state: any) => state.connect.skywayKey,
     connectType: (state: any) => state.connect.type,
     version: (state: any) => state.version,
-    bcdiceServer: (state: any) => state.bcdiceServer
+    bcdiceServer: (state: any) => state.bcdiceServer,
+    chatFormats: (state: any) => state.chatFormat.targetList,
+    chatLineRegExp: (state: any) => state.chatFormat.lineRegExp,
+    borderStyleRegExp: (state: any) => state.chatFormat.borderStyleRegExp,
+    chatStyleRegExp: (state: any) => state.chatFormat.styleRegExp,
+
+    /** 暗号化 */
+    encrypt: (state: any) => ({
+      planeText,
+      salt = state.magicWord
+    }: {
+      planeText: string;
+      salt: string;
+    }) => {
+      // window.console.log("------encrypt------");
+      // window.console.log(planeText);
+      // window.console.log(encodeURIComponent(planeText));
+      return CryptoJS.AES.encrypt(
+        encodeURIComponent(planeText),
+        salt
+      ).toString();
+    },
+
+    /** 復号化 */
+    decrypt: (state: any) => ({
+      cipherText,
+      salt = state.magicWord
+    }: {
+      cipherText: string;
+      salt: string;
+    }) => {
+      // window.console.log("decrypt", salt, cipherText);
+      // window.console.log(CryptoJS.AES.decrypt(cipherText, salt).toString(CryptoJS.enc.Utf8));
+      return decodeURIComponent(
+        CryptoJS.AES.decrypt(cipherText, salt).toString(CryptoJS.enc.Utf8)
+      );
+    }
   }
 };

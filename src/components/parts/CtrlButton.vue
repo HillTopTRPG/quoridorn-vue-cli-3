@@ -2,9 +2,12 @@
   <label class="ctrl-button-wrapper" :disabled="disabled" @contextmenu.prevent>
     <input
       type="button"
+      ref="button"
       :disabled="disabled"
       @click.left.stop.prevent="buttonOnClickLeft"
       @click.right.stop.prevent="buttonOnClickRight"
+      @keydown.enter.stop
+      @keyup.enter.stop
     />
     <span class="front-area">
       <slot />
@@ -26,6 +29,11 @@ export default class CtrlButton extends Vue {
 
   @Emit("click-right")
   private buttonOnClickRight(event: any) {}
+
+  public requestFocus(): void {
+    const button: HTMLInputElement = this.$refs.button as HTMLInputElement;
+    button.focus();
+  }
 }
 </script>
 

@@ -17,7 +17,7 @@ import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import DiceBotSelect from "../parts/select/DiceBotSelect.vue";
 
-@Component({ components: {} })
+@Component
 export default class DiceBotMessage extends Vue {
   @Action("setProperty") private setProperty: any;
   @Getter("diceBotMessageText") private diceBotMessageText: any;
@@ -73,6 +73,8 @@ export default class DiceBotMessage extends Vue {
       .join("。<br />");
   }
 
+  private timer: any = null;
+
   /**
    * 「表示」「非表示」の際に「フェードイン」「フェードアウト」する仕様
    * @param diceBotMessageView
@@ -82,7 +84,20 @@ export default class DiceBotMessage extends Vue {
     if (diceBotMessageView) {
       this.animationClass = "fade-in";
       this.isView = true;
+
+      this.timer = setTimeout(() => {
+        this.setProperty({
+          property: `public.chat.diceBotMessage.isView`,
+          value: false,
+          isNotice: false,
+          logOff: true
+        });
+      }, 5000);
     } else {
+      if (this.timer !== null) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
       this.animationClass = "fade-out";
       setTimeout(() => {
         this.isView = false;

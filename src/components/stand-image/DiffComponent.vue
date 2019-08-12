@@ -13,8 +13,22 @@
     <!-- 数値情報 -->
     <div class="locate">
       <label>位置</label>
-      <label>X：<input type="number" v-model="x"/></label>
-      <label>Y：<input type="number" v-model="y"/></label>
+      <label
+        >X：<input
+          type="number"
+          v-model="x"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
+      </label>
+      <label
+        >Y：<input
+          type="number"
+          v-model="y"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
+      </label>
       <ctrl-select v-model="type" :optionInfoList="optionInfoList" />
     </div>
 
@@ -72,7 +86,6 @@ export default class DiffComponent extends Vue {
   @Action("windowOpen") private windowOpen: any;
   @Action("editStandImageDiff") private editStandImageDiff: any;
   @Action("deleteStandImageDiff") private deleteStandImageDiff: any;
-  @Getter("getSelfActors") private getSelfActors: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
   @Getter("imageList") private imageList: any;

@@ -2,7 +2,7 @@
   <spec-frame
     property="menuBar"
     label-str="メインメニュー"
-    lastVersion="1.0.0b3"
+    lastVersion="1.0.0"
     :isSpecFixed="false"
   >
     <!----------------------
@@ -132,7 +132,7 @@
                   </li>
                   <li>
                     <spec-link property="editFloorTileMode" title-str="">
-                      フロアタイル変更モード
+                      フロアタイル追加
                     </spec-link>
                   </li>
                   <li>

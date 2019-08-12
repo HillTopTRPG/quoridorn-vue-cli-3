@@ -27,7 +27,6 @@ export default class PublicMemoContext extends Mixins<WindowMixin>(
   @Getter("getObj") private getObj: any;
   @Getter("characterContextObjKey") private characterContextObjKey: any;
   @Getter("playerKey") private playerKey: any;
-  @Getter("mapMaskIsLock") private mapMaskIsLock: any;
 
   private viewItemOnClick() {
     this.openPublicMemoWindow(false);

@@ -4,8 +4,8 @@
     display-property="private.display.editMapWindow"
     align="center"
     fixSize="401, 435"
-    @open="initWindow"
-    @reset="initWindow"
+    @open="open"
+    @reset="open"
     @cancel="cancel"
     @close="close"
   >
@@ -14,6 +14,7 @@
         v-model="edit.imageKey"
         :imageTag.sync="edit.imageTag"
         class="imageSelector"
+        ref="selecter"
       />
 
       <fieldset class="imageAreaSettings">
@@ -26,6 +27,8 @@
                 min="1"
                 class="size"
                 v-model="edit.totalRow"
+                @keydown.enter.stop
+                @keyup.enter.stop
             /></label>
           </div>
           <div class="totalColumn">
@@ -35,6 +38,8 @@
                 min="1"
                 class="size"
                 v-model="edit.totalColumn"
+                @keydown.enter.stop
+                @keyup.enter.stop
             /></label>
           </div>
           <div class="gridColor">
@@ -43,6 +48,8 @@
                 type="color"
                 class="size"
                 v-model="edit.gridColor"
+                @keydown.enter.stop
+                @keyup.enter.stop
             /></label>
           </div>
         </div>
@@ -57,6 +64,8 @@
                 min="0"
                 class="size"
                 v-model="edit.marginGridSize"
+                @keydown.enter.stop
+                @keyup.enter.stop
             /></label>
           </div>
           <div class="borderWidth">
@@ -66,12 +75,19 @@
                 min="0"
                 class="size"
                 v-model="edit.borderWidth"
+                @keydown.enter.stop
+                @keyup.enter.stop
             /></label>
           </div>
           <div class="isUseImage">
             <label
-              >ぼかし画像：<input type="checkbox" v-model="edit.isUseImage"
-            /></label>
+              >ぼかし画像：<input
+                type="checkbox"
+                v-model="edit.isUseImage"
+                @keydown.enter.stop
+                @keyup.enter.stop
+              />
+            </label>
           </div>
         </div>
         <div>
@@ -87,6 +103,8 @@
                 max="1"
                 step="0.1"
                 v-model="edit.maskAlpha"
+                @keydown.enter.stop
+                @keyup.enter.stop
             /></label>
           </div>
           <div class="isUseGridColor">
@@ -98,6 +116,8 @@
                 type="color"
                 class="size"
                 v-model="edit.marginGridColor"
+                @keydown.enter.stop
+                @keyup.enter.stop
             /></label>
           </div>
         </div>
@@ -111,6 +131,8 @@
                 type="color"
                 class="size"
                 v-model="edit.backgroundColor"
+                @keydown.enter.stop
+                @keyup.enter.stop
             /></label>
           </div>
         </div>
@@ -154,7 +176,7 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private edit: any = {
     imageTag: "imgTag-1",
-    imageKey: "image-1",
+    imageKey: "image-2",
     isReverse: false,
     marginGridSize: 5,
     marginGridColor: "#FFFFFF",
@@ -171,7 +193,7 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private original: any = {
     imageTag: "imgTag-1",
-    imageKey: "image-1",
+    imageKey: "image-2",
     isReverse: false,
     marginGridSize: 5,
     marginGridColor: "#FFFFFF",
@@ -186,7 +208,7 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
     backgroundColor: "#92A8B3"
   };
 
-  private initWindow() {
+  private open() {
     const peerId = this.peerId(this.isWait);
     if (this.storeMap.isEditing && this.storeMap.isEditing !== peerId) {
       alert(
@@ -230,6 +252,9 @@ export default class EditMapWindow extends Mixins<WindowMixin>(WindowMixin) {
       value: peerId,
       logOff: true
     });
+
+    const selecter: ImageSelector = this.$refs.selecter as ImageSelector;
+    selecter.requestFocus();
   }
 
   private commit() {

@@ -12,6 +12,9 @@
     <div class="item" @click.left.prevent="addChit">
       チット追加
     </div>
+    <div class="item" @click.left.prevent="addFloorTile">
+      フロアタイル追加
+    </div>
     <hr />
     <div class="item" @click.left.prevent="addDiceSymbol">
       ダイスシンボル追加
@@ -73,6 +76,11 @@ export default class GameTableContext extends Mixins<WindowMixin>(WindowMixin) {
 
   private addChit(): void {
     this.windowOpen("private.display.addChitWindow");
+    this.windowClose("private.display.gameTableContext");
+  }
+
+  private addFloorTile(): void {
+    this.windowOpen("private.display.addFloorTileWindow");
     this.windowClose("private.display.gameTableContext");
   }
 

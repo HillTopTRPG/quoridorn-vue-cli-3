@@ -43,8 +43,6 @@ export default class ActorStatusTabComponent extends Vue {
   private actor!: any;
 
   @Action("addActorStatus") private addActorStatus: any;
-  @Getter("getSelfActors") private getSelfActors: any;
-  @Getter("getViewName") private getViewName: any;
   @Getter("getObj") private getObj: any;
 
   private statusList: any[] = [];

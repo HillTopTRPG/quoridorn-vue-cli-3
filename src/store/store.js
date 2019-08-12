@@ -3,18 +3,19 @@
 // import "bcdice-js/lib/preload-dicebots"
 import Vue from "vue";
 import Vuex from "vuex";
-import statePrivate from "./state_private.ts";
-import statePublic from "./state_public.ts";
+import statePrivate from "./state_private";
+import statePublic from "./state_public";
 import stateSetting from "./state_setting";
 import actionFile from "./action_file";
-import actionPeer from "./action_peer.ts";
-import actionOperation from "./action_operation.ts";
+import actionPeer from "./action_peer";
+import actionOperation from "./action_operation";
+import saveChat from "./action_save_chat.ts";
 import { getFileNameArgList, getUrlParam } from "../components/common/Utility";
 import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
 import yaml from "js-yaml";
 import moment from "moment";
+
 const CryptoJS = require("crypto-js");
-// const moment = require("moment");
 
 Vue.use(Vuex);
 
@@ -29,7 +30,8 @@ export default new Vuex.Store({
     setting: stateSetting,
     file: actionFile,
     peer: actionPeer,
-    operation: actionOperation
+    operation: actionOperation,
+    saveChat: saveChat
   },
   state: {
     // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）
@@ -54,7 +56,7 @@ export default new Vuex.Store({
     },
 
     chat: {
-      activeChatTab: "chatTab-0",
+      activeChatTab: "chatTab-1",
       hoverChatTab: "",
       actorKey: "",
       diceSystemList: []
@@ -76,10 +78,13 @@ export default new Vuex.Store({
         total: { x: 0, y: 0 },
         dragging: { x: 0, y: 0 }
       },
+      moveObj: {
+        isMoving: false,
+        key: ""
+      },
       rollObj: {
         isRolling: false,
-        propName: "",
-        key: 0
+        key: ""
       },
       angle: {
         dragging: 0,
@@ -117,8 +122,9 @@ export default new Vuex.Store({
      * @param state
      * @param rootState
      * @param rootGetters
+     * @param commit
      */
-    onMount({ dispatch, state, rootState, rootGetters }) {
+    onMount({ dispatch, state, rootState, rootGetters, commit }) {
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
@@ -129,24 +135,11 @@ export default new Vuex.Store({
       let playerType = getUrlParam("playerType");
       let system = getUrlParam("system");
 
-      if (!!roomName && roomName.endsWith(CreateNewRoom.ENTRANCE_ROOM_NAME)) {
+      if (roomName && roomName.endsWith(CreateNewRoom.ENTRANCE_ROOM_NAME)) {
         alert(
           `「${CreateNewRoom.ENTRANCE_ROOM_NAME}」で終わる部屋名は使えません。`
         );
         roomName = null;
-        /* ------------------------------
-         * URLを書き換える（リロードなし）
-         */
-        const paramList = [];
-        if (roomPassword !== null)
-          paramList.push(`roomPassword=${roomPassword}`);
-        if (system !== null) paramList.push(`system=${system}`);
-        if (playerName !== null) paramList.push(`playerName=${playerName}`);
-        if (playerPassword !== null)
-          paramList.push(`playerPassword=${playerPassword}`);
-        if (playerType !== null) paramList.push(`playerType=${playerType}`);
-        const newUrl = `?${paramList.join("&")}`;
-        window.history.replaceState("", "", newUrl);
       }
 
       state.param.roomName = roomName;
@@ -160,6 +153,28 @@ export default new Vuex.Store({
         playerType = null;
       }
       state.param.system = system;
+
+      /* ------------------------------
+       * URLを書き換える（リロードなし）
+       */
+      const paramList = [];
+      if (state.param.roomName !== null)
+        paramList.push(`roomName=${state.param.roomName}`);
+      if (state.param.roomPassword !== null)
+        paramList.push(`roomPassword=${state.param.roomPassword}`);
+      if (state.param.system !== null)
+        paramList.push(`system=${state.param.system}`);
+      if (state.param.playerName !== null)
+        paramList.push(`playerName=${state.param.playerName}`);
+      if (state.param.playerPassword !== null)
+        paramList.push(`playerPassword=${state.param.playerPassword}`);
+      if (state.param.playerType !== null)
+        paramList.push(`playerType=${state.param.playerType}`);
+      const newUrl = `?${paramList.join("&")}`;
+      window.history.replaceState("", "", newUrl);
+
+      // state_settingの初期化
+      commit("init_state_setting");
 
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定
@@ -254,6 +269,20 @@ export default new Vuex.Store({
         rootState.public.image.list = imageList;
         rootState.public.image.maxKey = imageList.length - 1;
       });
+
+      /* ----------------------------------------------------------------------
+       * チャットフォーマットの設定
+       */
+      rootGetters
+        .loadYaml("/static/conf/chatFormat.yaml")
+        .then(chatFormatList => {
+          chatFormatList.forEach(chatFormat => {
+            rootState.setting.chatFormat.targetList.push({
+              label: chatFormat.label,
+              chatText: chatFormat.chatText
+            });
+          });
+        });
 
       /* ----------------------------------------------------------------------
        * 接続設定の設定
@@ -361,7 +390,7 @@ export default new Vuex.Store({
         const isMaster =
           rootGetters.members[0].peerId === rootGetters.peerId(isWait);
         if (isMaster) {
-          value.processTime = moment().format("YYYYMMDD hh:mm:ss");
+          value.processTime = parseInt(moment().format("YYYYMMDDHHmmss"), 0);
         }
         dispatch("sendRoomData", {
           type: isMaster ? "DO_METHOD" : "NOTICE_OPERATION",
@@ -710,6 +739,7 @@ export default new Vuex.Store({
     activeChatTab: state => state.chat.activeChatTab,
     hoverChatTab: state => state.chat.hoverChatTab,
     hoverTab: state => state.chat.hoverTab,
+    moveObj: state => state.map.moveObj,
     rollObj: state => state.map.rollObj,
     isDraggingLeft: state => state.map.isDraggingLeft,
     isMouseDownRight: state => state.map.isMouseDownRight,
@@ -732,12 +762,13 @@ export default new Vuex.Store({
     volatilePrivateData: state => state.volatileSaveData.players,
     chatTabs: (state, getters, rootState, rootGetters) => {
       return rootGetters.chatTabsOption.map(privateTab => {
-        const publicTab = rootState.public.chat.tab.list.filter(
+        const publicTab = rootGetters.chatTabList.filter(
           publicTab => publicTab.key === privateTab.key
         )[0];
         return {
           key: publicTab.key,
           name: publicTab.name,
+          isTotal: publicTab.isTotal,
           isActive: privateTab.isActive,
           isHover: privateTab.isHover,
           unRead: privateTab.unRead,
@@ -749,6 +780,7 @@ export default new Vuex.Store({
       c: state.map.grid.c,
       r: state.map.grid.r
     }),
+    isMoving: state => state.map.moveObj.isMoving,
     isRolling: state => state.map.rollObj.isRolling,
     diceSystemList: state => state.chat.diceSystemList,
     dice: state => state.dice,
@@ -761,12 +793,6 @@ export default new Vuex.Store({
     },
     hash: state => (planeText, key) => CryptoJS.HmacSHA1(planeText, key),
     isSameHash: state => (hash, planeText, key) =>
-      hash === CryptoJS.HmacSHA1(planeText, key),
-    encrypt: state => (planeText, password) =>
-      CryptoJS.AES.encrypt(planeText, password),
-    decrypt: state => (ciphertext, password) =>
-      CryptoJS.AES.decrypt(ciphertext.toString(), password).toString(
-        CryptoJS.enc.Utf8
-      )
+      hash === CryptoJS.HmacSHA1(planeText, key)
   }
 });

@@ -28,11 +28,26 @@
 
       <div class="rowsNum">
         <label>縦マス：</label>
-        <input type="number" min="1" class="size" v-model="rows" />
+        <input
+          type="number"
+          min="1"
+          class="size"
+          v-model="rows"
+          ref="input"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </div>
       <div class="columnsNum">
         <label>横マス：</label>
-        <input type="number" min="1" class="size" v-model="columns" />
+        <input
+          type="number"
+          min="1"
+          class="size"
+          v-model="columns"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </div>
       <textarea
         class="otherText"
@@ -65,7 +80,7 @@ export default class AddChitWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("imageListFromTagKey") private imageListFromTagKey: any;
 
   private currentImageTag: string = "imgTag-0";
-  private selectImage: string = "image-11";
+  private selectImage: string = "image-12";
   private isReverse: boolean = false;
   private rows: number = 1;
   private columns: number = 1;
@@ -96,11 +111,14 @@ export default class AddChitWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private open() {
     this.currentImageTag = "imgTag-0";
-    this.selectImage = "image-11";
+    this.selectImage = "image-12";
     this.isReverse = false;
     this.rows = 1;
     this.columns = 1;
     this.description = "";
+
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
   }
 
   private get currentImage() {

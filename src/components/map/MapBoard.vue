@@ -6,6 +6,7 @@
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
     @contextmenu.prevent
+    @keydown.enter.stop="grobalEnter"
   >
   </canvas>
 </template>
@@ -30,10 +31,16 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
   @Getter("gridSize") private gridSize: any;
   @Getter("canvasSize") private canvasSize: any;
   @Getter("mouseOnCanvas") private mouseOnCanvas: any;
-  mounted(): void {
+
+  private mounted(): void {
     this.paint();
   }
-  paint(this: any): void {
+
+  private grobalEnter() {
+    window.console.log("grobalEnter on MapBoard.");
+  }
+
+  private paint(this: any): void {
     const canvasElm: HTMLCanvasElement = document.getElementById(
       "map-canvas"
     ) as HTMLCanvasElement;
@@ -83,16 +90,16 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
     }
 
     // 中心点の描画
-    ctx.strokeStyle = "red";
-    ctx.globalAlpha = 1;
-    const center = {
-      x: this.canvasSize.w / 2,
-      y: this.canvasSize.h / 2
-    };
-    // 横線
-    this.drawLine(ctx, center.x - 5, center.y, 10, 0);
-    // 縦線
-    this.drawLine(ctx, center.x, center.y - 5, 0, 10);
+    // ctx.strokeStyle = "red";
+    // ctx.globalAlpha = 1;
+    // const center = {
+    //   x: this.canvasSize.w / 2,
+    //   y: this.canvasSize.h / 2
+    // };
+    // // 横線
+    // this.drawLine(ctx, center.x - 5, center.y, 10, 0);
+    // // 縦線
+    // this.drawLine(ctx, center.x, center.y - 5, 0, 10);
 
     /*
     // マウス座標の描画
@@ -122,29 +129,35 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
       }
     }
   }
+
   @Watch("isDrawGridLine")
-  onChangeIsDrawGridLine() {
+  private onChangeIsDrawGridLine() {
     window.console.log("isDrawGridLine from paint");
     this.paint();
   }
+
   @Watch("isDrawGridId")
-  onChangeIsDrawGridId() {
+  private onChangeIsDrawGridId() {
     this.paint();
   }
+
   @Watch("gridColor")
-  onChangeGridColor() {
+  private onChangeGridColor() {
     this.paint();
   }
+
   @Watch("grid", { deep: true })
-  onChangeGrid() {
+  private onChangeGrid() {
     this.paint();
   }
+
   @Watch("mouseOnCanvas", { deep: true })
-  onChangeMouseOnCanvas() {
+  private onChangeMouseOnCanvas() {
     this.paint();
   }
+
   @Watch("canvasSize", { deep: true })
-  onChangeCanvasSize() {
+  private onChangeCanvasSize() {
     this.paint();
   }
 }

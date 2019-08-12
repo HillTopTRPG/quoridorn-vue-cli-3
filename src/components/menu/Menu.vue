@@ -86,6 +86,8 @@
     <div class="hoverMenu hoverMenu2" v-show="isShow('ファイル')">
       <div class="item" @click="clickExport">セーブ</div>
       <div class="item" @click="clickImport">ロード</div>
+      <hr @mouseenter="menuHover('ファイル')" />
+      <div class="item" @click="clickChatLog">チャットログ取得</div>
     </div>
     <!--------------------------------------------------
      ! 表示
@@ -172,7 +174,7 @@
      !-------------------------------------------------->
     <div class="hoverMenu hoverMenu5" v-show="isShow('マップ')">
       <div class="item" @click="clickChangeMap">マップ変更</div>
-      <div class="item" @click="clickFloorTileMode">フロアタイル変更モード</div>
+      <div class="item" @click="clickAddFloorTile">フロアタイル追加</div>
       <div class="item" @click="clickAddMapMask">マップマスク追加</div>
       <div class="item" @click="clickCreateEasyMap">簡易マップ作成</div>
       <hr />
@@ -271,6 +273,7 @@ export default class Menu extends Vue {
   @Action("doResetWindowLocate") private doResetWindowLocate: any;
   @Action("exportStart") private exportStart: any;
   @Action("addListObj") private addListObj: any;
+  @Action("saveChatLogHtml") private saveChatLogHtml: any;
   @Getter("roomName") private roomName: any;
   @Getter("isModal") private isModal: any;
   @Getter("peerId") private peerId: any;
@@ -337,6 +340,12 @@ export default class Menu extends Vue {
       logOff: true
     });
     this.windowOpen("private.display.unSupportWindow");
+    this.menuClick();
+  }
+
+  /** チャットログ保存 */
+  clickChatLog(): void {
+    this.saveChatLogHtml();
     this.menuClick();
   }
 
@@ -407,14 +416,9 @@ export default class Menu extends Vue {
     this.menuClick();
   }
 
-  /** フロアタイル変更モード */
-  clickFloorTileMode(): void {
-    this.setProperty({
-      property: "private.display.unSupportWindow.title",
-      value: "フロアタイルモード",
-      logOff: true
-    });
-    this.windowOpen("private.display.unSupportWindow");
+  /** フロアタイル追加 */
+  clickAddFloorTile(): void {
+    this.windowOpen("private.display.addFloorTileWindow");
     this.menuClick();
   }
 
@@ -516,7 +520,7 @@ export default class Menu extends Vue {
 
   /** オフィシャルサイトへ */
   clickOfficialSite(): void {
-    window.open("http://mihikari.sakura.ne.jp/quoridorn/official/#/", "_blank");
+    window.open("http://quoridorn.com/", "_blank");
     this.menuClick();
   }
 
@@ -537,9 +541,7 @@ export default class Menu extends Vue {
 
   get menuStyle(): any {
     const result: any = {};
-    if (this.isModal) {
-      result.filter = "blur(3px)";
-    }
+    if (this.isModal) result.filter = "blur(3px)";
     return result;
   }
 

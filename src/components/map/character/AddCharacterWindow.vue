@@ -19,13 +19,22 @@
         />
       </div>
       <div class="controlArea">
-        <label><input type="checkbox" v-model="is_Continuous" />複数作成</label>
+        <label
+          ><input
+            type="checkbox"
+            v-model="is_Continuous"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />複数作成</label
+        >
         <span>連番：</span
         ><input
           type="number"
           min="0"
           v-model="continuous_Num"
           :disabled="!isContinuous"
+          @keydown.enter.stop
+          @keyup.enter.stop
         />
       </div>
     </div>

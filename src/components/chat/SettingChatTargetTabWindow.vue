@@ -4,13 +4,21 @@
     display-property="private.display.settingChatTargetTabWindow"
     align="center"
     :fixSize="`${windowSize.w}, ${windowSize.h}`"
+    @open="open"
+    @reset="open"
   >
     <div class="contents" @contextmenu.prevent>
-      <div>
-        <ctrl-button @click="addButtonOnClick">追加</ctrl-button>
+      <div class="operationArea">
+        <ctrl-button @click="addButtonOnClick" ref="button">追加</ctrl-button>
         <ctrl-button @click="delButtonOnClick">削除</ctrl-button>
+        <div class="space"></div>
         <label>
-          タブを斜めにする<input type="checkbox" v-model="isTabVertical" />
+          タブを斜めにする<input
+            type="checkbox"
+            v-model="isTabVertical"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
         </label>
       </div>
       <div class="tableContainer">
@@ -76,7 +84,7 @@
               <td :style="colStyle(4)">
                 <ctrl-button
                   @click="edit(groupTargetTab.key)"
-                  :disabled="groupTargetTab.key === 'groupTargetTab-0'"
+                  :disabled="!isEditableTab(groupTargetTab.key)"
                 >
                   編集
                 </ctrl-button>
@@ -130,15 +138,39 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   @Getter("playerKey") private playerKey: any;
   @Getter("chatActorKey") private chatActorKey: any;
   @Getter("isChatTabVertical") private isChatTabVertical: any;
+  @Getter("groupTargetTabList") private groupTargetTabList: any;
+  @Getter("getMapObjectList") private getMapObjectList: any;
+
+  private open() {
+    const button: CtrlButton = this.$refs.button as CtrlButton;
+    button.requestFocus();
+  }
+
+  private isEditableTab(key: string): boolean {
+    if (key === "groupTargetTab-0") return false;
+
+    const tabObj: any = this.groupTargetTabList.find(
+      (tabObj: any) => tabObj.key === key
+    );
+
+    const playerKey: string = this.playerKey;
+    const fieldCharacters: any[] = this.getMapObjectList({
+      kind: "character",
+      place: "field",
+      playerKey
+    });
+
+    const actor = tabObj.group.filter(
+      (g: any) =>
+        g === playerKey ||
+        fieldCharacters.findIndex((c: any) => c.key === g) >= 0
+    )[0];
+
+    return actor;
+  }
 
   private addButtonOnClick() {
-    this.addGroupTargetTab({ ownerKey: this.getChatFromKey() }).then(() => {
-      const last: any = this.groupTargetTabList[
-        this.groupTargetTabList.length - 1
-      ];
-      this.selectLine(last.key);
-      this.edit(last.key);
-    });
+    this.windowOpen("private.display.addGroupChatWindow");
   }
 
   private delButtonOnClick() {
@@ -240,37 +272,10 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
     this.changeProp(groupTargetTab, "group", newArr);
   }
 
-  private getChatFromKey() {
-    const actor: any = this.getSelfActors.filter(
-      (actor: any) => actor.key === this.chatActorKey
-    )[0];
-    return actor ? actor.key : "";
-  }
-
   private getViewNames(tab: any) {
     return tab.isAll
       ? "全員"
       : tab.group.map((g: string) => this.getViewName(g)).join(", ");
-  }
-
-  private get groupTargetTabList() {
-    return this.$store.state.public.chat.groupTargetTab.list.filter(
-      (tab: any) => {
-        if (tab.isAll) return true;
-        const targetList = tab.group
-          .map((g: string) => this.getObj(g))
-          .filter((obj: any) => {
-            const kind = obj.key.split("-")[0];
-            if (kind === "player") {
-              if (obj.key === this.playerKey) return true;
-            } else {
-              if (obj.owner === this.playerKey) return true;
-            }
-            return false;
-          });
-        return targetList.length > 0;
-      }
-    );
   }
 
   /* Start 列幅可変テーブルのプロパティ */
@@ -327,15 +332,26 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
 </script>
 
 <style scoped lang="scss">
+@import "../common.scss";
+
 .contents {
+  @include flex-box(column, normal, normal);
   position: absolute;
   height: 100%;
   width: 100%;
   font-size: 12px;
 }
 
-label {
-  display: flex;
+.operationArea {
+  @include flex-box(row, normal, normal);
+
+  .space {
+    flex: 1;
+  }
+
+  label {
+    display: flex;
+  }
 }
 
 .operateArea {

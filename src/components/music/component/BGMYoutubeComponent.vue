@@ -35,6 +35,9 @@ import { Action } from "vuex-class";
 export default class BGMYoutubeComponent extends Vue {
   @Action("setProperty") private setProperty: any;
 
+  @Prop({ type: Object, required: true })
+  private bgm!: any;
+
   @Prop({ type: String, required: true })
   private bgmKey!: string;
 
@@ -66,18 +69,19 @@ export default class BGMYoutubeComponent extends Vue {
   private fadeOut!: number;
 
   private onMounted() {
+    const bgmObj = {
+      onReady: this.onReady,
+      timeUpdate: this.onTimeUpdate,
+      onPlaying: this.onPlaying,
+      onError: this.onError,
+      onPaused: this.onPaused,
+      onReject: this.onReject
+    };
     const result = (<any>window)["youtube"]["registration"](
       this.tag,
       this.url,
       0,
-      {
-        onReady: this.onReady,
-        timeUpdate: this.onTimeUpdate,
-        onPlaying: this.onPlaying,
-        onError: this.onError,
-        onPaused: this.onPaused,
-        onReject: this.onReject
-      }
+      bgmObj
     );
     if (!result) this.$emit("end");
   }
@@ -89,7 +93,7 @@ export default class BGMYoutubeComponent extends Vue {
   private onReady() {}
 
   private onPlaying(this: any, duration: number) {
-    const bgmCoreComponent: BGMCoreComponent = this.$refs.core;
+    const bgmCoreComponent: BGMCoreComponent = this.$refs.core! as BGMCoreComponent;
     bgmCoreComponent.setDuration(duration);
     bgmCoreComponent.play();
   }
@@ -99,16 +103,18 @@ export default class BGMYoutubeComponent extends Vue {
   }
 
   private onPaused(this: any) {
-    const bgmCoreComponent: BGMCoreComponent = this.$refs.core;
+    const bgmCoreComponent: BGMCoreComponent = this.$refs
+      .core as BGMCoreComponent;
     bgmCoreComponent.pause();
   }
 
   private onReject() {
-    window.console.error("youtube - onReject => reload");
+    window.console.log("youtube - onReject => reload");
+    this.bgm.isReject = true;
     this.setProperty({
       property: "private.display.jukeboxWindow.command",
       logOff: true,
-      value: { command: "add", payload: this.bgmKey }
+      value: { command: "add", payload: this.bgm }
     });
   }
 
@@ -138,7 +144,7 @@ export default class BGMYoutubeComponent extends Vue {
 
   private onTimeUpdate(time: number) {
     const bgmCoreComponent: BGMCoreComponent = this.$refs
-      .core! as BGMCoreComponent;
+      .core as BGMCoreComponent;
     bgmCoreComponent.timeUpdate(time);
   }
 }

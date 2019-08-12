@@ -20,10 +20,10 @@ import { Prop } from "vue-property-decorator";
 export default class GroupChatTabSelect extends Mixins<SelectMixin>(
   SelectMixin
 ) {
-  @Getter("groupTargetTabList") private groupTargetTabList: any;
+  @Getter("groupTargetTabListFiltered") private groupTargetTabListFiltered: any;
 
   private get optionInfoList(): any[] {
-    const resultList = this.groupTargetTabList.map((tabObj: any) => ({
+    const resultList = this.groupTargetTabListFiltered.map((tabObj: any) => ({
       key: tabObj.key,
       value: tabObj.key,
       text: tabObj.name,

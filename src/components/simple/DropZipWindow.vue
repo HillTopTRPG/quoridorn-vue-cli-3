@@ -74,8 +74,9 @@ export default class DropZipWindow extends Mixins<WindowMixin>(WindowMixin) {
       ({ fileName, saveData }: { fileName: string; saveData: any }) => {
         const publicData: any = saveData.public;
         const dataVersion: string = saveData.dataVersion;
-        const delKeyList: string[] = saveData.delKeyList;
-        const addObjList: any[] = saveData.addObjList;
+
+        // const delKeyList: string[] = saveData.delKeyList;
+        // const addObjList: any[] = saveData.addObjList;
 
         // TODO セーブデータの互換性の処理
 
@@ -85,20 +86,20 @@ export default class DropZipWindow extends Mixins<WindowMixin>(WindowMixin) {
           importData.publicData = publicData;
         }
 
-        // 削除リストのマージ
-        delKeyList.forEach(delKey => {
-          if (importData.delKeyList.indexOf(delKey) !== -1) return;
-          importData.delKeyList.push(delKey);
-        });
-
-        // 追加リストのマージ
-        addObjList.forEach(addObj => {
-          const index = importData.addObjList.findIndex((impAddObj: any) => {
-            return JSON.stringify(addObj) === JSON.stringify(impAddObj);
-          });
-          if (index !== -1) return;
-          importData.addObjList.push(addObj);
-        });
+        // // 削除リストのマージ
+        // delKeyList.forEach(delKey => {
+        //   if (importData.delKeyList.indexOf(delKey) !== -1) return;
+        //   importData.delKeyList.push(delKey);
+        // });
+        //
+        // // 追加リストのマージ
+        // addObjList.forEach(addObj => {
+        //   const index = importData.addObjList.findIndex((impAddObj: any) => {
+        //     return JSON.stringify(addObj) === JSON.stringify(impAddObj);
+        //   });
+        //   if (index !== -1) return;
+        //   importData.addObjList.push(addObj);
+        // });
       }
     );
     this.doImport(importData);

@@ -11,9 +11,21 @@
       <div class="scrollArea">
         <div>
           <label>
-            秘匿チャット<input type="checkbox" v-model="isSecret" />
+            秘匿チャット<input
+              type="checkbox"
+              v-model="isSecret"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
           </label>
-          <label>名前<input type="text" v-model="name"/></label>
+          <label
+            >名前<input
+              type="text"
+              v-model="name"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </label>
           <label>
             出力先のタブ
             <ctrl-select
@@ -22,7 +34,14 @@
               :maxWidth="11"
             />
           </label>
-          <label>全体<input type="checkbox" v-model="isAll"/></label>
+          <label
+            >全体<input
+              type="checkbox"
+              v-model="isAll"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </label>
         </div>
         <div class="tableContainer">
           <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -48,12 +67,14 @@
                   <input
                     type="checkbox"
                     :checked="isContain(target.key)"
-                    @change="
+                    @change.stop="
                       event =>
                         changeTargetCheck(target.key, event.target.checked)
                     "
                     @click.stop
                     :disabled="isAll"
+                    @keydown.enter.stop
+                    @keyup.enter.stop
                   />
                 </td>
                 <divider :index="0" prop="editGroupChatWindow" />
@@ -107,12 +128,12 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
   @Action("windowClose") private windowClose: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("setProperty") private setProperty: any;
-  @Action("addGroupTargetTab") private addGroupTargetTab: any;
-  @Getter("getSelfActors") private getSelfActors: any;
+  @Action("changeListObj") private changeListObj: any;
   @Getter("getViewName") private getViewName: any;
   @Getter("chatTabs") private chatTabs: any;
   @Getter("playerList") private playerList: any;
   @Getter("getMapObjectList") private getMapObjectList: any;
+  @Getter("groupTargetTabList") private groupTargetTabList: any;
 
   private isSecret: boolean = false;
   private name: string = "";
@@ -129,21 +150,13 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
   }
 
   private commit() {
-    const tab = this.groupTargetTabList.filter(
-      (tab: any) => tab.key === this.objKey
-    )[0];
-    const index = this.groupTargetTabList.indexOf(tab);
-    this.setProperty({
-      property: `public.chat.groupTargetTab.list.${index}`,
-      value: {
-        isSecret: this.isSecret,
-        name: this.name,
-        targetTab: this.targetTab,
-        isAll: this.isAll,
-        group: this.group
-      },
-      isNotice: true,
-      logOff: true
+    this.changeListObj({
+      key: this.objKey,
+      isSecret: this.isSecret,
+      name: this.name,
+      targetTab: this.targetTab,
+      isAll: this.isAll,
+      group: this.group
     });
     this.windowClose("private.display.editGroupChatWindow");
   }
@@ -273,10 +286,6 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
     )[0];
   }
 
-  private get groupTargetTabList() {
-    return this.$store.state.public.chat.groupTargetTab.list;
-  }
-
   /* Start 列幅可変テーブルのプロパティ */
   private get selectLineKey() {
     return this.$store.state.private.display.editGroupChatWindow.selectLineKey;
@@ -330,12 +339,14 @@ export default class EditGroupChatWindow extends Mixins<WindowMixin>(
   }
 
   private get targetTabOptionInfoList(): any[] {
-    const resultList: any[] = this.chatTabs.map((tabObj: any) => ({
-      key: tabObj.name,
-      value: tabObj.key,
-      text: tabObj.name,
-      disabled: false
-    }));
+    const resultList: any[] = this.chatTabs
+      .filter((tab: any) => !tab.isTotal)
+      .map((tabObj: any) => ({
+        key: tabObj.name,
+        value: tabObj.key,
+        text: tabObj.name,
+        disabled: false
+      }));
     resultList.unshift({
       key: "0",
       value: "",

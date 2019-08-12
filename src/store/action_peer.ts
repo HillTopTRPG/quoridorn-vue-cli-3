@@ -1,18 +1,8 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import 'bcdice-js/lib/preload-dicebots'
 import Vue from "vue";
-import Vuex from "vuex";
 import Peer from "skyway-js";
 import { qLog } from "@/components/common/Utility";
 import moment from "moment";
-// const moment = require("moment");
 
-Vue.use(Vuex);
-
-/**
- * Store
- */
 export default {
   actions: {
     /**========================================================================
@@ -183,11 +173,11 @@ export default {
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
         dispatch("addChatLog", {
           name: rootGetters.systemLog.name,
-          text: `${player.name} が退室しました。`,
-          from: rootGetters.systemLog.from,
-          color: rootGetters.systemLog.color,
+          text: `「${player.name}」が退室しました。`,
           tab: rootGetters.systemLog.tab,
-          owner: rootGetters.systemLog.owner
+          target: "groupTargetTab-0",
+          from: rootGetters.systemLog.from,
+          owner: rootGetters.systemLog.from
         });
       }
     },
@@ -211,6 +201,14 @@ export default {
       }: { rootState: any; dispatch: any; rootGetters: any },
       { fromPeerId, isWait }: { fromPeerId: string; isWait: boolean }
     ) {
+      if (!rootGetters.members[0]) {
+        // タイミング悪く準備完了前に来てしまったとき
+        setTimeout(
+          () => dispatch("onNoticeNewMember", { fromPeerId, isWait }),
+          500
+        );
+        return;
+      }
       // 自分が親だったら、入ってきた人に部屋情報を教えてあげる
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
         dispatch("sendRoomData", {
@@ -410,9 +408,17 @@ export default {
       }: { rootState: any; dispatch: any; rootGetters: any },
       { value, method, isWait }: { value: any; method: string; isWait: boolean }
     ) {
+      if (!rootGetters.members[0]) {
+        // タイミング悪く準備完了前に来てしまったとき
+        setTimeout(
+          () => dispatch("onNoticeOperation", { value, method, isWait }),
+          500
+        );
+        return;
+      }
       // 自分が親だったら、この通知を処理して、ルームメンバーに土管する
       if (rootGetters.members[0].peerId === rootGetters.peerId(isWait)) {
-        value.processTime = moment().format("YYYYMMDD hh:mm:ss");
+        value.processTime = parseInt(moment().format("YYYYMMDDHHmmss"), 10);
         dispatch("sendRoomData", {
           type: "DO_METHOD",
           value: value,
@@ -613,6 +619,7 @@ export default {
      * 入室手続きを始める
      *=========================================================================
      * @param dispatch
+     * @param commit
      * @param rootGetters
      * @param rootState
      * @param roomName
@@ -628,9 +635,15 @@ export default {
     joinPlayer(
       {
         dispatch,
+        commit,
         rootGetters,
         rootState
-      }: { dispatch: Function; rootGetters: any; rootState: any },
+      }: {
+        dispatch: Function;
+        commit: Function;
+        rootGetters: any;
+        rootState: any;
+      },
       {
         roomName,
         roomPassword,
@@ -655,7 +668,7 @@ export default {
     ) {
       return new Promise((resolve: Function, reject: Function) => {
         // メンバーのリセット
-        dispatch("emptyMember");
+        commit("emptyMember");
 
         const room = rootGetters.webRtcRoom(isWait);
 
@@ -858,21 +871,21 @@ export default {
     sendRoomData({ rootGetters }: { rootGetters: any }, payload: any) {
       const room = rootGetters.webRtcRoom(payload.isWait);
       if (!room) return;
-      if (payload && payload.type !== "NOTICE_INPUT") {
-        // const msgList: any[] = [];
-        // msgList.push(`TYPE: ${payload.type}`);
-        // if (payload.type === "DO_METHOD") {
-        //   msgList.push("METHOD:");
-        //   msgList.push(payload.method);
-        // }
-        // msgList.push("VALUE:");
-        // msgList.push(payload.value);
-        // msgList.push("targets:");
-        // msgList.push(payload.targets);
-        // msgList.push("this.peerId:");
-        // msgList.push(rootGetters.peerId(payload.isWait));
-        // qLog("RoomData送信 =>", ...msgList);
-      }
+      // if (payload && payload.type !== "NOTICE_INPUT") {
+      //   const msgList: any[] = [];
+      //   msgList.push(`TYPE: ${payload.type}`);
+      //   if (payload.type === "DO_METHOD") {
+      //     msgList.push("METHOD:");
+      //     msgList.push(payload.method);
+      //   }
+      //   msgList.push("VALUE:");
+      //   msgList.push(payload.value);
+      //   msgList.push("targets:");
+      //   msgList.push(payload.targets);
+      //   msgList.push("this.peerId:");
+      //   msgList.push(rootGetters.peerId(payload.isWait));
+      //   qLog("RoomData送信 =>", ...msgList);
+      // }
       room.send(payload);
     },
 
@@ -1119,11 +1132,11 @@ export default {
       // チャット追加
       dispatch("addChatLog", {
         name: rootGetters.systemLog.name,
-        text: `${playerName} が入室しました。`,
-        from: rootGetters.systemLog.from,
-        color: rootGetters.systemLog.color,
+        text: `「${playerName}」が入室しました。`,
         tab: rootGetters.systemLog.tab,
-        owner: rootGetters.systemLog.owner
+        target: "groupTargetTab-0",
+        from: rootGetters.systemLog.from,
+        owner: rootGetters.systemLog.from
       });
 
       dispatch("windowOpen", "private.display.playerBoxWindow");

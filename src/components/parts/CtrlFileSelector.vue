@@ -9,6 +9,9 @@
       :disabled="disabled"
       @change.stop.prevent="fileOnChange"
       multiple
+      ref="input"
+      @keydown.enter.stop
+      @keyup.enter.stop
     />
     <span class="front-area"><slot /></span>
     <span class="background-area"></span>
@@ -22,6 +25,11 @@ import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 export default class CtrlFileSelector extends Vue {
   @Prop({ type: Boolean, default: false })
   private disabled!: boolean;
+
+  public requestFocus() {
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
+  }
 
   @Emit("change")
   private fileOnChange(event: any) {}

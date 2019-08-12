@@ -5,8 +5,8 @@
     align="center"
     fixSize="530, 400"
     :message="message"
-    @open="initWindow"
-    @reset="initWindow"
+    @open="open"
+    @reset="open"
   >
     <div class="contents" @contextmenu.prevent>
       <!-- 画像選択エリア -->
@@ -49,12 +49,18 @@
         <label for="fileUploader-tag">
           付与するタグ（半角・全角スペースで区切り）：
         </label>
-        <input type="text" id="fileUploader-tag" v-model="inputImageTag" />
+        <input
+          type="text"
+          id="fileUploader-tag"
+          v-model="inputImageTag"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
         <image-tag-select class="tagSelect" v-model="selectImageTag" />
       </div>
 
       <div class="ctrl-type-2">
-        <ctrl-file-selector @change="fileOnChange">
+        <ctrl-file-selector @change="fileOnChange" ref="button">
           アップロード対象画像選択
         </ctrl-file-selector>
         <ctrl-button :disabled="!useImageList.length" @click="commitOnClick">
@@ -102,12 +108,15 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
   private hoverImageKey: number | null = null;
   private committed: boolean = false;
 
-  private initWindow() {
+  private open() {
     this.inputImageTag = "キャラクター";
     this.selectImageTag = "imgTag-2";
     this.useImageList = [];
     this.hoverImageKey = null;
     this.committed = false;
+
+    const button: CtrlFileSelector = this.$refs.button as CtrlFileSelector;
+    button.requestFocus();
   }
 
   /**
@@ -219,7 +228,7 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
         owner: this.playerKey
       });
     });
-    this.initWindow();
+    this.open();
   }
 
   private cancelOnClick() {

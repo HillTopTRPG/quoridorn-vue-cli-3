@@ -1,9 +1,14 @@
 <template>
   <div
     class="character"
-    :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
+    :class="[
+      isThisRolling ? 'rolling' : '',
+      isHover ? 'hover' : '',
+      isBorderHide ? 'isBorderHide' : ''
+    ]"
     :style="characterStyle"
     :title="storeObj.text"
+    :id="storeObj.key"
     @click.right.prevent="
       e => openContext(e, 'private.display.characterContext')
     "
@@ -67,7 +72,7 @@
       </div>
     </div>
     <div class="selectHighlight" v-if="isViewHighlight"></div>
-    <div class="border"></div>
+    <div class="border" v-if="!isBorderHide"></div>
     <img
       class="image"
       v-img="imageObj.data"
@@ -75,9 +80,13 @@
       draggable="false"
     />
     <div class="name">{{ name }}</div>
-    <span class="rotate" v-show="isHover || isThisRolling" draggable="false">
+    <span
+      class="rotate"
+      v-show="(isViewPieceRotateMarker && isHover) || isThisRolling"
+      draggable="false"
+    >
       <i
-        class="icon-redo2"
+        class="icon-redo2 roll-knob"
         @mousedown.stop="rollStart"
         @mouseup.stop="rollEnd"
         @touchstart.stop="rollStart"
@@ -101,9 +110,9 @@ import { Action, Getter } from "vuex-class";
   }
 })
 export default class Character extends PieceMixin {
-  @Action("changeListObj") private changeListObj: any;
   @Getter("imageList") private imageList: any;
   @Getter("propertyList") private propertyList: any;
+  @Getter("isViewPieceRotateMarker") private isViewPieceRotateMarker: any;
 
   private checkPropertyList: any[] = [];
   private numberPropertyList: any[] = [];
@@ -192,6 +201,9 @@ export default class Character extends PieceMixin {
   }
   get useImageIndex(): number {
     return this.storeObj.useImageIndex;
+  }
+  get isBorderHide(): number {
+    return this.storeObj.isBorderHide;
   }
   get imageObj() {
     if (this.useImageList === "") return "";
@@ -368,6 +380,10 @@ export default class Character extends PieceMixin {
     bottom: -2px;
     top: -2px;
     border: solid black 2px;
+  }
+
+  &.isBorderHide:before {
+    border: none;
   }
 }
 

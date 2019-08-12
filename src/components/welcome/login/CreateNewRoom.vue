@@ -17,7 +17,9 @@
         type="text"
         v-model="roomName"
         placeholder="必須項目"
-        @keypress.enter="commitRoomName"
+        @keypress.enter.stop="commitRoomName"
+        @keydown.enter.stop
+        @keyup.enter.stop
       />
       <ctrl-button @click="commitRoomName">チェック</ctrl-button>
     </label>
@@ -40,7 +42,12 @@
     <div class="subBlock waitRoom" v-if="isViewWait && !isRoomExist">
       <label class="roomPassword">
         入室パスワード：
-        <input type="password" v-model="roomPassword" />
+        <input
+          type="password"
+          v-model="roomPassword"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </label>
       <fieldset class="playerInfo">
         <legend>あなたの情報</legend>
@@ -51,11 +58,18 @@
               placeholder="プレイヤー名を入力（必須項目）"
               type="text"
               v-model="playerName"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
           </label>
         </div>
         <label class="playerPassword">
-          パスワード：<input type="password" v-model="playerPassword" />
+          パスワード：<input
+            type="password"
+            v-model="playerPassword"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
         </label>
         <div class="description">
           部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！
@@ -81,6 +95,8 @@
           type="password"
           v-model="roomPassword"
           @keypress.enter="roomProcess(false)"
+          @keydown.enter.stop
+          @keyup.enter.stop
         />
       </label>
       <ctrl-button @click="roomProcess(false)">
@@ -108,7 +124,12 @@
     </div>
     <div class="subBlock newRoom" v-if="isViewNewRoom && !isRoomExist">
       <label class="roomPassword">
-        入室パスワード：<input type="password" v-model="roomPassword" />
+        入室パスワード：<input
+          type="password"
+          v-model="roomPassword"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </label>
       <label class="roomSystem">
         システム：
@@ -123,11 +144,18 @@
               placeholder="プレイヤー名を入力（必須項目）"
               type="text"
               v-model="playerName"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
           </label>
         </div>
         <label class="playerPassword">
-          パスワード：<input type="password" v-model="playerPassword" />
+          パスワード：<input
+            type="password"
+            v-model="playerPassword"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
         </label>
         <div class="description">
           部屋内でのプレイヤー管理に使用します。パスワード忘れに注意！
@@ -165,7 +193,6 @@ import { Action, Getter, Mutation } from "vuex-class";
 export default class CreateNewRoom extends Vue {
   @Action("setProperty") private setProperty: any;
   @Action("checkRoomName") private checkRoomName: any;
-  @Action("emptyMember") private emptyMember: any;
   @Action("windowClose") private windowClose: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("loading") private loading: any;
@@ -183,7 +210,6 @@ export default class CreateNewRoom extends Vue {
   @Getter("isRoomExist") private isRoomExist: any;
   @Getter("peerId") private peerId: any;
   @Getter("roles") private roles: any;
-  @Getter("systemLog") private systemLog: any;
 
   /*
    * data

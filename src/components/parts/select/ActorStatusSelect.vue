@@ -3,6 +3,7 @@
     v-model="localValue"
     :optionInfoList="optionInfoList"
     :test="test"
+    :disabled="disabled"
   >
     <option
       v-for="status in statusList"
@@ -30,6 +31,9 @@ export default class ActorStatusSelect extends Mixins<SelectMixin>(
 ) {
   @Prop({ type: String, required: true })
   private actorKey!: string;
+
+  @Prop({ type: Boolean, default: false })
+  private disabled!: boolean;
 
   @Getter("getObj") private getObj: any;
 

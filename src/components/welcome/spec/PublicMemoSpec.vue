@@ -1,8 +1,8 @@
 <template>
   <spec-frame
     property="publicMemoSpec"
-    label-str="共有メモ機能"
-    lastVersion="1.0.0b9"
+    label-str="共有メモ"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

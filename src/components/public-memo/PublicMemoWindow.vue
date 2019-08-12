@@ -4,8 +4,8 @@
     display-property="private.display.publicMemoWindow"
     align="center"
     baseSize="350, 310"
-    @open="initWindow"
-    @reset="initWindow"
+    @open="open"
+    @reset="open"
     :fontSizeBar="!isEditMode || isPreview"
     :message="isEditMode && !isPreview ? '確定ボタンを押すと反映' : ''"
   >
@@ -39,7 +39,12 @@
           @click="addButtonOnClick"
           v-if="isEditMode && !isPreview"
         >
-          <input type="text" @change="addTab" placeholder="追加タブの名前" />
+          <input
+            type="text"
+            @change="addTab"
+            placeholder="追加タブの名前"
+            ref="input"
+          />
         </span>
       </div>
 
@@ -167,7 +172,7 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
   private isPreview: boolean = false;
   private editingPublicMemoData: any = null;
 
-  private initWindow() {
+  private open() {
     this.currentTabIndex = 0;
     this.isFront = true;
     this.hoverMenuItemIndex = -1;
@@ -182,6 +187,9 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
         JSON.stringify(this.publicMemoObj)
       );
     });
+
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
   }
 
   private deleteTab() {
@@ -215,7 +223,12 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
       tabName: event.target.value,
       front: {
         targetList: [],
-        contentsList: []
+        contentsList: [
+          {
+            kind: "text",
+            text: "テキスト"
+          }
+        ]
       },
       back: {
         targetList: [],

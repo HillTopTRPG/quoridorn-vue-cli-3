@@ -2,7 +2,7 @@
   <spec-frame
     property="welcomeWindowSpec"
     label-str="ようこそ画面"
-    lastVersion="1.0.0b3"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <div>※ この画面の仕様です</div>

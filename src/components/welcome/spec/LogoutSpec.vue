@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="logout"
+    property="logoutSpec"
     label-str="ログアウト機能"
-    lastVersion="1.0.0b1"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

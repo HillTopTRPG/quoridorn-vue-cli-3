@@ -4,7 +4,8 @@
     display-property="private.display.initiativeSettingWindow"
     align="center"
     fixSize="510, 210"
-    @open="initWindow"
+    @open="open"
+    @reset="open"
   >
     <div class="contents">
       <div class="message" @contextmenu.prevent>
@@ -24,7 +25,13 @@
       </div>
       <label @contextmenu.prevent>
         カウンター名一覧：
-        <input type="text" v-model="format" />
+        <input
+          type="text"
+          v-model="format"
+          @keydown.enter.stop
+          @keyup.enter.stop
+          ref="input"
+        />
       </label>
       <hr />
       <div class="operationArea" @contextmenu.prevent>
@@ -40,7 +47,7 @@ import WindowMixin from "../WindowMixin.vue";
 import WindowFrame from "../WindowFrame.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
 
-import { Action } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({
@@ -55,10 +62,15 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
   @Action("setProperty") private setProperty: any;
   @Action("windowClose") private windowClose: any;
   @Action("setInitiativeParams") private setInitiativeParams: any;
+  @Getter("rowStr") private rowStr: any;
+
   private format: string = "";
 
-  initWindow() {
+  open() {
     this.format = this.value;
+
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
   }
 
   commit() {
@@ -77,7 +89,7 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
   }
 
   get value(): string {
-    return this.$store.state.public.initiative.rowStr;
+    return this.rowStr;
   }
 }
 </script>

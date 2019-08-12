@@ -9,11 +9,12 @@
     @add="add"
     @remove="remove"
   >
-    <div class="contents" @contextmenu.prevent>
+    <div class="contents">
       <master-volume-component />
       <template v-for="bgmObj in playList">
         <b-g-m-youtube-component
           v-if="/www\.youtube\.com/.test(bgmObj.url)"
+          :bgm="bgmObj"
           :key="bgmObj.key"
           :bgmKey="bgmObj.key"
           :ref="bgmObj.key"
@@ -30,6 +31,7 @@
         />
         <b-g-m-file-component
           v-if="!/www\.youtube\.com/.test(bgmObj.url)"
+          :bgm="bgmObj"
           :key="bgmObj.key"
           :bgmKey="bgmObj.key"
           :ref="bgmObj.key"
@@ -60,6 +62,7 @@ import BGMFileComponent from "@/components/music/component/BGMFileComponent.vue"
 
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
+import { Watch } from "vue-property-decorator";
 
 @Component({
   components: {
@@ -76,13 +79,18 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
 
   private playList: any[] = [];
 
-  private add(bgmKey: string): void {
-    if (!bgmKey) return;
-    const addBgmObj = this.bgmList.filter(
-      (bgmObj: any) => bgmObj.key === bgmKey
-    )[0];
-    // 見つからなかったらタイミング悪く削除されたということなので、処理しない
+  private add(addBgmObj: any): void {
     if (!addBgmObj) return;
+
+    // 強制リスタートじゃなければ、もともと再生されてる曲を中断しない。
+    if (!addBgmObj.isReject && !addBgmObj.forceReset) {
+      const bgmObj: any = this.playList.filter(
+        (bgmObj: any) => bgmObj.key === addBgmObj.key
+      )[0];
+      if (bgmObj) {
+        return;
+      }
+    }
 
     // タグが同じものはプレイリストから削除する
     const delList = this.playList.filter(plObj => {
@@ -114,13 +122,9 @@ export default class JukeboxWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private remove(bgmKey: string): void {
-    const delBgmObj = this.bgmList.filter(
+    const index = this.playList.findIndex(
       (bgmObj: any) => bgmObj.key === bgmKey
-    )[0];
-    // 見つからなかったらタイミング悪く削除されたということなので、処理しない
-    if (!delBgmObj) return;
-
-    const index = this.playList.indexOf(delBgmObj);
+    );
     this.playList.splice(index, 1);
 
     if (this.playList.length === 0) {

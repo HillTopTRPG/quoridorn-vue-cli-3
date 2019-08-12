@@ -6,6 +6,8 @@
       placeholder="状態"
       :value="localValue"
       @change="event => changeValue(event.target.value)"
+      @keydown.enter.stop
+      @keyup.enter.stop
     />
     <datalist id="actorStatus">
       <option v-for="status in useStatusList" :key="status" :value="status">
@@ -21,8 +23,6 @@ import { Getter } from "vuex-class";
 
 @Component
 export default class ActorStatusCombo extends Vue {
-  @Getter("getSelfActors") private getSelfActors: any;
-
   @Prop({ type: String, required: true })
   private value!: string;
 

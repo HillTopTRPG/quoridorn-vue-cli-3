@@ -10,6 +10,7 @@
       }))
     "
     :maxWidth="19"
+    :disabled="disabled"
   />
 </template>
 
@@ -23,7 +24,12 @@ export default class DiceBotSelect extends Vue {
   @Action("loading") private loading: any;
   @Action("getBcdiceSystemInfo") private getBcdiceSystemInfo: any;
   @Getter("diceSystemList") private diceSystemList: any;
-  @Prop() private value!: string;
+
+  @Prop({ type: String, required: true })
+  private value!: string;
+
+  @Prop({ type: Boolean, default: false })
+  private disabled!: boolean;
 
   /*
    * data

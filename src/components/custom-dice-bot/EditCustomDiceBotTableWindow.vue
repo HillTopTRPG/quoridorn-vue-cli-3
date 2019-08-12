@@ -4,23 +4,42 @@
     display-property="private.display.editCustomDiceBotTableWindow"
     align="center"
     :fixSize="'600, 400'"
-    @open="initWindow"
-    @reset="initWindow"
+    @open="open"
+    @reset="open"
     :fontSizeBar="true"
   >
     <div class="contents v-box" @contextmenu.prevent>
       <div class="line-box">
         <label class="commandName h-box">
           コマンド名：
-          <input type="text" class="flex-max" v-model="commandName" />
+          <input
+            type="text"
+            class="flex-max"
+            v-model="commandName"
+            ref="input"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
         </label>
         <label class="diceRoll h-box">
           ダイス：
-          <input type="text" class="flex-max" v-model="diceRoll" />
+          <input
+            type="text"
+            class="flex-max"
+            v-model="diceRoll"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
         </label>
         <label class="tableTitle h-box flex-max">
           表タイトル：
-          <input type="text" class="flex-max" v-model="tableTitle" />
+          <input
+            type="text"
+            class="flex-max"
+            v-model="tableTitle"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
         </label>
       </div>
       <div class="line-box">
@@ -87,12 +106,15 @@ export default class EditCustomDiceBotTableWindow extends Mixins<WindowMixin>(
   private diceBotSystem: string = "DiceBot";
   private tableContents: string = "";
 
-  private initWindow() {
+  private open() {
     this.commandName = this.storeObj.commandName;
     this.diceRoll = this.storeObj.diceRoll;
     this.tableTitle = this.storeObj.tableTitle;
     this.diceBotSystem = this.storeObj.diceBotSystem;
     this.tableContents = this.storeObj.tableContents;
+
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
   }
 
   private commitButtonOnClick() {

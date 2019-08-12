@@ -9,7 +9,12 @@
     @reset="open"
   >
     <div class="contents">
-      <textarea v-model="text"></textarea>
+      <textarea
+        v-model="text"
+        @keydown.enter.stop
+        @keyup.enter.stop
+        ref="input"
+      ></textarea>
 
       <label class="operationLine">
         <ctrl-button @click="commit()">確定</ctrl-button>
@@ -48,6 +53,8 @@ export default class EditChatPaletteWindow extends Mixins<WindowMixin>(
    */
   private open() {
     this.text = this.chatPaletteText;
+    const input: HTMLTextAreaElement = this.$refs.input as HTMLTextAreaElement;
+    input.focus();
   }
 
   private commit() {

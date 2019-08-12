@@ -1,13 +1,6 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import 'bcdice-js/lib/preload-dicebots'
-import Vue from "vue";
-import Vuex from "vuex";
 import JSZip from "jszip";
 import saveAs from "file-saver";
 import moment from "moment";
-
-Vue.use(Vuex);
 
 /**
  * Store
@@ -91,13 +84,39 @@ export default {
       );
       saveData.public.room.members = [];
 
-      // listに対する差分を取り扱う
-      const addKeyList: string[] = [];
-      const delKeyList: string[] = [];
-      saveData.public.historyList.forEach((history: any) => {
-        if (history.type === "add") addKeyList.push(history.key);
-        if (history.type === "del") delKeyList.push(history.key);
-      });
+      /*
+       * 暗号化
+       */
+      const encryptObj: Function = (container: any, target: string) => {
+        container[target] = rootGetters.encrypt({
+          planeText: JSON.stringify(container[target])
+        });
+      };
+      encryptObj(saveData.public, "room");
+      encryptObj(saveData.public, "initiative");
+      encryptObj(saveData.public, "setting");
+
+      const encryptListObj: Function = (container: any, target: string) => {
+        container[target] = container[target].map((obj: any) =>
+          rootGetters.encrypt({ planeText: JSON.stringify(obj) })
+        );
+      };
+      encryptListObj(saveData.public.chat, "logs");
+      encryptListObj(saveData.public.chat.tab, "list");
+      encryptListObj(saveData.public.chat.groupTargetTab, "list");
+      encryptListObj(saveData.public.player, "list");
+      encryptListObj(saveData.public.chit, "list");
+      encryptListObj(saveData.public.character, "list");
+      encryptListObj(saveData.public.mapMask, "list");
+      encryptListObj(saveData.public.diceSymbol, "list");
+      encryptListObj(saveData.public.customDiceBot, "list");
+      encryptListObj(saveData.public.customDiceBot, "roomSysList");
+      encryptListObj(saveData.public.publicMemo, "list");
+      encryptListObj(saveData.public.image, "list");
+      encryptListObj(saveData.public.image.tags, "list");
+      encryptListObj(saveData.public.bgm, "list");
+      encryptListObj(saveData.public.map, "list");
+      encryptListObj(saveData.public.counterRemocon, "list");
 
       for (const playerKey in rootGetters.volatilePrivateData) {
         if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
@@ -113,107 +132,115 @@ export default {
         });
       }
 
-      // ------------------------------------------------------------
-      // 削除したデータが追加したデータに含まれている場合は双方のリストから消す
-      const delKeyDelList: string[] = [];
-      delKeyList.forEach((delKey: string) => {
-        const index = addKeyList.findIndex(
-          (addKey: string) => addKey === delKey
-        );
-        if (index > -1) {
-          addKeyList.splice(index, 1);
-          delKeyDelList.push(delKey);
-        }
-      });
-      delKeyDelList.forEach((delKeyDel: string) =>
-        delKeyList.splice(
-          delKeyList.findIndex((delKey: string) => delKey === delKeyDel),
-          1
-        )
-      );
-
-      // ------------------------------------------------------------
-      // この時点で削除リストはプリセットデータの削除のみとなっているはず
-      // → 対象のkeyのリストが保存データに含まれれば、ロード時に十分なデータとなる
-      saveData.delKeyList = delKeyList;
-
-      // ============================================================
-
-      // ここからは追加データ間の関連データを調べ、差分データとして用意する
-      const imageKeyList = addKeyList.filter(
-        key => key.split("-")[0] === "image"
-      );
-
-      /** -----------------------------------------------------------
-       * imageKeyListに含まれるなら間接参照keyに変換する
-       */
-      const getAfterKey = (beforeKey: string) => {
-        const index: number = imageKeyList.findIndex(
-          imageKey => imageKey === beforeKey
-        );
-        if (index === -1) return beforeKey;
-        return beforeKey.replace(/[0-9]+/, () => `$${index}`);
-      };
-
-      const addObjList: any[] = addKeyList.map(key => {
-        // オブジェクトのデータを文字列化し、そこに含まれるイメージkeyを必要に応じて置換する
-        let objStr = JSON.stringify(rootGetters.getObj(key));
-        (objStr.match(/image-([0-9])+/g) || []).forEach((imageKey: string) => {
-          objStr = objStr.replace(
-            new RegExp(imageKey, "g"),
-            getAfterKey(imageKey)
-          );
-        });
-        return JSON.parse(objStr);
-
-        // // 画像を持つオブジェクトなら "useImageList" があるはず
-        // const obj = JSON.parse(JSON.stringify(rootGetters.getObj(key)));
-        // let useImageList = obj.useImageList;
-        // if (useImageList) {
-        //   const useImageKeys = useImageList
-        //     .split("|")
-        //     .map((str: string) => str.replace(":R", ""));
-        //   useImageKeys.forEach((uiKey: string) => {
-        //     const afterKey = getAfterKey(uiKey);
-        //     useImageList = useImageList.replace(uiKey, afterKey);
-        //   });
-        //   obj.useImageList = useImageList;
-        // }
-        // const imageKey = obj.imageKey;
-        // if (imageKey) {
-        //   obj.imageKey = getAfterKey(imageKey);
-        // }
-        // return obj;
-      });
-
-      addObjList.forEach(addObj => {
-        const prefix = addObj.key.split("-")[0];
-        if (prefix === "image") {
-          addObj.key = getAfterKey(addObj.key);
-        } else {
-          addObj.key = addObj.key.replace(/[0-9]+/, "?");
-        }
-      });
-
-      // 追加データに記録されるものは二重管理となるため削除
-      delete saveData.public.character;
-      delete saveData.public.chit;
-      delete saveData.public.mapMask;
-      delete saveData.public.image;
-      delete saveData.public.bgm;
-      delete saveData.public.diceSymbol;
+      // // listに対する差分を取り扱う
+      // const addKeyList: string[] = [];
+      // const delKeyList: string[] = [];
+      // saveData.public.historyList.forEach((history: any) => {
+      //   if (history.type === "add") addKeyList.push(history.key);
+      //   if (history.type === "del") delKeyList.push(history.key);
+      // });
+      //
+      // // ------------------------------------------------------------
+      // // 削除したデータが追加したデータに含まれている場合は双方のリストから消す
+      // const delKeyDelList: string[] = [];
+      // delKeyList.forEach((delKey: string) => {
+      //   const index = addKeyList.findIndex(
+      //     (addKey: string) => addKey === delKey
+      //   );
+      //   if (index > -1) {
+      //     addKeyList.splice(index, 1);
+      //     delKeyDelList.push(delKey);
+      //   }
+      // });
+      // delKeyDelList.forEach((delKeyDel: string) =>
+      //   delKeyList.splice(
+      //     delKeyList.findIndex((delKey: string) => delKey === delKeyDel),
+      //     1
+      //   )
+      // );
+      //
+      // // ------------------------------------------------------------
+      // // この時点で削除リストはプリセットデータの削除のみとなっているはず
+      // // → 対象のkeyのリストが保存データに含まれれば、ロード時に十分なデータとなる
+      // saveData.delKeyList = delKeyList;
+      //
+      // // ============================================================
+      //
+      // // ここからは追加データ間の関連データを調べ、差分データとして用意する
+      // const imageKeyList = addKeyList.filter(
+      //   key => key.split("-")[0] === "image"
+      // );
+      //
+      // /** -----------------------------------------------------------
+      //  * imageKeyListに含まれるなら間接参照keyに変換する
+      //  */
+      // const getAfterKey = (beforeKey: string) => {
+      //   const index: number = imageKeyList.findIndex(
+      //     imageKey => imageKey === beforeKey
+      //   );
+      //   if (index === -1) return beforeKey;
+      //   return beforeKey.replace(/[0-9]+/, () => `$${index}`);
+      // };
+      //
+      // const addObjList: any[] = addKeyList.map(key => {
+      //   // オブジェクトのデータを文字列化し、そこに含まれるイメージkeyを必要に応じて置換する
+      //   let objStr = JSON.stringify(rootGetters.getObj(key));
+      //   (objStr.match(/image-([0-9])+/g) || []).forEach((imageKey: string) => {
+      //     objStr = objStr.replace(
+      //       new RegExp(imageKey, "g"),
+      //       getAfterKey(imageKey)
+      //     );
+      //   });
+      //   return JSON.parse(objStr);
+      //
+      //   // // 画像を持つオブジェクトなら "useImageList" があるはず
+      //   // const obj = JSON.parse(JSON.stringify(rootGetters.getObj(key)));
+      //   // let useImageList = obj.useImageList;
+      //   // if (useImageList) {
+      //   //   const useImageKeys = useImageList
+      //   //     .split("|")
+      //   //     .map((str: string) => str.replace(":R", ""));
+      //   //   useImageKeys.forEach((uiKey: string) => {
+      //   //     const afterKey = getAfterKey(uiKey);
+      //   //     useImageList = useImageList.replace(uiKey, afterKey);
+      //   //   });
+      //   //   obj.useImageList = useImageList;
+      //   // }
+      //   // const imageKey = obj.imageKey;
+      //   // if (imageKey) {
+      //   //   obj.imageKey = getAfterKey(imageKey);
+      //   // }
+      //   // return obj;
+      // });
+      //
+      // addObjList.forEach(addObj => {
+      //   const prefix = addObj.key.split("-")[0];
+      //   if (prefix === "image") {
+      //     addObj.key = getAfterKey(addObj.key);
+      //   } else {
+      //     addObj.key = addObj.key.replace(/[0-9]+/, "?");
+      //   }
+      // });
+      //
+      // // 追加データに記録されるものは二重管理となるため削除
+      // delete saveData.public.character;
+      // delete saveData.public.chit;
+      // delete saveData.public.mapMask;
+      // delete saveData.public.image;
+      // delete saveData.public.bgm;
+      // delete saveData.public.diceSymbol;
+      //
+      // // セーブデータに追加差分データを含める
+      // saveData.addObjList = addObjList;
 
       // お試しデータのカードデッキはとりあえず削除
       delete saveData.public.deck;
-
-      // セーブデータに追加差分データを含める
-      saveData.addObjList = addObjList;
 
       // zipファイルの生成
       const zip = new JSZip();
       zip.file("save.json", JSON.stringify(saveData, undefined, 2));
       zip.generateAsync({ type: "blob" }).then((blob: any) => {
-        const dateStr = moment().format("YYYYMMDD_hhmmss");
+        const dateStr = moment().format("YYYYMMDD_HHmmss");
         saveAs(blob, `Quoridorn_${dateStr}.zip`);
       });
     },
@@ -298,6 +325,40 @@ export default {
         dropZipRoomCreate: boolean;
       }
     ) {
+      /*
+       * 復号化
+       */
+      const decryptObj: Function = (container: any, target: string) => {
+        container[target] = JSON.parse(
+          rootGetters.decrypt({ cipherText: container[target] })
+        );
+      };
+      decryptObj(publicData, "room");
+      decryptObj(publicData, "initiative");
+      decryptObj(publicData, "setting");
+
+      const decryptListObj: Function = (container: any, target: string) => {
+        container[target] = container[target].map((cipherText: string) =>
+          JSON.parse(rootGetters.decrypt({ cipherText }))
+        );
+      };
+      decryptListObj(publicData.chat, "logs");
+      decryptListObj(publicData.chat.tab, "list");
+      decryptListObj(publicData.chat.groupTargetTab, "list");
+      decryptListObj(publicData.player, "list");
+      decryptListObj(publicData.chit, "list");
+      decryptListObj(publicData.character, "list");
+      decryptListObj(publicData.mapMask, "list");
+      decryptListObj(publicData.diceSymbol, "list");
+      decryptListObj(publicData.customDiceBot, "list");
+      decryptListObj(publicData.customDiceBot, "roomSysList");
+      decryptListObj(publicData.publicMemo, "list");
+      decryptListObj(publicData.image, "list");
+      decryptListObj(publicData.image.tags, "list");
+      decryptListObj(publicData.bgm, "list");
+      decryptListObj(publicData.map, "list");
+      decryptListObj(publicData.counterRemocon, "list");
+
       const importFunc = () => {
         // FIXME チャットデータは上書きでいいの…かな？（差分方式がいい気もしている
         dispatch("setProperty", {
@@ -306,10 +367,14 @@ export default {
           isNotice: true,
           logOff: true
         }).then(() => {
-          dispatch("setInitiativeParams", {
-            format: rootState.public.initiative.rowStr.trim()
-          });
+          // dispatch("setInitiativeParams", {
+          //   format: rootGetters.rowStr.trim()
+          // });
         });
+
+        return Promise.resolve();
+
+        /*
 
         delKeyList.forEach(delKey => {
           dispatch("delObj", delKey);
@@ -365,7 +430,7 @@ export default {
 
                 // グループチャットデータのロード
                 if (type === "groupTargetTab") {
-                  rootGetters.groupTargetTab.list.push({
+                  rootGetters.groupTargetTabList.push({
                     key: `groupTargetTab-${++rootGetters.groupTargetTab
                       .maxKey}`,
                     isSecret: addObj.isSecret,
@@ -385,6 +450,7 @@ export default {
             return Promise.all(otherObjectPromiseList);
           }
         );
+        */
       };
 
       const roomName = publicData.room.name;

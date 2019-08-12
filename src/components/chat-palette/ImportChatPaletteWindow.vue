@@ -18,7 +18,9 @@
           type="file"
           style="display: none;"
           accept=".json,.cpd,.txt"
-          @change="selectFile"
+          @change.stop="selectFile"
+          @keydown.enter.stop
+          @keyup.enter.stop
         />
       </label>
 

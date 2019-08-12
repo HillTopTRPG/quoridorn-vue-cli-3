@@ -5,7 +5,6 @@
       class="tab"
       v-for="(tabObj, index) in tabList"
       :key="tabObj.name"
-      :tabindex="tabIndex + index + 1"
       :class="getTabClasses(tabObj, index)"
     >
       <div class="corner-container" v-if="isVertical">
@@ -19,6 +18,9 @@
 
       <div
         class="text"
+        :tabindex="isModal ? -1 : tabIndex + index + 1"
+        @keydown.space.stop="chatTabOnSelect(tabObj.key)"
+        @keydown.enter.stop="chatTabOnSelect(tabObj.key)"
         @mousedown.prevent="chatTabOnSelect(tabObj.key)"
         @mouseenter.prevent="chatTabOnHover(tabObj.key)"
         @mouseleave.prevent="chatTabOnHover('')"
@@ -33,7 +35,10 @@
     <span
       class="tab addButton"
       @click="tabAddButtonOnClick"
-      :tabindex="tabIndex + chatTabs.length + 1"
+      @keydown.space.stop="tabAddButtonOnClick"
+      @keydown.enter.stop="tabAddButtonOnClick"
+      :tabindex="isModal ? -1 : tabIndex + tabList.length + 1"
+      v-if="viewOption"
       ><span class="icon-cog"></span
     ></span>
   </div>
@@ -46,6 +51,8 @@ import { Component, Mixins } from "vue-mixin-decorator";
 
 @Component({ components: {} })
 export default class TabsComponent extends Vue {
+  @Getter("isModal") private isModal: any;
+
   @Prop({ type: Array, required: true })
   private tabList!: any[];
 
@@ -64,9 +71,8 @@ export default class TabsComponent extends Vue {
   @Prop({ type: Function, required: true })
   private textFunc!: Function;
 
-  @Action("chatTabSelect") private chatTabSelect: any;
-  @Action("setProperty") private setProperty: any;
-  @Getter("chatTabs") private chatTabs: any;
+  @Prop({ type: Boolean, required: true })
+  private viewOption!: boolean;
 
   /**
    * チャットログ表示タブを選択されたときの挙動
@@ -94,7 +100,7 @@ export default class TabsComponent extends Vue {
       hover: tabObj.key === this.hoverChatTab,
       unRead: tabObj.unRead > 0,
       vertical: this.isVertical,
-      isLast: index === this.chatTabs.length - 1
+      isLast: index === this.tabList.length - 1
     };
   }
 }
@@ -123,7 +129,7 @@ $hover-border-color: #0092ed;
 
   .tab {
     @include inline-flex-box(row, flex-start, flex-end);
-    outline: none;
+    /*outline: none;*/
     overflow: visible;
     margin-right: -2px;
 
@@ -246,7 +252,7 @@ $hover-border-color: #0092ed;
     &.addButton {
       @include flex-box(row, center, center);
       position: absolute;
-      right: 1px;
+      right: 2px;
       cursor: pointer;
       z-index: 13;
       height: 2em;

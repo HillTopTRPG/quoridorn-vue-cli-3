@@ -16,7 +16,7 @@ export default class AddressCalcMixin extends Vue {
   @Getter("mouseOnCanvas") protected mouseOnCanvas: any;
   @Getter("mouseLocate") protected mouseLocate: any;
 
-  arrangeAngle(angle: number): number {
+  protected arrangeAngle(angle: number): number {
     if (angle > 180) angle -= 360;
     if (angle < -180) angle += 360;
     return angle;
