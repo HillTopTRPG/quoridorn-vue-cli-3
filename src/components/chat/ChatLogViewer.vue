@@ -121,7 +121,7 @@ export default class ChatLogViewer extends Vue {
   }
 
   private transText(text: string) {
-    text = text.replace(/\[\[quot]]/g, '"');
+    text = text.replace(/\[\[quot]]/g, '"').replace(/\n/g, "<br />");
 
     const matchInfoList: any[] = [];
     let matchResult = null;
