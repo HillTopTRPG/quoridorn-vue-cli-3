@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="addEditBgmWindowSpec"
-    label-str="BGM追加・編集画面"
-    lastVersion="1.0.0b9"
+    property="bgmSpec2"
+    label-str="BGM2"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

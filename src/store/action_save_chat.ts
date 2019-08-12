@@ -9,6 +9,12 @@ export default {
      * @param rootGetters
      */
     async saveChatLogHtml({ rootGetters }: { rootGetters: any }) {
+      if (!rootGetters.isGameMaster) {
+        alert(
+          "仕様的な考慮不足によりGM専用機能です。\nGM以外でも可能になるよう、近いうちに改修します。\nGMにログ取得を促してくださいませ。"
+        );
+        return;
+      }
       const dateStr = moment().format("YYYYMMDD_HHmmss");
       const title = `Quoridorn_chatLog_${dateStr}`;
 

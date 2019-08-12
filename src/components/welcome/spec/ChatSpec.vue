@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="chatWindowSpec"
-    label-str="チャット画面"
-    lastVersion="1.0.0b12"
+    property="chatSpec"
+    label-str="チャット"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
@@ -36,6 +36,7 @@
                 グループチャットまたは秘匿チャット先(個人)の選択
               </li>
               <li>「#」または「＃」<br />→ 出力先タブの選択</li>
+              <li>「&」または「＆」<br />→ 臨時チャット装飾指定の選択・挿入</li>
             </ol>
           </li>
           <li>使用するダイスボットの選択</li>

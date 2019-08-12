@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="addRangeWindow"
-    label-str="範囲追加"
-    lastVersion="1.0.0b1"
+    property="graveyardSpec"
+    label-str="墓場"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
@@ -10,39 +10,33 @@
      !--------------------->
     <spec-item class-str="operation" label-str="起動操作">
       <li>画面上部メニューの「コマ」を選択</li>
-      <li>「範囲追加」を選択</li>
+      <li>「墓場」を選択</li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>名前の設定</li>
-      <li>「射界」の設定 → 別項「射界」参照</li>
+      <li>マップオブジェクトを削除した際、一旦は「墓場」へと移動する</li>
+      <li>「墓場」の操作により、削除したオブジェクトを復活できる</li>
+      <li>「墓場」の操作により、本当に削除することができる</li>
     </spec-item>
     <!----------------------
      ! ユーザ要望
      !--------------------->
     <spec-item class-str="request" label-str="ユーザ要望">
-      <li>別項「射界」参照</li>
+      <li>なし</li>
     </spec-item>
     <!----------------------
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>本機能自体が未実装</li>
-      <li>
-        中身の処理はキャラクターに簡易実装されているが、バグが数点ある
-      </li>
+      <li>本機能自体が未実装<br />→ 初回リリースに含める機能</li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
      !--------------------->
     <spec-item class-str="unSupport" label-str="実装しない機能">
-      <li>
-        どどんとふの各システム用に用意された「範囲追加」は対応しない
-        <br />→
-        基本機能が全て実装できた後の「個別システム対応」のフェーズで対応するかも
-      </li>
+      <li>なし</li>
     </spec-item>
     <!----------------------
      ! 関連項目

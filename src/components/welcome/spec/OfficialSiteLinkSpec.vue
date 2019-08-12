@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="officialSiteLink"
+    property="officialSiteSpec"
     label-str="オフィシャルサイトへ"
-    lastVersion="1.0.0b1"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

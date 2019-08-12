@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="addDiceSymbolWindow"
-    label-str="ダイスシンボル追加画面"
-    lastVersion="1.0.0b10"
+    property="diceSymbolSpec"
+    label-str="ダイスシンボル"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

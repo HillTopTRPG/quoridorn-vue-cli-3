@@ -2,7 +2,7 @@
   <spec-frame
     property="editCustomDiceBotTableWindowSpec"
     label-str="ダイスボット表変更"
-    lastVersion="1.0.0b12"
+    lastVersion="1.0.0"
     :isSpecFixed="false"
   >
     <!----------------------

@@ -1,22 +1,34 @@
 <template>
   <spec-frame
-    property="versionWindow"
-    label-str="バージョン"
-    lastVersion="1.0.0b1"
+    property="easyMapSpec"
+    label-str="簡易マップ"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
      ! 起動操作
      !--------------------->
     <spec-item class-str="operation" label-str="起動操作">
-      <li>画面上部メニューの「ヘルプ」を選択</li>
-      <li>「バージョン」を選択</li>
+      <li>画面上部メニューの「マップ」を選択</li>
+      <li>「簡易マップ作成」を選択</li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>バージョン番号を表示する</li>
+      <li>
+        マス目を色(透過度つき)で塗りつぶす機能
+      </li>
+      <li>
+        以下の３つの機能で塗りつぶし操作を行う
+        <ol>
+          <li>色の選択(＋透過度)</li>
+          <li>ペン太さの設定</li>
+          <li>鉛筆</li>
+          <li>消しゴム</li>
+          <li>スポイト</li>
+        </ol>
+      </li>
     </spec-item>
     <!----------------------
      ! ユーザ要望
@@ -28,13 +40,15 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>なし</li>
+      <li>
+        本機能自体が未実装<br />→ ちょっと大変なので初回リリースには含めない。
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能
      !--------------------->
     <spec-item class-str="unSupport" label-str="実装しない機能">
-      <li>なし</li>
+      <li>未記載</li>
     </spec-item>
     <!----------------------
      ! 関連項目

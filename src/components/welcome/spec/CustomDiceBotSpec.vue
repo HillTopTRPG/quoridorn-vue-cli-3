@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="customDiceBotTableWindowSpec"
-    label-str="ダイスボット用表管理"
-    lastVersion="1.0.0b12"
+    property="customDiceBotSpec"
+    label-str="独自ダイスボット"
+    lastVersion="1.0.0"
     :isSpecFixed="false"
   >
     <!----------------------

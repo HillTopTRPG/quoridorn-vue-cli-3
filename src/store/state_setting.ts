@@ -4,7 +4,7 @@ export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.0b15",
+    version: "1.0.0",
     magicWord: "I walk slowly, but I never walk backward.",
     /** 接続情報 */
     connect: {

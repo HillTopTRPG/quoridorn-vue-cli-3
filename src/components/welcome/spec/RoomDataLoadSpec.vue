@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="import"
-    label-str="ロード機能"
-    lastVersion="1.0.0b5"
+    property="roomDataLoadSpec"
+    label-str="部屋データ読込機能"
+    lastVersion="1.0.0"
     :isSpecFixed="false"
   >
     <!----------------------

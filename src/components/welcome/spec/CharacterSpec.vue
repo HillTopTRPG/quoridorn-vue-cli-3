@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="addCharacterWindow"
-    label-str="キャラクター追加画面"
-    lastVersion="1.0.0b14"
+    property="characterSpec"
+    label-str="キャラクター"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
@@ -47,20 +47,18 @@
     <spec-item class-str="request" label-str="ユーザ要望">
       <li>
         画像指定時に回転させたい（画像を用意する枚数削減）
-        <br />→ 余裕があれば初回リリースに含める機能。「画像選択」の項目に転載
+        <br />→ いずれ作りたい
       </li>
       <li>
         キャラに「ステータス」を持たせて、それをコマに表示させたい
-        <br />→ 余裕があれば初回リリースに含める機能。<br />→
-        イニシアティブ表への指定にて実装する予定。
+        <br />→ いずれ作りたい
       </li>
     </spec-item>
     <!----------------------
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>マップマスクの下に隠す設定<br />→ 初回リリースに含める機能。</li>
-      <li>イニシアティブ表の情報の入力<br />→ 初回リリースに含める機能。</li>
+      <li>イニシアティブ表の情報の入力<br />→ いずれ作りたい</li>
     </spec-item>
     <!----------------------
      ! 実装しない機能

@@ -1,35 +1,31 @@
 <template>
   <spec-frame
-    property="addMapMaskWindow"
-    label-str="マップマスク追加機能"
-    lastVersion="1.0.0b1"
+    property="MapSaveSpec"
+    label-str="マップ状態保存機能"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
      ! 起動操作
      !--------------------->
-    <spec-item class-str="operation" label-str="起動操作１">
+    <spec-item class-str="operation" label-str="起動操作">
       <li>画面上部メニューの「マップ」を選択</li>
-      <li>「マップマスク追加」を選択</li>
-    </spec-item>
-    <spec-item class-str="operation" label-str="起動操作２">
-      <li>マップを右クリック</li>
-      <li>
-        表示されたメニューの「マップマスク追加」を選択
-      </li>
+      <li>「マップ状態保存」を選択</li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>中に表示する文字の入力</li>
-      <li>表示色（＋透明度）の選択</li>
-      <li>サイズ指定</li>
       <li>
-        「射界」の設定 → 後述の「射界」の項参照
+        現在のマップの状態をセーブデータとして保存する
       </li>
       <li>
-        マップマスクはすべてのマップオブジェクトの中で最も下に表示される
+        保存時に追加で含めるデータを以下の中から選択可能
+        <ol>
+          <li>フロアタイル</li>
+          <li>マップマスク</li>
+          <li>簡易マップ</li>
+        </ol>
       </li>
     </spec-item>
     <!----------------------
@@ -43,9 +39,8 @@
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
       <li>
-        「射界」機能
-        <br />→
-        マップマスクへの反映は優先度低め。余裕があれば初回リリースに含める。
+        本機能自体が未実装
+        <br />→ 初回リリースには含めない。しばらくは運用でカバーをお願いします。
       </li>
     </spec-item>
     <!----------------------

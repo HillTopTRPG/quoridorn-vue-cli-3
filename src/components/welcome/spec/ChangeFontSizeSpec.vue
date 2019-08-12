@@ -1,25 +1,23 @@
 <template>
   <spec-frame
-    property="manualWindow"
-    label-str="マニュアル"
-    lastVersion="1.0.0b1"
-    :isSpecFixed="false"
+    property="changeFontSizeSpec"
+    label-str="フォントサイズ調整"
+    lastVersion="1.0.0"
+    :isSpecFixed="true"
   >
     <!----------------------
      ! 起動操作
      !--------------------->
     <spec-item class-str="operation" label-str="起動操作">
-      <li>画面上部メニューの「ヘルプ」を選択</li>
-      <li>「マニュアル」を選択</li>
+      <li>画面上部メニューの「表示」を選択</li>
+      <li>「フォントサイズ調整」を選択</li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>パターン別の操作マニュアルを表示</li>
       <li>
-        「ようこそ」画面の「仕様一覧」に統合するか悩み中
-        <span class="unFixed">[仕様未確定事項]</span>
+        Quoridorn全体のフォントサイズを変更する
       </li>
     </spec-item>
     <!----------------------
@@ -33,8 +31,8 @@
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
       <li>
-        本機能自体が未実装
-        <br />→ 仕様未定につき実装時期未定
+        本機能自体が未実装。<br />→
+        優先度低。対応は案外大変なので初回リリースに含めないかも。
       </li>
     </spec-item>
     <!----------------------

@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="resetAllWindow"
+    property="resetAllWindowSpec"
     label-str="ウィンド配置初期化機能"
-    lastVersion="1.0.0b1"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

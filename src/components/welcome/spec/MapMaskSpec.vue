@@ -1,23 +1,35 @@
 <template>
   <spec-frame
-    property="editImageTagWindow"
-    label-str="タグ編集画面"
-    lastVersion="1.0.0b1"
+    property="mapMaskSpec"
+    label-str="マップマスク"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
      ! 起動操作
      !--------------------->
-    <spec-item class-str="operation" label-str="起動操作">
-      <li>画面上部メニューの「画像」を選択</li>
-      <li>「タグ編集」を選択</li>
+    <spec-item class-str="operation" label-str="起動操作１">
+      <li>画面上部メニューの「マップ」を選択</li>
+      <li>「マップマスク追加」を選択</li>
+    </spec-item>
+    <spec-item class-str="operation" label-str="起動操作２">
+      <li>マップを右クリック</li>
+      <li>
+        表示されたメニューの「マップマスク追加」を選択
+      </li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
+      <li>中に表示する文字の入力</li>
+      <li>表示色（＋透明度）の選択</li>
+      <li>サイズ指定</li>
       <li>
-        既に参照可能となっている画像に付与されているタグ情報を編集する
+        「射界」の設定 → 後述の「射界」の項参照
+      </li>
+      <li>
+        マップマスクはすべてのマップオブジェクトの中で最も下に表示される
       </li>
     </spec-item>
     <!----------------------
@@ -30,7 +42,11 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>本機能自体が未実装<br />→ 初回リリースに含める</li>
+      <li>
+        「射界」機能
+        <br />→
+        マップマスクへの反映は優先度低め。余裕があれば初回リリースに含める。
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能

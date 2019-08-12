@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="export"
-    label-str="セーブ機能"
-    lastVersion="1.0.0b5"
+    property="roomDataSaveSpec"
+    label-str="部屋データ保存機能"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="standImageSettingWindowSpec"
-    label-str="立ち絵設定"
-    lastVersion="1.0.0b10"
+    property="standImageSpec"
+    label-str="立ち絵"
+    lastVersion="1.0.0"
     :isSpecFixed="false"
   >
     <!----------------------

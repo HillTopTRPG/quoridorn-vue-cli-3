@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="initiativeWindow"
-    label-str="イニシアティブ画面"
-    lastVersion="1.0.0b6"
+    property="initiativeSpec"
+    label-str="イニシアティブ表"
+    lastVersion="1.0.0"
     :isSpecFixed="false"
   >
     <!----------------------

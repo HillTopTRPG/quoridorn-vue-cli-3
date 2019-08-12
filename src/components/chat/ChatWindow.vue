@@ -595,6 +595,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("isViewTime") private isViewTime: any;
   @Getter("isViewTotalTab") private isViewTotalTab: any;
   @Getter("isModal") private isModal: any;
+  @Getter("isGameMaster") private isGameMaster: any;
 
   /** Enterを押しているかどうか */
   private enterPressing: boolean = false;
@@ -954,11 +955,16 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
    * チャットログ削除ボタンクリックイベントハンドラ
    */
   private async chatLogDeleteButtonOnClick(): Promise<any> {
+    if (!this.isGameMaster) {
+      alert(
+        "仕様的な考慮不足によりGM専用機能です。\nGM以外でも可能になるよう、近いうちに改修します。\nGMにログ取得を促してくださいませ。"
+      );
+      return;
+    }
     const result: boolean = window.confirm(
       "本当にチャットログを削除しますか？\n削除前にログ保存を同時に行います。"
     );
     if (!result) return;
-
     await this.saveChatLogHtml();
     this.deleteChatLog();
   }

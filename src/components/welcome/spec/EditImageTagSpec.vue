@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="deleteImageWindow"
-    label-str="画像削除画面"
-    lastVersion="1.0.0b1"
+    property="editImageTagSpec"
+    label-str="タグ編集"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
@@ -10,17 +10,14 @@
      !--------------------->
     <spec-item class-str="operation" label-str="起動操作">
       <li>画面上部メニューの「画像」を選択</li>
-      <li>「画像削除」を選択</li>
+      <li>「タグ編集」を選択</li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
       <li>
-        既に参照可能となっている画像を選択して削除する
-      </li>
-      <li>
-        既に参照されている画像はマークをつけて表示し、削除対象として選択できないようにする
+        既に参照可能となっている画像に付与されているタグ情報を編集する
       </li>
     </spec-item>
     <!----------------------

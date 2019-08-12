@@ -80,44 +80,44 @@
               </ctrl-button>
             </div>
             <div class="menu">
-              <environment /><!-- 動作環境 -->
-              <menu-bar /><!-- メインメニュー -->
-              <save /><!-- セーブ機能 -->
-              <load /><!-- ロード機能 -->
-              <chat-window /><!-- チャット画面 -->
-              <dice-window /><!-- ダイス画面 -->
-              <player-box-window /><!-- プレイヤーボックス画面 -->
-              <initiative-window /><!-- イニシアティブ画面 -->
-              <counter-remocon-window-spec /><!-- カウンターリモコン画面 -->
-              <change-font-size-window /><!-- フォントサイズ調整画面 -->
-              <reset-all-window /><!-- ウィンドウ配置初期化機能 -->
-              <add-character-window /><!-- キャラクター追加画面 -->
-              <add-range-window /><!-- 範囲追加画面 -->
-              <add-chit-window /><!-- チット追加画面 -->
-              <graveyard-window /><!-- 墓場画面 -->
-              <waiting-room-window /><!-- キャラクター待合室画面 -->
-              <edit-map-window /><!-- マップ変更画面 -->
-              <edit-floor-tile-mode /><!-- フロアタイル変更モード -->
-              <add-map-mask-window /><!-- マップマスク追加機能 -->
-              <create-easy-map-window /><!-- 簡易マップ作成機能 -->
-              <save-map-window /><!-- マップ状態保存画面 -->
-              <load-map-window /><!-- マップ切り替え画面 -->
-              <file-uploader-window-spec /><!-- ファイルアップローダー画面 -->
-              <edit-image-tag-window /><!-- (画像)タグ編集画面 -->
-              <delete-image-window /><!-- 画像削除画面 -->
+              <environment-spec /><!-- 動作環境 -->
+              <menu-bar-spec /><!-- メインメニュー -->
+              <room-data-save-spec /><!-- 部屋データ保存 -->
+              <room-data-load-spec /><!-- 部屋データ読込 -->
+              <chat-log-save-spec /><!-- チャットログ保存 -->
+              <file-upload-spec /><!-- ファイルアップローダー -->
+              <edit-image-tag-spec /><!-- (画像)タグ編集 -->
+              <delete-image-spec /><!-- 画像削除 -->
+              <character-spec /><!-- キャラクター -->
+              <chit-spec /><!-- チット -->
+              <map-mask-spec /><!-- マップマスク -->
+              <floor-tile-spec /><!-- フロアタイル -->
+              <dice-symbol-spec /><!-- ダイスシンボル -->
+              <waiting-room-spec /><!-- キャラクター待合室 -->
+              <graveyard-spec /><!-- 墓場 -->
+              <player-box-spec /><!-- プレイヤーボックス -->
+              <chat-spec /><!-- チャット -->
+              <dice-spec /><!-- ダイス -->
+              <chat-palette-spec /><!-- チャットパレット -->
+              <public-memo-spec /><!-- 共有メモ -->
+              <change-font-size-spec /><!-- フォントサイズ変更 -->
+              <initiative-spec /><!-- イニシアティブ -->
+              <counter-remocon-spec /><!-- カウンターリモコン -->
+              <custom-dice-bot-spec /><!-- 独自ダイスボット -->
+              <bgm-spec /><!-- BGM -->
+              <bgm-spec2 /><!-- BGM2 -->
+              <stand-image-spec /><!-- 立ち絵 -->
+              <range-spec /><!-- 範囲 -->
+              <map-spec /><!-- マップ -->
+              <easy-map-spec /><!-- 簡易マップ -->
+              <map-save-spec /><!-- マップ状態保存 -->
+              <map-load-spec /><!-- マップ切り替え -->
+              <reset-all-window-spec /><!-- ウィンドウ配置初期化機能 -->
               <welcome-window-spec /><!-- ようこそ画面 -->
-              <version-window /><!-- バージョン画面 -->
-              <manual-window /><!-- マニュアル画面 -->
-              <official-site-link /><!-- オフィシャルサイトへ -->
-              <room-info-window /><!-- プレイルーム情報表示画面 -->
-              <add-public-memo-window /><!-- 共有メモ追加画面 -->
-              <logout /><!-- ログアウト -->
-              <setting-b-g-m-window-spec /><!-- BGM設定画面 -->
-              <add-edit-b-g-m-window-spec /><!-- BGM追加・編集画面 -->
-              <add-dice-symbol-window-spec /><!-- ダイスシンボル追加画面 -->
-              <stand-image-setting-window-spec /><!-- 立ち絵設定画面 -->
-              <custom-dice-bot-table-window-spec /><!-- ダイスボット用表管理 -->
-              <chat-palette-setting-window-spec /><!-- チャットパレット画面 -->
+              <room-info-spec /><!-- プレイルーム情報 -->
+              <version-spec /><!-- バージョン -->
+              <official-site-link-spec /><!-- オフィシャルサイト -->
+              <logout-spec /><!-- ログアウト -->
             </div>
             <span class="toTop" @click="scrollTo()">
               <span class="rotate90">＜</span>
@@ -148,99 +148,99 @@ import WindowFrame from "../WindowFrame.vue";
 import WindowMixin from "../WindowMixin.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
 
-import Login from "./login/Login.vue";
-import Environment from "./spec/EnvironmentSpec.vue";
-import MenuBar from "./spec/MenuBarSpec.vue";
-import Save from "./spec/SaveSpec.vue";
-import Load from "./spec/LoadSpec.vue";
-import ChatWindow from "./spec/ChatWindowSpec.vue";
-import DiceWindow from "./spec/DiceWindowSpec.vue";
-import PlayerBoxWindow from "./spec/PlayerBoxWindowSpec.vue";
-import ChangeFontSizeWindow from "./spec/ChangeFontSizeWindowSpec.vue";
-import ResetAllWindow from "./spec/ResetAllWindowSpec.vue";
-import AddCharacterWindow from "./spec/AddCharacterWindowSpec.vue";
-import AddRangeWindow from "./spec/AddRangeWindowSpec.vue";
-import AddChitWindow from "./spec/AddChitWindowSpec.vue";
-import GraveyardWindow from "./spec/GraveyardWindowSpec.vue";
-import WaitingRoomWindow from "./spec/WaitingRoomWindowSpec.vue";
-import EditMapWindow from "./spec/EditMapWindowSpec.vue";
-import EditFloorTileMode from "./spec/EditFloorTileModeSpec.vue";
-import AddMapMaskWindow from "./spec/AddMapMaskWindowSpec.vue";
-import CreateEasyMapWindow from "./spec/CreateEasyMapWindowSpec.vue";
-import SaveMapWindow from "./spec/SaveMapWindowSpec.vue";
-import LoadMapWindow from "./spec/LoadMapWindow.vue";
-import FileUploaderWindowSpec from "./spec/FileUploaderWindowSpec.vue";
-import EditImageTagWindow from "./spec/EditImageTagWindowSpec.vue";
-import DeleteImageWindow from "./spec/DeleteImageWindowSpec.vue";
-import WelcomeWindowSpec from "./spec/WelcomeWindowSpec.vue";
-import VersionWindow from "./spec/VersionWindowSpec.vue";
-import ManualWindow from "./spec/ManualWindowSpec.vue";
-import OfficialSiteLink from "./spec/OfficialSiteLinkSpec.vue";
-import RoomInfoWindow from "./spec/RoomInfoWindowSpec.vue";
-import AddPublicMemoWindow from "./spec/PublicMemoSpec.vue";
-import Logout from "./spec/LogoutSpec.vue";
-import InitiativeWindow from "./spec/InitiativeWindowSpec.vue";
+import { Getter } from "vuex-class";
+import { Component, Mixins } from "vue-mixin-decorator";
 
+import Login from "./login/Login.vue";
 import Logo from "../simple/Logo.vue";
 import Source from "./source/Source.vue";
 import DevSupport from "./devSupport/DevSupport.vue";
 
-import { Getter } from "vuex-class";
-import { Component, Mixins } from "vue-mixin-decorator";
-import CounterRemoconWindowSpec from "@/components/welcome/spec/CounterRemoconWindowSpec.vue";
-import SettingBGMWindowSpec from "@/components/welcome/spec/SettingBGMWindowSpec.vue";
-import AddEditBGMWindowSpec from "@/components/welcome/spec/AddEditBGMWindowSpec.vue";
-import AddDiceSymbolWindowSpec from "@/components/welcome/spec/AddDiceSymbolWindowSpec.vue";
-import CustomDiceBotTableWindowSpec from "@/components/welcome/spec/CustomDiceBotTableWindowSpec.vue";
-import StandImageSettingWindowSpec from "@/components/welcome/spec/StandImageSettingWindowSpec.vue";
-import ChatPaletteSettingWindowSpec from "@/components/welcome/spec/ChatPaletteSettingWindowSpec.vue";
+import EnvironmentSpec from "./spec/EnvironmentSpec.vue";
+import MenuBarSpec from "./spec/MenuBarSpec.vue";
+import RoomDataSaveSpec from "./spec/RoomDataSaveSpec.vue";
+import RoomDataLoadSpec from "./spec/RoomDataLoadSpec.vue";
+import ChatSpec from "./spec/ChatSpec.vue";
+import DiceSpec from "./spec/DiceSpec.vue";
+import PlayerBoxSpec from "./spec/PlayerBoxSpec.vue";
+import ChangeFontSizeSpec from "./spec/ChangeFontSizeSpec.vue";
+import ResetAllWindowSpec from "./spec/ResetAllWindowSpec.vue";
+import CharacterSpec from "./spec/CharacterSpec.vue";
+import RangeSpec from "./spec/RangeSpec.vue";
+import ChitSpec from "./spec/ChitSpec.vue";
+import GraveyardSpec from "./spec/GraveyardSpec.vue";
+import WaitingRoomSpec from "./spec/WaitingRoomSpec.vue";
+import MapSpec from "./spec/MapSpec.vue";
+import FloorTileSpec from "./spec/FloorTileSpec.vue";
+import MapMaskSpec from "./spec/MapMaskSpec.vue";
+import EasyMapSpec from "./spec/EasyMapSpec.vue";
+import MapSaveSpec from "./spec/MapSaveSpec.vue";
+import MapLoadSpec from "./spec/MapLoadSpec.vue";
+import FileUploadSpec from "./spec/FileUploadSpec.vue";
+import EditImageTagSpec from "./spec/EditImageTagSpec.vue";
+import DeleteImageSpec from "./spec/DeleteImageSpec.vue";
+import WelcomeWindowSpec from "./spec/WelcomeWindowSpec.vue";
+import VersionSpec from "./spec/VersionSpec.vue";
+import OfficialSiteLinkSpec from "./spec/OfficialSiteLinkSpec.vue";
+import RoomInfoSpec from "./spec/RoomInfoSpec.vue";
+import PublicMemoSpec from "./spec/PublicMemoSpec.vue";
+import LogoutSpec from "./spec/LogoutSpec.vue";
+import InitiativeSpec from "./spec/InitiativeSpec.vue";
+import CounterRemoconSpec from "./spec/CounterRemoconSpec.vue";
+import BgmSpec from "./spec/BgmSpec.vue";
+import BgmSpec2 from "./spec/BgmSpec2.vue";
+import DiceSymbolSpec from "./spec/DiceSymbolSpec.vue";
+import CustomDiceBotSpec from "./spec/CustomDiceBotSpec.vue";
+import StandImageSpec from "./spec/StandImageSpec.vue";
+import ChatPaletteSpec from "./spec/ChatPaletteSpec.vue";
+import ChatLogSaveSpec from "./spec/ChatLogSaveSpec.vue";
 
 @Component({
   components: {
-    ChatPaletteSettingWindowSpec,
     CtrlButton,
-    AddDiceSymbolWindowSpec,
-    CounterRemoconWindowSpec,
     WindowFrame,
     Logo,
     Login,
-    Environment,
-    MenuBar,
-    Save,
-    Load,
-    ChatWindow,
-    DiceWindow,
-    PlayerBoxWindow,
-    InitiativeWindow,
-    ChangeFontSizeWindow,
-    ResetAllWindow,
-    AddCharacterWindow,
-    AddRangeWindow,
-    AddChitWindow,
-    GraveyardWindow,
-    WaitingRoomWindow,
-    EditMapWindow,
-    EditFloorTileMode,
-    AddMapMaskWindow,
-    CreateEasyMapWindow,
-    SaveMapWindow,
-    LoadMapWindow,
-    FileUploaderWindowSpec,
-    EditImageTagWindow,
-    DeleteImageWindow,
+    EnvironmentSpec,
+    MenuBarSpec,
+    RoomDataSaveSpec,
+    RoomDataLoadSpec,
+    ChatSpec,
+    DiceSpec,
+    PlayerBoxSpec,
+    InitiativeSpec,
+    ChangeFontSizeSpec,
+    ResetAllWindowSpec,
+    CharacterSpec,
+    RangeSpec,
+    ChitSpec,
+    GraveyardSpec,
+    WaitingRoomSpec,
+    MapSpec,
+    FloorTileSpec,
+    MapMaskSpec,
+    EasyMapSpec,
+    MapSaveSpec,
+    MapLoadSpec,
+    FileUploadSpec,
+    EditImageTagSpec,
+    DeleteImageSpec,
     WelcomeWindowSpec,
-    VersionWindow,
-    ManualWindow,
-    OfficialSiteLink,
-    RoomInfoWindow,
-    AddPublicMemoWindow,
-    Logout,
+    VersionSpec,
+    OfficialSiteLinkSpec,
+    RoomInfoSpec,
+    PublicMemoSpec,
+    LogoutSpec,
     Source,
     DevSupport,
-    SettingBGMWindowSpec,
-    AddEditBGMWindowSpec,
-    CustomDiceBotTableWindowSpec,
-    StandImageSettingWindowSpec
+    BgmSpec,
+    BgmSpec2,
+    CustomDiceBotSpec,
+    StandImageSpec,
+    CounterRemoconSpec,
+    DiceSymbolSpec,
+    ChatPaletteSpec,
+    ChatLogSaveSpec
   }
 })
 export default class WelcomeWindow extends Mixins<WindowMixin>(WindowMixin) {

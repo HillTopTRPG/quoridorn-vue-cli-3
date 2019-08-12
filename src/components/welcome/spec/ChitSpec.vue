@@ -1,27 +1,44 @@
 <template>
   <spec-frame
-    property="waitingRoomWindow"
-    label-str="キャラクター待合室"
-    lastVersion="1.0.0b1"
+    property="chitSpec"
+    label-str="チット追加"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
      ! 起動操作
      !--------------------->
-    <spec-item class-str="operation" label-str="起動操作">
+    <spec-item class-str="operation" label-str="起動操作1">
       <li>画面上部メニューの「コマ」を選択</li>
-      <li>「キャラクター待合室」を選択</li>
+      <li>「チット追加」を選択</li>
+    </spec-item>
+    <!----------------------
+     ! 起動操作
+     !--------------------->
+    <spec-item class-str="operation" label-str="起動操作2">
+      <li>マップを右クリック</li>
+      <li>
+        表示されたメニューの「チット追加」を選択
+      </li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
+      <li>マップオブジェクトの一種</li>
       <li>
-        キャラクターのコマをドロップインすることでキャラクター待合室に移動
+        画像とマウスオーバー時に表示される説明文のみが設定できる
       </li>
       <li>
-        キャラクター待合室からコマをドロップインすることでマップに再配置
+        画像選択 → 後述の「画像選択」の項参照
       </li>
+      <li>
+        「射界」の設定 → 後述の「射界」の項参照
+      </li>
+      <li>
+        追加後に編集可能（どどんとふではチットの編集不可）
+      </li>
+      <li>追加後に削除可能</li>
     </spec-item>
     <!----------------------
      ! ユーザ要望
@@ -33,7 +50,10 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>本機能自体が未実装<br />→ 初回リリースに含める</li>
+      <li>
+        「射界」機能
+        <br />→ チットへの反映は優先度低め。余裕があれば初回リリースに含める。
+      </li>
     </spec-item>
     <!----------------------
      ! 実装しない機能

@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="counterRemoconWindowSpec"
-    label-str="カウンターリモコン画面"
-    lastVersion="1.0.0b8"
+    property="counterRemoconSpec"
+    label-str="カウンターリモコン"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

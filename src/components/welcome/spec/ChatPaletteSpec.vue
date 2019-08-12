@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="chatPaletteSettingWindowSpec"
+    property="chatPaletteSpec"
     label-str="チャットパレット"
-    lastVersion="1.0.0b14"
+    lastVersion="1.0.0"
     :isSpecFixed="false"
   >
     <!----------------------

@@ -276,8 +276,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   private rightDown(this: any): void {
-    // qLog(`  [methods] GameTableイベント => event: mousedown, mouse: right`);
-    window.console.log("回転開始");
     const obj = {
       angle: {
         dragStart: this.calcCoordinate(
@@ -292,8 +290,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   private rightUp(event: any): void {
-    // qLog(`  [methods] GameTableイベント => event: mouseup, mouse: right`);
-    window.console.log("回転終了");
     const isDraggingRight = this.isDraggingRight;
     this.setProperty({
       property: "map.isMouseDownRight",
@@ -481,7 +477,12 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
       const useImageList = event.dataTransfer.getData("useImageList");
       const isHide = event.dataTransfer.getData("isHide") === "true";
       const url = event.dataTransfer.getData("urlStr");
-      const text = event.dataTransfer.getData("description");
+      const text = [
+        {
+          kind: "text",
+          text: event.dataTransfer.getData("description")
+        }
+      ];
       const useImageIndex = parseInt(
         event.dataTransfer.getData("useImageIndex"),
         10

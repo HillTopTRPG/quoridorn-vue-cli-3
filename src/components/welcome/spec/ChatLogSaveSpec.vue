@@ -1,32 +1,41 @@
 <template>
   <spec-frame
-    property="loadMapWindow"
-    label-str="マップ切り替え"
-    lastVersion="1.0.0b1"
+    property="chatLogSaveSpec"
+    label-str="チャットログ保存機能"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
      ! 起動操作
      !--------------------->
-    <spec-item class-str="operation" label-str="起動操作">
-      <li>画面上部メニューの「マップ」を選択</li>
-      <li>「マップ切り替え」を選択</li>
+    <spec-item class-str="operation" label-str="起動操作１">
+      <li>画面上部メニューの「ファイル」を選択</li>
+      <li>「チャットログ取得」を選択</li>
+    </spec-item>
+    <spec-item class-str="operation" label-str="起動操作２">
+      <li>
+        チャット画面のアイコン<span class="icon-file-text"></span>をクリック
+      </li>
+    </spec-item>
+    <spec-item class-str="operation" label-str="起動操作３">
+      <li>チャットログ削除をする際、チャットログを保存してから削除される</li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
       <li>
-        マップ状態保存機能で保存したデータを参照させることで、マップ状態を復元する
+        <b>GM限定機能</b
+        >（いずれ閲覧制限などを設けてPLなどでも保存できるようにしたい）
       </li>
       <li>
-        復元時に、復元前に配置されていた以下のデータを削除するか選択する
-        <ol>
-          <li>フロアタイル</li>
-          <li>マップマスク</li>
-          <li>簡易マップ</li>
-        </ol>
+        単一HTMLファイルをダウンロードする
       </li>
+      <li>
+        ダウンロードしたHTMLの機能を使って他の形式のログを生成する<br />（どどんとふHTML,
+        どどんとふTXT, JSON）
+      </li>
+      <li>ログデータは暗号化する</li>
     </spec-item>
     <!----------------------
      ! ユーザ要望
@@ -38,10 +47,7 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>
-        本機能自体が未実装
-        <br />→ 初回リリースには含めない。しばらくは運用でカバーをお願いします。
-      </li>
+      <li>閲覧制限によりPLでも適切なログをダウンロードできるようにする</li>
     </spec-item>
     <!----------------------
      ! 実装しない機能

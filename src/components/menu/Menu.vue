@@ -520,7 +520,7 @@ export default class Menu extends Vue {
 
   /** オフィシャルサイトへ */
   clickOfficialSite(): void {
-    window.open("http://mihikari.sakura.ne.jp/quoridorn/official/#/", "_blank");
+    window.open("http://quoridorn.com/", "_blank");
     this.menuClick();
   }
 

@@ -273,7 +273,7 @@ export default {
           const from = payload.from || rootGetters.chatActorKey;
           const name = payload.name || rootGetters.getViewName(from);
           let tab = payload.tab || activeChatTab;
-          const target = payload.target;
+          const target = payload.target || "groupTargetTab-0";
           const isDiceBot: boolean = payload.isDiceBot || false;
           const statusName = payload.statusName || "◆";
           const processTime = payload.processTime;

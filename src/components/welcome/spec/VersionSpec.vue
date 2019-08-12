@@ -1,24 +1,22 @@
 <template>
   <spec-frame
-    property="changeFontSizeWindow"
-    label-str="フォントサイズ調整画面"
-    lastVersion="1.0.0b1"
+    property="versionSpec"
+    label-str="バージョン"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
      ! 起動操作
      !--------------------->
     <spec-item class-str="operation" label-str="起動操作">
-      <li>画面上部メニューの「表示」を選択</li>
-      <li>「フォントサイズ調整」を選択</li>
+      <li>画面上部メニューの「ヘルプ」を選択</li>
+      <li>「バージョン」を選択</li>
     </spec-item>
     <!----------------------
      ! 仕様
      !--------------------->
     <spec-item class-str="spec" label-str="仕様">
-      <li>
-        Quoridorn全体のフォントサイズを変更する
-      </li>
+      <li>バージョン番号を表示する</li>
     </spec-item>
     <!----------------------
      ! ユーザ要望
@@ -30,10 +28,7 @@
      ! 未実装事項
      !--------------------->
     <spec-item class-str="unImplemented" label-str="未実装事項">
-      <li>
-        本機能自体が未実装。<br />→
-        優先度低。対応は案外大変なので初回リリースに含めないかも。
-      </li>
+      <li>なし</li>
     </spec-item>
     <!----------------------
      ! 実装しない機能

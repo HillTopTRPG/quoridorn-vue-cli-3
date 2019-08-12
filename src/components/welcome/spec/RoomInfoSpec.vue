@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="roomInfoWindow"
-    label-str="プレイルーム情報表示画面"
-    lastVersion="1.0.0b1"
+    property="roomInfoSpec"
+    label-str="プレイルーム情報"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

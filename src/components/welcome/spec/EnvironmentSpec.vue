@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="environment"
+    property="environmentSpec"
     label-str="動作環境"
-    lastVersion="1.0.0b3"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------

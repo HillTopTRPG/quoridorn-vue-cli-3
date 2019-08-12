@@ -1,8 +1,8 @@
 <template>
   <spec-frame
-    property="fileUploaderWindow"
+    property="fileUploadSpec"
     label-str="ファイルアップローダー"
-    lastVersion="1.0.0b11"
+    lastVersion="1.0.0"
     :isSpecFixed="true"
   >
     <!----------------------
