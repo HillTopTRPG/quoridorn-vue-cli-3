@@ -61,6 +61,13 @@ export default {
         fetch(url)
           .then(response => response.json())
           .then(json => {
+            json.names.sort((i1: any, i2: any) => {
+              if (i1.name === "DiceBot") return -1;
+              if (i2.name === "DiceBot") return 1;
+              if (i1.name > i2.name) return 1;
+              if (i1.name < i2.name) return -1;
+              return 0;
+            });
             resolve(json.names);
           })
           .catch(err => reject(err));
