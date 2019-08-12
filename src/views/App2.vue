@@ -249,6 +249,13 @@ export default class App2 extends Vue {
         if (count++ === 0) this.exportStart();
         return false;
       }
+      if (event.code === "Enter") {
+        const gameTableElm = document.getElementById("gameTable");
+        gameTableElm!.dispatchEvent(
+          new KeyboardEvent("keydown", { key: event.code })
+        );
+      }
+      return true;
     };
     document.onkeyup = (event: any) => {
       if (
@@ -258,6 +265,13 @@ export default class App2 extends Vue {
         count = 0;
         return false;
       }
+      if (event.code === "Enter") {
+        const gameTableElm = document.getElementById("gameTable");
+        gameTableElm!.dispatchEvent(
+          new KeyboardEvent("keyup", { key: event.code })
+        );
+      }
+      return true;
     };
   }
 

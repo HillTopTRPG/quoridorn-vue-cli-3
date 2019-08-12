@@ -4,14 +4,20 @@
     display-property="private.display.addDiceSymbolWindow"
     align="center"
     fixSize="240, 130"
-    @open="initWindow"
-    @reset="initWindow"
+    @open="open"
+    @reset="open"
   >
     <div class="container" @contextmenu.prevent>
       <div class="control">
         <label>
           <span>ダイス目</span>
-          <input type="number" min="1" :max="faceNum" v-model="pips" />
+          <input
+            type="number"
+            min="1"
+            :max="faceNum"
+            v-model="pips"
+            ref="input"
+          />
         </label>
         <label>
           <span>ダイス種別</span>
@@ -80,11 +86,14 @@ export default class AddDiceSymbolWindow extends Mixins<WindowMixin>(
   private pips: number = 1;
   private isHide: boolean = false;
 
-  private initWindow() {
+  private open() {
     this.faceNum = "6";
     this.pips = 1;
     this.isHide = false;
     this.onChangeFaceNum(this.faceNum);
+
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
   }
 
   @Watch("faceNum", { immediate: true })

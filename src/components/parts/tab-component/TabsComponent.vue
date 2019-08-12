@@ -19,8 +19,8 @@
       <div
         class="text"
         :tabindex="isModal ? -1 : tabIndex + index + 1"
-        @keydown.space.prevent="chatTabOnSelect(tabObj.key)"
-        @keydown.enter.prevent="chatTabOnSelect(tabObj.key)"
+        @keydown.space.stop="chatTabOnSelect(tabObj.key)"
+        @keydown.enter.stop="chatTabOnSelect(tabObj.key)"
         @mousedown.prevent="chatTabOnSelect(tabObj.key)"
         @mouseenter.prevent="chatTabOnHover(tabObj.key)"
         @mouseleave.prevent="chatTabOnHover('')"
@@ -35,8 +35,8 @@
     <span
       class="tab addButton"
       @click="tabAddButtonOnClick"
-      @keydown.space.prevent="tabAddButtonOnClick"
-      @keydown.enter.prevent="tabAddButtonOnClick"
+      @keydown.space.stop="tabAddButtonOnClick"
+      @keydown.enter.stop="tabAddButtonOnClick"
       :tabindex="isModal ? -1 : tabIndex + tabList.length + 1"
       ><span class="icon-cog"></span
     ></span>

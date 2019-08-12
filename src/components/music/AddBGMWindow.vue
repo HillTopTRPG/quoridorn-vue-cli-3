@@ -12,7 +12,13 @@
         <!-- URL -->
         <label class="url">
           <span @contextmenu.prevent>URL</span>
-          <input type="text" v-model="url" ref="urlElm" />
+          <input
+            type="text"
+            v-model="url"
+            ref="urlElm"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
         </label>
       </fieldset>
       <fieldset>
@@ -21,14 +27,24 @@
           <!-- 表示タイトル -->
           <label class="titleStr">
             <span @contextmenu.prevent>タイトル</span>
-            <input type="text" v-model="title" />
+            <input
+              type="text"
+              v-model="title"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
           </label>
         </div>
         <div class="firstWide" v-if="!isYoutube">
           <!-- クレジットURL -->
           <label class="creditUrl">
             <span @contextmenu.prevent>CreditURL</span>
-            <input type="text" v-model="creditUrl" />
+            <input
+              type="text"
+              v-model="creditUrl"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
           </label>
           <!-- クレジット取得 -->
           <ctrl-button class="getCredit" @click="getCredit">取得</ctrl-button>
@@ -43,7 +59,13 @@
               title="再生中のBGMはタグによって一意になります"
               @contextmenu.prevent
               >タグ</span
-            ><input type="text" v-model="tag" list="bgmTagComboboxValues" />
+            ><input
+              type="text"
+              v-model="tag"
+              list="bgmTagComboboxValues"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
           </label>
           <datalist id="bgmTagComboboxValues">
             <option v-for="tag in tags" :key="tag" :value="tag">
@@ -71,6 +93,8 @@
               step="0.1"
               max="10000"
               v-model="playLength"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
           </label>
           <!-- フェードイン -->
@@ -83,6 +107,8 @@
               max="10"
               v-model="fadeIn"
               placeholder="秒"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
           </label>
           <!-- フェードアウト -->
@@ -95,6 +121,8 @@
               max="10"
               v-model="fadeOut"
               placeholder="秒"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
           </label>
           <!-- 無限ループ -->
@@ -114,7 +142,12 @@
           <!-- 多重再生時強制再スタート -->
           <label>
             <span @contextmenu.prevent>多重再生時強制再スタート</span>
-            <input type="checkbox" v-model="forceReset" />
+            <input
+              type="checkbox"
+              v-model="forceReset"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
           </label>
         </div>
       </fieldset>
@@ -137,6 +170,8 @@
               :placeholder="chatLinkage === 1 ? '' : 'Javascriptの正規表現'"
               type="text"
               v-model="chatLinkageSearch"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
           </label>
         </div>

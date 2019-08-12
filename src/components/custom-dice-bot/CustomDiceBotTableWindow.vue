@@ -4,6 +4,8 @@
     display-property="private.display.customDiceBotTableWindow"
     align="center"
     fixSize="450, 300"
+    @open="open"
+    @reset="open"
   >
     <div class="contents" @contextmenu.prevent>
       <div class="tableContainer">
@@ -93,7 +95,9 @@
         </table>
       </div>
       <div>
-        <ctrl-button @click="addButtonOnClick">新規作成</ctrl-button>
+        <ctrl-button @click="addButtonOnClick" ref="button"
+          >新規作成</ctrl-button
+        >
         <ctrl-button @click="copyButtonOnClick">コピー作成</ctrl-button>
         <ctrl-button @click="changeButtonOnClick">変更</ctrl-button>
         <ctrl-button @click="deleteButtonOnClick">削除</ctrl-button>
@@ -135,6 +139,11 @@ export default class CustomDiceBotTableWindow extends Mixins<WindowMixin>(
   @Getter("customDiceBotList") private customDiceBotList: any;
   @Getter("customDiceBotRoomSysList") private customDiceBotRoomSysList: any;
   @Getter("diceSystemList") private diceSystemList: any;
+
+  private open() {
+    const button: CtrlButton = this.$refs.button as CtrlButton;
+    button.requestFocus();
+  }
 
   private addButtonOnClick(): void {
     this.loadYaml("/static/conf/system/default/customDiceBot.yaml")

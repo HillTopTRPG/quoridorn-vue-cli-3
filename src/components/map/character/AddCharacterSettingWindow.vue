@@ -73,16 +73,32 @@
                 class="name"
                 placeholder="必ず入力してください"
                 v-model="name"
+                ref="input"
+                @keydown.enter.stop
+                @keyup.enter.stop
               />
             </label>
           </div>
           <div class="pieceOptions">
             <label>
               <span @contextmenu.prevent>サイズ：</span>
-              <input type="number" class="size" min="1" v-model="size" />
+              <input
+                type="number"
+                class="size"
+                min="1"
+                v-model="size"
+                @keydown.enter.stop
+                @keyup.enter.stop
+              />
             </label>
             <label @contextmenu.prevent>
-              <input type="checkbox" class="hide" v-model="isHide" />
+              <input
+                type="checkbox"
+                class="hide"
+                v-model="isHide"
+                @keydown.enter.stop
+                @keyup.enter.stop
+              />
               <span>
                 マップマスクの下に隠す
                 <br />(イニシアティブ表で非表示)
@@ -96,6 +112,8 @@
                 type="text"
                 v-model="url"
                 placeholder="キャラクターシートのURL"
+                @keydown.enter.stop
+                @keyup.enter.stop
               />
             </label>
           </div>
@@ -142,7 +160,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   @Action("windowClose") private windowClose: any;
   @Getter("imageList") private imageList: any;
 
-  private selectImage: string = "image-1";
+  private selectImage: string = "image-2";
 
   @Watch("selectImage")
   onChangeSelectImage(selectImage: string) {
@@ -159,7 +177,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   private isOpenSwitch: boolean = false;
   private currentImageTag: string = "imgTag-2";
   private switchImageList: any[] = [
-    { key: 0, imgKey: "image-1", isReverse: false }
+    { key: 0, imgKey: "image-2", isReverse: false }
   ];
   private switchCurrentKey: number = 0;
   private name: string = "";
@@ -267,7 +285,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     this.switchImageList.splice(0, this.switchImageList.length);
     this.switchImageList.push({
       key: 0,
-      imgKey: "image-1",
+      imgKey: "image-2",
       isReverse: false
     });
     this.switchCurrentKey = 0;
@@ -277,6 +295,9 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
     this.url = "";
     this.text = "";
     this.windowClose("private.display.addCharacterWindow");
+
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
   }
 
   private get isReverse(): boolean {

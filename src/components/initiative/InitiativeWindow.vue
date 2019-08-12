@@ -181,6 +181,8 @@
                           parseInt(event.target.value)
                         )
                     "
+                    @keydown.enter.stop
+                    @keyup.enter.stop
                   />
                 </label>
               </td>
@@ -203,6 +205,8 @@
                           parseInt(event.target.value)
                         )
                     "
+                    @keydown.enter.stop
+                    @keyup.enter.stop
                   />
                 </label>
               </td>
@@ -252,6 +256,8 @@
                           getMax(character.key, index + 1) <
                           getPropValue(character.key, index)
                       }"
+                      @keydown.enter.stop
+                      @keyup.enter.stop
                     />
                   </label>
                   <label v-if="property.type === 'number'">
@@ -275,6 +281,8 @@
                           getMax(character.key, index) <
                             getPropValue(character.key, index)
                       }"
+                      @keydown.enter.stop
+                      @keyup.enter.stop
                     />
                   </label>
                   <label v-if="property.type === 'max'">
@@ -303,6 +311,8 @@
                           getPropValue(character.key, index) <
                           getMin(character.key, index - 1)
                       }"
+                      @keydown.enter.stop
+                      @keyup.enter.stop
                     />
                   </label>
                   <color-check-box

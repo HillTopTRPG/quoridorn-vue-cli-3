@@ -585,10 +585,6 @@ export default class Menu extends Vue {
   > *:not(:first-child) {
     margin-left: 1em;
   }
-
-  &:hover {
-    z-index: 199998;
-  }
 }
 div.isDisconnect {
   background-color: rgba(200, 200, 200, 0.5);

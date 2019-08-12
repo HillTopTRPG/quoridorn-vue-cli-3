@@ -5,12 +5,23 @@
     align="center"
     fixSize="285, 195"
     message="ドラッグ＆ドロップで配置"
+    @open="open"
+    @reset="open"
   >
     <table>
       <tbody>
         <tr>
           <th>文字：</th>
-          <td><input type="text" v-model="name" /></td>
+          <td>
+            <input
+              type="text"
+              v-model="name"
+              placeholder="表示文字"
+              ref="input"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
           <td class="mapMaskGrid" rowspan="6">
             <div
               :style="mapMaskStyle"
@@ -30,23 +41,60 @@
         </tr>
         <tr>
           <th>色：</th>
-          <td><input type="color" v-model="color" /></td>
+          <td>
+            <input
+              type="color"
+              v-model="color"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
         </tr>
         <tr>
           <th>高さ：</th>
-          <td><input type="number" min="1" v-model="height" /></td>
+          <td>
+            <input
+              type="number"
+              min="1"
+              v-model="height"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
         </tr>
         <tr>
           <th>幅：</th>
-          <td><input type="number" min="1" v-model="width" /></td>
+          <td>
+            <input
+              type="number"
+              min="1"
+              v-model="width"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
         </tr>
         <tr>
           <th>透明度：</th>
-          <td><input type="range" v-model="transparency" /></td>
+          <td>
+            <input
+              type="range"
+              v-model="transparency"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
         </tr>
         <tr>
           <td colspan="2" class="multi">
-            <label><input type="checkbox" v-model="isMulti" />複数作成</label>
+            <label
+              ><input
+                type="checkbox"
+                v-model="isMulti"
+                @keydown.enter.stop
+                @keyup.enter.stop
+              />複数作成</label
+            >
           </td>
         </tr>
       </tbody>
@@ -78,6 +126,11 @@ export default class AddMapMaskWindow extends Mixins<WindowMixin>(WindowMixin) {
   private name: string = "";
   private isMulti: boolean = true;
   private color: string = "#000000";
+
+  private open() {
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
+  }
 
   private dragStart(event: any): void {
     event.dataTransfer.setData("kind", "mapMask");

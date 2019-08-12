@@ -9,6 +9,8 @@
         mozTextFillColor: fontColor,
         maxWidth: maxWidth ? `${maxWidth}em` : undefined
       }"
+      @keydown.enter.stop
+      @keyup.enter.stop
     >
       <option
         v-for="optionInfo in optionInfoList"
@@ -41,6 +43,11 @@ export default class CtrlSelect extends Mixins<SelectMixin>(SelectMixin) {
   private maxWidth!: number;
 
   private fontColor: string = "";
+
+  public requestFocus(): void {
+    const elm: HTMLSelectElement = this.$refs.select as HTMLSelectElement;
+    elm.focus();
+  }
 
   @Watch("optionInfoList", { immediate: true })
   onChangeOptionInfoList(optionInfoList: any[]) {

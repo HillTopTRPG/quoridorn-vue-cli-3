@@ -4,8 +4,8 @@
     display-property="private.display.settingChatTabWindow"
     align="center"
     fixSize="320, 432"
-    @open="initWindow"
-    @reset="initWindow"
+    @open="open"
+    @reset="open"
   >
     <div class="contents" @contextmenu.prevent>
       <draggable v-model="tabs">
@@ -16,6 +16,8 @@
               v-if="tab.key !== 'chatTab-1'"
               type="text"
               v-model="tab.name"
+              @keydown.enter.stop
+              @keyup.enter.stop
             />
             <ctrl-button
               v-if="tab.key !== 'chatTab-1'"
@@ -26,15 +28,30 @@
           </label>
         </template>
       </draggable>
-      <ctrl-button @click="addTab">追加</ctrl-button>
+      <ctrl-button @click="addTab" ref="button">追加</ctrl-button>
       <label>
-        タブを斜めにする<input type="checkbox" v-model="isTabVertical" />
+        タブを斜めにする<input
+          type="checkbox"
+          v-model="isTabVertical"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </label>
       <label>
-        時間を表示する<input type="checkbox" v-model="isLogViewTime" />
+        時間を表示する<input
+          type="checkbox"
+          v-model="isLogViewTime"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </label>
       <label>
-        統合タブを表示する<input type="checkbox" v-model="isLogViewAllTab" />
+        統合タブを表示する<input
+          type="checkbox"
+          v-model="isLogViewAllTab"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </label>
       <div class="operateArea">
         <ctrl-button @click="commit">変更</ctrl-button>
@@ -80,12 +97,15 @@ export default class SettingChatTabWindow extends Mixins<WindowMixin>(
   private isLogViewTime: boolean = false;
   private isLogViewAllTab: boolean = false;
 
-  private initWindow() {
+  private open() {
     this.tabs = this.chatTabs.filter((tab: any) => !tab.isTotal).concat();
     this.delTabs = [];
     this.isTabVertical = this.isChatTabVertical;
     this.isLogViewTime = this.isViewTime;
     this.isLogViewAllTab = this.isViewTotalTab;
+
+    const button: CtrlButton = this.$refs.button as CtrlButton;
+    button.requestFocus();
   }
 
   private addTab() {

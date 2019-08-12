@@ -23,6 +23,8 @@
         type="text"
         readonly="readonly"
         :value="inviteUrl"
+        @keydown.enter.stop
+        @keyup.enter.stop
       />
       <ctrl-button class="copy" @click="doCopy">コピー</ctrl-button>
     </label>

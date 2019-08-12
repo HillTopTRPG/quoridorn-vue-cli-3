@@ -16,7 +16,11 @@
     <div class="imageInfo">
       <div class="selectedImage">
         <label>タグ名：</label>
-        <image-tag-select class="tagSelect" v-model="selectImageTag" />
+        <image-tag-select
+          class="tagSelect"
+          v-model="selectImageTag"
+          ref="input"
+        />
         <span>{{ selectedTagIndexText }}</span>
       </div>
       <ctrl-button @click="onClickHideImage">隠し画像</ctrl-button>
@@ -44,6 +48,11 @@ export default class ImageSelector extends Vue {
   private imageTag!: string;
 
   private selectImageTag: string = "";
+
+  public requestFocus(): void {
+    const input: ImageTagSelect = this.$refs.input as ImageTagSelect;
+    input.requestFocus();
+  }
 
   @Emit("input")
   public input(value: string | null) {}

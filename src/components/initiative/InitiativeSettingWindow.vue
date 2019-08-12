@@ -4,7 +4,8 @@
     display-property="private.display.initiativeSettingWindow"
     align="center"
     fixSize="510, 210"
-    @open="initWindow"
+    @open="open"
+    @reset="open"
   >
     <div class="contents">
       <div class="message" @contextmenu.prevent>
@@ -24,7 +25,13 @@
       </div>
       <label @contextmenu.prevent>
         カウンター名一覧：
-        <input type="text" v-model="format" />
+        <input
+          type="text"
+          v-model="format"
+          @keydown.enter.stop
+          @keyup.enter.stop
+          ref="input"
+        />
       </label>
       <hr />
       <div class="operationArea" @contextmenu.prevent>
@@ -59,8 +66,11 @@ export default class InitiativeSettingWindow extends Mixins<WindowMixin>(
 
   private format: string = "";
 
-  initWindow() {
+  open() {
     this.format = this.value;
+
+    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
+    input.focus();
   }
 
   commit() {

@@ -4,14 +4,21 @@
     display-property="private.display.settingChatTargetTabWindow"
     align="center"
     :fixSize="`${windowSize.w}, ${windowSize.h}`"
+    @open="open"
+    @reset="open"
   >
     <div class="contents" @contextmenu.prevent>
       <div class="operationArea">
-        <ctrl-button @click="addButtonOnClick">追加</ctrl-button>
+        <ctrl-button @click="addButtonOnClick" ref="button">追加</ctrl-button>
         <ctrl-button @click="delButtonOnClick">削除</ctrl-button>
         <div class="space"></div>
         <label>
-          タブを斜めにする<input type="checkbox" v-model="isTabVertical" />
+          タブを斜めにする<input
+            type="checkbox"
+            v-model="isTabVertical"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
         </label>
       </div>
       <div class="tableContainer">
@@ -133,6 +140,11 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
   @Getter("isChatTabVertical") private isChatTabVertical: any;
   @Getter("groupTargetTabList") private groupTargetTabList: any;
   @Getter("getMapObjectList") private getMapObjectList: any;
+
+  private open() {
+    const button: CtrlButton = this.$refs.button as CtrlButton;
+    button.requestFocus();
+  }
 
   private isEditableTab(key: string): boolean {
     if (key === "groupTargetTab-0") return false;

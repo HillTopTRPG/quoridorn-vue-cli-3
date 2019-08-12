@@ -23,6 +23,8 @@
             type="text"
             v-model="inputPlayerName"
             list="input-player-info-window-players"
+            @keydown.enter.stop
+            @keyup.enter.stop
           />
           <datalist id="input-player-info-window-players">
             <option
@@ -34,8 +36,13 @@
           </datalist>
         </label>
         <label class="playerPassword"
-          >パスワード：<input type="password" v-model="inputPlayerPassword"
-        /></label>
+          >パスワード：<input
+            type="password"
+            v-model="inputPlayerPassword"
+            @keydown.enter.stop
+            @keyup.enter.stop
+          />
+        </label>
         <div class="description" v-if="!isPlayerExist">
           部屋内でのユーザ管理に使用します。パスワード忘れに注意！
         </div>

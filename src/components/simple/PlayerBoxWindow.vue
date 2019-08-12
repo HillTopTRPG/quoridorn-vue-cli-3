@@ -14,7 +14,9 @@
         <input
           type="color"
           :value="getPlayer ? getPlayer.fontColor : ''"
-          @change="event => changePlayerFontColor(event.target.value)"
+          @change.stop="event => changePlayerFontColor(event.target.value)"
+          @keydown.enter.stop
+          @keyup.enter.stop
         />
       </label>
       <!-----------------
@@ -49,7 +51,7 @@
                         : ''
                       : character.fontColor
                   "
-                  @change="
+                  @change.stop="
                     event =>
                       changeCharacterFontColor(
                         character.key,
@@ -57,6 +59,8 @@
                       )
                   "
                   :disabled="character.fontColorType === '0'"
+                  @keydown.enter.stop
+                  @keyup.enter.stop
                 />
               </label>
             </fieldset>

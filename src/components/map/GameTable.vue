@@ -5,6 +5,7 @@
     @drop.prevent="drop"
     dropzone="move"
     id="gameTable"
+    @keydown.enter.stop="globalEnter"
   >
     <div :style="gridPaperStyle" @contextmenu.prevent></div>
 
@@ -140,16 +141,26 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("propertyList") private propertyList: any;
   @Getter("getObj") private getObj: any;
 
-  mounted(): void {
+  private mounted(): void {
     document.addEventListener("mousemove", this.mouseMove);
     document.addEventListener("touchmove", this.touchMove);
   }
 
-  dragging(): void {
+  private globalEnter() {
+    window.console.log("globalEnter at GameTable");
+    this.setProperty({
+      property: "private.display.chatWindow.command",
+      logOff: true,
+      isNotice: false,
+      value: { command: "globalEnter", payload: {} }
+    });
+  }
+
+  private dragging(): void {
     window.console.log(`★★★★ dragging ★★★★`);
   }
 
-  onWheel(this: any, delta: number): void {
+  private onWheel(this: any, delta: number): void {
     const changeValue = 100;
     const add = delta > 0 ? changeValue : -changeValue;
     const wheel = this.wheel + add;
@@ -163,7 +174,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     });
   }
 
-  leftDown(this: any): void {
+  private leftDown(this: any): void {
     // window.console.log(`  [methods] mousedown left on GameTable`)
     const obj = {
       move: {
@@ -177,7 +188,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     this.setProperty({ property: "map", value: obj, logOff: true });
   }
 
-  leftUp(event: any): void {
+  private leftUp(event: any): void {
     const dispatchMouseUpEvent = (elm: HTMLElement) => {
       const evt = document.createEvent("MouseEvents");
       evt.initMouseEvent(
@@ -264,7 +275,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     this.setProperty({ property: "map", value: obj, logOff: true });
   }
 
-  rightDown(this: any): void {
+  private rightDown(this: any): void {
     // qLog(`  [methods] GameTableイベント => event: mousedown, mouse: right`);
     window.console.log("回転開始");
     const obj = {
@@ -280,7 +291,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     this.setProperty({ property: "map", value: obj, logOff: true });
   }
 
-  rightUp(event: any): void {
+  private rightUp(event: any): void {
     // qLog(`  [methods] GameTableイベント => event: mouseup, mouse: right`);
     window.console.log("回転終了");
     const isDraggingRight = this.isDraggingRight;
@@ -338,18 +349,18 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     }
   }
 
-  mouseMove(event: any): void {
+  private mouseMove(event: any): void {
     this.setMouseLocateOnPage(event.pageX, event.pageY);
   }
 
-  touchMove(event: any): void {
+  private touchMove(event: any): void {
     this.setMouseLocateOnPage(
       event.changedTouches[0].pageX,
       event.changedTouches[0].pageY
     );
   }
 
-  setMouseLocateOnPage(pageX: number, pageY: number): void {
+  private setMouseLocateOnPage(pageX: number, pageY: number): void {
     const obj = {
       x: pageX,
       y: pageY
@@ -387,7 +398,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     this.setProperty({ property: "map", value: mapObj, logOff: true });
   }
 
-  drop(this: any, event: any): void {
+  private drop(this: any, event: any): void {
     // ドロップされた物の種類
     const kind = event.dataTransfer.getData("kind");
 
@@ -668,19 +679,19 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     }
   }
 
-  get currentAngle(): number {
+  private get currentAngle(): number {
     return this.arrangeAngle(this.angle.total + this.angleVolatile.dragging);
   }
 
-  get sizeW(this: any): number {
+  private get sizeW(this: any): number {
     return (this.columns + this.marginGridSize * 2) * this.gridSize;
   }
 
-  get sizeH(this: any): number {
+  private get sizeH(this: any): number {
     return (this.rows + this.marginGridSize * 2) * this.gridSize;
   }
 
-  get gameTableStyle(this: any): any {
+  private get gameTableStyle(this: any): any {
     const translateZ = this.wheel;
     const zoom = (1000 - this.wheel) / 1000;
     const totalLeftX = (this.move.total.x + this.move.dragging.x) * zoom;
@@ -709,7 +720,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
     return result;
   }
 
-  get gridPaperStyle(): any {
+  private get gridPaperStyle(): any {
     const maskColorObj = this.parseColor(this.marginMaskColor);
     maskColorObj.a = this.marginMaskAlpha;
     const marginMaskColorStr = maskColorObj.getRGBA();
@@ -742,7 +753,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   @Watch("mouseLocate", { deep: true })
-  onChangeMouseLocate(mouseLocate: any) {
+  private onChangeMouseLocate(mouseLocate: any) {
     if (this.isDraggingLeft) {
       const obj = {
         x: mouseLocate.x - this.move.from.x,

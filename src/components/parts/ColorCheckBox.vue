@@ -4,9 +4,11 @@
     <input
       type="checkbox"
       v-model="value"
-      @change="event => onChange(event.target.checked)"
+      @change.stop="event => onChange(event.target.checked)"
       :style="{ backgroundColor: value ? color : 'white' }"
       :disabled="disabled"
+      @keydown.enter.stop
+      @keyup.enter.stop
     />
     <span class="designed"></span>
     <span v-if="label && labelSide !== 'left'">{{ label }}</span>

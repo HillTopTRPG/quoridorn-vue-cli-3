@@ -3,6 +3,7 @@
     v-model="localValue"
     :optionInfoList="optionInfoList"
     :maxWidth="7"
+    ref="select"
   />
 </template>
 

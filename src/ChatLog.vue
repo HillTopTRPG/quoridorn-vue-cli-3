@@ -13,7 +13,11 @@
           >{{ getViewName(player.key)
           }}<input
             type="checkbox"
-            @input="event => onTargetCheck(player.key, event.target.checked)"
+            @input.stop="
+              event => onTargetCheck(player.key, event.target.checked)
+            "
+            @keydown.enter.stop
+            @keyup.enter.stop
         /></label>
       </div>
     </fieldset>

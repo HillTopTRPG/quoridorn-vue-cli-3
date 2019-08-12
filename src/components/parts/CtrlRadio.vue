@@ -6,6 +6,8 @@
         :name="name"
         :value="optionInfo.value"
         v-model="localValue"
+        @keydown.enter.stop
+        @keyup.enter.stop
       />
       {{ optionInfo.text }}
     </label>

@@ -4,10 +4,12 @@
     display-property="private.display.unSupportWindow"
     align="center"
     fixSize="200, 120"
+    @open="open"
+    @reset="open"
   >
     <div class="contents" @contextmenu.prevent>
       <div>未実装の機能です。</div>
-      <ctrl-button @click="close">閉じる</ctrl-button>
+      <ctrl-button @click="close" ref="input">閉じる</ctrl-button>
     </div>
   </window-frame>
 </template>
@@ -26,6 +28,11 @@ export default {
     ...mapActions(["windowClose"]),
     close() {
       this.windowClose("private.display.unSupportWindow");
+    },
+
+    open() {
+      const input = this.$refs.input;
+      input.requestFocus();
     }
   },
   computed: mapState({

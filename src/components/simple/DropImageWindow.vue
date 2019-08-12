@@ -21,8 +21,10 @@
           <input
             class="tagInput"
             type="text"
-            @change="changeTag(imageObj.key)"
+            @change.stop="changeTag(imageObj.key)"
             v-model="imageObj.currentTag"
+            @keydown.enter.stop
+            @keyup.enter.stop
           />
           <ctrl-select
             class="tagSelect"

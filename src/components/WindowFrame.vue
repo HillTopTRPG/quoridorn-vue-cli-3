@@ -10,11 +10,6 @@
     class="window"
     v-if="isDisplay"
   >
-    <!-- コンテンツ -->
-    <div class="_contents" :style="{ fontSize: fontSize + 'px' }" @wheel.stop>
-      <slot />
-    </div>
-
     <!-- タイトルバー -->
     <div
       class="window-title"
@@ -40,7 +35,10 @@
           min="10"
           max="18"
           v-model="fontSize"
+          :tabindex="0"
           @mousedown.stop
+          @keydown.enter.stop
+          @keyup.enter.stop
         />
       </label>
 
@@ -48,9 +46,17 @@
       <span v-if="!isBanClose" @contextmenu.prevent>
         <i
           class="icon-cross window-close"
-          @click.left.prevent="closeWindow"
+          @click.left.prevent.stop="closeWindow"
+          @keydown.space.stop="closeWindow"
+          @keydown.enter.stop="closeWindow"
+          :tabindex="0"
         ></i>
       </span>
+    </div>
+
+    <!-- コンテンツ -->
+    <div class="_contents" :style="{ fontSize: fontSize + 'px' }" @wheel.stop>
+      <slot />
     </div>
 
     <!-- サイズ変更つまみ -->
@@ -666,11 +672,6 @@ export default class WindowFrame extends Vue {
       border: 1px solid rgb(167, 167, 167);
       border-top: 1px solid rgb(105, 110, 106);
       box-sizing: border-box;
-
-      &:focus,
-      &:active {
-        outline: none;
-      }
 
       &::-webkit-slider-thumb {
         -webkit-appearance: none;

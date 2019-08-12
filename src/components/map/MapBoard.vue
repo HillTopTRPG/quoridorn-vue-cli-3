@@ -6,6 +6,7 @@
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
     @contextmenu.prevent
+    @keydown.enter.stop="grobalEnter"
   >
   </canvas>
 </template>
@@ -30,10 +31,16 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
   @Getter("gridSize") private gridSize: any;
   @Getter("canvasSize") private canvasSize: any;
   @Getter("mouseOnCanvas") private mouseOnCanvas: any;
-  mounted(): void {
+
+  private mounted(): void {
     this.paint();
   }
-  paint(this: any): void {
+
+  private grobalEnter() {
+    window.console.log("grobalEnter on MapBoard.");
+  }
+
+  private paint(this: any): void {
     const canvasElm: HTMLCanvasElement = document.getElementById(
       "map-canvas"
     ) as HTMLCanvasElement;
@@ -122,29 +129,35 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
       }
     }
   }
+
   @Watch("isDrawGridLine")
-  onChangeIsDrawGridLine() {
+  private onChangeIsDrawGridLine() {
     window.console.log("isDrawGridLine from paint");
     this.paint();
   }
+
   @Watch("isDrawGridId")
-  onChangeIsDrawGridId() {
+  private onChangeIsDrawGridId() {
     this.paint();
   }
+
   @Watch("gridColor")
-  onChangeGridColor() {
+  private onChangeGridColor() {
     this.paint();
   }
+
   @Watch("grid", { deep: true })
-  onChangeGrid() {
+  private onChangeGrid() {
     this.paint();
   }
+
   @Watch("mouseOnCanvas", { deep: true })
-  onChangeMouseOnCanvas() {
+  private onChangeMouseOnCanvas() {
     this.paint();
   }
+
   @Watch("canvasSize", { deep: true })
-  onChangeCanvasSize() {
+  private onChangeCanvasSize() {
     this.paint();
   }
 }

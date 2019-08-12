@@ -15,6 +15,8 @@
         accept=".zip"
         multiple
         @change="selectFile"
+        @keydown.enter.stop
+        @keyup.enter.stop
       />
     </div>
     <ctrl-button @click="commit"><i class="icon-home3"></i> 作成</ctrl-button>

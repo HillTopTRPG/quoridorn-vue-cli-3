@@ -25,11 +25,25 @@
 
       <div class="rowsNum">
         <label>縦マス：</label>
-        <input type="number" min="1" class="size" v-model="rows" />
+        <input
+          type="number"
+          min="1"
+          class="size"
+          v-model="rows"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </div>
       <div class="columnsNum">
         <label>横マス：</label>
-        <input type="number" min="1" class="size" v-model="columns" />
+        <input
+          type="number"
+          min="1"
+          class="size"
+          v-model="columns"
+          @keydown.enter.stop
+          @keyup.enter.stop
+        />
       </div>
       <textarea
         class="otherText"
@@ -72,7 +86,7 @@ export default class EditChitWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("imageListFromTagKey") private imageListFromTagKey: any;
 
   private currentImageTag: string = "imgTag-0";
-  private selectImage: string = "image-11";
+  private selectImage: string = "image-12";
   private isReverse: boolean = false;
   private rows: number = 1;
   private columns: number = 1;

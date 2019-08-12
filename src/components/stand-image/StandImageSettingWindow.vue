@@ -4,9 +4,11 @@
     display-property="private.display.standImageSettingWindow"
     align="center"
     fixSize="676, 540"
+    @open="open"
+    @reset="open"
   >
     <div class="contents">
-      <actor-tab-component @change="changeActor">
+      <actor-tab-component @change="changeActor" ref="tab">
         <actor-status-tab-component
           slot="actor"
           slot-scope="{ actor }"
@@ -71,6 +73,8 @@
                       type="checkbox"
                       v-model="isPreview"
                       :disabled="status.standImage.isSystemLock"
+                      @keydown.enter.stop
+                      @keyup.enter.stop
                     />
                   </label>
                   <ctrl-button
@@ -87,6 +91,8 @@
                     :checked="getViewStatus(status).standImage.autoResize"
                     @change="event => changeAutoResize(event.target.checked)"
                     :disabled="status.standImage.isSystemLock || true"
+                    @keydown.enter.stop
+                    @keyup.enter.stop
                   />
                 </label>
                 <label>
@@ -101,6 +107,8 @@
                     min="0"
                     max="99"
                     :disabled="status.standImage.isSystemLock"
+                    @keydown.enter.stop
+                    @keyup.enter.stop
                   />
                   秒
                 </label>
@@ -120,6 +128,8 @@
                       event => changeLocate(parseInt(event.target.value, 10))
                     "
                     :disabled="status.standImage.isSystemLock"
+                    @keydown.enter.stop
+                    @keyup.enter.stop
                   />右
                 </label>
               </div>
@@ -189,6 +199,11 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
   private statusName: string | null = "";
   private isPreview: boolean = true;
   private baseSize: any = { w: 0, h: 0 };
+
+  private open() {
+    const tab: ActorTabComponent = this.$refs.tab as ActorTabComponent;
+    tab.requestFocus();
+  }
 
   changeActor(actorKey: string): void {
     this.actorKey = actorKey;
@@ -329,11 +344,10 @@ export default class StandImageSettingWindow extends Mixins<WindowMixin>(
                     image.key !== imageKey.replace(":R", "") &&
                     image.name.startsWith(baseImageName)
                 );
-                const diffList: DiffComponent[] | undefined = <
-                  Array<DiffComponent>
-                >this.$refs.diffList;
-                diffImageList.forEach(diffImage => {
-                  let isFind = false;
+                const diffList: DiffComponent[] | undefined = this.$refs
+                  .diffList as DiffComponent[];
+                diffImageList.forEach((diffImage: any) => {
+                  let isFind: boolean = false;
                   if (diffList) {
                     for (const diff of diffList) {
                       if (

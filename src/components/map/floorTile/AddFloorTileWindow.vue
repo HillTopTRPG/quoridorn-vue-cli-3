@@ -67,7 +67,7 @@ export default class AddFloorTileWindow extends Mixins<WindowMixin>(
   @Getter("imageListFromTagKey") private imageListFromTagKey: any;
 
   private currentImageTag: string = "imgTag-0";
-  private selectImage: string = "image-11";
+  private selectImage: string = "image-12";
   private isReverse: boolean = false;
   private rows: number = 1;
   private columns: number = 1;
@@ -98,7 +98,7 @@ export default class AddFloorTileWindow extends Mixins<WindowMixin>(
 
   private open() {
     this.currentImageTag = "imgTag-0";
-    this.selectImage = "image-11";
+    this.selectImage = "image-12";
     this.isReverse = false;
     this.rows = 1;
     this.columns = 1;

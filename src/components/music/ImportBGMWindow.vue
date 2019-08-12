@@ -17,7 +17,9 @@
           type="file"
           style="display: none;"
           accept=".json"
-          @input="selectFile"
+          @input.stop="selectFile"
+          @keydown.enter.stop
+          @keyup.enter.stop
         />
         <span class="space"></span>
         <ctrl-button @click="doPreview">プレビュー(自分のみ)</ctrl-button>

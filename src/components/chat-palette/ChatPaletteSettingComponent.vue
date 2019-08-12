@@ -1,6 +1,6 @@
 <template>
   <div class="chat-palette-setting-component">
-    <actor-tab-component @change="changeActor" :optionTabInfo="[]">
+    <actor-tab-component @change="changeActor" :optionTabInfo="[]" ref="tab">
       <div slot="option" slot-scope="{ option }" v-if="option">
         {{ option }}
       </div>
@@ -26,7 +26,9 @@
           <input
             type="text"
             v-model="chatTemporarily"
-            @keydown.enter="sendLine(actor, null)"
+            ref="sendLineInput"
+            @keydown.enter.stop="sendLine(actor, null)"
+            @keyup.enter.stop
           />
           <ctrl-button @click="sendLine(actor, null)">送信</ctrl-button>
         </div>
@@ -109,6 +111,11 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
   private statusName: string = "◆";
   /** 発言先 */
   private chatTarget: string = "groupTargetTab-0";
+
+  public requestFocus(): void {
+    const elm: ActorTabComponent = this.$refs.tab as ActorTabComponent;
+    elm.requestFocus();
+  }
 
   private changeActor(actorKey: string): void {
     this.actorKey = actorKey;

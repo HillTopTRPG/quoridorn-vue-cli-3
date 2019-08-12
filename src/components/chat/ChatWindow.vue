@@ -5,6 +5,7 @@
     align="left-bottom"
     baseSize="-300, 300"
     :fontSizeBar="true"
+    @globalEnter="globalEnter"
   >
     <div class="container">
       <!----------------
@@ -72,6 +73,8 @@
             class="icon-dice"
             title="ダイスボットの追加・編集・削除"
             @click="diceBotSettingButtonOnClick"
+            @keydown.space.stop="diceBotSettingButtonOnClick"
+            @keydown.enter.stop="diceBotSettingButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 5"
           ></i>
         </span>
@@ -80,6 +83,8 @@
             class="icon-bin"
             title="チャットログ全削除"
             @click="chatLogDeleteButtonOnClick"
+            @keydown.space.stop="chatLogDeleteButtonOnClick"
+            @keydown.enter.stop="chatLogDeleteButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 6"
           ></i>
         </span>
@@ -88,6 +93,8 @@
             class="icon-file-text"
             title="チャットログ保存"
             @click="chatLogExportButtonOnClick"
+            @keydown.space.stop="chatLogExportButtonOnClick"
+            @keydown.enter.stop="chatLogExportButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 7"
           ></i>
         </span>
@@ -96,6 +103,8 @@
             class="icon-cloud-check"
             title="点呼・投票設定"
             @click="rollCallSettingButtonOnClick"
+            @keydown.space.stop="rollCallSettingButtonOnClick"
+            @keydown.enter.stop="rollCallSettingButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 8"
           ></i>
         </span>
@@ -104,6 +113,8 @@
             class="icon-bell"
             title="目覚ましアラーム設定"
             @click="alermSettingButtonOnClick"
+            @keydown.space.stop="alermSettingButtonOnClick"
+            @keydown.enter.stop="alermSettingButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 9"
           ></i>
         </span>
@@ -112,6 +123,8 @@
             class="icon-music"
             title="BGMの設定"
             @click="bgmSettingButtonOnClick"
+            @keydown.space.stop="bgmSettingButtonOnClick"
+            @keydown.enter.stop="bgmSettingButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 10"
           ></i>
         </span>
@@ -120,6 +133,8 @@
             class="icon-film"
             title="カットイン設定"
             @click="cutInSettingButtonOnClick"
+            @keydown.space.stop="cutInSettingButtonOnClick"
+            @keydown.enter.stop="cutInSettingButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 11"
           ></i>
         </span>
@@ -128,6 +143,8 @@
             class="icon-list2"
             title="チャットパレット設定"
             @click="chatPaletteSettingButtonOnClick"
+            @keydown.space.stop="chatPaletteSettingButtonOnClick"
+            @keydown.enter.stop="chatPaletteSettingButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 12"
           ></i>
         </span>
@@ -136,6 +153,8 @@
             class="icon-accessibility"
             title="立ち絵設定"
             @click="standImageSettingButtonOnClick"
+            @keydown.space.stop="standImageSettingButtonOnClick"
+            @keydown.enter.stop="standImageSettingButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 13"
           ></i>
         </span>
@@ -144,6 +163,8 @@
             class="icon-target"
             title="射界設定"
             @click="rangeSettingButtonOnClick"
+            @keydown.space.stop="rangeSettingButtonOnClick"
+            @keydown.enter.stop="rangeSettingButtonOnClick"
             :tabindex="isModal ? -1 : chatTabs.length + 14"
           ></i>
         </span>
@@ -185,6 +206,8 @@
                   isModal ? -1 : chatTabs.length + chatTabs.length + 16
                 "
                 :disabled="isModal"
+                @keydown.enter.stop
+                @keyup.enter.stop
               />
               発言時に「」を付与
             </label>
@@ -464,20 +487,19 @@
               v-model="currentMessage"
               @input="onInput"
               @blur="textAreaOnBlur"
-              @keydown.up.prevent.self.stop="
+              @keydown.up.self.stop="
                 event => chatOptionSelectChange('up', event)
               "
-              @keydown.down.prevent.self.stop="
+              @keydown.down.self.stop="
                 event => chatOptionSelectChange('down', event)
               "
               @keydown.esc.prevent="textAreaOnPressEsc"
               @keypress.enter.prevent="event => sendMessage(event, true)"
               @keyup.enter.prevent="event => sendMessage(event, false)"
               :tabindex="isModal ? -1 : chatTabs.length + chatTabs.length + 17"
-              :placeholder="
-                'メッセージ（改行はShift + Enter）\n部分フォント変更は &quot;&amp;&quot; を入力'
-              "
+              :placeholder="placeholderText"
               :disabled="isModal"
+              ref="input"
             ></textarea>
           </label>
         </div>
@@ -601,6 +623,15 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private volatileTargetTab: string | null = "";
   private statusName: string = "◆";
   private hoverChatTargetTab = "";
+
+  private placeholderText: string =
+    "メッセージ（改行はShift + Enter）\\n部分フォント変更は &quot;&amp;&quot; を入力";
+
+  private globalEnter() {
+    window.console.log("globalEnter at ChatWindow");
+    const input: HTMLTextAreaElement = this.$refs.input as HTMLTextAreaElement;
+    input.focus();
+  }
 
   @Watch("chatActorKey", { deep: true, immediate: true })
   private onChangeChatActorKey(chatActorKey: any) {
@@ -753,6 +784,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
 
       this.statusName = newValue.statusName;
       this.updateActorKey(newValue.key);
+      event.preventDefault();
     }
 
     // 発言先の選択の場合
@@ -764,6 +796,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       const newValue = arrangeIndex(this.chatTargetList, index);
 
       this.groupTargetTabOnSelect(newValue.key);
+      event.preventDefault();
     }
 
     // タブの選択の場合
@@ -781,6 +814,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
         newValue !== null ? newValue : this.volatileActiveTab
       );
       this.outputTab = newValue;
+      event.preventDefault();
     }
 
     // チャットフォーマットの選択の場合
@@ -793,6 +827,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
       let index = selection.indexOf(this.partsFormat);
       const newValue = arrangeIndex(selection, index);
       this.partsFormat = newValue;
+      event.preventDefault();
     }
   }
 
@@ -1005,7 +1040,17 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.enterPressing = flg;
     if (!flg) return;
     if (event && event.shiftKey) {
-      this.currentMessage += "\n";
+      const textArea: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
+      const sentence = textArea.value;
+      const pos = textArea.selectionStart;
+
+      const before = sentence.substr(0, pos);
+      const after = sentence.substr(pos, sentence.length);
+      this.currentMessage = `${before}\n${after}`;
+      setTimeout(() => {
+        textArea.selectionStart = pos + 1;
+        textArea.selectionEnd = pos + 1;
+      });
       return;
     }
     if (this.currentMessage === "") return;

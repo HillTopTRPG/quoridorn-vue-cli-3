@@ -11,26 +11,63 @@
       <tbody>
         <tr>
           <th>文字：</th>
-          <td><input type="text" v-model="name" /></td>
+          <td>
+            <input
+              type="text"
+              v-model="name"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
           <td rowspan="6" class="mapMaskGrid">
             <div class="mapMask" :style="mapMaskStyle">{{ name }}</div>
           </td>
         </tr>
         <tr>
           <th>色：</th>
-          <td><input type="color" v-model="color" /></td>
+          <td>
+            <input
+              type="color"
+              v-model="color"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
         </tr>
         <tr>
           <th>高さ：</th>
-          <td><input type="number" min="1" v-model="height" /></td>
+          <td>
+            <input
+              type="number"
+              min="1"
+              v-model="height"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
         </tr>
         <tr>
           <th>幅：</th>
-          <td><input type="number" min="1" v-model="width" /></td>
+          <td>
+            <input
+              type="number"
+              min="1"
+              v-model="width"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
         </tr>
         <tr>
           <th>透明度：</th>
-          <td><input type="range" v-model="transparency" /></td>
+          <td>
+            <input
+              type="range"
+              v-model="transparency"
+              @keydown.enter.stop
+              @keyup.enter.stop
+            />
+          </td>
         </tr>
         <tr>
           <td colspan="2" class="multi">

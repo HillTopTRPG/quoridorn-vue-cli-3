@@ -4,7 +4,8 @@
     display-property="private.display.settingBGMWindow"
     align="center"
     fixSize="394, 334"
-    @open="initWindow"
+    @open="open"
+    @reset="open"
   >
     <div class="contents">
       <div class="playOperationArea" @contextmenu.prevent>
@@ -116,7 +117,7 @@
         </table>
       </div>
       <div class="operateArea" @contextmenu.prevent>
-        <ctrl-button @click="doAdd">追加</ctrl-button>
+        <ctrl-button @click="doAdd" ref="button">追加</ctrl-button>
         <ctrl-button @click="doModify">変更</ctrl-button>
         <ctrl-button @click="doCopy">コピー</ctrl-button>
         <ctrl-button @click="doDelete">削除</ctrl-button>
@@ -163,12 +164,15 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     return /dropbox/.test(url);
   }
 
-  private initWindow(): void {
+  private open(): void {
     this.setProperty({
       property: "private.display.settingBGMWindow.selectLineKey",
       value: null,
       logOff: true
     });
+
+    const button: CtrlButton = this.$refs.button as CtrlButton;
+    button.requestFocus();
   }
 
   private doPlay(): void {

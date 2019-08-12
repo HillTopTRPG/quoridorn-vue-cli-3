@@ -5,6 +5,8 @@
     align="center"
     :fixSize="fixSize"
     :fontSizeBar="true"
+    @open="open"
+    @reset="open"
   >
     <div class="contents">
       <div class="optionLine">
@@ -33,6 +35,7 @@
           )"
           :key="num"
           :currentDiceBotSystem="currentDiceBotSystem"
+          ref="component"
         />
       </div>
     </div>
@@ -63,6 +66,13 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
 ) {
   private columns: string = "1";
   private currentDiceBotSystem: string = "DiceBot";
+
+  private open() {
+    const refs: ChatPaletteSettingComponent[] = this.$refs
+      .component as ChatPaletteSettingComponent[];
+    if (!refs || !refs[0]) return;
+    refs[0].requestFocus();
+  }
 
   private get fixSize() {
     const columnNum = parseInt(this.columns, 10);
