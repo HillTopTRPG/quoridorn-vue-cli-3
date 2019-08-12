@@ -29,11 +29,30 @@ export default new Vuex.Store({
       // state_settingの初期化
       commit("init_state_setting");
 
-      commit("setChatLogs", (window as any)!["chatLogs"]);
-      commit("setChatTabs", (window as any)!["chatTabList"]);
-      commit("setGroupTargetTabList", (window as any)!["groupTargetTabList"]);
-      commit("initPlayer");
-      commit("initCharacter");
+      const decode = (text: string) => {
+        const txt = document.createElement("textarea");
+        txt.innerHTML = text;
+        return txt.value;
+      };
+      const replaceFunc = (text: string) =>
+        decode(text).replace(/\n/g, "<br />");
+
+      const getDecodeStr = (target: string): any[] => {
+        const planeStr = decode((window as any)![target]);
+        return JSON.parse(planeStr).map((str: string) =>
+          JSON.parse(replaceFunc(rootGetters.decrypt({ cipherText: str })))
+        );
+      };
+
+      const chatLogs: any[] = getDecodeStr("chatLogs");
+      const chatTabList: any[] = getDecodeStr("chatTabList");
+      const groupTargetTabList: any[] = getDecodeStr("groupTargetTabList");
+      const actors: any[] = getDecodeStr("actors");
+      commit("setChatLogs", chatLogs);
+      commit("setChatTabs", chatTabList);
+      commit("setGroupTargetTabList", groupTargetTabList);
+      commit("initPlayer", actors);
+      commit("initCharacter", actors);
     }
   },
   mutations: {},
@@ -53,9 +72,15 @@ export default new Vuex.Store({
       } else if (kind === "imgTag") {
         // イメージタグ
         return rootGetters.imageTagList.filter(filterFunc)[0];
+      } else if (kind === "player") {
+        // プレイヤー
+        return rootGetters.playerList.filter(filterFunc)[0];
+      } else if (kind === "character") {
+        // キャラクター
+        return rootGetters.characterList.filter(filterFunc)[0];
       } else {
         // その他
-        return (window as any)!["actors"].filter(filterFunc)[0];
+        return null;
       }
     },
     getViewName: (state: any, getters: any) => (key: string): string => {
@@ -70,6 +95,7 @@ export default new Vuex.Store({
       } else {
         return obj.name;
       }
-    }
+    },
+    isModal: () => false
   }
 });

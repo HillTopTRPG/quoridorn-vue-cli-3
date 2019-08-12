@@ -176,7 +176,13 @@ export default {
       planeText: string;
       salt: string;
     }) => {
-      return CryptoJS.AES.encrypt(planeText, salt).toString();
+      // window.console.log("------encrypt------");
+      // window.console.log(planeText);
+      // window.console.log(encodeURIComponent(planeText));
+      return CryptoJS.AES.encrypt(
+        encodeURIComponent(planeText),
+        salt
+      ).toString();
     },
 
     /** 復号化 */
@@ -187,9 +193,11 @@ export default {
       cipherText: string;
       salt: string;
     }) => {
-      // window.console.log("decrypt", cipherText, salt);
+      // window.console.log("decrypt", salt, cipherText);
       // window.console.log(CryptoJS.AES.decrypt(cipherText, salt).toString(CryptoJS.enc.Utf8));
-      return CryptoJS.AES.decrypt(cipherText, salt).toString(CryptoJS.enc.Utf8);
+      return decodeURIComponent(
+        CryptoJS.AES.decrypt(cipherText, salt).toString(CryptoJS.enc.Utf8)
+      );
     }
   }
 };

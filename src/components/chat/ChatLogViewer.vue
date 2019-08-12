@@ -10,6 +10,7 @@
       :hoverChatTab="hoverChatTab"
       :isVertical="isVertical"
       :textFunc="textFunc"
+      :viewOption="viewOption"
       @onSelect="onSelect"
       @onHover="onHover"
       @editTab="editTab"
@@ -76,6 +77,9 @@ export default class ChatLogViewer extends Vue {
 
   @Prop({ type: Object, required: true })
   private colorMap!: any;
+
+  @Prop({ type: Boolean, required: true })
+  private viewOption!: boolean;
 
   /**
    * チャットログ表示タブを選択されたときの挙動

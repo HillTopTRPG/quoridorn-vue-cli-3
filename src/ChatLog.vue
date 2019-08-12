@@ -60,6 +60,7 @@
       @onHover="chatTabOnHover"
       @editTab="tabAddButtonOnClick"
       :colorMap="colorMap"
+      :viewOption="false"
       style="align-self: stretch;"
     />
   </div>
@@ -165,6 +166,8 @@ export default class ChatLog extends Vue {
   @Getter("getObj") private getObj: any;
   @Getter("colorMap") private colorMap: any;
   @Getter("chatLineRegExp") private chatLineRegExp: any;
+  @Getter("chatStyleRegExp") private chatStyleRegExp: any;
+  @Getter("playerList") private playerList: any;
 
   private activeChatTab: string = "";
   private hoverChatTab: string = "";
@@ -250,14 +253,9 @@ export default class ChatLog extends Vue {
     };
   }
 
-  private get playerList(): any {
-    const actors: any[] = (window as any)!["actors"];
-    return actors.filter((actor: any) => actor.key.startsWith("player"));
-  }
-
   private onClickSaveAsDodontofHTML() {
     const replaceFunc: Function = (text: string) =>
-      text.replace(this.chatLineRegExp, "").replace(/\[\[quot]]/g, '"');
+      this.formatRuby(text).replace(/\[\[quot]]/g, '"');
 
     saveHTML(
       "html",
@@ -297,7 +295,9 @@ export default class ChatLog extends Vue {
 
   private onClickSaveAsDodontofText() {
     const replaceFunc: Function = (text: string) =>
-      text.replace(this.chatLineRegExp, "").replace(/\[\[quot]]/g, '"');
+      this.formatRuby(text)
+        .replace(/\[\[quot]]/g, '"')
+        .replace(/<br ?\/>/g, "\n");
 
     saveText(
       "text",
@@ -316,6 +316,49 @@ export default class ChatLog extends Vue {
         })
         .join("\n")
     );
+  }
+
+  private formatRuby(text: string) {
+    text = text.replace(/\[\[quot]]/g, '"');
+
+    const matchInfoList: any[] = [];
+    let matchResult = null;
+    while ((matchResult = this.chatLineRegExp.exec(text)) !== null) {
+      const styleStr = matchResult[1];
+      const startIndex = matchResult.index;
+      const contentsIndex = matchResult.index + matchResult[0].length;
+      matchInfoList.push({
+        styleStr,
+        startIndex,
+        contentsIndex
+      });
+    }
+
+    if (!matchInfoList.length) return text;
+
+    matchInfoList.push({ startIndex: text.length });
+    const resultTexts: string[] = [];
+    resultTexts.push(text.substring(0, matchInfoList[0].startIndex));
+
+    for (let i = 0; i < matchInfoList.length - 1; i++) {
+      const styleStr: string = matchInfoList[i]!.styleStr;
+      const startIndex: number = matchInfoList[i]!.contentsIndex;
+      const endIndex: number = matchInfoList[i + 1]!.startIndex;
+      const contentsStr = text.substring(startIndex, endIndex);
+
+      let rubyText: string = "";
+      let matchResult = null;
+      while ((matchResult = this.chatStyleRegExp.exec(styleStr)) !== null) {
+        if (matchResult[9] === "r") rubyText = matchResult[10];
+      }
+
+      let contentsText: string = contentsStr;
+      if (rubyText) {
+        contentsText = `${contentsText}[${rubyText}]`;
+      }
+      resultTexts.push(contentsText);
+    }
+    return resultTexts.join("");
   }
 
   private onClickSaveAsJson() {

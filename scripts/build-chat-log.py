@@ -59,7 +59,7 @@ def getIncludeText(regInfoArr, line):
 # キレイに行に分解してあげる
 with open(BASE_HTML_ORG) as fr:
     lines = fr.read()
-    lines = re.sub('(<[^/!])', r'\n\1', lines)
+    lines = re.sub('(?!<br)(<[^/!])', r'\n\1', lines)
     lines = re.sub('(<\/body>)', r'\n\1', lines)
     lines = re.sub('(<\/head>)', r'\n\1', lines)
     lines = re.sub('<link.+ rel=\"?preload\"?.*>\n', '', lines)

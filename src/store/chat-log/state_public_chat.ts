@@ -58,7 +58,7 @@ export default {
      * @param logs
      * @returns { *[] }
      */
-    setChatLogs: (state: any, logs: any) => {
+    setChatLogs: (state: any, logs: any[]) => {
       state.logs = logs;
     },
     /**

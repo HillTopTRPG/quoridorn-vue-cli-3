@@ -27,6 +27,7 @@
         @onHover="chatTabOnHover"
         @editTab="tabAddButtonOnClick"
         :colorMap="colorMap"
+        :viewOption="true"
       />
 
       <!----------------
@@ -196,6 +197,7 @@
             @onSelect="groupTargetTabOnSelect"
             @onHover="groupTargetTabOnHover"
             @editTab="targetTabAddButtonOnClick"
+            :viewOption="true"
           >
             <!-- 「」付与チェックボックス -->
             <label class="bracketOption">

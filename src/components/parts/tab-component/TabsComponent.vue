@@ -38,6 +38,7 @@
       @keydown.space.stop="tabAddButtonOnClick"
       @keydown.enter.stop="tabAddButtonOnClick"
       :tabindex="isModal ? -1 : tabIndex + tabList.length + 1"
+      v-if="viewOption"
       ><span class="icon-cog"></span
     ></span>
   </div>
@@ -69,6 +70,9 @@ export default class TabsComponent extends Vue {
 
   @Prop({ type: Function, required: true })
   private textFunc!: Function;
+
+  @Prop({ type: Boolean, required: true })
+  private viewOption!: boolean;
 
   /**
    * チャットログ表示タブを選択されたときの挙動

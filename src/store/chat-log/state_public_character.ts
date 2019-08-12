@@ -5,8 +5,8 @@ export default {
   },
   actions: {},
   mutations: {
-    initCharacter(state: any) {
-      state.list = (window as any)!["actors"].filter(
+    initCharacter(state: any, actorList: any[]) {
+      state.list = actorList.filter(
         (actor: any) => actor.key.split("-")[0] === "character"
       );
     }

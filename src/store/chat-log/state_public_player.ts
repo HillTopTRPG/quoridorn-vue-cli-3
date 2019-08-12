@@ -5,8 +5,8 @@ export default {
   },
   actions: {},
   mutations: {
-    initPlayer(state: any) {
-      state.list = (window as any)!["actors"].filter(
+    initPlayer(state: any, actorList: any[]) {
+      state.list = actorList.filter(
         (actor: any) => actor.key.split("-")[0] === "player"
       );
     }

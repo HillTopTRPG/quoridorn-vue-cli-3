@@ -12,11 +12,18 @@ export default {
       const dateStr = moment().format("YYYYMMDD_HHmmss");
       const title = `Quoridorn_chatLog_${dateStr}`;
 
+      const func: Function = (list: any[]): string =>
+        JSON.stringify(
+          list.map((obj: any) =>
+            rootGetters.encrypt({ planeText: JSON.stringify(obj) })
+          )
+        );
+
       const data = {
-        chatLogs: JSON.stringify(rootGetters.chatLogs),
-        actors: JSON.stringify(rootGetters.getAllActors),
-        groupTargetTabList: JSON.stringify(rootGetters.groupTargetTabList),
-        chatTabList: JSON.stringify(rootGetters.chatTabList),
+        chatLogs: func(rootGetters.chatLogs),
+        actors: func(rootGetters.getAllActors),
+        groupTargetTabList: func(rootGetters.groupTargetTabList),
+        chatTabList: func(rootGetters.chatTabList),
         title,
         mode: "dev"
       };
