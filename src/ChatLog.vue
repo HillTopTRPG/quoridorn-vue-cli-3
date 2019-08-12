@@ -146,6 +146,7 @@ import { Watch } from "vue-property-decorator";
 import ImportTypeRadio from "@/components/parts/radio/ImportTypeRadio.vue";
 import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { saveJson, saveHTML, saveText } from "@/components/common/Utility";
+import moment from "moment";
 
 @Component({
   components: {
@@ -208,9 +209,7 @@ export default class ChatLog extends Vue {
     this.hoverChatTab = tabKey;
   }
 
-  private tabAddButtonOnClick(): void {
-    alert("未実装");
-  }
+  private tabAddButtonOnClick(): void {}
 
   private get chatLogList(): Function {
     return (chatTab: string) => {
@@ -257,8 +256,10 @@ export default class ChatLog extends Vue {
     const replaceFunc: Function = (text: string) =>
       this.formatRuby(text).replace(/\[\[quot]]/g, '"');
 
+    const dateStr = moment().format("YYYYMMDD_HHmmss");
+
     saveHTML(
-      "html",
+      `chatLog_${dateStr}`,
       [
         "<?xml version='1.0' encoding='UTF-8'?>",
         "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>",
@@ -299,8 +300,10 @@ export default class ChatLog extends Vue {
         .replace(/\[\[quot]]/g, '"')
         .replace(/<br ?\/>/g, "\n");
 
+    const dateStr = moment().format("YYYYMMDD_HHmmss");
+
     saveText(
-      "text",
+      `chatLog_${dateStr}`,
       this.jsonData
         .map((logObj: any) => {
           const tabName = logObj.isDiceBot ? "" : `[${logObj.tab}]`;
@@ -362,7 +365,8 @@ export default class ChatLog extends Vue {
   }
 
   private onClickSaveAsJson() {
-    saveJson("chat-log", this.jsonData);
+    const dateStr = moment().format("YYYYMMDD_HHmmss");
+    saveJson(`chatLog_${dateStr}`, this.jsonData);
   }
 
   private get jsonData(): any {
