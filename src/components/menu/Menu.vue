@@ -174,7 +174,7 @@
      !-------------------------------------------------->
     <div class="hoverMenu hoverMenu5" v-show="isShow('マップ')">
       <div class="item" @click="clickChangeMap">マップ変更</div>
-      <div class="item" @click="clickFloorTileMode">フロアタイル変更モード</div>
+      <div class="item" @click="clickAddFloorTile">フロアタイル追加</div>
       <div class="item" @click="clickAddMapMask">マップマスク追加</div>
       <div class="item" @click="clickCreateEasyMap">簡易マップ作成</div>
       <hr />
@@ -416,8 +416,8 @@ export default class Menu extends Vue {
     this.menuClick();
   }
 
-  /** フロアタイル変更モード */
-  clickFloorTileMode(): void {
+  /** フロアタイル追加 */
+  clickAddFloorTile(): void {
     this.windowOpen("private.display.addFloorTileWindow");
     this.menuClick();
   }

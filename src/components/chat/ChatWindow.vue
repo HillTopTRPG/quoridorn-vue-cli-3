@@ -625,7 +625,7 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   private hoverChatTargetTab = "";
 
   private placeholderText: string =
-    "メッセージ（改行はShift + Enter）\\n部分フォント変更は &quot;&amp;&quot; を入力";
+    'メッセージ（改行はShift + Enter）\n部分フォント変更は "&" を入力';
 
   private globalEnter() {
     window.console.log("globalEnter at ChatWindow");
