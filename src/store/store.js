@@ -442,7 +442,11 @@ export default new Vuex.Store({
      */
     doReverseProperty: ({ getters, commit }, { property }) => {
       const target = getters.getStateValue(property);
-      const payload = { property, value: !target };
+      const payload = {
+        property,
+        value: !target,
+        logOff: true
+      };
       commit("doSetProperty", payload);
     },
 

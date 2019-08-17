@@ -5,6 +5,7 @@
     align="left-bottom"
     baseSize="-300, 300"
     :fontSizeBar="true"
+    :standImageSizeChooser="true"
     @globalEnter="globalEnter"
   >
     <div class="container">

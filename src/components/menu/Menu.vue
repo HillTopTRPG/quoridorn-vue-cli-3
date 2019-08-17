@@ -130,12 +130,6 @@
       >
         マス目にキャラクターを合わせる
       </menu-boolean-item>
-      <menu-boolean-item
-        property="private.setting.standImageAutoResize"
-        @mouseenter="menuHover('表示')"
-      >
-        立ち絵のサイズを自動調整する
-      </menu-boolean-item>
       <hr @mouseenter="menuHover('表示')" />
       <div
         class="item"

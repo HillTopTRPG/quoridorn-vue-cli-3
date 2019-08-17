@@ -8,5 +8,7 @@ export default {
   },
   actions: {},
   mutations: {},
-  getters: {}
+  getters: {
+    isViewStandImage: (state: any) => state.standImage
+  }
 };

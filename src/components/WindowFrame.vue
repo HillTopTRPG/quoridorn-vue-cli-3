@@ -14,11 +14,11 @@
     <div
       class="window-title"
       :class="{ fix: isFix }"
-      @mousedown.left.prevent="event => move(event, true)"
-      @mouseup.left.prevent="event => move(event, false)"
-      @touchstart.prevent="event => move(event, true, true)"
-      @touchend.prevent="event => move(event, false, true)"
-      @touchcancel.prevent="event => move(event, false, true)"
+      @mousedown.left.stop="event => move(event, true)"
+      @mouseup.left.stop="event => move(event, false)"
+      @touchstart.stop="event => move(event, true, true)"
+      @touchend.stop="event => move(event, false, true)"
+      @touchcancel.stop="event => move(event, false, true)"
       @contextmenu.prevent
     >
       <!-- タイトル文言 -->
@@ -41,6 +41,15 @@
           @keyup.enter.stop
           @keydown.229.stop
           @keyup.229.stop
+        />
+      </label>
+
+      <!-- 文字サイズ変更 -->
+      <label v-if="standImageSizeChooser" class="fontSizeSlider">
+        立ち絵サイズ
+        <ctrl-select
+          v-model="standImageSize"
+          :optionInfoList="standImageSizeOptionInfoList"
         />
       </label>
 
@@ -82,16 +91,20 @@
     <window-frame-knob name="side-bottom" @resize="resize" v-if="!isFix" />
 
     <!-- 立ち絵 -->
-    <stand-image-component
-      class="standImage"
-      v-for="(standImage, index) in standImageList"
-      :key="index"
-      :standImage="standImage.standImage"
-      :drawDiff="true"
-      @click="clickStandImage(standImage.standImage, index)"
-      :style="standImageStyle(standImage.standImage, index)"
-      @contextmenu.prevent
-    />
+    <template v-if="isViewStandImage">
+      <stand-image-component
+        class="standImage"
+        v-for="(standImage, index) in standImageList"
+        :key="index"
+        :standImage="standImage.standImage"
+        :drawDiff="true"
+        @click="clickStandImage(standImage.standImage, index)"
+        :style="standImageStyle(standImage.standImage, index)"
+        :width="standImageWidth"
+        :height="standImageHeight"
+        @contextmenu.prevent
+      />
+    </template>
   </div>
 </template>
 
@@ -101,9 +114,10 @@ import StandImageComponent from "@/components/parts/StandImageComponent.vue";
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action, Getter } from "vuex-class";
 import WindowFrameKnob from "@/components/WindowFrameKnob.vue";
+import CtrlSelect from "@/components/parts/CtrlSelect.vue";
 
 @Component({
-  components: { WindowFrameKnob, StandImageComponent }
+  components: { CtrlSelect, WindowFrameKnob, StandImageComponent }
 })
 export default class WindowFrame extends Vue {
   @Action("windowClose") private windowClose: any;
@@ -111,6 +125,7 @@ export default class WindowFrame extends Vue {
   @Action("windowActive") private windowActive: any;
   @Getter("getStateValue") private getStateValue: any;
   @Getter("isModal") private isModal: any;
+  @Getter("isViewStandImage") private isViewStandImage: any;
 
   @Prop({ type: String, required: true })
   private titleText!: string;
@@ -132,6 +147,9 @@ export default class WindowFrame extends Vue {
 
   @Prop({ type: Boolean, default: false })
   private fontSizeBar!: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  private standImageSizeChooser!: boolean;
 
   @Prop({ type: String })
   private message!: string | null;
@@ -156,6 +174,16 @@ export default class WindowFrame extends Vue {
   };
 
   private fontSize: number = 12;
+  private standImageSize: string = "192*256";
+  private standImageWidth: number = 192;
+  private standImageHeight: number = 256;
+
+  @Watch("standImageSize", { immediate: true })
+  private onChangeStandImageSize(standImageSize: string) {
+    const split: string[] = standImageSize.split("*");
+    this.standImageWidth = parseInt(split[0]);
+    this.standImageHeight = parseInt(split[1]);
+  }
 
   private mounted(): void {
     const _ = this;
@@ -435,9 +463,11 @@ export default class WindowFrame extends Vue {
 
   private standImageStyle(standImage: any, index: number): any {
     const locate = standImage.locate;
-    const mpx: number = (192 * (locate - 1)) / 12;
+    const mpx: number = (this.standImageWidth * (locate - 1)) / 12;
     return {
-      left: `calc((100% - 192px) * ${locate - 1} / 11)`,
+      width: `${this.standImageWidth}px`,
+      height: `${this.standImageHeight}px`,
+      left: `calc((100% - ${this.standImageWidth}px) * ${locate - 1} / 11)`,
       zIndex: index + 2
     };
   }
@@ -500,6 +530,29 @@ export default class WindowFrame extends Vue {
       w: parseInt(this.baseSize.split(",")[0].trim(), 10),
       h: parseInt(this.baseSize.split(",")[1].trim(), 10)
     };
+  }
+
+  private get standImageSizeOptionInfoList(): any[] {
+    const resultList: any[] = [];
+    resultList.push({
+      key: 0,
+      value: "192*256",
+      text: "192*256",
+      disabled: false
+    });
+    resultList.push({
+      key: 1,
+      value: "300*400",
+      text: "300*400",
+      disabled: false
+    });
+    resultList.push({
+      key: 2,
+      value: "450*600",
+      text: "450*600",
+      disabled: false
+    });
+    return resultList;
   }
 
   @Emit("windowStyle")
@@ -799,8 +852,6 @@ export default class WindowFrame extends Vue {
 }
 
 .standImage {
-  width: 192px;
-  height: 256px;
   position: absolute;
   bottom: calc(100% + 1px);
 
