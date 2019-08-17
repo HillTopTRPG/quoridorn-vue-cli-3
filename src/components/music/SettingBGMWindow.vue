@@ -38,64 +38,13 @@
             <!-- ===============================================================
               コンテンツ
             -->
-            <tr
+            <setting-bgm-tr-component
               v-for="bgmObj in bgmList"
               :key="bgmObj.key"
-              @click="selectLine(bgmObj.key)"
+              :bgmObj="bgmObj"
+              :windowParam="'settingBGMWindow'"
               @dblclick="playBGM()"
-              :class="{ isActive: selectLineKey === bgmObj.key }"
-            >
-              <td
-                :style="colStyle(0)"
-                :title="linkageStr(bgmObj)"
-                @contextmenu.prevent
-              >
-                {{ bgmObj.chatLinkage > 0 ? "あり" : "なし" }}
-              </td>
-              <divider :index="0" prop="settingBGMWindow" />
-              <td :style="colStyle(1)" @contextmenu.prevent>
-                {{ bgmObj.tag }}
-              </td>
-              <divider :index="1" prop="settingBGMWindow" />
-              <td :style="colStyle(2)" @contextmenu.prevent>
-                <i class="icon-stop2" v-if="!bgmObj.url"></i>
-                <i class="icon-youtube2" v-if="isYoutube(bgmObj.url)"></i>
-                <i class="icon-dropbox" v-if="isDropBox(bgmObj.url)"></i>
-                <i
-                  class="icon-file-music"
-                  v-if="
-                    bgmObj.url &&
-                      !isYoutube(bgmObj.url) &&
-                      !isDropBox(bgmObj.url)
-                  "
-                ></i>
-              </td>
-              <divider :index="2" prop="settingBGMWindow" />
-              <td :style="colStyle(3)" class="selectable">
-                {{ bgmObj.title }}
-              </td>
-              <divider :index="3" prop="settingBGMWindow" />
-              <td :style="colStyle(4)" @contextmenu.prevent>
-                {{ bgmObj.url ? convertSecond(bgmObj.start, bgmObj.end) : "-" }}
-              </td>
-              <divider :index="4" prop="settingBGMWindow" />
-              <td :style="colStyle(5)" @contextmenu.prevent>
-                <i class="icon-loop" v-if="bgmObj.url && bgmObj.isLoop"></i
-                >{{ bgmObj.url && bgmObj.isLoop ? "" : "-" }}
-              </td>
-              <divider :index="5" prop="settingBGMWindow" />
-              <td :style="colStyle(6)" @contextmenu.prevent>
-                {{ bgmObj.url ? bgmObj.volume * 100 : "-" }}
-              </td>
-              <divider :index="6" prop="settingBGMWindow" />
-              <td
-                :style="colStyle(7)"
-                :title="fadeTitle(bgmObj)"
-                @contextmenu.prevent
-              >
-                {{ bgmObj.url ? fadeStr(bgmObj) : "-" }}
-              </td>
-            </tr>
+            />
             <tr class="space" @contextmenu.prevent>
               <td :style="colStyle(0)"></td>
               <divider :index="0" prop="settingBGMWindow" />
@@ -143,8 +92,11 @@ import CtrlButton from "@/components/parts/CtrlButton.vue";
 import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import { saveJson } from "@/components/common/Utility";
+import SettingBgmTrComponent from "@/components/music/component/SettingBgmTrComponent.vue";
 
-@Component({ components: { CtrlButton, WindowFrame, Divider } })
+@Component({
+  components: { SettingBgmTrComponent, CtrlButton, WindowFrame, Divider }
+})
 export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") setProperty: any;
   @Action("windowOpen") windowOpen: any;
@@ -386,37 +338,6 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
     return (index: number) => ({ width: `${this.widthList[index]}px` });
   }
   /* End 列幅可変テーブルのプロパティ */
-
-  private get fadeStr(): Function {
-    return (bgmObj: any): string => {
-      if (bgmObj.fadeIn > 0 && bgmObj.fadeOut > 0) return "in/out";
-      if (bgmObj.fadeIn > 0 && bgmObj.fadeOut === 0) return "in";
-      if (bgmObj.fadeIn === 0 && bgmObj.fadeOut > 0) return "out";
-      return "-";
-    };
-  }
-
-  private get fadeTitle(): Function {
-    return (bgmObj: any): string => {
-      if (bgmObj.fadeIn > 0 && bgmObj.fadeOut > 0)
-        return `in:${bgmObj.fadeIn}\nout:${bgmObj.fadeOut}`;
-      if (bgmObj.fadeIn > 0 && bgmObj.fadeOut === 0)
-        return `in:${bgmObj.fadeIn}`;
-      if (bgmObj.fadeIn === 0 && bgmObj.fadeOut > 0)
-        return `out:${bgmObj.fadeOut}`;
-      return "-";
-    };
-  }
-
-  private get linkageStr(): Function {
-    return (bgmObj: any): string => {
-      if (bgmObj.chatLinkage === 1)
-        return `【末尾文字】\n${bgmObj.chatLinkageSearch}`;
-      if (bgmObj.chatLinkage === 2)
-        return `【正規表現】\n${bgmObj.chatLinkageSearch}`;
-      return "なし";
-    };
-  }
 }
 </script>
 
