@@ -4,6 +4,7 @@
     :class="[
       storeObj.isLock ? 'isLock' : 'isUnLock',
       isHover ? 'hover' : '',
+      isMoving ? 'moving' : '',
       storeObj.isBorderHide ? 'isBorderHide' : ''
     ]"
     :style="floorTileStyle"
@@ -74,9 +75,14 @@ export default class FloorTile extends PieceMixin {
   white-space: nowrap;
   font-size: 12px;
   cursor: crosshair;
-  z-index: 100000000;
+  z-index: 200000000;
 
   &.hover {
+    z-index: 299999999;
+  }
+
+  &.hover.moving,
+  &.rolling {
     z-index: 999999999;
   }
 

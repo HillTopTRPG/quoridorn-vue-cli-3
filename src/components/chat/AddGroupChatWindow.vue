@@ -11,9 +11,25 @@
       <div class="scrollArea">
         <div>
           <label>
-            秘匿チャット<input type="checkbox" v-model="isSecret" />
+            秘匿チャット<input
+              type="checkbox"
+              v-model="isSecret"
+              @keydown.enter.stop
+              @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
+            />
           </label>
-          <label>名前<input type="text" v-model="name"/></label>
+          <label
+            >名前<input
+              type="text"
+              v-model="name"
+              @keydown.enter.stop
+              @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
+            />
+          </label>
           <label>
             出力先のタブ
             <ctrl-select
@@ -22,7 +38,16 @@
               :maxWidth="11"
             />
           </label>
-          <label>全体<input type="checkbox" v-model="isAll"/></label>
+          <label
+            >全体<input
+              type="checkbox"
+              v-model="isAll"
+              @keydown.enter.stop
+              @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
+            />
+          </label>
         </div>
         <div class="tableContainer">
           <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
@@ -54,6 +79,10 @@
                     "
                     @click.stop
                     :disabled="isAll"
+                    @keydown.enter.stop
+                    @keyup.enter.stop
+                    @keydown.229.stop
+                    @keyup.229.stop
                   />
                 </td>
                 <divider :index="0" prop="addGroupChatWindow" />

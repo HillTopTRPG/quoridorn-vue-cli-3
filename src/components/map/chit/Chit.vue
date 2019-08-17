@@ -3,6 +3,7 @@
     class="chit"
     :class="[
       isHover ? 'hover' : '',
+      isMoving ? 'moving' : '',
       storeObj.isBorderHide ? 'isBorderHide' : ''
     ]"
     :style="chitStyle"
@@ -76,9 +77,14 @@ export default class Chit extends PieceMixin {
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;
-  z-index: 200000000;
+  z-index: 300000000;
 
   &.hover {
+    z-index: 399999999;
+  }
+
+  &.hover.moving,
+  &.rolling {
     z-index: 999999999;
   }
 

@@ -9,6 +9,8 @@
       :disabled="disabled"
       @keydown.enter.stop
       @keyup.enter.stop
+      @keydown.229.stop
+      @keyup.229.stop
     />
     <span class="designed"></span>
     <span v-if="label && labelSide !== 'left'">{{ label }}</span>

@@ -121,6 +121,7 @@ export default class ChatLogViewer extends Vue {
   @include flex-box(column, normal, normal);
   position: relative;
   flex: 1;
+  height: 100%;
 }
 
 #chatLog {

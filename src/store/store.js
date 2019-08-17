@@ -176,6 +176,8 @@ export default new Vuex.Store({
       // state_settingの初期化
       commit("init_state_setting");
 
+      dispatch("onTest");
+
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定
        */
@@ -440,7 +442,11 @@ export default new Vuex.Store({
      */
     doReverseProperty: ({ getters, commit }, { property }) => {
       const target = getters.getStateValue(property);
-      const payload = { property, value: !target };
+      const payload = {
+        property,
+        value: !target,
+        logOff: true
+      };
       commit("doSetProperty", payload);
     },
 

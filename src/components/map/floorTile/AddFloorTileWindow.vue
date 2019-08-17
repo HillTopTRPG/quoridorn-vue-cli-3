@@ -38,6 +38,10 @@
         class="otherText"
         v-model="description"
         placeholder="説明"
+        @keydown.enter.stop
+        @keyup.enter.stop
+        @keydown.229.stop
+        @keyup.229.stop
       ></textarea>
     </div>
   </window-frame>

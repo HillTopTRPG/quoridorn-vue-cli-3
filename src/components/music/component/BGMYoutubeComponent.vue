@@ -92,8 +92,9 @@ export default class BGMYoutubeComponent extends Vue {
 
   private onReady() {}
 
-  private onPlaying(this: any, duration: number) {
-    const bgmCoreComponent: BGMCoreComponent = this.$refs.core! as BGMCoreComponent;
+  private onPlaying(duration: number) {
+    const bgmCoreComponent: BGMCoreComponent = this.$refs
+      .core as BGMCoreComponent;
     bgmCoreComponent.setDuration(duration);
     bgmCoreComponent.play();
   }
@@ -102,7 +103,7 @@ export default class BGMYoutubeComponent extends Vue {
     window.console.error(event);
   }
 
-  private onPaused(this: any) {
+  private onPaused() {
     const bgmCoreComponent: BGMCoreComponent = this.$refs
       .core as BGMCoreComponent;
     bgmCoreComponent.pause();

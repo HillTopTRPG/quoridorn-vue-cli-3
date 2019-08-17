@@ -10,7 +10,7 @@
     <div class="contents" @contextmenu.prevent>
       <draggable v-model="tabs">
         <template v-for="(tab, index) in tabs">
-          <label :key="tab.key">
+          <label :key="tab.key" draggable="false">
             <span v-if="tab.key === 'chatTab-1'">{{ tab.name }}</span>
             <input
               v-if="tab.key !== 'chatTab-1'"
@@ -18,6 +18,8 @@
               v-model="tab.name"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
             <ctrl-button
               v-if="tab.key !== 'chatTab-1'"
@@ -35,6 +37,8 @@
           v-model="isTabVertical"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
       <label>
@@ -43,6 +47,8 @@
           v-model="isLogViewTime"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
       <label>
@@ -51,6 +57,8 @@
           v-model="isLogViewAllTab"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
       <div class="operateArea">

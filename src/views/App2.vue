@@ -1,6 +1,6 @@
 <template>
   <div id="app2" @wheel.passive="onWheel">
-    <game-table ref="gameTable" />
+    <game-table ref="gameTable" @contextmenu.prevent />
     <div id="YoutubePlayerContainer">
       <div class="unUse"><div id="YoutubePlayer001"></div></div>
       <div class="unUse"><div id="YoutubePlayer002"></div></div>

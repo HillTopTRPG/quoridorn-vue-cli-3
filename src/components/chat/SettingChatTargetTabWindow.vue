@@ -18,6 +18,8 @@
             v-model="isTabVertical"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
       </div>
@@ -152,6 +154,7 @@ export default class SettingChatTargetTabWindow extends Mixins<WindowMixin>(
     const tabObj: any = this.groupTargetTabList.find(
       (tabObj: any) => tabObj.key === key
     );
+    if (tabObj.isAll) return true;
 
     const playerKey: string = this.playerKey;
     const fieldCharacters: any[] = this.getMapObjectList({

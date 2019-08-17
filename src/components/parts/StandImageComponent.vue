@@ -1,5 +1,10 @@
 <template>
-  <div class="stand-image" @click="onClick" @contextmenu.prevent>
+  <div
+    class="stand-image"
+    :style="standImageContainerStyle"
+    @click="onClick"
+    @contextmenu.prevent
+  >
     <canvas
       :width="canvasSize.w"
       :height="canvasSize.h"
@@ -24,6 +29,12 @@ interface Rectangle {
 export default class StandImageComponent extends Vue {
   @Prop({ type: Object, required: true })
   private standImage!: any;
+
+  @Prop({ type: Number, default: 192 })
+  private width!: number;
+
+  @Prop({ type: Number, default: 256 })
+  private height!: number;
 
   @Prop({ type: Boolean, default: true })
   private drawDiff!: boolean;
@@ -153,19 +164,26 @@ export default class StandImageComponent extends Vue {
     clearTimeout(this.timer);
   }
 
-  get standImageStyle(): any {
+  private get standImageContainerStyle(): any {
+    return {
+      width: `${this.width}px`,
+      height: `${this.height}px`
+    };
+  }
+
+  private get standImageStyle(): any {
     const canvasSize: any = this.canvasSize;
     if (canvasSize.w === 0 || canvasSize.h === 0) return {};
 
-    const ratioW: number = 192 / canvasSize.w;
-    const ratioH: number = 256 / canvasSize.h;
+    const ratioW: number = this.width / canvasSize.w;
+    const ratioH: number = this.height / canvasSize.h;
 
     const ratio: number = Math.min(ratioW, ratioH);
 
     const translate: number[] = [0, 0];
     if (ratioW < ratioH) {
       // 横長の場合は下寄せにする
-      translate[1] = 256 - canvasSize.h * ratio;
+      translate[1] = this.height - canvasSize.h * ratio;
     } else {
       // 縦長の場合は左寄せでいいので何もしない
     }
@@ -307,8 +325,6 @@ export default class StandImageComponent extends Vue {
 <style scoped lang="scss">
 .stand-image {
   position: relative;
-  width: 192px;
-  height: 256px;
 
   canvas {
     background-size: contain;

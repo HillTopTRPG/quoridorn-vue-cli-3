@@ -25,6 +25,8 @@
             list="input-player-info-window-players"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
           <datalist id="input-player-info-window-players">
             <option
@@ -41,6 +43,8 @@
             v-model="inputPlayerPassword"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
         <div class="description" v-if="!isPlayerExist">

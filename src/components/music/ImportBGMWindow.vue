@@ -49,54 +49,13 @@
             <!-- ===============================================================
               コンテンツ
             -->
-            <tr
+            <setting-bgm-tr-component
               v-for="bgmObj in bgmList"
               :key="bgmObj.key"
-              @click="selectLine(bgmObj.key)"
+              :bgmObj="bgmObj"
+              :windowParam="'importBGMWindow'"
               @dblclick="playBGM()"
-              :class="{ isActive: selectLineKey === bgmObj.key }"
-            >
-              <td :style="colStyle(0)" :title="linkageStr(bgmObj)">
-                {{ bgmObj.chatLinkage > 0 ? "あり" : "なし" }}
-              </td>
-              <divider :index="0" prop="importBGMWindow" />
-              <td :style="colStyle(1)">{{ bgmObj.tag }}</td>
-              <divider :index="1" prop="importBGMWindow" />
-              <td :style="colStyle(2)">
-                <i class="icon-stop2" v-if="!bgmObj.url"></i>
-                <i class="icon-youtube2" v-if="isYoutube(bgmObj.url)"></i>
-                <i class="icon-dropbox" v-if="isDropBox(bgmObj.url)"></i>
-                <i
-                  class="icon-file-music"
-                  v-if="
-                    bgmObj.url &&
-                      !isYoutube(bgmObj.url) &&
-                      !isDropBox(bgmObj.url)
-                  "
-                ></i>
-              </td>
-              <divider :index="2" prop="importBGMWindow" />
-              <td :style="colStyle(3)" class="selectable">
-                {{ bgmObj.title }}
-              </td>
-              <divider :index="3" prop="importBGMWindow" />
-              <td :style="colStyle(4)">
-                {{ bgmObj.url ? convertSecond(bgmObj.start, bgmObj.end) : "-" }}
-              </td>
-              <divider :index="4" prop="importBGMWindow" />
-              <td :style="colStyle(5)">
-                <i class="icon-loop" v-if="bgmObj.url && bgmObj.isLoop"></i
-                >{{ bgmObj.url && bgmObj.isLoop ? "" : "-" }}
-              </td>
-              <divider :index="5" prop="importBGMWindow" />
-              <td :style="colStyle(6)">
-                {{ bgmObj.url ? bgmObj.volume * 100 : "-" }}
-              </td>
-              <divider :index="6" prop="importBGMWindow" />
-              <td :style="colStyle(7)" :title="fadeTitle(bgmObj)">
-                {{ bgmObj.url ? fadeStr(bgmObj) : "-" }}
-              </td>
-            </tr>
+            />
             <tr class="space">
               <td :style="colStyle(0)"></td>
               <divider :index="0" prop="importBGMWindow" />
@@ -139,9 +98,16 @@ import { Action, Getter } from "vuex-class";
 import { Component, Mixins } from "vue-mixin-decorator";
 import ImportTypeRadio from "@/components/parts/radio/ImportTypeRadio.vue";
 import { Watch } from "vue-property-decorator";
+import SettingBgmTrComponent from "@/components/music/component/SettingBgmTrComponent.vue";
 
 @Component({
-  components: { ImportTypeRadio, CtrlButton, WindowFrame, Divider }
+  components: {
+    SettingBgmTrComponent,
+    ImportTypeRadio,
+    CtrlButton,
+    WindowFrame,
+    Divider
+  }
 })
 export default class ImportBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") private setProperty: any;
@@ -203,7 +169,8 @@ export default class ImportBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       }
       if (json.saveDataTypeName === "Quoridorn_BGM_01") {
         const regExp = new RegExp(/youtube/);
-        json.saveData.forEach((bgm: any) => {
+        json.saveData.forEach((bgm: any, index: number) => {
+          bgm.key = String(index);
           const url: string = bgm.url;
           if (!regExp.test(url)) bgm.url = this.decrypt({ cipherText: url });
         });

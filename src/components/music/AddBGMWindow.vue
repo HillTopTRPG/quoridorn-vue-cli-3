@@ -18,6 +18,8 @@
             ref="urlElm"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
       </fieldset>
@@ -32,6 +34,8 @@
               v-model="title"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
         </div>
@@ -44,6 +48,8 @@
               v-model="creditUrl"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
           <!-- クレジット取得 -->
@@ -65,6 +71,8 @@
               list="bgmTagComboboxValues"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
           <datalist id="bgmTagComboboxValues">
@@ -95,6 +103,8 @@
               v-model="playLength"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
           <!-- フェードイン -->
@@ -109,6 +119,8 @@
               placeholder="秒"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
           <!-- フェードアウト -->
@@ -123,6 +135,8 @@
               placeholder="秒"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
           <!-- 無限ループ -->
@@ -147,6 +161,8 @@
               v-model="forceReset"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
         </div>
@@ -172,6 +188,8 @@
               v-model="chatLinkageSearch"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
         </div>

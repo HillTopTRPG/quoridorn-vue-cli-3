@@ -5,6 +5,7 @@
     align="left-bottom"
     baseSize="-300, 300"
     :fontSizeBar="true"
+    :standImageSizeChooser="true"
     @globalEnter="globalEnter"
   >
     <div class="container">
@@ -76,6 +77,8 @@
             @click="diceBotSettingButtonOnClick"
             @keydown.space.stop="diceBotSettingButtonOnClick"
             @keydown.enter.stop="diceBotSettingButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 5"
           ></i>
         </span>
@@ -86,6 +89,8 @@
             @click="chatLogDeleteButtonOnClick"
             @keydown.space.stop="chatLogDeleteButtonOnClick"
             @keydown.enter.stop="chatLogDeleteButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 6"
           ></i>
         </span>
@@ -96,6 +101,8 @@
             @click="chatLogExportButtonOnClick"
             @keydown.space.stop="chatLogExportButtonOnClick"
             @keydown.enter.stop="chatLogExportButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 7"
           ></i>
         </span>
@@ -106,6 +113,8 @@
             @click="rollCallSettingButtonOnClick"
             @keydown.space.stop="rollCallSettingButtonOnClick"
             @keydown.enter.stop="rollCallSettingButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 8"
           ></i>
         </span>
@@ -116,6 +125,8 @@
             @click="alermSettingButtonOnClick"
             @keydown.space.stop="alermSettingButtonOnClick"
             @keydown.enter.stop="alermSettingButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 9"
           ></i>
         </span>
@@ -126,6 +137,8 @@
             @click="bgmSettingButtonOnClick"
             @keydown.space.stop="bgmSettingButtonOnClick"
             @keydown.enter.stop="bgmSettingButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 10"
           ></i>
         </span>
@@ -136,6 +149,8 @@
             @click="cutInSettingButtonOnClick"
             @keydown.space.stop="cutInSettingButtonOnClick"
             @keydown.enter.stop="cutInSettingButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 11"
           ></i>
         </span>
@@ -146,6 +161,8 @@
             @click="chatPaletteSettingButtonOnClick"
             @keydown.space.stop="chatPaletteSettingButtonOnClick"
             @keydown.enter.stop="chatPaletteSettingButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 12"
           ></i>
         </span>
@@ -156,6 +173,8 @@
             @click="standImageSettingButtonOnClick"
             @keydown.space.stop="standImageSettingButtonOnClick"
             @keydown.enter.stop="standImageSettingButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 13"
           ></i>
         </span>
@@ -166,6 +185,8 @@
             @click="rangeSettingButtonOnClick"
             @keydown.space.stop="rangeSettingButtonOnClick"
             @keydown.enter.stop="rangeSettingButtonOnClick"
+            @keydown.229.stop
+            @keyup.229.stop
             :tabindex="isModal ? -1 : chatTabs.length + 14"
           ></i>
         </span>
@@ -210,6 +231,8 @@
                 :disabled="isModal"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
               発言時に「」を付与
             </label>
@@ -631,7 +654,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
     'メッセージ（改行はShift + Enter）\n部分フォント変更は "&" を入力';
 
   private globalEnter() {
-    window.console.log("globalEnter at ChatWindow");
     const input: HTMLTextAreaElement = this.$refs.input as HTMLTextAreaElement;
     input.focus();
   }

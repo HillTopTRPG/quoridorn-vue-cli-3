@@ -17,6 +17,8 @@
         @change="selectFile"
         @keydown.enter.stop
         @keyup.enter.stop
+        @keydown.229.stop
+        @keyup.229.stop
       />
     </div>
     <ctrl-button @click="commit"><i class="icon-home3"></i> 作成</ctrl-button>

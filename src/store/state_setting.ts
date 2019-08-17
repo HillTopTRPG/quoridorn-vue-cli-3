@@ -1,10 +1,11 @@
 import CryptoJS from "crypto-js";
+// import { saveJson } from "@/components/common/Utility";
 
 export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.0",
+    version: "1.0.1",
     magicWord: "I walk slowly, but I never walk backward.",
     /** 接続情報 */
     connect: {
@@ -51,6 +52,23 @@ export default {
   } /* end of state */,
 
   actions: {
+    onTest({ rootGetters }: { rootGetters: any }) {
+      // const bgmList: any[] = [];
+      // if (!bgmList.length) return;
+      // const data: any = bgmList.map((bgm: any) => {
+      //   if (!/youtube/.test(bgm.url)) {
+      //     bgm.url = rootGetters.encrypt({ planeText: bgm.url });
+      //   }
+      //   if (bgm.forceReset === undefined) {
+      //     bgm.forceReset = true;
+      //   }
+      //   delete bgm.key;
+      //   return bgm;
+      // });
+      //
+      // saveJson("bgmData", { saveDataTypeName: "Quoridorn_BGM_01", saveData: data });
+    },
+
     /**
      * ダイスボット一覧を取得する
      * @param state

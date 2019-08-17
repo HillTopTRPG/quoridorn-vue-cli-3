@@ -19,6 +19,8 @@
             ref="input"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
         <label class="diceRoll h-box">
@@ -29,6 +31,8 @@
             v-model="diceRoll"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
         <label class="tableTitle h-box flex-max">
@@ -39,6 +43,8 @@
             v-model="tableTitle"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
       </div>

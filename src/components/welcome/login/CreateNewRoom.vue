@@ -20,6 +20,8 @@
         @keypress.enter.stop="commitRoomName"
         @keydown.enter.stop
         @keyup.enter.stop
+        @keydown.229.stop
+        @keyup.229.stop
       />
       <ctrl-button @click="commitRoomName">チェック</ctrl-button>
     </label>
@@ -47,6 +49,8 @@
           v-model="roomPassword"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
       <fieldset class="playerInfo">
@@ -60,6 +64,8 @@
               v-model="playerName"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
         </div>
@@ -69,6 +75,8 @@
             v-model="playerPassword"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
         <div class="description">
@@ -97,6 +105,8 @@
           @keypress.enter="roomProcess(false)"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
       <ctrl-button @click="roomProcess(false)">
@@ -129,6 +139,8 @@
           v-model="roomPassword"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
       <label class="roomSystem">
@@ -146,6 +158,8 @@
               v-model="playerName"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
         </div>
@@ -155,6 +169,8 @@
             v-model="playerPassword"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
         <div class="description">

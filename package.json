@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "npm run build-chat-log && vue-cli-service serve --open",
+    "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build && npm run build-chat-log",
     "create-zip": "scripts/create-zip.sh",
     "build-chat-log": "scripts/build-chat-log.sh",
@@ -50,7 +50,7 @@
     "eslint-plugin-vue": "^5.2.3",
     "lint-staged": "^7.2.2",
     "node-sass": "^4.12.0",
-    "sass-loader": "^7.0.1",
+    "sass-loader": "^7.2.0",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {

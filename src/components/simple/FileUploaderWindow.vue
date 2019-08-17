@@ -55,6 +55,8 @@
           v-model="inputImageTag"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
         <image-tag-select class="tagSelect" v-model="selectImageTag" />
       </div>
@@ -107,6 +109,7 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
   private useImageList: any[] = [];
   private hoverImageKey: number | null = null;
   private committed: boolean = false;
+  private windowMessage: string = "";
 
   private open() {
     this.inputImageTag = "キャラクター";
@@ -114,6 +117,7 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
     this.useImageList = [];
     this.hoverImageKey = null;
     this.committed = false;
+    this.windowMessage = "";
 
     const button: CtrlFileSelector = this.$refs.button as CtrlFileSelector;
     button.requestFocus();
@@ -177,6 +181,7 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
       this.useImageList = this.useImageList.concat(values);
       event.target.value = "";
     });
+    this.windowMessage = "";
   }
 
   private get imageTagObjList(): any[] {
@@ -213,7 +218,9 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
       imageObj => imageObj.key === this.hoverImageKey
     )[0];
 
-    return imageObj ? imageObj.name : "";
+    if (imageObj) return imageObj.name;
+
+    return this.windowMessage;
   }
 
   private commitOnClick() {
@@ -229,6 +236,7 @@ export default class FileUploaderWindow extends Mixins<WindowMixin>(
       });
     });
     this.open();
+    this.windowMessage = "画像の読み込みが完了しました。";
   }
 
   private cancelOnClick() {

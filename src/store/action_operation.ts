@@ -250,6 +250,9 @@ export default {
       payload: any
     ) => {
       payload.owner = payload.owner || rootGetters.playerKey;
+      if (!payload.name) {
+        payload.name = rootGetters.getViewName(rootGetters.chatActorKey);
+      }
       dispatch("sendNoticeOperation", {
         value: payload,
         method: "doAddChatLog"

@@ -3,11 +3,12 @@
     class="character"
     :class="[
       isThisRolling ? 'rolling' : '',
+      isMoving ? 'moving' : '',
       isHover ? 'hover' : '',
       isBorderHide ? 'isBorderHide' : ''
     ]"
     :style="characterStyle"
-    :title="storeObj.text"
+    :title="storeObj.text[0].text"
     :id="storeObj.key"
     @click.right.prevent="
       e => openContext(e, 'private.display.characterContext')
@@ -364,10 +365,14 @@ export default class Character extends PieceMixin {
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;
-  z-index: 600000000;
+  z-index: 800000000;
   overflow: visible;
 
-  &.hover,
+  &.hover {
+    z-index: 899999999;
+  }
+
+  &.hover.moving,
   &.rolling {
     z-index: 999999999;
   }

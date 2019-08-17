@@ -29,6 +29,8 @@
             ref="sendLineInput"
             @keydown.enter.stop="sendLine(actor, null)"
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
           <ctrl-button @click="sendLine(actor, null)">送信</ctrl-button>
         </div>
@@ -45,8 +47,8 @@
           <ctrl-button @click="doImport(actor)">ロード</ctrl-button>
         </div>
 
-        <ul class="chat-palette">
-          <li
+        <div class="chat-palette">
+          <div
             v-for="(chatPaletteLine, index) in actor.chatPalette.list"
             :key="index"
             @dblclick="sendLine(actor, chatPaletteLine)"
@@ -54,15 +56,15 @@
             :class="{ isActive: selectedIndex === index }"
           >
             {{ chatPaletteLine }}
-          </li>
-          <li
+          </div>
+          <div
             class="space"
             :class="{
               isOdd: actor.chatPalette.list.length % 2,
               isEven: !(actor.chatPalette.list.length % 2)
             }"
-          ></li>
-        </ul>
+          ></div>
+        </div>
       </div>
     </actor-tab-component>
   </div>
@@ -257,12 +259,13 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
     @include flex-box(column, stretch, center);
     position: relative;
     flex: 1;
+    height: 100%;
 
     > *:not(.chat-palette) {
       font-size: 12px;
     }
 
-    ul.chat-palette {
+    .chat-palette {
       @include flex-box(column, stretch, flex-start);
       position: relative;
       list-style: none;
@@ -275,7 +278,7 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
       max-width: 327px;
       overflow: auto;
 
-      li {
+      > div {
         @include inline-flex-box(row, flex-start, center);
         height: 2em;
         min-height: 2em;
@@ -295,7 +298,7 @@ export default class ChatPaletteSettingWindow extends Mixins<WindowMixin>(
         }
       }
 
-      li.space {
+      > div.space {
         flex: 1;
         width: 100%;
 

@@ -75,8 +75,12 @@ export default class BGMFileComponent extends Vue {
   private jukeboxAudio: any = null;
 
   onMounted(this: any): void {
-    window.console.log(this.url);
-    const useUrl = this.url.replace(/^(.+dropbox.+\?dl)=0$/, "$1=1");
+    const useUrl = this.url
+      .replace(/^(.+dropbox.+\?dl)=0$/, "$1=1")
+      .replace(
+        /(drive.google.com\/)file\/d\/([^/]+)(?:.+)?/,
+        "$1/uc?export=download&id=$2"
+      );
 
     const bgmCoreComponent: BGMCoreComponent = this.$refs
       .core as BGMCoreComponent;
@@ -93,9 +97,9 @@ export default class BGMFileComponent extends Vue {
       bgmCoreComponent.setDuration(this.jukeboxAudio.duration);
       bgmCoreComponent.play();
     });
-    this.jukeboxAudio.addEventListener("progress", () =>
-      window.console.log("progress")
-    );
+    // this.jukeboxAudio.addEventListener("progress", () =>
+    //   window.console.log("progress")
+    // );
     this.jukeboxAudio.addEventListener("emptied", () =>
       window.console.log("emptied")
     );
@@ -111,12 +115,11 @@ export default class BGMFileComponent extends Vue {
     this.jukeboxAudio.addEventListener("ended", () =>
       window.console.log("ended")
     );
-    this.jukeboxAudio.addEventListener("suspend", () =>
-      window.console.log("suspend")
-    );
+    // this.jukeboxAudio.addEventListener("suspend", () =>
+    //   window.console.log("suspend")
+    // );
     // DropBox共有リンク対応
     this.jukeboxAudio.src = useUrl;
-    window.console.log(this.jukeboxAudio.src);
   }
 
   onDestroyed(): void {

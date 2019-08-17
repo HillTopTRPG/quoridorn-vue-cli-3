@@ -6,19 +6,23 @@
     dropzone="move"
     id="gameTable"
     @keydown.enter.stop="globalEnter"
+    @keyup.enter.stop
+    @keydown.229.stop
+    @keyup.229.stop
+    @contextmenu.prevent.stop
   >
     <div :style="gridPaperStyle" @contextmenu.prevent></div>
 
     <div
       id="mapBoardFrame"
-      @mousedown.left.prevent="leftDown"
-      @mousedown.right.prevent="rightDown"
-      @mouseup.left.prevent="leftUp"
-      @mouseup.right.prevent="rightUp"
-      @touchcancel.prevent="leftUp"
-      @touchend.prevent="leftUp"
-      @touchstart.prevent="leftDown"
-      @contextmenu.prevent
+      @contextmenu.prevent.stop
+      @mousedown.left.prevent.stop="leftDown"
+      @mousedown.right.prevent.stop="rightDown"
+      @mouseup.left.prevent.stop="leftUp"
+      @mouseup.right.prevent.stop="rightUp"
+      @touchcancel.prevent.stop="leftUp"
+      @touchend.prevent.stop="leftUp"
+      @touchstart.prevent.stop="leftDown"
     >
       <map-board />
     </div>
@@ -147,7 +151,6 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   }
 
   private globalEnter() {
-    window.console.log("globalEnter at GameTable");
     this.setProperty({
       property: "private.display.chatWindow.command",
       logOff: true,
@@ -333,7 +336,9 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
           value: obj,
           logOff: true
         });
-        this.windowOpen(`private.display.gameTableContext`);
+        setTimeout(() => {
+          this.windowOpen(`private.display.gameTableContext`);
+        });
         // qLog(`  [methods] open context => gameTableContext`);
       }
     } else {

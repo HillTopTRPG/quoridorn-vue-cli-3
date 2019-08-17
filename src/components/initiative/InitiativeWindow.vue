@@ -183,6 +183,8 @@
                     "
                     @keydown.enter.stop
                     @keyup.enter.stop
+                    @keydown.229.stop
+                    @keyup.229.stop
                   />
                 </label>
               </td>
@@ -207,6 +209,8 @@
                     "
                     @keydown.enter.stop
                     @keyup.enter.stop
+                    @keydown.229.stop
+                    @keyup.229.stop
                   />
                 </label>
               </td>
@@ -258,6 +262,8 @@
                       }"
                       @keydown.enter.stop
                       @keyup.enter.stop
+                      @keydown.229.stop
+                      @keyup.229.stop
                     />
                   </label>
                   <label v-if="property.type === 'number'">
@@ -283,6 +289,8 @@
                       }"
                       @keydown.enter.stop
                       @keyup.enter.stop
+                      @keydown.229.stop
+                      @keyup.229.stop
                     />
                   </label>
                   <label v-if="property.type === 'max'">
@@ -313,6 +321,8 @@
                       }"
                       @keydown.enter.stop
                       @keyup.enter.stop
+                      @keydown.229.stop
+                      @keyup.229.stop
                     />
                   </label>
                   <color-check-box
@@ -336,7 +346,7 @@
               />
               <td :style="colStyle(4 + propertyList.length)">
                 <label>
-                  <textarea :value="character.text" readonly></textarea>
+                  <textarea :value="character.text[0].text" readonly></textarea>
                 </label>
               </td>
             </tr>
