@@ -4,6 +4,7 @@
     :class="[
       storeObj.isLock ? 'isLock' : 'isUnLock',
       isHover ? 'hover' : '',
+      isMoving ? 'moving' : '',
       storeObj.isBorderHide ? 'isBorderHide' : ''
     ]"
     :style="mapMaskStyle"
@@ -74,6 +75,11 @@ export default class MapMask extends PieceMixin {
 
   &.hover {
     z-index: 599999999;
+  }
+
+  &.hover.moving,
+  &.rolling {
+    z-index: 999999999;
   }
 
   &:before {

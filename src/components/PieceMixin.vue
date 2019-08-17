@@ -13,6 +13,7 @@ export default class CanvasMixin extends AddressCalcMixin {
   @Getter("isFitGrid") protected isFitGrid: any;
   @Getter("getObj") protected getObj: any;
   @Getter("isRolling") protected isRolling: any;
+  @Getter("isMoving") protected isMoving: any;
   @Getter("rollObj") protected rollObj: any;
   @Getter("gridSize") protected gridSize: any;
   @Getter("marginGridSize") protected marginGridSize: any;

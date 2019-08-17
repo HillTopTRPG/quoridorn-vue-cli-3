@@ -3,6 +3,7 @@
     class="character"
     :class="[
       isThisRolling ? 'rolling' : '',
+      isMoving ? 'moving' : '',
       isHover ? 'hover' : '',
       isBorderHide ? 'isBorderHide' : ''
     ]"
@@ -367,9 +368,13 @@ export default class Character extends PieceMixin {
   z-index: 800000000;
   overflow: visible;
 
-  &.hover,
-  &.rolling {
+  &.hover {
     z-index: 899999999;
+  }
+
+  &.hover.moving,
+  &.rolling {
+    z-index: 999999999;
   }
 
   &:before {

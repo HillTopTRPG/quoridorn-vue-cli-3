@@ -1,7 +1,11 @@
 <template>
   <div
     class="diceSymbol"
-    :class="[isHover ? 'hover' : '', storeObj.isHide ? 'isHide' : '']"
+    :class="[
+      isHover ? 'hover' : '',
+      isMoving ? 'moving' : '',
+      storeObj.isHide ? 'isHide' : ''
+    ]"
     :style="chitStyle"
     :id="storeObj.key"
     @click.right.prevent="
@@ -99,9 +103,13 @@ export default class DiceSymbol extends PieceMixin {
   border-radius: 3px;
   z-index: 700000000;
 
-  &.hover,
-  &.rolling {
+  &.hover {
     z-index: 799999999;
+  }
+
+  &.hover.moving,
+  &.rolling {
+    z-index: 999999999;
   }
 
   &.isHide {
