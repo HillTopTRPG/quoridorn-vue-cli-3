@@ -227,8 +227,8 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Action("setProperty") private setProperty: any;
   @Action("windowOpen") private windowOpen: any;
   @Action("windowClose") private windowClose: any;
+  @Action("changeListObj") private changeListObj: any;
   @Getter("parseColor") private parseColor: any;
-  @Getter("changeListObj") private changeListObj: any;
 
   private initWindow() {
     const key = this.key;
@@ -296,6 +296,7 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       value: {
         command: "add",
         payload: {
+          key: this.key || "",
           url: this.url,
           title: this.title,
           creditUrl: this.creditUrl,
