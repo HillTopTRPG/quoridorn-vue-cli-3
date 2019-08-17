@@ -273,7 +273,7 @@ export default class EditBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       fadeOut: Math.floor(parseFloat(String(this.fadeOut)) * 10) / 10,
       isMute: this.isMute,
       volume: this.volume,
-      chatLinkage: this.chatLinkage,
+      chatLinkage: parseInt(this.chatLinkage, 10),
       chatLinkageSearch: this.chatLinkageSearch,
       forceReset: this.forceReset
     });
