@@ -165,7 +165,8 @@ export default class BGMCoreComponent extends Vue {
   }
 
   thumbnailClick(this: any): void {
-    window.open(this.creditUrl || this.url, "_blank");
+    if (/www\.youtube\.com/.test(this.url))
+      window.open(this.creditUrl || this.url, "_blank");
   }
   audioMute(this: any): void {
     const volumeComponent: VolumeComponent = this.$refs
@@ -238,9 +239,8 @@ export default class BGMCoreComponent extends Vue {
   }
 
   fadeProc() {
-    const volumeComponent: VolumeComponent = <VolumeComponent>(
-      this.$refs.volumeComponent
-    );
+    const volumeComponent: VolumeComponent = this.$refs
+      .volumeComponent as VolumeComponent;
     let isProcessed: boolean = false;
     if (this.fadeIn) {
       this.fadeInTable.forEach((time, index) => {
