@@ -21,12 +21,14 @@ export default class ChatTabSelect extends Mixins<SelectMixin>(SelectMixin) {
   @Getter("chatTabs") private chatTabs: any;
 
   private get optionInfoList(): any[] {
-    const resultList = this.chatTabs.map((tabObj: any) => ({
-      key: tabObj.key,
-      value: tabObj.key,
-      text: tabObj.name,
-      disabled: false
-    }));
+    const resultList = this.chatTabs
+      .filter((tabObj: any) => !tabObj.isTotal)
+      .map((tabObj: any) => ({
+        key: tabObj.key,
+        value: tabObj.key,
+        text: tabObj.name,
+        disabled: false
+      }));
 
     resultList.unshift({
       key: "",
