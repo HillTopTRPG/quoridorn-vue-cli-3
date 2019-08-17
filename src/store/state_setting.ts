@@ -1,5 +1,5 @@
 import CryptoJS from "crypto-js";
-import { saveJson } from "@/components/common/Utility";
+// import { saveJson } from "@/components/common/Utility";
 
 export default {
   // FIXME settingのデータは別経路で保存する？

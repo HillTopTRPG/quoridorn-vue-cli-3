@@ -44,8 +44,7 @@ export default class CanvasMixin extends AddressCalcMixin {
       w: this.mouseOnTable.x - rect.left,
       h: this.mouseOnTable.y - rect.top
     };
-    this.changeListObj({
-      key: this.objKey,
+    const pieceObj = {
       move: {
         from: {
           x: this.mouseOnTable.x,
@@ -57,6 +56,11 @@ export default class CanvasMixin extends AddressCalcMixin {
         }
       },
       isDraggingLeft: true
+    };
+    this.setProperty({
+      property: `public.${this.type}.list.${this.storeIndex}`,
+      value: pieceObj,
+      logOff: true
     });
   }
 
@@ -65,11 +69,7 @@ export default class CanvasMixin extends AddressCalcMixin {
       this.$emit("leftUp");
       return;
     }
-    this.setProperty({
-      property: `map.moveObj.isMoving`,
-      value: false,
-      logOff: true
-    });
+    // window.console.log(`  [methods] mouseup left on ${this.type}`)
     const locate = {
       x: this.mouseOnTable.x - this.storeObj.move.gridOffset.x * this.gridSize,
       y: this.mouseOnTable.y - this.storeObj.move.gridOffset.y * this.gridSize
@@ -78,8 +78,7 @@ export default class CanvasMixin extends AddressCalcMixin {
       locate.x = (Math.ceil(locate.x / this.gridSize) - 1) * this.gridSize;
       locate.y = (Math.ceil(locate.y / this.gridSize) - 1) * this.gridSize;
     }
-    this.changeListObj({
-      key: this.objKey,
+    const pieceObj = {
       left: locate.x,
       top: locate.y,
       move: {
@@ -93,6 +92,12 @@ export default class CanvasMixin extends AddressCalcMixin {
         }
       },
       isDraggingLeft: false
+    };
+    this.setProperty({
+      property: `public.${this.type}.list.${this.storeIndex}`,
+      value: pieceObj,
+      logOff: true,
+      isNotice: true
     });
   }
 
@@ -216,6 +221,12 @@ export default class CanvasMixin extends AddressCalcMixin {
 
   protected get storeObj() {
     return this.getObj(this.objKey);
+  }
+
+  protected get storeIndex() {
+    return this.$store.state.public[this.type].list.findIndex(
+      (obj: any) => obj.key === this.objKey
+    );
   }
 
   protected get angle() {
