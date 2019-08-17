@@ -76,10 +76,10 @@ export default class Chit extends PieceMixin {
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;
-  z-index: 200000000;
+  z-index: 300000000;
 
   &.hover {
-    z-index: 999999999;
+    z-index: 399999999;
   }
 
   &:before {

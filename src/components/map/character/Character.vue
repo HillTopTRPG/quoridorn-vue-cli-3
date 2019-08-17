@@ -364,12 +364,12 @@ export default class Character extends PieceMixin {
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;
-  z-index: 600000000;
+  z-index: 800000000;
   overflow: visible;
 
   &.hover,
   &.rolling {
-    z-index: 999999999;
+    z-index: 899999999;
   }
 
   &:before {

@@ -97,11 +97,11 @@ export default class DiceSymbol extends PieceMixin {
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;
-  z-index: 100000000;
+  z-index: 700000000;
 
   &.hover,
   &.rolling {
-    z-index: 999999999;
+    z-index: 799999999;
   }
 
   &.isHide {
