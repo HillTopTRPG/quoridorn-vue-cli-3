@@ -13,6 +13,8 @@
         v-model="text"
         @keydown.enter.stop
         @keyup.enter.stop
+        @keydown.229.stop
+        @keyup.229.stop
         ref="input"
       ></textarea>
 

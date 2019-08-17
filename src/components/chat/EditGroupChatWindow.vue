@@ -16,6 +16,8 @@
               v-model="isSecret"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
           <label
@@ -24,6 +26,8 @@
               v-model="name"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
           <label>
@@ -40,6 +44,8 @@
               v-model="isAll"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </label>
         </div>
@@ -75,6 +81,8 @@
                     :disabled="isAll"
                     @keydown.enter.stop
                     @keyup.enter.stop
+                    @keydown.229.stop
+                    @keyup.229.stop
                   />
                 </td>
                 <divider :index="0" prop="editGroupChatWindow" />

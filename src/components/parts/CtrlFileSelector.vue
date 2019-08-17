@@ -12,6 +12,8 @@
       ref="input"
       @keydown.enter.stop
       @keyup.enter.stop
+      @keydown.229.stop
+      @keyup.229.stop
     />
     <span class="front-area"><slot /></span>
     <span class="background-area"></span>

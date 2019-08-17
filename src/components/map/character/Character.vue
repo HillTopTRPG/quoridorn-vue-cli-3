@@ -7,7 +7,7 @@
       isBorderHide ? 'isBorderHide' : ''
     ]"
     :style="characterStyle"
-    :title="storeObj.text"
+    :title="storeObj.text[0].text"
     :id="storeObj.key"
     @click.right.prevent="
       e => openContext(e, 'private.display.characterContext')

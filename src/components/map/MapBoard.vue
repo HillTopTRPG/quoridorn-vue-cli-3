@@ -5,8 +5,11 @@
     :width="canvasSize.w"
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
-    @contextmenu.prevent
     @keydown.enter.stop="grobalEnter"
+    @keyup.enter.stop
+    @keydown.229.stop
+    @keyup.229.stop
+    @contextmenu.prevent
   >
   </canvas>
 </template>

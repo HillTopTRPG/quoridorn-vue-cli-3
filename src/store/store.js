@@ -176,6 +176,8 @@ export default new Vuex.Store({
       // state_settingの初期化
       commit("init_state_setting");
 
+      dispatch("onTest");
+
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定
        */

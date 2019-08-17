@@ -55,6 +55,8 @@
           v-model="inputImageTag"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
         <image-tag-select class="tagSelect" v-model="selectImageTag" />
       </div>

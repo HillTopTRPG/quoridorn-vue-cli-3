@@ -75,6 +75,8 @@
                       :disabled="status.standImage.isSystemLock"
                       @keydown.enter.stop
                       @keyup.enter.stop
+                      @keydown.229.stop
+                      @keyup.229.stop
                     />
                   </label>
                   <ctrl-button
@@ -93,6 +95,8 @@
                     :disabled="status.standImage.isSystemLock || true"
                     @keydown.enter.stop
                     @keyup.enter.stop
+                    @keydown.229.stop
+                    @keyup.229.stop
                   />
                 </label>
                 <label>
@@ -109,6 +113,8 @@
                     :disabled="status.standImage.isSystemLock"
                     @keydown.enter.stop
                     @keyup.enter.stop
+                    @keydown.229.stop
+                    @keyup.229.stop
                   />
                   秒
                 </label>
@@ -130,6 +136,8 @@
                     :disabled="status.standImage.isSystemLock"
                     @keydown.enter.stop
                     @keyup.enter.stop
+                    @keydown.229.stop
+                    @keyup.229.stop
                   />右
                 </label>
               </div>

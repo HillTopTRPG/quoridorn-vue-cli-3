@@ -25,6 +25,8 @@
             v-model="is_Continuous"
             @keydown.enter.stop
             @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />複数作成</label
         >
         <span>連番：</span
@@ -35,6 +37,8 @@
           :disabled="!isContinuous"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </div>
     </div>

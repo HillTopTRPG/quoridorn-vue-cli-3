@@ -19,6 +19,8 @@
           v-model="x"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
       <label
@@ -27,6 +29,8 @@
           v-model="y"
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
       <ctrl-select v-model="type" :optionInfoList="optionInfoList" />

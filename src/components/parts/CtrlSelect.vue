@@ -11,6 +11,8 @@
       }"
       @keydown.enter.stop
       @keyup.enter.stop
+      @keydown.229.stop
+      @keyup.229.stop
     >
       <option
         v-for="optionInfo in optionInfoList"

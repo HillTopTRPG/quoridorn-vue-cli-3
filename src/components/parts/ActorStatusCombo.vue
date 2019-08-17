@@ -8,6 +8,8 @@
       @change="event => changeValue(event.target.value)"
       @keydown.enter.stop
       @keyup.enter.stop
+      @keydown.229.stop
+      @keyup.229.stop
     />
     <datalist id="actorStatus">
       <option v-for="status in useStatusList" :key="status" :value="status">

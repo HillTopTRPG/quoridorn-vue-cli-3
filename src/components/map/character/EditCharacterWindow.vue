@@ -74,6 +74,8 @@
                 v-model="name"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
             </label>
           </div>
@@ -87,6 +89,8 @@
                 v-model="size"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
             </label>
             <label @contextmenu.prevent>
@@ -96,6 +100,8 @@
                 v-model="isHide"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
               <span>
                 マップマスクの下に隠す
@@ -112,6 +118,8 @@
                 placeholder="キャラクターシートのURL"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
             </label>
           </div>
@@ -119,7 +127,14 @@
 
         <label class="v-box flex-max">
           <span @contextmenu.prevent>その他</span>
-          <textarea class="otherText flex-max" v-model="text"></textarea>
+          <textarea
+            class="otherText flex-max"
+            v-model="text"
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
+          ></textarea>
         </label>
       </div>
 
@@ -264,7 +279,7 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
         .join("|"),
       isHide: this.isHide,
       url: this.url,
-      text: this.text,
+      text: [this.text],
       useImageIndex: 0,
       currentImageTag: this.currentImageTag
     });
@@ -296,7 +311,8 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
     this.size = characterObj.columns;
     this.isHide = characterObj.isHide;
     this.url = characterObj.url;
-    this.text = characterObj.text;
+    const textObj = characterObj.text.filter((t: any) => t.kind === "text")[0];
+    this.text = textObj ? textObj.text : "";
     this.selectImage = this.switchImageList[this.switchCurrentKey].imgKey;
   }
 
@@ -354,6 +370,7 @@ export default class EditCharacterWindow extends Mixins<WindowMixin>(
   }
 }
 .imageSelector {
+  max-height: 199px;
 }
 .switchImageArea {
   display: flex;

@@ -29,6 +29,8 @@
                 v-model="edit.totalRow"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
             /></label>
           </div>
           <div class="totalColumn">
@@ -40,6 +42,8 @@
                 v-model="edit.totalColumn"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
             /></label>
           </div>
           <div class="gridColor">
@@ -50,6 +54,8 @@
                 v-model="edit.gridColor"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
             /></label>
           </div>
         </div>
@@ -66,6 +72,8 @@
                 v-model="edit.marginGridSize"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
             /></label>
           </div>
           <div class="borderWidth">
@@ -77,6 +85,8 @@
                 v-model="edit.borderWidth"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
             /></label>
           </div>
           <div class="isUseImage">
@@ -86,6 +96,8 @@
                 v-model="edit.isUseImage"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
             </label>
           </div>
@@ -96,7 +108,11 @@
               >被せ色：<input
                 type="color"
                 class="size"
-                v-model="edit.maskColor"/><input
+                v-model="edit.maskColor"
+                @keydown.enter.stop
+                @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop/><input
                 type="range"
                 class="maskAlpha"
                 min="0"
@@ -105,19 +121,27 @@
                 v-model="edit.maskAlpha"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
             /></label>
           </div>
           <div class="isUseGridColor">
             <label
               >方眼罫線：<input
                 type="checkbox"
-                v-model="edit.isUseGridColor"/><input
+                v-model="edit.isUseGridColor"
+                @keydown.enter.stop
+                @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop/><input
                 v-show="edit.isUseGridColor"
                 type="color"
                 class="size"
                 v-model="edit.marginGridColor"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
             /></label>
           </div>
         </div>
@@ -133,6 +157,8 @@
                 v-model="edit.backgroundColor"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
             /></label>
           </div>
         </div>

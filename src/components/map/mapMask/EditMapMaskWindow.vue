@@ -17,6 +17,8 @@
               v-model="name"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </td>
           <td rowspan="6" class="mapMaskGrid">
@@ -31,6 +33,8 @@
               v-model="color"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </td>
         </tr>
@@ -43,6 +47,8 @@
               v-model="height"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </td>
         </tr>
@@ -55,6 +61,8 @@
               v-model="width"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </td>
         </tr>
@@ -66,6 +74,8 @@
               v-model="transparency"
               @keydown.enter.stop
               @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
           </td>
         </tr>

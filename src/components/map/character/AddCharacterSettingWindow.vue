@@ -76,6 +76,8 @@
                 ref="input"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
             </label>
           </div>
@@ -89,6 +91,8 @@
                 v-model="size"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
             </label>
             <label @contextmenu.prevent>
@@ -98,6 +102,8 @@
                 v-model="isHide"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
               <span>
                 マップマスクの下に隠す
@@ -114,6 +120,8 @@
                 placeholder="キャラクターシートのURL"
                 @keydown.enter.stop
                 @keyup.enter.stop
+                @keydown.229.stop
+                @keyup.229.stop
               />
             </label>
           </div>
@@ -121,7 +129,14 @@
 
         <label class="v-box flex-max">
           <span @contextmenu.prevent>その他</span>
-          <textarea class="otherText flex-max" v-model="text"></textarea>
+          <textarea
+            class="otherText flex-max"
+            v-model="text"
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
+          ></textarea>
         </label>
       </div>
 
@@ -343,6 +358,7 @@ export default class AddCharacterSettingWindow extends Mixins<WindowMixin>(
   }
 }
 .imageSelector {
+  max-height: 199px;
 }
 .switchImageArea {
   display: flex;

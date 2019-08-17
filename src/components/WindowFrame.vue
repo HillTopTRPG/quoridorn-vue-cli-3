@@ -39,6 +39,8 @@
           @mousedown.stop
           @keydown.enter.stop
           @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         />
       </label>
 
@@ -49,6 +51,8 @@
           @click.left.prevent.stop="closeWindow"
           @keydown.space.stop="closeWindow"
           @keydown.enter.stop="closeWindow"
+          @keydown.229.stop
+          @keyup.229.stop
           :tabindex="0"
         ></i>
       </span>

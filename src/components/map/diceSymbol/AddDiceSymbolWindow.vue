@@ -17,6 +17,10 @@
             :max="faceNum"
             v-model="pips"
             ref="input"
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </label>
         <label>
@@ -39,7 +43,14 @@
           />
         </label>
         <label>
-          <input type="checkbox" v-model="isHide" />
+          <input
+            type="checkbox"
+            v-model="isHide"
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
+          />
           <span>ダイス目を隠して置く</span>
         </label>
       </div>
