@@ -612,7 +612,7 @@ export default new Vuex.Store({
     loadYaml: state =>
       /**
        * 指定されたURLのyamlを読み込み、オブジェクトを返却する
-       * @param confFilePath yamlファイルのURL
+       * @param yamlPath yamlファイルのURL
        * @returns {*}
        */
       yamlPath => {
@@ -624,6 +624,26 @@ export default new Vuex.Store({
             window.console.log(
               "yamlファイルの読み込みに失敗しました",
               yamlPath
+            );
+            throw err;
+          });
+      },
+
+    loadJson: state =>
+      /**
+       * 指定されたURLのjsonを読み込み、オブジェクトを返却する
+       * @param jsonPath jsonファイルのURL
+       * @returns {*}
+       */
+      jsonPath => {
+        return window
+          .fetch(process.env.BASE_URL + jsonPath)
+          .then(responce => responce.text())
+          .then(text => JSON.parse(text))
+          .catch(err => {
+            window.console.log(
+              "jsonファイルの読み込みに失敗しました",
+              jsonPath
             );
             throw err;
           });

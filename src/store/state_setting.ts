@@ -5,7 +5,7 @@ export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.1",
+    version: "1.0.2",
     magicWord: "I walk slowly, but I never walk backward.",
     /** 接続情報 */
     connect: {
@@ -53,20 +53,40 @@ export default {
 
   actions: {
     onTest({ rootGetters }: { rootGetters: any }) {
-      // const bgmList: any[] = [];
-      // if (!bgmList.length) return;
-      // const data: any = bgmList.map((bgm: any) => {
-      //   if (!/youtube/.test(bgm.url)) {
-      //     bgm.url = rootGetters.encrypt({ planeText: bgm.url });
-      //   }
-      //   if (bgm.forceReset === undefined) {
-      //     bgm.forceReset = true;
-      //   }
-      //   delete bgm.key;
-      //   return bgm;
-      // });
-      //
-      // saveJson("bgmData", { saveDataTypeName: "Quoridorn_BGM_01", saveData: data });
+      // 特定の位置にファイルが置いてあったら変換する
+      rootGetters
+        .loadJson("/static/mod/bgm.json")
+        .then((bgmJson: any) => {
+          const bgmList: any[] = bgmJson.saveData;
+          if (!bgmList.length) return;
+          const data: any = bgmList.map((bgm: any) => {
+            if (!/youtube/.test(bgm.url)) {
+              window.console.log("-----------------------------------------------------");
+              window.console.log(bgm.url);
+              bgm.url = rootGetters.decrypt({ cipherText: bgm.url });
+              window.console.log(bgm.url);
+            }
+            if (bgm.forceReset === undefined) {
+              bgm.forceReset = true;
+            }
+            delete bgm.key;
+            return bgm;
+          });
+
+          setTimeout(() => {
+            window.console.log(
+              "-----------------------------------------------------",
+              bgmList
+            );
+            saveJson("bgmData", {
+              saveDataTypeName: "Quoridorn_BGM_01",
+              saveData: data
+            });
+          }, 500);
+        })
+        .catch(() => {
+
+      });
     },
 
     /**
