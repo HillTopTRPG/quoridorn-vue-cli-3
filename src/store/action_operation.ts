@@ -55,7 +55,7 @@ export default {
               isSecretDice = json.secret;
               dices = json.dices;
 
-              window.console.log(json);
+              // window.console.log(json);
 
               diceRollResult = resultStr
                 .replace(/(^: )/g, "")
