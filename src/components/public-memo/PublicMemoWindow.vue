@@ -20,6 +20,10 @@
           v-if="isEditMode && !isPreview"
           @input="textareaOnInput"
           placeholder="タイトル"
+          @keydown.enter.stop
+          @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
         ></textarea>
       </div>
 
@@ -44,6 +48,10 @@
             @change="addTab"
             placeholder="追加タブの名前"
             ref="input"
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           />
         </span>
       </div>
@@ -186,10 +194,17 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
       this.editingPublicMemoData = JSON.parse(
         JSON.stringify(this.publicMemoObj)
       );
-    });
 
-    const input: HTMLInputElement = this.$refs.input as HTMLInputElement;
-    input.focus();
+      setTimeout(() => {
+        const surfaceElm: SurfaceComponent = this.$refs
+          .surfaceElm as SurfaceComponent;
+        if (surfaceElm) surfaceElm.requestFocus();
+        else {
+          const input: HTMLElement = this.$refs.input as HTMLElement;
+          if (input) input.focus();
+        }
+      });
+    });
   }
 
   private deleteTab() {
@@ -262,7 +277,7 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private checkOnChange(checked: boolean, itemIndex: number) {
-    window.console.log(checked, itemIndex);
+    if (this.isPreview) return;
     const tabList: any = {};
     const tabObj: any = (tabList[this.currentTabIndex] = {});
     const surfaceObj: any = (tabObj[this.isFront ? "front" : "back"] = {});
@@ -284,7 +299,6 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private previewButtonOnClick() {
-    window.console.log(this.useSurfaceObj);
     if (
       !this.isFront &&
       this.useSurfaceObj &&
@@ -359,10 +373,6 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
     this.hoverMenuImageIndex = -1;
   }
 
-  private get surfaceElm(): SurfaceComponent {
-    return this.$refs.surfaceElm as SurfaceComponent;
-  }
-
   /**
    * タイトル追加が押下された時
    */
@@ -420,12 +430,12 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private insertContents(insertObj: any) {
-    window.console.log(
-      "insertContents",
-      this.hoverMenuItemIndex,
-      insertObj,
-      this.useSurfaceObj.contentsList
-    );
+    // window.console.log(
+    //   "insertContents",
+    //   this.hoverMenuItemIndex,
+    //   insertObj,
+    //   this.useSurfaceObj.contentsList
+    // );
     const contentsList: any[] = this.useSurfaceObj.contentsList;
     if (this.hoverMenuItemIndex === -2) {
       contentsList.push(insertObj);
@@ -501,7 +511,6 @@ export default class PublicMemoWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private get useSurfaceObj(): any {
-    window.console.log("useSurfaceObj", this.isEditMode);
     const usePublicMemoObj: any = this.isEditMode
       ? this.editingPublicMemoData
       : this.publicMemoObj;

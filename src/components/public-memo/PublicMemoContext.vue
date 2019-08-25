@@ -44,7 +44,8 @@ export default class PublicMemoContext extends Mixins<WindowMixin>(
       value: {
         objKey: this.objKey,
         isEditMode: isEditMode
-      }
+      },
+      logOff: true
     });
     this.windowOpen("private.display.publicMemoWindow");
     this.windowClose("private.display.publicMemoContext");

@@ -3,7 +3,15 @@
     <template v-if="isEditMode">
       <label>
         タブの名前
-        <input type="text" v-model="localValue" />
+        <input
+          type="text"
+          v-model="localValue"
+          ref="input"
+          @keydown.enter.stop
+          @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
+        />
       </label>
       <!-- タブの設定 -->
       <div class="tabSettingArea">
@@ -77,6 +85,10 @@
             v-if="isEditMode"
             @input="textareaOnInput"
             placeholder="大見出し"
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           ></textarea>
           <span
             class="item-config icon-cog"
@@ -102,6 +114,10 @@
             v-if="isEditMode"
             @input="textareaOnInput"
             placeholder="小見出し"
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           ></textarea>
           <span
             class="item-config icon-cog"
@@ -127,6 +143,10 @@
             v-if="isEditMode"
             @input="textareaOnInput"
             placeholder="テキスト"
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           ></textarea>
           <span
             class="item-config icon-cog"
@@ -161,6 +181,10 @@
               :checked="contents.checked"
               @change="event => checkOnChange(event.target.checked, itemIndex)"
               :disabled="isEditMode"
+              @keydown.enter.stop
+              @keyup.enter.stop
+              @keydown.229.stop
+              @keyup.229.stop
             />
             <span
               v-html="contents.text.replace(/\n/g, '<br />')"
@@ -172,6 +196,10 @@
             v-if="isEditMode"
             @input="textareaOnInput"
             placeholder=""
+            @keydown.enter.stop
+            @keyup.enter.stop
+            @keydown.229.stop
+            @keyup.229.stop
           ></textarea>
           <span
             class="item-config icon-cog"
@@ -296,6 +324,11 @@ export default class SurfaceComponent extends Vue {
 
   @Emit()
   private checkOnChange(checked: boolean, itemIndex: number) {}
+
+  public requestFocus() {
+    const inputElm: HTMLElement = this.$refs.input as HTMLElement;
+    if (inputElm) inputElm.focus();
+  }
 
   @Emit()
   private openImageMenu(
