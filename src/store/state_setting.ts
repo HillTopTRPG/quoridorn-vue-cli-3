@@ -1,5 +1,5 @@
 import CryptoJS from "crypto-js";
-// import { saveJson } from "@/components/common/Utility";
+import { saveJson } from "@/components/common/Utility";
 
 export default {
   // FIXME settingのデータは別経路で保存する？
@@ -61,7 +61,7 @@ export default {
           if (!bgmList.length) return;
           const data: any = bgmList.map((bgm: any) => {
             if (!/youtube/.test(bgm.url)) {
-              window.console.log("-----------------------------------------------------");
+              window.console.log("--------------");
               window.console.log(bgm.url);
               bgm.url = rootGetters.decrypt({ cipherText: bgm.url });
               window.console.log(bgm.url);
@@ -84,9 +84,7 @@ export default {
             });
           }, 500);
         })
-        .catch(() => {
-
-      });
+        .catch(() => {});
     },
 
     /**

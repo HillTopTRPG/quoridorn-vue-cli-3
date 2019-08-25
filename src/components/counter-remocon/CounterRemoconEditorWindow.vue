@@ -11,7 +11,14 @@
     <div class="contents" @contextmenu.prevent>
       <label>
         <span class="label">ボタン名:</span>
-        <input type="text" v-model="buttonName" />
+        <input
+          type="text"
+          v-model="buttonName"
+          @keydown.enter.stop
+          @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
+        />
       </label>
       <label>
         <span class="label">キャラクター{0}:</span>
@@ -27,11 +34,25 @@
           v-model="modifyType"
           :optionInfoList="modifyTypeOptionInfoList"
         />
-        <input type="text" v-model="modifyValue" />
+        <input
+          type="text"
+          v-model="modifyValue"
+          @keydown.enter.stop
+          @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
+        />
       </label>
       <label>
         <span class="label">表示メッセージ:</span>
-        <input type="text" v-model="message" />
+        <input
+          type="text"
+          v-model="message"
+          @keydown.enter.stop
+          @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
+        />
       </label>
       <label>
         <span class="label">例:</span>
