@@ -773,7 +773,6 @@ export default new Vuex.Store({
     isDraggingRight: state => state.map.isDraggingRight,
     move: state => state.map.move,
     angleVolatile: state => state.map.angle,
-    mouseOnScreen: state => state.map.mouse.onScreen,
     mouseOnTable: state => state.map.mouse.onTable,
     mouseOnCanvas: state => state.map.mouse.onCanvas,
     mouseLocate: state => state.mouse,

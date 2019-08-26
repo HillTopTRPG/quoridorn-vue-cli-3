@@ -11,10 +11,6 @@ export default class AddressCalcMixin extends Vue {
   @Getter("borderWidth") protected borderWidth: any;
   @Getter("marginGridSize") protected marginGridSize: any;
   @Getter("wheel") protected wheel: any;
-  @Getter("mouseOnScreen") protected mouseOnScreen: any;
-  @Getter("mouseOnTable") protected mouseOnTable: any;
-  @Getter("mouseOnCanvas") protected mouseOnCanvas: any;
-  @Getter("mouseLocate") protected mouseLocate: any;
 
   public arrangeAngle(angle: number): number {
     if (angle > 180) angle -= 360;

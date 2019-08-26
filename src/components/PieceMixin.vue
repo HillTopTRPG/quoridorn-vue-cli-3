@@ -17,6 +17,7 @@ export default class CanvasMixin extends AddressCalcMixin {
   @Getter("rollObj") protected rollObj: any;
   @Getter("gridSize") protected gridSize: any;
   @Getter("marginGridSize") protected marginGridSize: any;
+  @Getter("mouseOnTable") protected mouseOnTable: any;
 
   @Prop({ type: String, required: true })
   protected type!: string;
@@ -70,6 +71,14 @@ export default class CanvasMixin extends AddressCalcMixin {
       return;
     }
     // window.console.log(`  [methods] mouseup left on ${this.type}`)
+    this.setProperty({
+      property: `map.moveObj`,
+      value: {
+        key: null,
+        isMoving: false
+      },
+      logOff: true
+    });
     const locate = {
       x: this.mouseOnTable.x - this.storeObj.move.gridOffset.x * this.gridSize,
       y: this.mouseOnTable.y - this.storeObj.move.gridOffset.y * this.gridSize
@@ -82,6 +91,10 @@ export default class CanvasMixin extends AddressCalcMixin {
       left: locate.x,
       top: locate.y,
       move: {
+        from: {
+          x: 0,
+          y: 0
+        },
         dragging: {
           x: 0,
           y: 0
@@ -186,6 +199,10 @@ export default class CanvasMixin extends AddressCalcMixin {
     return (Math.atan2(loc.y, loc.x) * 180) / Math.PI;
   }
 
+  /**
+   * マウスが動いたときの挙動
+   * @param mouseOnTable
+   */
   @Watch("mouseOnTable", { deep: true })
   private onChangeMouseOnTable(this: any, mouseOnTable: any) {
     // window.console.log(`piece:${this.storeObj.name}, isDraggingLeft:${this.storeObj.isDraggingLeft}, isRolling:${this.isRolling}`)
@@ -193,27 +210,25 @@ export default class CanvasMixin extends AddressCalcMixin {
       if (!this.isThisRolling) {
         return;
       }
-
       const angle = this.getAngle(mouseOnTable);
       const dragging = this.arrangeAngle(
         this.arrangeAngle(angle - this.angle.dragStart) - this.angle.total
       );
-      this.changeListObj({
-        key: this.objKey,
-        angle: {
-          dragging
-        }
+      this.setProperty({
+        property: `public.${this.type}.list.${this.storeIndex}.angle.dragging`,
+        value: dragging,
+        logOff: true
       });
     } else {
       if (this.storeObj.isDraggingLeft) {
-        this.changeListObj({
-          key: this.objKey,
-          move: {
-            dragging: {
-              x: mouseOnTable.x - this.storeObj.move.from.x,
-              y: mouseOnTable.y - this.storeObj.move.from.y
-            }
-          }
+        const obj = {
+          x: mouseOnTable.x - this.storeObj.move.from.x,
+          y: mouseOnTable.y - this.storeObj.move.from.y
+        };
+        this.setProperty({
+          property: `public.${this.type}.list.${this.storeIndex}.move.dragging`,
+          value: obj,
+          logOff: true
         });
       }
     }

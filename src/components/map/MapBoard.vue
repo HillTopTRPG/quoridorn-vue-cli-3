@@ -5,7 +5,7 @@
     :width="canvasSize.w"
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
-    @keydown.enter.stop="grobalEnter"
+    @keydown.enter.stop
     @keyup.enter.stop
     @keydown.229.stop
     @keyup.229.stop
@@ -37,10 +37,6 @@ export default class MapBoard extends Mixins<CanvasMixin>(CanvasMixin) {
 
   private mounted(): void {
     this.paint();
-  }
-
-  private grobalEnter() {
-    window.console.log("grobalEnter on MapBoard.");
   }
 
   private paint(this: any): void {
