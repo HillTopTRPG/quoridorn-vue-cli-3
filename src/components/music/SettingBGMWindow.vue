@@ -217,10 +217,12 @@ export default class SettingBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
   }
 
   private doSave(): void {
-    const data: any = {
-      saveDataTypeName: "Quoridorn_BGM_01",
-      saveData: this.bgmList.concat()
-    };
+    const data: any = JSON.parse(
+      JSON.stringify({
+        saveDataTypeName: "Quoridorn_BGM_01",
+        saveData: this.bgmList
+      })
+    );
 
     data.saveData.forEach((bgmObj: any) => {
       if (!this.isYoutube(bgmObj.url))

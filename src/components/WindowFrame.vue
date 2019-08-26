@@ -2,11 +2,13 @@
   <div
     :style="windowStyle"
     :id="displayProperty"
-    @mousedown="windowActive({ property: displayProperty, isClose: false })"
-    @mouseup="event => mouseUp(event, 1)"
-    @touchcancel="event => mouseUp(event, 2)"
-    @touchend="event => mouseUp(event, 3)"
-    @touchstart="deckHoverKey(displayProperty)"
+    @mousedown.stop="
+      windowActive({ property: displayProperty, isClose: false })
+    "
+    @mouseup.stop="event => mouseUp(event, 1)"
+    @touchcancel.stop="event => mouseUp(event, 2)"
+    @touchend.stop="event => mouseUp(event, 3)"
+    @touchstart.stop="deckHoverKey(displayProperty)"
     class="window"
     v-if="isDisplay"
   >
@@ -14,11 +16,11 @@
     <div
       class="window-title"
       :class="{ fix: isFix }"
-      @mousedown.left.stop="event => move(event, true)"
-      @mouseup.left.stop="event => move(event, false)"
-      @touchstart.stop="event => move(event, true, true)"
-      @touchend.stop="event => move(event, false, true)"
-      @touchcancel.stop="event => move(event, false, true)"
+      @mousedown.left="event => move(event, true)"
+      @mouseup.left="event => move(event, false)"
+      @touchstart="event => move(event, true, true)"
+      @touchend="event => move(event, false, true)"
+      @touchcancel="event => move(event, false, true)"
       @contextmenu.prevent
     >
       <!-- タイトル文言 -->
@@ -36,7 +38,6 @@
           max="18"
           v-model="fontSize"
           :tabindex="0"
-          @mousedown.stop
           @keydown.enter.stop
           @keyup.enter.stop
           @keydown.229.stop
@@ -57,7 +58,7 @@
       <span v-if="!isBanClose" @contextmenu.prevent>
         <i
           class="icon-cross window-close"
-          @click.left.prevent.stop="closeWindow"
+          @click.left.stop="closeWindow"
           @keydown.space.stop="closeWindow"
           @keydown.enter.stop="closeWindow"
           @keydown.229.stop

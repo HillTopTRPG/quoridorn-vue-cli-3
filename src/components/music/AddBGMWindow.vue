@@ -5,6 +5,7 @@
     align="right-bottom"
     fixSize="300, 365"
     @open="initWindow"
+    @reset="initWindow"
   >
     <div class="contents">
       <fieldset>
@@ -312,6 +313,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       value: {
         command: "add",
         payload: {
+          key: "bgm-add",
           url: this.url,
           title: this.title,
           creditUrl: this.creditUrl,

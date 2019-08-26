@@ -144,6 +144,7 @@ export default class GameTable extends Mixins<AddressCalcMixin>(
   @Getter("getMapObjectList") private getMapObjectList: any;
   @Getter("propertyList") private propertyList: any;
   @Getter("getObj") private getObj: any;
+  @Getter("mouseLocate") private mouseLocate: any;
 
   private mounted(): void {
     document.addEventListener("mousemove", this.mouseMove);

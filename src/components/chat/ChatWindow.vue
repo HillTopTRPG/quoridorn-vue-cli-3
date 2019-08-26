@@ -220,6 +220,7 @@
             @editTab="targetTabAddButtonOnClick"
             :viewOption="true"
           >
+            <div style="flex: 1;"></div>
             <!-- 「」付与チェックボックス -->
             <label class="bracketOption">
               <input
@@ -1602,7 +1603,6 @@ i.icon-target {
 }
 
 .bracketOption {
-  flex: 1;
   @include flex-box(row, flex-end, center);
   padding-right: 3em;
 }

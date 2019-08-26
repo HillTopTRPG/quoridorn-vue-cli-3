@@ -328,6 +328,11 @@ export default {
       Vue.set(rootState.private.chat, "tab", volatileList);
       Vue.set(rootState, "public", value);
 
+      // イニシアティブ表の列の適用
+      dispatch("setInitiativeParams", {
+        format: rootGetters.rowStr.trim()
+      });
+
       const showInputWindow = () => {
         // 情報を入力してもらう
         dispatch("setProperty", {

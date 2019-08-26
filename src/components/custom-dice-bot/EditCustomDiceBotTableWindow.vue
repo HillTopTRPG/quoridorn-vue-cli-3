@@ -56,7 +56,14 @@
         </label>
       </div>
       <label class="h-box flex-max tableContents">
-        <textarea class="flex-max" v-model="tableContents"></textarea>
+        <textarea
+          class="flex-max"
+          v-model="tableContents"
+          @keydown.enter.stop
+          @keyup.enter.stop
+          @keydown.229.stop
+          @keyup.229.stop
+        ></textarea>
       </label>
       <div v-if="isRoomSys" style="color: red;">
         ※

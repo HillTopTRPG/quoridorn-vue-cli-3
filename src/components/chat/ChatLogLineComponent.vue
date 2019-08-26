@@ -71,7 +71,13 @@ export default class ChatLogLineComponent extends Vue {
   }
 
   private transText(text: string) {
-    text = text.replace(/\[\[quot]]/g, '"').replace(/\n/g, "<br />");
+    text = text
+      .replace(/\[\[quot]]/g, "&quot;")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/'/g, "&#39;")
+      .replace(/\n/g, "<br />");
 
     const matchInfoList: any[] = [];
     let matchResult = null;
