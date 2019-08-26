@@ -313,6 +313,7 @@ export default class AddBGMWindow extends Mixins<WindowMixin>(WindowMixin) {
       value: {
         command: "add",
         payload: {
+          key: "bgm-add",
           url: this.url,
           title: this.title,
           creditUrl: this.creditUrl,
