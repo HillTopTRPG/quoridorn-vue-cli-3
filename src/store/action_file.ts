@@ -91,7 +91,7 @@ export default {
         // ------------------------------------------------------------
         // セーブデータ内のplayerのリストに各プレイヤーのprivateデータを持たせる
         const playerPrivateObj: any =
-            rootGetters.volatilePrivateData[playerKey];
+          rootGetters.volatilePrivateData[playerKey];
         saveData.public.player.list.forEach((player: any) => {
           if (player.key !== playerPrivateObj.self.playerKey) return;
           player.private = playerPrivateObj;
