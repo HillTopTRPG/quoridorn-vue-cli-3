@@ -367,9 +367,9 @@ export default {
           isNotice: true,
           logOff: true
         }).then(() => {
-          // dispatch("setInitiativeParams", {
-          //   format: rootGetters.rowStr.trim()
-          // });
+          dispatch("setInitiativeParams", {
+            format: rootGetters.rowStr.trim()
+          });
         });
 
         return Promise.resolve();
