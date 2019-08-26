@@ -84,6 +84,23 @@ export default {
       );
       saveData.public.room.members = [];
 
+      for (const playerKey in rootGetters.volatilePrivateData) {
+        if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
+          continue;
+
+        // ------------------------------------------------------------
+        // セーブデータ内のplayerのリストに各プレイヤーのprivateデータを持たせる
+        const playerPrivateObj: any =
+            rootGetters.volatilePrivateData[playerKey];
+        saveData.public.player.list.forEach((player: any) => {
+          if (player.key !== playerPrivateObj.self.playerKey) return;
+          player.private = playerPrivateObj;
+        });
+      }
+
+      // お試しデータのカードデッキはとりあえず削除
+      delete saveData.public.deck;
+
       /*
        * 暗号化
        */
@@ -117,20 +134,6 @@ export default {
       encryptListObj(saveData.public.bgm, "list");
       encryptListObj(saveData.public.map, "list");
       encryptListObj(saveData.public.counterRemocon, "list");
-
-      for (const playerKey in rootGetters.volatilePrivateData) {
-        if (!rootGetters.volatilePrivateData.hasOwnProperty(playerKey))
-          continue;
-
-        // ------------------------------------------------------------
-        // セーブデータ内のplayerのリストに各プレイヤーのprivateデータを持たせる
-        const playerPrivateObj: any =
-          rootGetters.volatilePrivateData[playerKey];
-        saveData.public.player.list.forEach((player: any) => {
-          if (player.key !== playerPrivateObj.self.playerKey) return;
-          player.private = playerPrivateObj;
-        });
-      }
 
       // // listに対する差分を取り扱う
       // const addKeyList: string[] = [];
@@ -232,9 +235,6 @@ export default {
       //
       // // セーブデータに追加差分データを含める
       // saveData.addObjList = addObjList;
-
-      // お試しデータのカードデッキはとりあえず削除
-      delete saveData.public.deck;
 
       // zipファイルの生成
       const zip = new JSZip();
@@ -471,7 +471,7 @@ export default {
         // 部屋の存在チェック
         Promise.resolve()
           .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
-          .then(peerId => {
+          .then((peerId: string) => {
             // const logTexts = [];
             // logTexts.push(`create room by peer:"${peerId}"`);
             // logTexts.push(`本番: ${rootGetters.peerId(false)}`);
@@ -511,12 +511,12 @@ export default {
                     dispatch("setProperty", {
                       property: "private.display.inputPlayerInfoWindow",
                       value: {
-                        roomName: roomName,
+                        roomName,
                         playerName: "",
                         playerPassword: "",
                         playerType: "PL",
                         fontColor: "#000000",
-                        resolve: resolve
+                        resolve
                       },
                       logOff: true
                     });
@@ -527,17 +527,30 @@ export default {
                   })
               )
               // プレイヤー情報を入力してもらったら部屋を新規作成して入室する
-              .then((payload: any) =>
-                dispatch("doNewRoom", {
-                  roomName: roomName,
+              .then((payload: any) => {
+                // privateデータの復元
+                const playerData: any = publicData.player.list.filter(
+                  (player: any) => player.name === payload.playerName
+                )[0];
+                if (playerData) {
+                  const privateData: any = playerData.private;
+                  dispatch("setProperty", {
+                    property: "private",
+                    value: privateData,
+                    isNotice: false,
+                    logOff: true
+                  });
+                }
+                return dispatch("doNewRoom", {
+                  roomName,
                   roomPassword: publicData.room.password || "",
                   playerName: payload.playerName,
                   playerPassword: payload.playerPassword,
                   playerType: payload.playerType || "PL",
                   fontColor: payload.fontColor,
                   system
-                })
-              )
+                });
+              })
               .then(() => dispatch("loading", false))
               .catch(() => dispatch("loading", false));
           });
