@@ -6,7 +6,7 @@ import { Action, Getter } from "vuex-class";
 import { Mixin } from "vue-mixin-decorator";
 
 @Mixin
-export default class CanvasMixin extends AddressCalcMixin {
+export default class PieceMixin extends AddressCalcMixin {
   @Action("windowOpen") protected windowOpen: any;
   @Action("setProperty") protected setProperty: any;
   @Action("changeListObj") protected changeListObj: any;
@@ -207,9 +207,7 @@ export default class CanvasMixin extends AddressCalcMixin {
   private onChangeMouseOnTable(this: any, mouseOnTable: any) {
     // window.console.log(`piece:${this.storeObj.name}, isDraggingLeft:${this.storeObj.isDraggingLeft}, isRolling:${this.isRolling}`)
     if (this.isRolling) {
-      if (!this.isThisRolling) {
-        return;
-      }
+      if (!this.isThisRolling) return;
       const angle = this.getAngle(mouseOnTable);
       const dragging = this.arrangeAngle(
         this.arrangeAngle(angle - this.angle.dragStart) - this.angle.total
@@ -220,17 +218,15 @@ export default class CanvasMixin extends AddressCalcMixin {
         logOff: true
       });
     } else {
-      if (this.storeObj.isDraggingLeft) {
-        const obj = {
+      if (!this.storeObj.isDraggingLeft) return;
+      this.setProperty({
+        property: `public.${this.type}.list.${this.storeIndex}.move.dragging`,
+        value: {
           x: mouseOnTable.x - this.storeObj.move.from.x,
           y: mouseOnTable.y - this.storeObj.move.from.y
-        };
-        this.setProperty({
-          property: `public.${this.type}.list.${this.storeIndex}.move.dragging`,
-          value: obj,
-          logOff: true
-        });
-      }
+        },
+        logOff: true
+      });
     }
   }
 
