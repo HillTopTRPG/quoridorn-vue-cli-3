@@ -5,6 +5,7 @@
     align="right-bottom"
     fixSize="300, 365"
     @open="initWindow"
+    @reset="initWindow"
   >
     <div class="contents">
       <fieldset>

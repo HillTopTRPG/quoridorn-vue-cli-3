@@ -34,17 +34,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import { Getter } from "vuex-class";
 
-@Component({
-  props: {
-    initVolume: { type: Number, required: true },
-    mutable: { type: Boolean, default: true }
-  }
-})
+@Component
 export default class VolumeComponent extends Vue {
-  /** Vuexの getter への参照 */
+  @Prop({ type: Number, required: true })
+  private initVolume!: number;
+
+  @Prop({ type: Boolean, default: true })
+  private mutable!: boolean;
+
   @Getter("masterMute") private masterMute: any;
 
   private static FADE_NONE: number = 0;
@@ -61,11 +61,9 @@ export default class VolumeComponent extends Vue {
   /** フェード中の保存音量 */
   private fadingVolume: number = 0;
 
-  /**
-   * ライフサイクルメソッド
-   */
-  mounted(this: any): void {
-    this.volume = this.initVolume;
+  @Watch("initVolume", { immediate: true })
+  private onChangeInitVolume(initVolume: number) {
+    this.volume = initVolume;
   }
 
   /**
