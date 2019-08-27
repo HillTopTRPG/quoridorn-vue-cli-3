@@ -12,7 +12,7 @@ const math = create(all, config);
 export function getUrlParam(
   name: string,
   url: string = window.location.href
-): any {
+): string | null {
   name = name.replace(/[[\]]/g, "\\$&");
   const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
   let results = regex.exec(url);

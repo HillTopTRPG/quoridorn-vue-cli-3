@@ -13,6 +13,201 @@ import moment from "moment";
 
 const CryptoJS = require("crypto-js");
 
+type Dispatch = (target: string, payload?: any) => Promise<any>;
+type Commit = (target: string, payload?: any) => any;
+
+type Locate = {
+  x: number;
+  y: number;
+};
+
+type Matrix = {
+  c: number;
+  r: number;
+};
+
+interface VolatileMouse extends Locate {
+  drag: {
+    from: Locate;
+    move: Locate;
+  };
+}
+
+type DiceSystem = {
+  system: string;
+  name: string;
+};
+
+type VolatileChat = {
+  activeChatTab: string;
+  hoverChatTab: string;
+  actorKey: string;
+  diceSystemList: DiceSystem[];
+};
+
+type VolatileMapMoveObjInfo = {
+  isMoving: boolean;
+  key: string;
+};
+
+type VolatileMapRollObjInfo = {
+  isRolling: boolean;
+  key: string;
+};
+
+type VolatileMapMoveInfo = {
+  from: Locate;
+  total: Locate;
+  dragging: Locate;
+};
+
+type VolatileMapAngleInfo = {
+  dragging: number;
+  dragStart: number;
+};
+
+type VolatileMap = {
+  grid: Matrix;
+  mouse: {
+    onScreen: Locate;
+    onTable: Locate;
+    onCanvas: Locate;
+  };
+  isDraggingLeft: boolean;
+  isMouseDownRight: boolean;
+  isDraggingRight: boolean;
+  isOverEvent: boolean;
+  move: VolatileMapMoveInfo;
+  moveObj: VolatileMapMoveObjInfo;
+  rollObj: VolatileMapRollObjInfo;
+  angle: VolatileMapAngleInfo;
+};
+
+type Dice = { [P in string]: string };
+type DiceInfo = {
+  type: string;
+  label: string;
+  pips: Dice[];
+};
+type VolatileDice = { [P in string]: DiceInfo[] };
+
+type Volatile = {
+  mouse: VolatileMouse;
+  self: { webRtcPeer: any | null; webRtcPeerWait: any | null };
+  param: {
+    roomName: string | null;
+    roomPassword: string | null;
+    playerName: string | null;
+    playerPassword: string | null;
+    playerType: string | null;
+    system: string | null;
+  };
+  room: {
+    webRtcRoom: any;
+    webRtcRoomWait: any;
+    isExist: boolean;
+    isJoined: boolean;
+  };
+  chat: VolatileChat;
+  map: VolatileMap;
+  deck: {
+    viewMode: string;
+    hoverIndex: number;
+    hoverKey: string;
+    command: string | null;
+    isReverse: boolean;
+  };
+  dice: VolatileDice;
+  volatileSaveData: {
+    players: [];
+  };
+  mode: {
+    isModal: boolean;
+    isLoading: number;
+    isWait: boolean;
+  };
+};
+
+const state: Volatile = {
+  // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）
+  mouse: { x: 0, y: 0, drag: { from: { x: 0, y: 0 }, move: { x: 0, y: 0 } } },
+
+  self: { webRtcPeer: null, webRtcPeerWait: null },
+
+  param: {
+    roomName: null,
+    roomPassword: null,
+    playerName: null,
+    playerPassword: null,
+    playerType: null,
+    system: null
+  },
+
+  room: {
+    webRtcRoom: null,
+    webRtcRoomWait: null,
+    isExist: false,
+    isJoined: false
+  },
+
+  chat: {
+    activeChatTab: "chatTab-1",
+    hoverChatTab: "",
+    actorKey: "",
+    diceSystemList: []
+  },
+
+  map: {
+    grid: { c: 0, r: 0 },
+    mouse: {
+      onScreen: { x: 0, y: 0 },
+      onTable: { x: 0, y: 0 },
+      onCanvas: { x: 0, y: 0 }
+    },
+    isDraggingLeft: false,
+    isMouseDownRight: false,
+    isDraggingRight: false,
+    isOverEvent: false,
+    move: {
+      from: { x: 0, y: 0 },
+      total: { x: 0, y: 0 },
+      dragging: { x: 0, y: 0 }
+    },
+    moveObj: {
+      isMoving: false,
+      key: ""
+    },
+    rollObj: {
+      isRolling: false,
+      key: ""
+    },
+    angle: {
+      dragging: 0,
+      dragStart: 0
+    }
+  },
+
+  deck: {
+    viewMode: "normal",
+    hoverIndex: -1,
+    hoverKey: "",
+    command: null,
+    isReverse: false
+  },
+
+  dice: {},
+
+  volatileSaveData: {
+    players: []
+  },
+
+  mode: {
+    isModal: true,
+    isLoading: 0,
+    isWait: false
+  }
+};
+
 Vue.use(Vuex);
 
 /**
@@ -29,87 +224,8 @@ export default new Vuex.Store({
     operation: actionOperation,
     saveChat: saveChat
   },
-  state: {
-    // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）
-    mouse: { x: 0, y: 0, drag: { from: { x: 0, y: 0 }, move: { x: 0, y: 0 } } },
-
-    self: { webRtcPeer: null, webRtcPeerWait: null },
-
-    param: {
-      roomName: null,
-      roomPassword: null,
-      playerName: null,
-      playerPassword: null,
-      playerType: null,
-      system: null
-    },
-
-    room: {
-      webRtcRoom: null,
-      webRtcRoomWait: null,
-      isExist: false,
-      isJoined: false
-    },
-
-    chat: {
-      activeChatTab: "chatTab-1",
-      hoverChatTab: "",
-      actorKey: "",
-      diceSystemList: []
-    },
-
-    map: {
-      grid: { c: 0, r: 0 },
-      mouse: {
-        onScreen: { x: 0, y: 0 },
-        onTable: { x: 0, y: 0 },
-        onCanvas: { x: 0, y: 0 }
-      },
-      isDraggingLeft: false,
-      isMouseDownRight: false,
-      isDraggingRight: false,
-      isOverEvent: false,
-      move: {
-        from: { x: 0, y: 0 },
-        total: { x: 0, y: 0 },
-        dragging: { x: 0, y: 0 }
-      },
-      moveObj: {
-        isMoving: false,
-        key: ""
-      },
-      rollObj: {
-        isRolling: false,
-        key: ""
-      },
-      angle: {
-        dragging: 0,
-        dragStart: 0
-      }
-    },
-
-    deck: {
-      viewMode: "normal",
-      hoverIndex: -1,
-      hoverKey: "",
-      command: null,
-      isReverse: false
-    },
-
-    dice: {},
-
-    operationQueue: [],
-
-    volatileSaveData: {
-      players: []
-    },
-
-    mode: {
-      isModal: true,
-      isLoading: 0,
-      isWait: false
-    }
-  },
+  state,
+  // @ts-ignore
   actions: {
     /**
      * =================================================================================================================
@@ -120,29 +236,28 @@ export default new Vuex.Store({
      * @param rootGetters
      * @param commit
      */
-    onMount(
-      {
-        dispatch,
-        state,
-        rootState,
-        rootGetters,
-        commit
-      }: {
-        dispatch: Function;
-        state: any;
-        rootState: any;
-        rootGetters: any;
-        commit: Function;
-      }) {
+    async onMount({
+      dispatch,
+      state,
+      rootState,
+      rootGetters,
+      commit
+    }: {
+      dispatch: Dispatch;
+      state: Volatile;
+      rootState: any;
+      rootGetters: any;
+      commit: Commit;
+    }) {
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
-      let roomName = getUrlParam("roomName");
-      const roomPassword = getUrlParam("roomPassword");
-      const playerName = getUrlParam("playerName");
-      const playerPassword = getUrlParam("playerPassword");
-      let playerType = getUrlParam("playerType");
-      let system = getUrlParam("system");
+      let roomName: string | null = getUrlParam("roomName");
+      const roomPassword: string | null = getUrlParam("roomPassword");
+      const playerName: string | null = getUrlParam("playerName");
+      const playerPassword: string | null = getUrlParam("playerPassword");
+      let playerType: string | null = getUrlParam("playerType");
+      let system: string | null = getUrlParam("system");
 
       if (roomName && roomName.endsWith(rootGetters.entranceRoomName)) {
         alert(
@@ -156,7 +271,10 @@ export default new Vuex.Store({
       state.param.playerName = playerName;
       state.param.playerPassword = playerPassword;
       // 選択肢と一致していれば、権限をセットする
-      if (rootGetters.roles.findIndex((role: any) => role.value === playerType) >= 0) {
+      if (
+        rootGetters.roles.findIndex((role: any) => role.value === playerType) >=
+        0
+      ) {
         state.param.playerType = playerType;
       } else {
         playerType = null;
@@ -185,32 +303,27 @@ export default new Vuex.Store({
       // state_settingの初期化
       commit("init_state_setting");
 
-      dispatch("onTest");
+      dispatch("onTest").then();
 
       /* ----------------------------------------------------------------------
        * 初期表示画面の設定
        */
       setTimeout(() => {
-        dispatch("windowOpen", "private.display.chatWindow");
-        dispatch("windowOpen", "private.display.initiativeWindow");
+        dispatch("windowOpen", "private.display.chatWindow").then();
+        dispatch("windowOpen", "private.display.initiativeWindow").then();
         // dispatch("windowOpen", "private.display.resourceWindow");
         // dispatch("windowOpen", "private.display.chatPaletteWindow");
         // dispatch("windowOpen", "private.display.publicMemoWindow");
         // dispatch("windowOpen", "private.display.playerBoxWindow");
-        dispatch("windowOpen", "private.display.welcomeWindow");
+        dispatch("windowOpen", "private.display.welcomeWindow").then();
       }, 0);
 
-      /* ----------------------------------------------------------------------
-       * チャットタブの設定
-       */
-      // dispatch("changeChatTab", { tabsText: "雑談" });
+      const loadYaml: Function = rootGetters.loadYaml;
 
       /* ----------------------------------------------------------------------
        * ダイスの設定
        */
-      rootGetters.loadYaml("/static/conf/dice.yaml").then((dice: any) => {
-        state.dice = dice;
-      });
+      state.dice = (await loadYaml("/static/conf/dice.yaml")) as VolatileDice;
 
       /* ----------------------------------------------------------------------
        * カード情報の設定
@@ -220,10 +333,11 @@ export default new Vuex.Store({
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
-      rootGetters.loadYaml("/static/conf/deck.yaml").then((deckList: any) => {
-        const cardSet = deckList.filter((cs: any) => cs.name === cardSetName)[0];
-
-        if (!cardSet) return;
+      const deckList: any[] = await loadYaml("/static/conf/deck.yaml");
+      const cardSet: any = deckList.filter(
+        (cs: any) => cs.name === cardSetName
+      )[0];
+      if (cardSet) {
         const basePath = cardSet.basePath || "";
         const storeDeck = rootState.public.deck;
         storeDeck.name = cardSet.name;
@@ -240,139 +354,128 @@ export default new Vuex.Store({
           back: { text: ``, img: basePath + card.file }
         }));
         storeDeck.cards.maxKey = cardSet.cards.length - 1;
-      });
+      }
 
       /* ----------------------------------------------------------------------
        * BGMの設定
        */
-      rootGetters.loadYaml("/static/conf/bgm.yaml").then((bgmList: any[]) => {
-        bgmList.forEach((bgm: any, index: number) => (bgm.key = `bgm-${index}`));
-        rootState.public.bgm.list = bgmList;
-        rootState.public.bgm.maxKey = bgmList.length - 1;
-      });
+      const bgmList: any[] = await loadYaml("/static/conf/bgm.yaml");
+      bgmList.forEach((bgm: any, index: number) => (bgm.key = `bgm-${index}`));
+      rootState.public.bgm.list = bgmList;
+      rootState.public.bgm.maxKey = bgmList.length - 1;
 
       /* ----------------------------------------------------------------------
        * 画像の設定
        */
-      rootGetters.loadYaml("/static/conf/image.yaml").then((imageList: any[]) => {
-        imageList.forEach((image: any, index: number) => {
-          image.key = `image-${index}`;
-          image.name = image.data.replace(/.*\//, "");
+      const imageList: any[] = await loadYaml("/static/conf/image.yaml");
+      imageList.forEach((image: any, index: number) => {
+        image.key = `image-${index}`;
+        image.name = image.data.replace(/.*\//, "");
 
-          const imageArgList = getFileNameArgList(image.name);
-          if (imageArgList.length) image.imageArgList = imageArgList;
+        const imageArgList = getFileNameArgList(image.name);
+        if (imageArgList.length) image.imageArgList = imageArgList;
 
-          const regExp = new RegExp("[ 　]+", "g");
-          const tagStrList = image.tag.split(regExp);
-          tagStrList.forEach((tagStr: string) => {
-            const imageTag = rootGetters.imageTagList.filter(
-                (imageTag: any) => imageTag.name === tagStr
-            )[0];
-            if (!imageTag) {
-              const nextNum = ++rootState.public.image.tags.maxKey;
-              rootState.public.image.tags.list.push({
-                key: `imgTag-${nextNum}`,
-                name: image.tag
-              });
-            }
-          });
+        const regExp = new RegExp("[ 　]+", "g");
+        const tagStrList = image.tag.split(regExp);
+        tagStrList.forEach((tagStr: string) => {
+          const imageTag = rootGetters.imageTagList.filter(
+            (imageTag: any) => imageTag.name === tagStr
+          )[0];
+          if (!imageTag) {
+            const nextNum = ++rootState.public.image.tags.maxKey;
+            rootState.public.image.tags.list.push({
+              key: `imgTag-${nextNum}`,
+              name: image.tag
+            });
+          }
         });
-        rootState.public.image.list = imageList;
-        rootState.public.image.maxKey = imageList.length - 1;
       });
+      rootState.public.image.list = imageList;
+      rootState.public.image.maxKey = imageList.length - 1;
 
       /* ----------------------------------------------------------------------
        * チャットフォーマットの設定
        */
-      rootGetters
-        .loadYaml("/static/conf/chatFormat.yaml")
-        .then((chatFormatList: any[]) => {
-          chatFormatList.forEach((chatFormat: any) => {
-            rootState.setting.chatFormat.targetList.push({
-              label: chatFormat.label,
-              chatText: chatFormat.chatText
-            });
-          });
+      const chatFormatList: any[] = await loadYaml(
+        "/static/conf/chatFormat.yaml"
+      );
+      chatFormatList.forEach((chatFormat: any) => {
+        rootState.setting.chatFormat.targetList.push({
+          label: chatFormat.label,
+          chatText: chatFormat.chatText
         });
+      });
 
       /* ----------------------------------------------------------------------
        * 接続設定の設定
        */
-      rootGetters.loadYaml("/static/conf/connect.yaml").then((setting: any) => {
-        rootState.setting.connect.skywayKey = setting.skywayKey;
-        rootState.setting.connect.type = setting.type;
-        rootState.setting.connect.bcdiceServer = setting.bcdiceServer;
+      const setting: any = await loadYaml("/static/conf/connect.yaml");
+      rootState.setting.connect.skywayKey = setting.skywayKey;
+      rootState.setting.connect.type = setting.type;
+      rootState.setting.connect.bcdiceServer = setting.bcdiceServer;
 
-        /* ----------------------------------------------------------------------
-         * ダイスシステムの検証
-         */
-        dispatch("getBcdiceSystemList")
-          .then((systemList: any[]) => {
-            state.chat.diceSystemList = systemList;
-            const index = systemList.findIndex(
-                (systemObj: any) => systemObj.system === system
-            );
-            if (index === -1) system = "DiceBot";
-          })
-          .catch(() => {
-            alert(
-              `BCDice-apiサーバ\n${
-                setting.bcdiceServer
-              }\nの接続に失敗しました。`
-            );
-          });
-
-        /* ----------------------------------------------------------------------
-         * 初期入室の処理
-         */
-        if (roomName) {
-          /* ------------------------------
-           * 部屋存在チェック
-           */
-          dispatch("loading", true);
-          Promise.resolve()
-            .then(() => dispatch("simpleJoinRoom", { roomName: roomName }))
-            .then(peerId => {
-              // const logTexts = [];
-              // logTexts.push(`create room by peer:"${peerId}"`);
-              // logTexts.push(`本番: ${rootGetters.peerId(false)}`);
-              // logTexts.push(`待ち: ${rootGetters.peerId(true)}`);
-              // window.console.log(logTexts.join(", "));
-              return dispatch("checkRoomName", { roomName: roomName });
-            })
-            .then(isExist => {
-              const baseArg: any = {
-                roomName,
-                roomPassword,
-                playerName,
-                playerPassword,
-                playerType,
-                fontColor: "#000000",
-                system,
-                isWait: false
-              };
-              // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
-              if (
-                !isExist &&
-                roomPassword !== null &&
-                playerName &&
-                playerPassword !== null &&
-                playerType !== null
-              ) {
-                baseArg.playerType = baseArg.playerType || "PL";
-                return dispatch("doNewRoom", baseArg);
-              }
-              // 「この部屋に入る」画面で入力される項目が指定されていれば既存部屋への入室を試みる
-              if (isExist && roomPassword !== null) {
-                baseArg.useWindow = true;
-                baseArg.useAlert = true;
-                return dispatch("doJoinRoom", baseArg);
-              }
-            })
-            .then(() => dispatch("loading", false))
-            .catch(() => dispatch("loading", false));
-        }
+      /* ----------------------------------------------------------------------
+       * ダイスシステムの検証
+       */
+      const systemList: DiceSystem[] = await dispatch(
+        "getBcdiceSystemList"
+      ).catch(() => {
+        alert(
+          `BCDice-apiサーバ\n${setting.bcdiceServer}\nの接続に失敗しました。`
+        );
       });
+      state.chat.diceSystemList = systemList;
+      const index = systemList.findIndex(
+        (systemObj: any) => systemObj.system === system
+      );
+      if (index === -1) system = "DiceBot";
+
+      /* ----------------------------------------------------------------------
+       * 初期入室の処理
+       */
+      if (roomName) {
+        /* ------------------------------
+         * 部屋存在チェック
+         */
+        dispatch("loading", true).then();
+
+        const endLoading: Function = () => dispatch("loading", false);
+
+        await dispatch("simpleJoinRoom", { roomName: roomName }).catch(
+          () => endLoading
+        );
+        const isExist: boolean = await dispatch("checkRoomName", {
+          roomName: roomName
+        }).catch(() => endLoading);
+        const baseArg: any = {
+          roomName,
+          roomPassword,
+          playerName,
+          playerPassword,
+          playerType,
+          fontColor: "#000000",
+          system,
+          isWait: false
+        };
+        // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
+        if (
+          !isExist &&
+          roomPassword !== null &&
+          playerName &&
+          playerPassword !== null &&
+          playerType !== null
+        ) {
+          baseArg.playerType = baseArg.playerType || "PL";
+          await dispatch("doNewRoom", baseArg).catch(() => endLoading);
+        }
+        // 「この部屋に入る」画面で入力される項目が指定されていれば既存部屋への入室を試みる
+        if (isExist && roomPassword !== null) {
+          baseArg.useWindow = true;
+          baseArg.useAlert = true;
+          await dispatch("doJoinRoom", baseArg).catch(() => endLoading);
+        }
+        endLoading();
+      }
     },
 
     /**
@@ -381,7 +484,7 @@ export default new Vuex.Store({
      * @param state
      * @param isStart
      */
-    loading({ state }, isStart) {
+    loading({ state }: { state: Volatile }, isStart: boolean) {
       // window.console.error(`loading ${state.mode.isLoading} ${isStart ? "+1" : "-1"}`);
       state.mode.isLoading += isStart ? 1 : -1;
     },
@@ -394,7 +497,10 @@ export default new Vuex.Store({
      * @param method
      * @param value
      */
-    sendNoticeOperation({ dispatch, rootGetters }, { method, value }) {
+    sendNoticeOperation(
+      { dispatch, rootGetters }: { dispatch: Dispatch; rootGetters: any },
+      { method, value }: { method: string; value: any }
+    ) {
       const isWait = rootGetters.isWait;
       if (rootGetters.members[0]) {
         value.ownerPeerId = rootGetters.peerId(isWait);
@@ -408,7 +514,7 @@ export default new Vuex.Store({
           value: value,
           method: method,
           isWait: isWait
-        });
+        }).then();
         if (isMaster) return dispatch(method, value);
         return null;
       } else {
@@ -426,10 +532,13 @@ export default new Vuex.Store({
      * @param payload
      * @returns {*}
      */
-    reverseProperty: ({ dispatch, getters }, payload) => {
+    reverseProperty: async (
+      { dispatch, getters }: { dispatch: Dispatch; getters: any },
+      payload: any
+    ) => {
       const target = getters.getStateValue(payload.property);
       if (typeof target === "boolean") {
-        dispatch("sendNoticeOperation", {
+        await dispatch("sendNoticeOperation", {
           value: payload,
           method: "doReverseProperty"
         });
@@ -437,19 +546,23 @@ export default new Vuex.Store({
         // payload.property = `${payload.property}.isDisplay`;
         payload.value = !target.isDisplay;
         if (!target.isDisplay) {
-          dispatch("windowOpen", payload.property);
+          await dispatch("windowOpen", payload.property);
         } else {
-          dispatch("windowClose", payload.property);
+          await dispatch("windowClose", payload.property);
         }
       }
     },
+
     /**
      * 指定されたプロパティパスの値を反転させる
      * @param getters
      * @param commit
      * @param property
      */
-    doReverseProperty: ({ getters, commit }, { property }) => {
+    doReverseProperty: (
+      { getters, commit }: { getters: any; commit: Commit },
+      { property }: { property: string }
+    ) => {
       const target = getters.getStateValue(property);
       const payload = {
         property,
@@ -465,23 +578,24 @@ export default new Vuex.Store({
      * @param dispatch
      * @param payload
      */
-    setProperty: ({ dispatch }, payload) => {
+    setProperty: async ({ dispatch }: { dispatch: Dispatch }, payload: any) => {
       if (payload.isNotice) {
-        dispatch("sendNoticeOperation", {
+        await dispatch("sendNoticeOperation", {
           value: payload,
           method: "doSetProperty"
         });
       } else {
-        dispatch("doSetProperty", payload);
+        await dispatch("doSetProperty", payload);
       }
     },
+
     /**
      * stateに対するあらゆるデータ格納を代理する関数
      * @param commit
      * @param payload
      * @returns {*}
      */
-    doSetProperty: ({ commit }, payload) => {
+    doSetProperty: ({ commit }: { commit: Commit }, payload: any) => {
       delete payload.ownerPeerId;
       return commit("doSetProperty", payload);
     },
@@ -492,14 +606,17 @@ export default new Vuex.Store({
      * @param dispatch
      * @param payload
      */
-    emptyProperty: ({ dispatch }, payload) => {
+    emptyProperty: async (
+      { dispatch }: { dispatch: Dispatch },
+      payload: any
+    ) => {
       if (payload.isNotice) {
-        dispatch("sendNoticeOperation", {
+        await dispatch("sendNoticeOperation", {
           value: payload,
           method: "doEmptyProperty"
         });
       } else {
-        dispatch("doEmptyProperty", payload);
+        await dispatch("doEmptyProperty", payload);
       }
     },
     /**
@@ -508,7 +625,10 @@ export default new Vuex.Store({
      * @param property
      * @param logOff
      */
-    doEmptyProperty: ({ getters }, { property, logOff }) => {
+    doEmptyProperty: (
+      { getters }: { getters: any },
+      { property, logOff }: { property: string; logOff: boolean }
+    ) => {
       if (!logOff) {
         window.console.log(`#empty ${property}:`);
       }
@@ -528,7 +648,7 @@ export default new Vuex.Store({
      * @param logOff true:ログを出力しない
      */
     doSetProperty: (
-      state: any,
+      state: Volatile,
       {
         property,
         value,
@@ -537,7 +657,8 @@ export default new Vuex.Store({
         property: string;
         value: any;
         logOff: boolean;
-      }) => {
+      }
+    ) => {
       if (!logOff) {
         window.console.log(`doSetProperty => ${property}:`, value);
       }
@@ -606,36 +727,42 @@ export default new Vuex.Store({
       };
       propProc(state, property.split("."), value);
     },
-    updateWebRtcPeer: (state, { peer, isWait }) => {
+    updateWebRtcPeer: (
+      state: Volatile,
+      { peer, isWait }: { peer: string; isWait: boolean }
+    ) => {
       if (!isWait) state.self.webRtcPeer = peer;
       else state.self.webRtcPeerWait = peer;
     },
-    updateWebRtcRoom: (state, { room, isWait }) => {
+    updateWebRtcRoom: (
+      state: Volatile,
+      { room, isWait }: { room: any; isWait: boolean }
+    ) => {
       if (!isWait) state.room.webRtcRoom = room;
       else state.room.webRtcRoomWait = room;
     },
-    updateIsWait: (state, isWait) => {
+    updateIsWait: (state: Volatile, isWait: boolean) => {
       state.mode.isWait = isWait;
     },
-    updateIsModal: (state, isModal) => {
+    updateIsModal: (state: Volatile, isModal: boolean) => {
       state.mode.isModal = isModal;
     },
-    updateIsJoined: (state, isJoined) => {
+    updateIsJoined: (state: Volatile, isJoined: boolean) => {
       state.room.isJoined = isJoined;
     },
-    updateActorKey: (state, actorKey) => {
+    updateActorKey: (state: Volatile, actorKey: string) => {
       state.chat.actorKey = actorKey;
     }
   },
   getters: {
-    loadYaml: state =>
+    loadYaml: (state: Volatile) =>
       /**
        * 指定されたURLのyamlを読み込み、オブジェクトを返却する
        * @param yamlPath yamlファイルのURL
        * @returns {*}
        */
-      (yamlPath: string) => {
-        return window
+      (yamlPath: string) =>
+        window
           .fetch(process.env.BASE_URL + yamlPath)
           .then(responce => responce.text())
           .then(text => yaml.safeLoad(text))
@@ -645,10 +772,9 @@ export default new Vuex.Store({
               yamlPath
             );
             throw err;
-          });
-      },
+          }),
 
-    loadJson: state =>
+    loadJson: (state: Volatile) =>
       /**
        * 指定されたURLのjsonを読み込み、オブジェクトを返却する
        * @param jsonPath jsonファイルのURL
@@ -668,21 +794,21 @@ export default new Vuex.Store({
           });
       },
 
-    getStateValue: state =>
+    getStateValue: (state: Volatile, getters: any, rootState: any) =>
       /**
        * stateから指定されたプロパティパスの値を取得する
        * @param property
        * @returns {*}
        */
       (property: string) => {
-        let target = state;
+        let target = rootState;
         property.split(".").forEach(prop => {
           target = target[prop];
         });
         return target;
       },
 
-    isWindowOpen: (state, getters) =>
+    isWindowOpen: (state: Volatile, getters: any) =>
       /**
        * isDisplayに相当するプロパティ値を取得する
        * @param displayProperty
@@ -771,43 +897,50 @@ export default new Vuex.Store({
         return `{ ${params.join(", ")} }`;
       },
 
-    paramRoomName: state => state.param.roomName,
-    paramRoomPassword: state => state.param.roomPassword,
-    paramPlayerName: state => state.param.playerName,
-    paramPlayerPassword: state => state.param.playerPassword,
-    paramPlayerType: state => state.param.playerType,
-    isRoomExist: state => state.room.isExist,
-    isRoomJoined: state => state.room.isJoined,
-    isModal: state => state.mode.isModal,
-    isLoading: state => state.mode.isLoading,
-    isWait: state => state.mode.isWait,
-    activeChatTab: state => state.chat.activeChatTab,
-    hoverChatTab: state => state.chat.hoverChatTab,
-    hoverTab: state => state.chat.hoverTab,
-    moveObj: state => state.map.moveObj,
-    rollObj: state => state.map.rollObj,
-    isDraggingLeft: state => state.map.isDraggingLeft,
-    isMouseDownRight: state => state.map.isMouseDownRight,
-    isOverEvent: state => state.map.isOverEvent,
-    isDraggingRight: state => state.map.isDraggingRight,
-    move: state => state.map.move,
-    angleVolatile: state => state.map.angle,
-    mouseOnTable: state => state.map.mouse.onTable,
-    mouseOnCanvas: state => state.map.mouse.onCanvas,
-    mouseLocate: state => state.mouse,
-    deckCommand: state => state.deck.command,
-    deckHoverIndex: state => state.deck.hoverIndex,
-    deckHoverKey: state => state.deck.hoverKey,
-    webRtcPeer: state => (isWait: boolean) =>
+    paramRoomName: (state: Volatile): string | null => state.param.roomName,
+    paramRoomPassword: (state: Volatile): string | null =>
+      state.param.roomPassword,
+    paramPlayerName: (state: Volatile): string | null => state.param.playerName,
+    paramPlayerPassword: (state: Volatile): string | null =>
+      state.param.playerPassword,
+    paramPlayerType: (state: Volatile): string | null => state.param.playerType,
+    isRoomExist: (state: Volatile): boolean => state.room.isExist,
+    isRoomJoined: (state: Volatile): boolean => state.room.isJoined,
+    isModal: (state: Volatile): boolean => state.mode.isModal,
+    isLoading: (state: Volatile): number => state.mode.isLoading,
+    isWait: (state: Volatile): boolean => state.mode.isWait,
+    activeChatTab: (state: Volatile): string => state.chat.activeChatTab,
+    hoverChatTab: (state: Volatile): string => state.chat.hoverChatTab,
+    moveObj: (state: Volatile): VolatileMapMoveObjInfo => state.map.moveObj,
+    rollObj: (state: Volatile): VolatileMapRollObjInfo => state.map.rollObj,
+    isDraggingLeft: (state: Volatile): boolean => state.map.isDraggingLeft,
+    isMouseDownRight: (state: Volatile): boolean => state.map.isMouseDownRight,
+    isOverEvent: (state: Volatile): boolean => state.map.isOverEvent,
+    isDraggingRight: (state: Volatile): boolean => state.map.isDraggingRight,
+    move: (state: Volatile): VolatileMapMoveInfo => state.map.move,
+    angleVolatile: (state: Volatile): VolatileMapAngleInfo => state.map.angle,
+    mouseOnTable: (state: Volatile): Locate => state.map.mouse.onTable,
+    mouseOnCanvas: (state: Volatile): Locate => state.map.mouse.onCanvas,
+    mouseLocate: (state: Volatile): VolatileMouse => state.mouse,
+    deckCommand: (state: Volatile): string | null => state.deck.command,
+    deckHoverIndex: (state: Volatile): number => state.deck.hoverIndex,
+    deckHoverKey: (state: Volatile): string => state.deck.hoverKey,
+    webRtcPeer: (state: Volatile): any => (isWait: boolean) =>
       !isWait ? state.self.webRtcPeer : state.self.webRtcPeerWait,
-    webRtcRoom: state => (isWait: boolean) =>
+    webRtcRoom: (state: Volatile): any => (isWait: boolean) =>
       !isWait ? state.room.webRtcRoom : state.room.webRtcRoomWait,
-    chatActorKey: state => state.chat.actorKey,
-    volatilePrivateData: state => state.volatileSaveData.players,
-    chatTabs: (state, getters, rootState, rootGetters) => {
-      return rootGetters.chatTabsOption.map((privateTab: any) => {
+    chatActorKey: (state: Volatile): string => state.chat.actorKey,
+    volatilePrivateData: (state: Volatile): any[] =>
+      state.volatileSaveData.players,
+    chatTabs: (
+      state: Volatile,
+      getters: any,
+      rootState: any,
+      rootGetters: any
+    ) =>
+      rootGetters.chatTabsOption.map((privateTab: any) => {
         const publicTab = rootGetters.chatTabList.filter(
-            (publicTab: any) => publicTab.key === privateTab.key
+          (publicTab: any) => publicTab.key === privateTab.key
         )[0];
         return {
           key: publicTab.key,
@@ -818,25 +951,33 @@ export default new Vuex.Store({
           unRead: privateTab.unRead,
           order: privateTab.order
         };
-      });
-    },
-    grid: state => ({
-      c: state.map.grid.c,
-      r: state.map.grid.r
-    }),
-    isMoving: state => state.map.moveObj.isMoving,
-    isRolling: state => state.map.rollObj.isRolling,
-    diceSystemList: state => state.chat.diceSystemList,
-    dice: state => state.dice,
-    dicePipsImage: state => (faceNum: number, type: string, pips: number) => {
-      const diceSetList = state.dice[faceNum];
+      }),
+    grid: (state: Volatile): Matrix =>
+      JSON.parse(JSON.stringify(state.map.grid)),
+    isMoving: (state: Volatile): boolean => state.map.moveObj.isMoving,
+    isRolling: (state: Volatile): boolean => state.map.rollObj.isRolling,
+    diceSystemList: (state: Volatile): DiceSystem[] =>
+      state.chat.diceSystemList,
+    dice: (state: Volatile): VolatileDice => state.dice,
+    dicePipsImage: (state: Volatile): Function => (
+      faceNum: number,
+      type: string,
+      pips: number
+    ): Dice | null => {
+      const diceSetList: DiceInfo[] = state.dice[faceNum];
       if (!diceSetList) return null;
-      const diceObj = diceSetList.filter((diceSet: any) => diceSet.type === type)[0];
+      const diceObj: DiceInfo | null = diceSetList.filter(
+        (diceSet: DiceInfo) => diceSet.type === type
+      )[0];
       if (!diceObj) return null;
       return diceObj.pips[pips];
     },
-    hash: state => (planeText: string, key: string) => CryptoJS.HmacSHA1(planeText, key),
-    isSameHash: state => (hash: string, planeText: string, key: string) =>
-      hash === CryptoJS.HmacSHA1(planeText, key)
+    hash: (): Function => (planeText: string, key: string): string =>
+      CryptoJS.HmacSHA1(planeText, key),
+    isSameHash: (): Function => (
+      hash: string,
+      planeText: string,
+      key: string
+    ): boolean => hash === CryptoJS.HmacSHA1(planeText, key)
   }
 });

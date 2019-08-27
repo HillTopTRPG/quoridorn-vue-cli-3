@@ -604,7 +604,6 @@ export default class ChatWindow extends Mixins<WindowMixin>(WindowMixin) {
   @Getter("chatTargetList") private chatTargetList: any;
   @Getter("activeChatTab") private activeChatTab: any;
   @Getter("hoverChatTab") private hoverChatTab: any;
-  @Getter("hoverTab") private hoverTab: any;
   @Getter("playerKey") private playerKey: any;
   @Getter("chatOptionPagingSize") private chatOptionPagingSize: any;
   @Getter("isWait") private isWait: any;
