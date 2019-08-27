@@ -23,6 +23,21 @@
 </template>
 
 <script lang="ts">
+interface YoutubeAPI {
+  registration: Function;
+  destroyed: Function;
+  mute: Function;
+  unMute: Function;
+  setVolume: Function;
+  play: Function;
+  pause: Function;
+  seekTo: Function;
+}
+interface Window {
+  youtube: YoutubeAPI;
+  console: any;
+}
+declare var window: Window;
 import BGMCoreComponent from "./BGMCoreComponent.vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Action } from "vuex-class";
@@ -77,20 +92,15 @@ export default class BGMYoutubeComponent extends Vue {
       onPaused: this.onPaused,
       onReject: this.onReject
     };
-    const result = (<any>window)["youtube"]["registration"](
-      this.tag,
-      this.url,
-      0,
-      bgmObj
-    );
+    const result = window.youtube.registration(this.tag, this.url, 0, bgmObj);
     if (!result) this.$emit("end");
   }
 
-  private onDestroyed() {
-    (<any>window)["youtube"]["destroyed"](this.tag);
-  }
-
   private onReady() {}
+
+  private onDestroyed() {
+    window.youtube.destroyed(this.tag);
+  }
 
   private onPlaying(duration: number) {
     const bgmCoreComponent: BGMCoreComponent = this.$refs
@@ -120,23 +130,23 @@ export default class BGMYoutubeComponent extends Vue {
   }
 
   private onMute(mute: boolean) {
-    (<any>window)["youtube"][mute ? "mute" : "unMute"](this.tag);
+    window.youtube[mute ? "mute" : "unMute"](this.tag);
   }
 
   private onVolume(volume: number) {
-    (<any>window)["youtube"]["setVolume"](this.tag, volume * 100);
+    window.youtube.setVolume(this.tag, volume * 100);
   }
 
   private onPlay() {
-    (<any>window)["youtube"]["play"](this.tag);
+    window.youtube.play(this.tag);
   }
 
   private onPause() {
-    (<any>window)["youtube"]["pause"](this.tag);
+    window.youtube.pause(this.tag);
   }
 
   private onSeekTo(time: any) {
-    (<any>window)["youtube"]["seekTo"](this.tag, time, true);
+    window.youtube.seekTo(this.tag, time, true);
   }
 
   private onEnd() {
