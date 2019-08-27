@@ -2,6 +2,9 @@ import JSZip from "jszip";
 import saveAs from "file-saver";
 import moment from "moment";
 
+type Dispatch = (target: string, payload?: any) => Promise<any>;
+type Commit = (target: string, payload?: any) => any;
+
 /**
  * Store
  */
@@ -18,7 +21,7 @@ export default {
       rootState,
       rootGetters
     }: {
-      dispatch: Function;
+      dispatch: Dispatch;
       rootState: any;
       rootGetters: any;
     }) {
@@ -70,7 +73,7 @@ export default {
       rootState,
       rootGetters
     }: {
-      dispatch: Function;
+      dispatch: Dispatch;
       rootState: any;
       rootGetters: any;
     }) {
@@ -253,7 +256,7 @@ export default {
      * @param isRoomCreate
      */
     importStart(
-      { dispatch, rootState }: { dispatch: Function; rootState: any },
+      { dispatch, rootState }: { dispatch: Dispatch; rootState: any },
       { zipFiles, isRoomCreate }: { zipFiles: any[]; isRoomCreate: boolean }
     ) {
       const zip: any = new JSZip();
@@ -310,7 +313,7 @@ export default {
         commit,
         rootState,
         rootGetters
-      }: { dispatch: Function; commit: any; rootState: any; rootGetters: any },
+      }: { dispatch: Dispatch; commit: Commit; rootState: any; rootGetters: any },
       {
         publicData,
         dataVersion,

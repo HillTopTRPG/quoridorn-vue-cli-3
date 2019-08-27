@@ -6,127 +6,29 @@ import stateSetting from "./state_setting";
 import actionFile from "./action_file";
 import actionPeer from "./action_peer";
 import actionOperation from "./action_operation";
-import saveChat from "./action_save_chat";
-import { getFileNameArgList, getUrlParam } from "@/components/common/Utility";
+import actionSaveChat from "./action_save_chat";
 import yaml from "js-yaml";
 import moment from "moment";
+import { onMount } from "./action_onMount";
+import {
+  Dice,
+  DiceInfo,
+  DiceSystem,
+  Locate,
+  Matrix,
+  Volatile,
+  VolatileDice,
+  VolatileMapAngleInfo,
+  VolatileMapMoveInfo,
+  VolatileMapMoveObjInfo,
+  VolatileMapRollObjInfo,
+  VolatileMouse
+} from "@/store/Type_Volatile";
 
 const CryptoJS = require("crypto-js");
 
 type Dispatch = (target: string, payload?: any) => Promise<any>;
 type Commit = (target: string, payload?: any) => any;
-
-type Locate = {
-  x: number;
-  y: number;
-};
-
-type Matrix = {
-  c: number;
-  r: number;
-};
-
-interface VolatileMouse extends Locate {
-  drag: {
-    from: Locate;
-    move: Locate;
-  };
-}
-
-type DiceSystem = {
-  system: string;
-  name: string;
-};
-
-type VolatileChat = {
-  activeChatTab: string;
-  hoverChatTab: string;
-  actorKey: string;
-  diceSystemList: DiceSystem[];
-};
-
-type VolatileMapMoveObjInfo = {
-  isMoving: boolean;
-  key: string;
-};
-
-type VolatileMapRollObjInfo = {
-  isRolling: boolean;
-  key: string;
-};
-
-type VolatileMapMoveInfo = {
-  from: Locate;
-  total: Locate;
-  dragging: Locate;
-};
-
-type VolatileMapAngleInfo = {
-  dragging: number;
-  dragStart: number;
-};
-
-type VolatileMap = {
-  grid: Matrix;
-  mouse: {
-    onScreen: Locate;
-    onTable: Locate;
-    onCanvas: Locate;
-  };
-  isDraggingLeft: boolean;
-  isMouseDownRight: boolean;
-  isDraggingRight: boolean;
-  isOverEvent: boolean;
-  move: VolatileMapMoveInfo;
-  moveObj: VolatileMapMoveObjInfo;
-  rollObj: VolatileMapRollObjInfo;
-  angle: VolatileMapAngleInfo;
-};
-
-type Dice = { [P in string]: string };
-type DiceInfo = {
-  type: string;
-  label: string;
-  pips: Dice[];
-};
-type VolatileDice = { [P in string]: DiceInfo[] };
-
-type Volatile = {
-  mouse: VolatileMouse;
-  self: { webRtcPeer: any | null; webRtcPeerWait: any | null };
-  param: {
-    roomName: string | null;
-    roomPassword: string | null;
-    playerName: string | null;
-    playerPassword: string | null;
-    playerType: string | null;
-    system: string | null;
-  };
-  room: {
-    webRtcRoom: any;
-    webRtcRoomWait: any;
-    isExist: boolean;
-    isJoined: boolean;
-  };
-  chat: VolatileChat;
-  map: VolatileMap;
-  deck: {
-    viewMode: string;
-    hoverIndex: number;
-    hoverKey: string;
-    command: string | null;
-    isReverse: boolean;
-  };
-  dice: VolatileDice;
-  volatileSaveData: {
-    players: [];
-  };
-  mode: {
-    isModal: boolean;
-    isLoading: number;
-    isWait: boolean;
-  };
-};
 
 const state: Volatile = {
   // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）
@@ -219,10 +121,10 @@ export default new Vuex.Store({
     private: statePrivate,
     public: statePublic,
     setting: stateSetting,
-    file: actionFile,
-    peer: actionPeer,
-    operation: actionOperation,
-    saveChat: saveChat
+    actionFile,
+    actionPeer,
+    actionOperation,
+    actionSaveChat
   },
   state,
   // @ts-ignore
@@ -236,247 +138,7 @@ export default new Vuex.Store({
      * @param rootGetters
      * @param commit
      */
-    async onMount({
-      dispatch,
-      state,
-      rootState,
-      rootGetters,
-      commit
-    }: {
-      dispatch: Dispatch;
-      state: Volatile;
-      rootState: any;
-      rootGetters: any;
-      commit: Commit;
-    }) {
-      /* ----------------------------------------------------------------------
-       * URLパラメータの処理
-       */
-      let roomName: string | null = getUrlParam("roomName");
-      const roomPassword: string | null = getUrlParam("roomPassword");
-      const playerName: string | null = getUrlParam("playerName");
-      const playerPassword: string | null = getUrlParam("playerPassword");
-      let playerType: string | null = getUrlParam("playerType");
-      let system: string | null = getUrlParam("system");
-
-      if (roomName && roomName.endsWith(rootGetters.entranceRoomName)) {
-        alert(
-          `「${rootGetters.entranceRoomName}」で終わる部屋名は使えません。`
-        );
-        roomName = null;
-      }
-
-      state.param.roomName = roomName;
-      state.param.roomPassword = roomPassword;
-      state.param.playerName = playerName;
-      state.param.playerPassword = playerPassword;
-      // 選択肢と一致していれば、権限をセットする
-      if (
-        rootGetters.roles.findIndex((role: any) => role.value === playerType) >=
-        0
-      ) {
-        state.param.playerType = playerType;
-      } else {
-        playerType = null;
-      }
-      state.param.system = system;
-
-      /* ------------------------------
-       * URLを書き換える（リロードなし）
-       */
-      const paramList = [];
-      if (state.param.roomName !== null)
-        paramList.push(`roomName=${state.param.roomName}`);
-      if (state.param.roomPassword !== null)
-        paramList.push(`roomPassword=${state.param.roomPassword}`);
-      if (state.param.system !== null)
-        paramList.push(`system=${state.param.system}`);
-      if (state.param.playerName !== null)
-        paramList.push(`playerName=${state.param.playerName}`);
-      if (state.param.playerPassword !== null)
-        paramList.push(`playerPassword=${state.param.playerPassword}`);
-      if (state.param.playerType !== null)
-        paramList.push(`playerType=${state.param.playerType}`);
-      const newUrl = `?${paramList.join("&")}`;
-      window.history.replaceState("", "", newUrl);
-
-      // state_settingの初期化
-      commit("init_state_setting");
-
-      dispatch("onTest").then();
-
-      /* ----------------------------------------------------------------------
-       * 初期表示画面の設定
-       */
-      setTimeout(() => {
-        dispatch("windowOpen", "private.display.chatWindow").then();
-        dispatch("windowOpen", "private.display.initiativeWindow").then();
-        // dispatch("windowOpen", "private.display.resourceWindow");
-        // dispatch("windowOpen", "private.display.chatPaletteWindow");
-        // dispatch("windowOpen", "private.display.publicMemoWindow");
-        // dispatch("windowOpen", "private.display.playerBoxWindow");
-        dispatch("windowOpen", "private.display.welcomeWindow").then();
-      }, 0);
-
-      const loadYaml: Function = rootGetters.loadYaml;
-
-      /* ----------------------------------------------------------------------
-       * ダイスの設定
-       */
-      state.dice = (await loadYaml("/static/conf/dice.yaml")) as VolatileDice;
-
-      /* ----------------------------------------------------------------------
-       * カード情報の設定
-       */
-      const cardSetName = null;
-      // const cardSetName = "花札";
-      // const cardSetName = "トランプ"
-      // const cardSetName = "タロット"
-
-      const deckList: any[] = await loadYaml("/static/conf/deck.yaml");
-      const cardSet: any = deckList.filter(
-        (cs: any) => cs.name === cardSetName
-      )[0];
-      if (cardSet) {
-        const basePath = cardSet.basePath || "";
-        const storeDeck = rootState.public.deck;
-        storeDeck.name = cardSet.name;
-        storeDeck.back = basePath + cardSet.back;
-        storeDeck.width = cardSet.width || 128;
-        storeDeck.height = cardSet.height || 192;
-        cardSet.source = cardSet.source || {};
-        storeDeck.author = cardSet.source.author || "";
-        storeDeck.title = cardSet.source.title || "";
-        storeDeck.refs = cardSet.source.refs || [];
-        storeDeck.cards.list = cardSet.cards.map((card: any, i: number) => ({
-          key: `card-${i}`,
-          front: { text: `` },
-          back: { text: ``, img: basePath + card.file }
-        }));
-        storeDeck.cards.maxKey = cardSet.cards.length - 1;
-      }
-
-      /* ----------------------------------------------------------------------
-       * BGMの設定
-       */
-      const bgmList: any[] = await loadYaml("/static/conf/bgm.yaml");
-      bgmList.forEach((bgm: any, index: number) => (bgm.key = `bgm-${index}`));
-      rootState.public.bgm.list = bgmList;
-      rootState.public.bgm.maxKey = bgmList.length - 1;
-
-      /* ----------------------------------------------------------------------
-       * 画像の設定
-       */
-      const imageList: any[] = await loadYaml("/static/conf/image.yaml");
-      imageList.forEach((image: any, index: number) => {
-        image.key = `image-${index}`;
-        image.name = image.data.replace(/.*\//, "");
-
-        const imageArgList = getFileNameArgList(image.name);
-        if (imageArgList.length) image.imageArgList = imageArgList;
-
-        const regExp = new RegExp("[ 　]+", "g");
-        const tagStrList = image.tag.split(regExp);
-        tagStrList.forEach((tagStr: string) => {
-          const imageTag = rootGetters.imageTagList.filter(
-            (imageTag: any) => imageTag.name === tagStr
-          )[0];
-          if (!imageTag) {
-            const nextNum = ++rootState.public.image.tags.maxKey;
-            rootState.public.image.tags.list.push({
-              key: `imgTag-${nextNum}`,
-              name: image.tag
-            });
-          }
-        });
-      });
-      rootState.public.image.list = imageList;
-      rootState.public.image.maxKey = imageList.length - 1;
-
-      /* ----------------------------------------------------------------------
-       * チャットフォーマットの設定
-       */
-      const chatFormatList: any[] = await loadYaml(
-        "/static/conf/chatFormat.yaml"
-      );
-      chatFormatList.forEach((chatFormat: any) => {
-        rootState.setting.chatFormat.targetList.push({
-          label: chatFormat.label,
-          chatText: chatFormat.chatText
-        });
-      });
-
-      /* ----------------------------------------------------------------------
-       * 接続設定の設定
-       */
-      const setting: any = await loadYaml("/static/conf/connect.yaml");
-      rootState.setting.connect.skywayKey = setting.skywayKey;
-      rootState.setting.connect.type = setting.type;
-      rootState.setting.connect.bcdiceServer = setting.bcdiceServer;
-
-      /* ----------------------------------------------------------------------
-       * ダイスシステムの検証
-       */
-      const systemList: DiceSystem[] = await dispatch(
-        "getBcdiceSystemList"
-      ).catch(() => {
-        alert(
-          `BCDice-apiサーバ\n${setting.bcdiceServer}\nの接続に失敗しました。`
-        );
-      });
-      state.chat.diceSystemList = systemList;
-      const index = systemList.findIndex(
-        (systemObj: any) => systemObj.system === system
-      );
-      if (index === -1) system = "DiceBot";
-
-      /* ----------------------------------------------------------------------
-       * 初期入室の処理
-       */
-      if (roomName) {
-        /* ------------------------------
-         * 部屋存在チェック
-         */
-        dispatch("loading", true).then();
-
-        const endLoading: Function = () => dispatch("loading", false);
-
-        await dispatch("simpleJoinRoom", { roomName: roomName }).catch(
-          () => endLoading
-        );
-        const isExist: boolean = await dispatch("checkRoomName", {
-          roomName: roomName
-        }).catch(() => endLoading);
-        const baseArg: any = {
-          roomName,
-          roomPassword,
-          playerName,
-          playerPassword,
-          playerType,
-          fontColor: "#000000",
-          system,
-          isWait: false
-        };
-        // 「新しい部屋をつくる」画面で入力される項目が指定されていれば新規部屋作成を試みる
-        if (
-          !isExist &&
-          roomPassword !== null &&
-          playerName &&
-          playerPassword !== null &&
-          playerType !== null
-        ) {
-          baseArg.playerType = baseArg.playerType || "PL";
-          await dispatch("doNewRoom", baseArg).catch(() => endLoading);
-        }
-        // 「この部屋に入る」画面で入力される項目が指定されていれば既存部屋への入室を試みる
-        if (isExist && roomPassword !== null) {
-          baseArg.useWindow = true;
-          baseArg.useAlert = true;
-          await dispatch("doJoinRoom", baseArg).catch(() => endLoading);
-        }
-        endLoading();
-      }
-    },
+    onMount,
 
     /**
      * =================================================================================================================
@@ -629,9 +291,7 @@ export default new Vuex.Store({
       { getters }: { getters: any },
       { property, logOff }: { property: string; logOff: boolean }
     ) => {
-      if (!logOff) {
-        window.console.log(`#empty ${property}:`);
-      }
+      if (!logOff) window.console.log(`#empty ${property}:`);
       const target = getters.getStateValue(property);
       target.splice(0, target.length);
     },
