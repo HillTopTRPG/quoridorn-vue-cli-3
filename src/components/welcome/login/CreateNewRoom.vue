@@ -226,11 +226,11 @@ export default class CreateNewRoom extends Vue {
   @Getter("isRoomExist") private isRoomExist: any;
   @Getter("peerId") private peerId: any;
   @Getter("roles") private roles: any;
+  @Getter("entranceRoomName") private entranceRoomName: any;
 
   /*
    * data
    */
-  static ENTRANCE_ROOM_NAME = "の待機部屋";
   private roomName: string = "";
   private roomPassword: string = "";
   private playerName: string = "";
@@ -484,8 +484,7 @@ export default class CreateNewRoom extends Vue {
 
           // エントランス部屋に接続する
           this.loading(true);
-          const entranceRoomName =
-            this.roomName + CreateNewRoom.ENTRANCE_ROOM_NAME;
+          const entranceRoomName = this.roomName + this.entranceRoomName;
           Promise.resolve()
             .then(() =>
               this.simpleJoinRoom({ roomName: entranceRoomName, isWait: true })

@@ -1,6 +1,3 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// import "bcdice-js/lib/preload-dicebots"
 import Vue from "vue";
 import Vuex from "vuex";
 import statePrivate from "./state_private";
@@ -9,9 +6,8 @@ import stateSetting from "./state_setting";
 import actionFile from "./action_file";
 import actionPeer from "./action_peer";
 import actionOperation from "./action_operation";
-import saveChat from "./action_save_chat.ts";
-import { getFileNameArgList, getUrlParam } from "../components/common/Utility";
-import CreateNewRoom from "@/components/welcome/login/CreateNewRoom.vue";
+import saveChat from "./action_save_chat";
+import { getFileNameArgList, getUrlParam } from "@/components/common/Utility";
 import yaml from "js-yaml";
 import moment from "moment";
 
@@ -124,7 +120,20 @@ export default new Vuex.Store({
      * @param rootGetters
      * @param commit
      */
-    onMount({ dispatch, state, rootState, rootGetters, commit }) {
+    onMount(
+      {
+        dispatch,
+        state,
+        rootState,
+        rootGetters,
+        commit
+      }: {
+        dispatch: Function;
+        state: any;
+        rootState: any;
+        rootGetters: any;
+        commit: Function;
+      }) {
       /* ----------------------------------------------------------------------
        * URLパラメータの処理
        */
@@ -135,9 +144,9 @@ export default new Vuex.Store({
       let playerType = getUrlParam("playerType");
       let system = getUrlParam("system");
 
-      if (roomName && roomName.endsWith(CreateNewRoom.ENTRANCE_ROOM_NAME)) {
+      if (roomName && roomName.endsWith(rootGetters.entranceRoomName)) {
         alert(
-          `「${CreateNewRoom.ENTRANCE_ROOM_NAME}」で終わる部屋名は使えません。`
+          `「${rootGetters.entranceRoomName}」で終わる部屋名は使えません。`
         );
         roomName = null;
       }
@@ -147,7 +156,7 @@ export default new Vuex.Store({
       state.param.playerName = playerName;
       state.param.playerPassword = playerPassword;
       // 選択肢と一致していれば、権限をセットする
-      if (rootGetters.roles.findIndex(role => role.value === playerType) >= 0) {
+      if (rootGetters.roles.findIndex((role: any) => role.value === playerType) >= 0) {
         state.param.playerType = playerType;
       } else {
         playerType = null;
@@ -199,7 +208,7 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * ダイスの設定
        */
-      rootGetters.loadYaml("/static/conf/dice.yaml").then(dice => {
+      rootGetters.loadYaml("/static/conf/dice.yaml").then((dice: any) => {
         state.dice = dice;
       });
 
@@ -211,8 +220,8 @@ export default new Vuex.Store({
       // const cardSetName = "トランプ"
       // const cardSetName = "タロット"
 
-      rootGetters.loadYaml("/static/conf/deck.yaml").then(deckList => {
-        const cardSet = deckList.filter(cs => cs.name === cardSetName)[0];
+      rootGetters.loadYaml("/static/conf/deck.yaml").then((deckList: any) => {
+        const cardSet = deckList.filter((cs: any) => cs.name === cardSetName)[0];
 
         if (!cardSet) return;
         const basePath = cardSet.basePath || "";
@@ -225,7 +234,7 @@ export default new Vuex.Store({
         storeDeck.author = cardSet.source.author || "";
         storeDeck.title = cardSet.source.title || "";
         storeDeck.refs = cardSet.source.refs || [];
-        storeDeck.cards.list = cardSet.cards.map((card, i) => ({
+        storeDeck.cards.list = cardSet.cards.map((card: any, i: number) => ({
           key: `card-${i}`,
           front: { text: `` },
           back: { text: ``, img: basePath + card.file }
@@ -236,8 +245,8 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * BGMの設定
        */
-      rootGetters.loadYaml("/static/conf/bgm.yaml").then(bgmList => {
-        bgmList.forEach((bgm, index) => (bgm.key = `bgm-${index}`));
+      rootGetters.loadYaml("/static/conf/bgm.yaml").then((bgmList: any[]) => {
+        bgmList.forEach((bgm: any, index: number) => (bgm.key = `bgm-${index}`));
         rootState.public.bgm.list = bgmList;
         rootState.public.bgm.maxKey = bgmList.length - 1;
       });
@@ -245,8 +254,8 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * 画像の設定
        */
-      rootGetters.loadYaml("/static/conf/image.yaml").then(imageList => {
-        imageList.forEach((image, index) => {
+      rootGetters.loadYaml("/static/conf/image.yaml").then((imageList: any[]) => {
+        imageList.forEach((image: any, index: number) => {
           image.key = `image-${index}`;
           image.name = image.data.replace(/.*\//, "");
 
@@ -255,9 +264,9 @@ export default new Vuex.Store({
 
           const regExp = new RegExp("[ 　]+", "g");
           const tagStrList = image.tag.split(regExp);
-          tagStrList.forEach(tagStr => {
+          tagStrList.forEach((tagStr: string) => {
             const imageTag = rootGetters.imageTagList.filter(
-              imageTag => imageTag.name === tagStr
+                (imageTag: any) => imageTag.name === tagStr
             )[0];
             if (!imageTag) {
               const nextNum = ++rootState.public.image.tags.maxKey;
@@ -277,8 +286,8 @@ export default new Vuex.Store({
        */
       rootGetters
         .loadYaml("/static/conf/chatFormat.yaml")
-        .then(chatFormatList => {
-          chatFormatList.forEach(chatFormat => {
+        .then((chatFormatList: any[]) => {
+          chatFormatList.forEach((chatFormat: any) => {
             rootState.setting.chatFormat.targetList.push({
               label: chatFormat.label,
               chatText: chatFormat.chatText
@@ -289,7 +298,7 @@ export default new Vuex.Store({
       /* ----------------------------------------------------------------------
        * 接続設定の設定
        */
-      rootGetters.loadYaml("/static/conf/connect.yaml").then(setting => {
+      rootGetters.loadYaml("/static/conf/connect.yaml").then((setting: any) => {
         rootState.setting.connect.skywayKey = setting.skywayKey;
         rootState.setting.connect.type = setting.type;
         rootState.setting.connect.bcdiceServer = setting.bcdiceServer;
@@ -298,10 +307,10 @@ export default new Vuex.Store({
          * ダイスシステムの検証
          */
         dispatch("getBcdiceSystemList")
-          .then(systemList => {
+          .then((systemList: any[]) => {
             state.chat.diceSystemList = systemList;
             const index = systemList.findIndex(
-              systemObj => systemObj.system === system
+                (systemObj: any) => systemObj.system === system
             );
             if (index === -1) system = "DiceBot";
           })
@@ -332,7 +341,7 @@ export default new Vuex.Store({
               return dispatch("checkRoomName", { roomName: roomName });
             })
             .then(isExist => {
-              const baseArg = {
+              const baseArg: any = {
                 roomName,
                 roomPassword,
                 playerName,
@@ -518,12 +527,22 @@ export default new Vuex.Store({
      * @param value 代入する値
      * @param logOff true:ログを出力しない
      */
-    doSetProperty: (state, { property, value, logOff = false }) => {
+    doSetProperty: (
+      state: any,
+      {
+        property,
+        value,
+        logOff = false
+      }: {
+        property: string;
+        value: any;
+        logOff: boolean;
+      }) => {
       if (!logOff) {
         window.console.log(`doSetProperty => ${property}:`, value);
       }
 
-      const propProc = (target, props, value) => {
+      const propProc = (target: any, props: any[], value: any) => {
         // if (!logOff) window.console.log("【0】propProc", target, props, value);
         const prop = props.shift();
         if (props.length > 0) {
@@ -540,10 +559,10 @@ export default new Vuex.Store({
             // XXX target[prop] = value;
             Vue.set(target, prop, value);
           } else {
-            const propProc2 = (target, props) => {
+            const propProc2 = (target: any, props: any[]) => {
               for (const prop in props) {
                 if (!props.hasOwnProperty(prop)) continue;
-                const val = props[prop];
+                const val: any = props[prop];
                 // if (!logOff) window.console.log("【4】propProc2", JSON.parse(JSON.stringify(target)), prop, val, props);
                 if (!(val instanceof Object) || typeof val === "function") {
                   // XXX target[prop] = val;
@@ -615,7 +634,7 @@ export default new Vuex.Store({
        * @param yamlPath yamlファイルのURL
        * @returns {*}
        */
-      yamlPath => {
+      (yamlPath: string) => {
         return window
           .fetch(process.env.BASE_URL + yamlPath)
           .then(responce => responce.text())
@@ -635,7 +654,7 @@ export default new Vuex.Store({
        * @param jsonPath jsonファイルのURL
        * @returns {*}
        */
-      jsonPath => {
+      (jsonPath: string) => {
         return window
           .fetch(process.env.BASE_URL + jsonPath)
           .then(responce => responce.text())
@@ -655,7 +674,7 @@ export default new Vuex.Store({
        * @param property
        * @returns {*}
        */
-      property => {
+      (property: string) => {
         let target = state;
         property.split(".").forEach(prop => {
           target = target[prop];
@@ -669,7 +688,7 @@ export default new Vuex.Store({
        * @param displayProperty
        * @returns {*}
        */
-      displayProperty => {
+      (displayProperty: string) => {
         const target = getters.getStateValue(displayProperty);
         return typeof target === "boolean" ? target : target.isDisplay;
       },
@@ -681,8 +700,8 @@ export default new Vuex.Store({
        * @param key
        * @returns {*}
        */
-      (list, key) => {
-        const filteredList = list.filter(obj => obj.key === key);
+      (list: any[], key: string) => {
+        const filteredList = list.filter((obj: any) => obj.key === key);
         if (filteredList.length === 0) {
           // window.console.log(`key:"${key}" is not find.`);
           return null;
@@ -700,8 +719,8 @@ export default new Vuex.Store({
        * @param colorText
        * @returns {*}
        */
-      colorText => {
-        let _c = null;
+      (colorText: string) => {
+        let _c: any = null;
         if (colorText.startsWith("rgb")) {
           let splits = colorText.replace(/(rgba?\()|\)/g, "").split(",");
           _c = {
@@ -739,7 +758,7 @@ export default new Vuex.Store({
        * @param obj
        * @returns {string}
        */
-      obj => {
+      (obj: any) => {
         const params = [];
         for (const key in obj) {
           if (!obj.hasOwnProperty(key)) continue;
@@ -779,16 +798,16 @@ export default new Vuex.Store({
     deckCommand: state => state.deck.command,
     deckHoverIndex: state => state.deck.hoverIndex,
     deckHoverKey: state => state.deck.hoverKey,
-    webRtcPeer: state => isWait =>
+    webRtcPeer: state => (isWait: boolean) =>
       !isWait ? state.self.webRtcPeer : state.self.webRtcPeerWait,
-    webRtcRoom: state => isWait =>
+    webRtcRoom: state => (isWait: boolean) =>
       !isWait ? state.room.webRtcRoom : state.room.webRtcRoomWait,
     chatActorKey: state => state.chat.actorKey,
     volatilePrivateData: state => state.volatileSaveData.players,
     chatTabs: (state, getters, rootState, rootGetters) => {
-      return rootGetters.chatTabsOption.map(privateTab => {
+      return rootGetters.chatTabsOption.map((privateTab: any) => {
         const publicTab = rootGetters.chatTabList.filter(
-          publicTab => publicTab.key === privateTab.key
+            (publicTab: any) => publicTab.key === privateTab.key
         )[0];
         return {
           key: publicTab.key,
@@ -809,15 +828,15 @@ export default new Vuex.Store({
     isRolling: state => state.map.rollObj.isRolling,
     diceSystemList: state => state.chat.diceSystemList,
     dice: state => state.dice,
-    dicePipsImage: state => (faceNum, type, pips) => {
+    dicePipsImage: state => (faceNum: number, type: string, pips: number) => {
       const diceSetList = state.dice[faceNum];
       if (!diceSetList) return null;
-      const diceObj = diceSetList.filter(diceSet => diceSet.type === type)[0];
+      const diceObj = diceSetList.filter((diceSet: any) => diceSet.type === type)[0];
       if (!diceObj) return null;
       return diceObj.pips[pips];
     },
-    hash: state => (planeText, key) => CryptoJS.HmacSHA1(planeText, key),
-    isSameHash: state => (hash, planeText, key) =>
+    hash: state => (planeText: string, key: string) => CryptoJS.HmacSHA1(planeText, key),
+    isSameHash: state => (hash: string, planeText: string, key: string) =>
       hash === CryptoJS.HmacSHA1(planeText, key)
   }
 });

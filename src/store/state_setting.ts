@@ -5,8 +5,9 @@ export default {
   // FIXME settingのデータは別経路で保存する？
   state: {
     /** バージョン */
-    version: "1.0.2",
+    version: "1.0.3",
     magicWord: "I walk slowly, but I never walk backward.",
+    entranceRoomName: "の待機部屋",
     /** 接続情報 */
     connect: {
       skywayKey: "",
@@ -203,6 +204,7 @@ export default {
     chatLineRegExp: (state: any) => state.chatFormat.lineRegExp,
     borderStyleRegExp: (state: any) => state.chatFormat.borderStyleRegExp,
     chatStyleRegExp: (state: any) => state.chatFormat.styleRegExp,
+    entranceRoomName: (state: any) => state.entranceRoomName,
 
     /** 暗号化 */
     encrypt: (state: any) => ({

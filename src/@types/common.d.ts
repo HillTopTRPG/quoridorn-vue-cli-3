@@ -7,4 +7,5 @@ declare module "vue-slider-component";
 declare module "mustache";
 declare module "mathjs";
 declare module "crypto-js";
+declare module "js-yaml";
 declare function parseInt(s: string, radix?: number): number;
