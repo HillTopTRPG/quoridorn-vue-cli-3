@@ -20,7 +20,7 @@
     "js-yaml": "^3.13.1",
     "json-loader": "^0.5.7",
     "jszip": "^3.2.2",
-    "mathjs": "^6.0.3",
+    "mathjs": "^7.5.1",
     "moment": "^2.24.0",
     "mustache": "^3.0.1",
     "skyway-js": "^1.4.0",
