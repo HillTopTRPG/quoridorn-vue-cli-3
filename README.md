@@ -1,3 +1,8 @@
+# This repository has been archived.
+next project: [quoridorn-mark2](https://github.com/HillTopTRPG/quoridorn-mark2)
+
+---
+
 ◆このリポジトリ
 Quoridorn Vue CLI 3 版
 
